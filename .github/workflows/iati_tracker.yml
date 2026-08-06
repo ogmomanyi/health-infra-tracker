@@ -1,0 +1,43 @@
+name: IATI Health Project Tracker
+
+on:
+  schedule:
+    - cron: '0 6 * * *'  # Runs automatically every day at 06:00 UTC
+  workflow_dispatch:     # Enables manual trigger button in GitHub UI
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Ensure Data Directory Exists
+        run: mkdir -p data
+
+      - name: Execute Pipeline
+        env:
+          IATI_API_KEY: ${{ secrets.IATI_API_KEY }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          python iati_tracker.py \
+            --output-prefix data/iati_health_projects \
+            --state-file data/projects_state.json
+
+      - name: Commit Updated Datasets & State
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/
+          git diff --quiet && git diff --staged --quiet || (git commit -m "auto: update IATI health data & state [skip ci]" && git push)
