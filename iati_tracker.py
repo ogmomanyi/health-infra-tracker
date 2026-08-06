@@ -140,18 +140,20 @@ def _text(node: Any) -> str:
     return ""
 
 
-def _narrative_text(narrative_container: Any, prefer_lang: str = "en") -> str:
-    narratives = _as_list(narrative_container)
-    if not narratives:
+def _narrative_text(narrative_list: Optional[List[dict]], prefer_lang: str = "en") -> str:
+    if not narrative_list:
         return ""
     fallback = ""
-    for n in narratives:
+    for n in narrative_list:
         txt = _text(n)
         if not txt:
             continue
         if not fallback:
             fallback = txt
-        lang = (n.get("@xml:lang") if isinstance(n, dict) else "").lower()
+            
+        # FIX: 'or ""' ensures that if get() returns None, it becomes a string before .lower()
+        lang = (n.get("@xml:lang") or "").lower()
+        
         if lang == prefer_lang or not lang:
             return txt
     return fallback
