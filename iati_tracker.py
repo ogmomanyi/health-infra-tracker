@@ -140,22 +140,31 @@ def _text(node: Any) -> str:
     return ""
 
 
-def _narrative_text(narrative_list: Optional[List[dict]], prefer_lang: str = "en") -> str:
+def _narrative_text(narrative_list: Optional[Union[List[dict], dict]], prefer_lang: str = "en") -> str:
     if not narrative_list:
         return ""
+    
+    # Handle single dictionary responses from the IATI API
+    if isinstance(narrative_list, dict):
+        narrative_list = [narrative_list]
+        
     fallback = ""
     for n in narrative_list:
+        if not isinstance(n, dict):
+            continue
+            
         txt = _text(n)
         if not txt:
             continue
         if not fallback:
             fallback = txt
             
-        # FIX: 'or ""' ensures that if get() returns None, it becomes a string before .lower()
+        # Safely extract and cast lang attribute
         lang = (n.get("@xml:lang") or "").lower()
         
         if lang == prefer_lang or not lang:
             return txt
+            
     return fallback
 
 
