@@ -1,0 +1,37 @@
+name: IATI Continuous Tracker
+
+on:
+  schedule:
+    # Runs at 08:00 UTC every Monday. (Use '0 8 * * *' to run daily instead)
+    - cron: '0 8 * * 1' 
+  workflow_dispatch: # Gives you a manual "Run workflow" button in the UI
+
+jobs:
+  track-projects:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Required to commit the JSON file back to the repo
+      
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Python dependencies
+        run: pip install requests
+
+      - name: Run IATI Pipeline
+        env:
+          IATI_API_KEY: ${{ secrets.IATI_API_KEY }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: python iati_tracker.py
+
+      - name: Commit Database State to Repository
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: update IATI projects state"
+          file_pattern: "projects_state.json"
