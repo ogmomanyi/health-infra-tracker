@@ -1,25 +1,45 @@
 #!/usr/bin/env python3
+
 """
-IATI Health Sector Project Intelligence & Continuous Tracking Pipeline
-======================================================================
+IATI Health Sector Intelligence - Step 1
+========================================
 
-Queries the IATI Datastore v3 API for health-sector development/humanitarian
-activities across East & Central Africa (KE, UG, RW, ET, SS, SO, TZ, CD).
+Builds a normalized, persistent data foundation from the IATI Datastore v3 API.
 
-Features:
-  - Preserves nested schema integrity (`fl=iati_json`) for linked budgets/dates.
-  - Defensively normalizes XML-to-JSON object/list conversions.
-  - Scans narratives for equipment procurement keywords and extracts text snippets.
-  - Supports continuous delta tracking & Webhook alerting (Slack/Teams).
+Outputs:
+
+    data/iati_health_projects.csv
+    data/transactions.csv
+    data/budgets.csv
+    data/planned_disbursements.csv
+    data/activity_countries.csv
+    data/organisations.csv
+    data/iati_intelligence.db
+    data/projects_state.json
+
+The database is intentionally normalized so that future intelligence layers
+can calculate:
+
+    - funding velocity
+    - budget growth
+    - disbursement acceleration
+    - procurement probability
+    - opportunity scores
+    - donor/implementer relationships
+    - country market intelligence
+    - competitor intelligence
 """
 
 import argparse
 import json
 import os
 import re
+import sqlite3
 import sys
 import time
 from collections import defaultdict
+from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import pandas as pd
@@ -27,23 +47,31 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-# =========================================================================
-# CONFIGURATION & CONSTANTS
-# =========================================================================
+
+# ============================================================================
+# CONFIGURATION
+# ============================================================================
 
 BASE_URL = "https://api.iatistandard.org/datastore/activity/select"
 
-TARGET_COUNTRIES = ["KE", "UG", "RW", "ET", "SS", "SO", "TZ", "CD"]
+TARGET_COUNTRIES = [
+    "KE",
+    "UG",
+    "RW",
+    "ET",
+    "SS",
+    "SO",
+    "TZ",
+    "CD",
+]
 
-# OECD DAC CRS 5-digit health sector purpose codes
-SECTOR_CODES: Dict[str, str] = {
-    # 121 - Health, General
+SECTOR_CODES = {
     "12110": "Health policy and administrative management",
     "12181": "Medical education/training",
     "12182": "Medical research",
     "12191": "Medical services",
     "12196": "Health statistics and data",
-    # 122 - Basic Health
+
     "12220": "Basic health care",
     "12230": "Basic health infrastructure",
     "12240": "Basic nutrition",
@@ -53,7 +81,7 @@ SECTOR_CODES: Dict[str, str] = {
     "12263": "Tuberculosis control",
     "12264": "COVID-19 control",
     "12281": "Health personnel development",
-    # 123 - Non-communicable diseases (NCDs)
+
     "12310": "NCDs control, general",
     "12320": "Tobacco use control",
     "12330": "Control of harmful use of alcohol and drugs",
@@ -70,6 +98,7 @@ ACTIVITY_STATUS_LABELS = {
     "5": "Cancelled",
     "6": "Suspended",
 }
+
 TARGET_STATUS_CODES = ["1", "2"]
 
 ROLE_FUNDING = "1"
@@ -81,442 +110,2246 @@ DATE_ACTUAL_START = "2"
 DATE_PLANNED_END = "3"
 DATE_ACTUAL_END = "4"
 
-EQUIPMENT_KEYWORDS: Dict[str, List[str]] = {
+EQUIPMENT_KEYWORDS = {
     "Medical Devices & Equipment": [
-        r"medical device", r"medical equipment", r"biomedical equipment",
-        r"laboratory equipment", r"lab equipment", r"surgical equipment",
-        r"imaging equipment", r"x-?ray", r"ultrasound", r"\bmri\b",
-        r"ventilator", r"incubator", r"autoclave", r"sterili[sz]",
+        r"medical device",
+        r"medical equipment",
+        r"biomedical equipment",
+        r"laboratory equipment",
+        r"lab equipment",
+        r"surgical equipment",
+        r"imaging equipment",
+        r"x-?ray",
+        r"\bmri\b",
+        r"ultrasound",
+        r"ventilator",
+        r"incubator",
+        r"autoclave",
+        r"sterili[sz]",
     ],
     "Diagnostic Equipment": [
-        r"diagnostic", r"rapid test", r"test kit", r"point.of.care",
-        r"in.vitro diagnostic", r"\bivd\b", r"analy[sz]er", r"screening",
+        r"diagnostic",
+        r"rapid test",
+        r"test kit",
+        r"point.of.care",
+        r"in.vitro diagnostic",
+        r"\bivd\b",
+        r"analy[sz]er",
+        r"screening",
     ],
     "Cold Chain / Storage": [
-        r"cold chain", r"cold storage", r"refrigerat", r"vaccine storage",
-        r"\bfridge", r"freezer",
+        r"cold chain",
+        r"cold storage",
+        r"refrigerat",
+        r"vaccine storage",
+        r"\bfridge\b",
+        r"freezer",
     ],
     "Vehicles & Transport": [
-        r"ambulance", r"\bvehicles?\b", r"motorcycle", r"\b4x4\b", r"fleet of",
+        r"ambulance",
+        r"\bvehicles?\b",
+        r"motorcycle",
+        r"\b4x4\b",
+        r"fleet of",
     ],
     "PPE": [
-        r"personal protective equipment", r"\bppe\b", r"protective gear",
-        r"\bgloves\b", r"\bmasks?\b", r"protective clothing",
+        r"personal protective equipment",
+        r"\bppe\b",
+        r"protective gear",
+        r"\bgloves\b",
+        r"\bmasks?\b",
+        r"protective clothing",
     ],
     "Facility Infrastructure": [
-        r"construction", r"renovation", r"rehabilitat", r"health facilit",
-        r"hospital building", r"clinic\b", r"dispensary", r"dispensaries",
+        r"construction",
+        r"renovation",
+        r"rehabilitat",
+        r"health facilit",
+        r"hospital building",
+        r"clinic\b",
+        r"dispensary",
+        r"dispensaries",
         r"infrastructure",
     ],
     "IT / Health Information Systems": [
-        r"health information system", r"\bhmis\b", r"electronic medical record",
-        r"\bemr\b", r"\behr\b", r"digital health", r"data system",
+        r"health information system",
+        r"\bhmis\b",
+        r"electronic medical record",
+        r"\bemr\b",
+        r"\behr\b",
+        r"digital health",
+        r"data system",
         r"software platform",
     ],
 }
+
 _COMPILED_KEYWORDS = {
-    category: [re.compile(p, re.IGNORECASE) for p in patterns]
+    category: [
+        re.compile(pattern, re.IGNORECASE)
+        for pattern in patterns
+    ]
     for category, patterns in EQUIPMENT_KEYWORDS.items()
 }
 
-# =========================================================================
-# UTILITIES & PARSING HELPERS
-# =========================================================================
 
-def _as_list(item: Any) -> List[Any]:
-    """Ensures single elements XML-parsed as dicts are safely treated as lists."""
+# ============================================================================
+# GENERAL HELPERS
+# ============================================================================
+
+def now_utc() -> str:
+    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def as_list(item: Any) -> List[Any]:
     if item is None:
         return []
+
     if isinstance(item, list):
         return item
+
     return [item]
 
 
-def _text(node: Any) -> str:
+def text(node: Any) -> str:
     if isinstance(node, dict):
         return str(node.get("text()", "")).strip()
-    elif isinstance(node, str):
+
+    if isinstance(node, str):
         return node.strip()
+
     return ""
 
 
-def _narrative_text(narrative_list: Optional[Union[List[dict], dict]], prefer_lang: str = "en") -> str:
+def narrative_text(
+    narrative_list: Optional[Union[List[dict], dict]],
+    prefer_lang: str = "en",
+) -> str:
+
     if not narrative_list:
         return ""
-    
-    # Handle single dictionary responses from the IATI API
+
     if isinstance(narrative_list, dict):
         narrative_list = [narrative_list]
-        
+
     fallback = ""
-    for n in narrative_list:
-        if not isinstance(n, dict):
+
+    for narrative in narrative_list:
+
+        if not isinstance(narrative, dict):
             continue
-            
-        txt = _text(n)
+
+        txt = text(narrative)
+
         if not txt:
             continue
+
         if not fallback:
             fallback = txt
-            
-        # Safely extract and cast lang attribute
-        lang = (n.get("@xml:lang") or "").lower()
-        
+
+        lang = (
+            narrative.get("@xml:lang")
+            or narrative.get("@xml\\:lang")
+            or ""
+        ).lower()
+
         if lang == prefer_lang or not lang:
             return txt
-            
+
     return fallback
 
 
-def _reporting_org(activity: dict) -> Tuple[str, str]:
-    ro_list = _as_list(activity.get("reporting-org"))
-    if not ro_list:
+def clean_number(value: Any) -> Optional[float]:
+    if value is None:
+        return None
+
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+# ============================================================================
+# ACTIVITY PARSING
+# ============================================================================
+
+def reporting_org(activity: dict) -> Tuple[str, str]:
+
+    orgs = as_list(activity.get("reporting-org"))
+
+    if not orgs:
         return "", ""
-    ro = ro_list[0]
-    if isinstance(ro, dict):
-        return ro.get("@ref", "") or "", _narrative_text(ro.get("narrative"))
-    return "", ""
+
+    org = orgs[0]
+
+    if not isinstance(org, dict):
+        return "", ""
+
+    return (
+        org.get("@ref", "") or "",
+        narrative_text(org.get("narrative")),
+    )
 
 
-def _participating_orgs_by_role(activity: dict, role_code: str) -> List[str]:
-    names = []
-    for po in _as_list(activity.get("participating-org")):
-        if isinstance(po, dict) and po.get("@role") == role_code:
-            name = _narrative_text(po.get("narrative")) or po.get("@ref", "")
-            if name:
-                names.append(name)
-    return names
+def participating_orgs(
+    activity: dict,
+    role_code: str,
+) -> List[Dict[str, str]]:
 
+    results = []
 
-def _activity_dates(activity: dict) -> Dict[str, str]:
-    out = {}
-    for ad in _as_list(activity.get("activity-date")):
-        if isinstance(ad, dict):
-            dtype = ad.get("@type")
-            if dtype:
-                out[dtype] = ad.get("@iso-date", "")
-    return out
+    for org in as_list(activity.get("participating-org")):
 
-
-def _total_budget(activity: dict) -> Tuple[Optional[float], str, int]:
-    totals: Dict[str, float] = defaultdict(float)
-    n = 0
-    for b in _as_list(activity.get("budget")):
-        if not isinstance(b, dict):
+        if not isinstance(org, dict):
             continue
-        value_list = _as_list(b.get("value"))
-        if not value_list:
+
+        if org.get("@role") != role_code:
             continue
-        v = value_list[0]
-        if isinstance(v, dict):
-            try:
-                amount = float(v.get("text()", 0) or 0)
-            except (TypeError, ValueError):
-                continue
-            currency = v.get("@currency", "") or "USD"
-            totals[currency] += amount
-            n += 1
 
-    if not totals:
-        return None, "", 0
-    if len(totals) == 1:
-        currency, amount = next(iter(totals.items()))
-        return amount, currency, n
-    dominant = max(totals, key=totals.get)
-    return totals[dominant], "MIXED", n
+        name = (
+            narrative_text(org.get("narrative"))
+            or org.get("@ref", "")
+        )
 
+        if not name:
+            continue
 
-def _sectors(activity: dict) -> List[Tuple[str, str]]:
-    out = []
-    for s in _as_list(activity.get("sector")):
-        if isinstance(s, dict):
-            code = s.get("@code", "")
-            if not code:
-                continue
-            name = SECTOR_CODES.get(code) or _narrative_text(s.get("narrative"))
-            out.append((code, name))
-    return out
+        results.append({
+            "ref": org.get("@ref", "") or "",
+            "name": name,
+            "type": org.get("@type", "") or "",
+            "role": role_code,
+        })
+
+    return results
 
 
-def _recipient_countries(activity: dict) -> List[str]:
-    countries = []
-    for c in _as_list(activity.get("recipient-country")):
-        if isinstance(c, dict) and c.get("@code"):
-            countries.append(c.get("@code"))
-    return countries
+def activity_dates(activity: dict) -> Dict[str, str]:
+
+    output = {}
+
+    for item in as_list(activity.get("activity-date")):
+
+        if not isinstance(item, dict):
+            continue
+
+        date_type = item.get("@type")
+
+        if date_type:
+            output[date_type] = item.get("@iso-date", "") or ""
+
+    return output
 
 
-def _title(activity: dict) -> str:
-    t_list = _as_list(activity.get("title"))
-    return _narrative_text(t_list[0].get("narrative")) if t_list and isinstance(t_list[0], dict) else ""
+def activity_title(activity: dict) -> str:
+
+    titles = as_list(activity.get("title"))
+
+    if not titles:
+        return ""
+
+    title = titles[0]
+
+    if not isinstance(title, dict):
+        return ""
+
+    return narrative_text(title.get("narrative"))
 
 
-def _descriptions(activity: dict) -> Tuple[str, str]:
+def activity_descriptions(activity: dict) -> Tuple[str, str]:
+
     general = ""
-    parts = []
-    for d in _as_list(activity.get("description")):
-        if not isinstance(d, dict):
+    all_descriptions = []
+
+    for item in as_list(activity.get("description")):
+
+        if not isinstance(item, dict):
             continue
-        txt = _narrative_text(d.get("narrative"))
-        if not txt:
+
+        value = narrative_text(item.get("narrative"))
+
+        if not value:
             continue
-        parts.append(txt)
-        if not general and d.get("@type") in (None, "1"):
-            general = txt
-    if not general and parts:
-        general = parts[0]
-    return general, " ".join(parts)
+
+        all_descriptions.append(value)
+
+        if not general and item.get("@type") in (None, "1"):
+            general = value
+
+    if not general and all_descriptions:
+        general = all_descriptions[0]
+
+    return general, " ".join(all_descriptions)
 
 
-def extract_equipment_targets(*texts: str) -> Tuple[str, str]:
-    haystack = " ".join(t for t in texts if t)
+def sectors(activity: dict) -> List[Dict[str, str]]:
+
+    output = []
+
+    for sector in as_list(activity.get("sector")):
+
+        if not isinstance(sector, dict):
+            continue
+
+        code = sector.get("@code", "")
+
+        if not code:
+            continue
+
+        name = (
+            SECTOR_CODES.get(code)
+            or narrative_text(sector.get("narrative"))
+        )
+
+        output.append({
+            "code": code,
+            "name": name,
+            "vocabulary": sector.get("@vocabulary", "") or "",
+        })
+
+    return output
+
+
+def recipient_countries(activity: dict) -> List[Dict[str, Any]]:
+
+    output = []
+
+    for country in as_list(activity.get("recipient-country")):
+
+        if not isinstance(country, dict):
+            continue
+
+        code = country.get("@code", "")
+
+        if not code:
+            continue
+
+        percentage = clean_number(
+            country.get("@percentage")
+        )
+
+        output.append({
+            "country_code": code,
+            "percentage": percentage,
+        })
+
+    return output
+
+
+# ============================================================================
+# EQUIPMENT EXTRACTION
+# ============================================================================
+
+def extract_equipment_targets(
+    *texts: str,
+) -> Tuple[str, str]:
+
+    haystack = " ".join(
+        value for value in texts if value
+    )
+
     if not haystack:
         return "", ""
-    categories_hit, snippets = [], []
+
+    categories = []
+    snippets = []
+
     for category, patterns in _COMPILED_KEYWORDS.items():
+
         for pattern in patterns:
-            m = pattern.search(haystack)
-            if m:
-                categories_hit.append(category)
-                snippet = haystack[max(0, m.start() - 25): m.end() + 25].strip()
-                snippets.append(f"{category}: …{snippet}…")
-                break
-    return "; ".join(categories_hit), " | ".join(snippets)
+
+            match = pattern.search(haystack)
+
+            if not match:
+                continue
+
+            categories.append(category)
+
+            start = max(0, match.start() - 75)
+            end = min(len(haystack), match.end() + 100)
+
+            snippet = haystack[start:end].strip()
+
+            snippets.append(
+                f"{category}: …{snippet}…"
+            )
+
+            break
+
+    return (
+        "; ".join(dict.fromkeys(categories)),
+        " | ".join(snippets),
+    )
 
 
-def parse_activity(raw_doc: dict) -> Optional[dict]:
-    blob = raw_doc.get("iati_json", raw_doc)
+# ============================================================================
+# FINANCIAL PARSING
+# ============================================================================
+
+def parse_budgets(
+    activity: dict,
+    activity_id: str,
+) -> List[Dict[str, Any]]:
+
+    records = []
+
+    for index, budget in enumerate(
+        as_list(activity.get("budget"))
+    ):
+
+        if not isinstance(budget, dict):
+            continue
+
+        values = as_list(budget.get("value"))
+
+        if not values:
+            continue
+
+        value = values[0]
+
+        if not isinstance(value, dict):
+            continue
+
+        amount = clean_number(value.get("text()"))
+
+        if amount is None:
+            continue
+
+        records.append({
+            "activity_id": activity_id,
+            "budget_index": index,
+            "budget_type_code": budget.get("@type", "") or "",
+            "budget_status_code": budget.get("@status", "") or "",
+            "period_start": budget.get(
+                "period-start",
+                [{}],
+            )[0].get("@iso-date", "")
+            if isinstance(
+                budget.get("period-start"),
+                list,
+            ) and budget.get("period-start")
+            else "",
+            "period_end": budget.get(
+                "period-end",
+                [{}],
+            )[0].get("@iso-date", "")
+            if isinstance(
+                budget.get("period-end"),
+                list,
+            ) and budget.get("period-end")
+            else "",
+            "amount": amount,
+            "currency": (
+                value.get("@currency", "")
+                or ""
+            ),
+            "value_date": (
+                value.get("@value-date", "")
+                or ""
+            ),
+        })
+
+    return records
+
+
+def parse_transactions(
+    activity: dict,
+    activity_id: str,
+) -> List[Dict[str, Any]]:
+
+    records = []
+
+    for index, transaction in enumerate(
+        as_list(activity.get("transaction"))
+    ):
+
+        if not isinstance(transaction, dict):
+            continue
+
+        transaction_type = as_list(
+            transaction.get("transaction-type")
+        )
+
+        transaction_date = as_list(
+            transaction.get("transaction-date")
+        )
+
+        values = as_list(
+            transaction.get("value")
+        )
+
+        transaction_type_code = ""
+
+        if transaction_type:
+            first = transaction_type[0]
+
+            if isinstance(first, dict):
+                transaction_type_code = (
+                    first.get("@code", "")
+                    or ""
+                )
+
+        transaction_date_value = ""
+
+        if transaction_date:
+            first = transaction_date[0]
+
+            if isinstance(first, dict):
+                transaction_date_value = (
+                    first.get("@iso-date", "")
+                    or ""
+                )
+
+        if not values:
+            continue
+
+        value = values[0]
+
+        if not isinstance(value, dict):
+            continue
+
+        amount = clean_number(
+            value.get("text()")
+        )
+
+        if amount is None:
+            continue
+
+        provider = parse_org_node(
+            transaction.get("provider-org")
+        )
+
+        receiver = parse_org_node(
+            transaction.get("receiver-org")
+        )
+
+        description = narrative_text(
+            transaction.get("description")
+        )
+
+        transaction_sector = parse_single_code(
+            transaction.get("sector")
+        )
+
+        recipient_country = parse_single_code(
+            transaction.get("recipient-country")
+        )
+
+        flow_type = parse_single_code(
+            transaction.get("flow-type")
+        )
+
+        finance_type = parse_single_code(
+            transaction.get("finance-type")
+        )
+
+        tied_status = parse_single_code(
+            transaction.get("tied-status")
+        )
+
+        aid_types = []
+
+        for aid_type in as_list(
+            transaction.get("aid-type")
+        ):
+
+            if isinstance(aid_type, dict):
+                code = aid_type.get("@code", "")
+
+                if code:
+                    aid_types.append(code)
+
+        records.append({
+            "activity_id": activity_id,
+            "transaction_index": index,
+            "transaction_ref": (
+                transaction.get("@ref", "")
+                or ""
+            ),
+            "humanitarian": (
+                transaction.get("@humanitarian", "")
+                or ""
+            ),
+            "transaction_type_code":
+                transaction_type_code,
+            "transaction_date":
+                transaction_date_value,
+            "amount":
+                amount,
+            "currency":
+                value.get("@currency", "") or "",
+            "value_date":
+                value.get("@value-date", "") or "",
+            "description":
+                description,
+            "provider_org_ref":
+                provider["ref"],
+            "provider_org_name":
+                provider["name"],
+            "provider_org_type":
+                provider["type"],
+            "provider_activity_id":
+                provider["activity_id"],
+            "receiver_org_ref":
+                receiver["ref"],
+            "receiver_org_name":
+                receiver["name"],
+            "receiver_org_type":
+                receiver["type"],
+            "receiver_activity_id":
+                receiver["activity_id"],
+            "sector_code":
+                transaction_sector,
+            "recipient_country_code":
+                recipient_country,
+            "flow_type_code":
+                flow_type,
+            "finance_type_code":
+                finance_type,
+            "aid_type_codes":
+                "; ".join(aid_types),
+            "tied_status_code":
+                tied_status,
+        })
+
+    return records
+
+
+def parse_planned_disbursements(
+    activity: dict,
+    activity_id: str,
+) -> List[Dict[str, Any]]:
+
+    records = []
+
+    for index, item in enumerate(
+        as_list(activity.get("planned-disbursement"))
+    ):
+
+        if not isinstance(item, dict):
+            continue
+
+        values = as_list(
+            item.get("value")
+        )
+
+        if not values:
+            continue
+
+        value = values[0]
+
+        if not isinstance(value, dict):
+            continue
+
+        amount = clean_number(
+            value.get("text()")
+        )
+
+        if amount is None:
+            continue
+
+        period_start = get_nested_iso_date(
+            item.get("period-start")
+        )
+
+        period_end = get_nested_iso_date(
+            item.get("period-end")
+        )
+
+        provider = parse_org_node(
+            item.get("provider-org")
+        )
+
+        receiver = parse_org_node(
+            item.get("receiver-org")
+        )
+
+        records.append({
+            "activity_id":
+                activity_id,
+            "planned_disbursement_index":
+                index,
+            "type_code":
+                item.get("@type", "") or "",
+            "period_start":
+                period_start,
+            "period_end":
+                period_end,
+            "amount":
+                amount,
+            "currency":
+                value.get("@currency", "") or "",
+            "value_date":
+                value.get("@value-date", "") or "",
+            "provider_org_ref":
+                provider["ref"],
+            "provider_org_name":
+                provider["name"],
+            "provider_org_type":
+                provider["type"],
+            "provider_activity_id":
+                provider["activity_id"],
+            "receiver_org_ref":
+                receiver["ref"],
+            "receiver_org_name":
+                receiver["name"],
+            "receiver_org_type":
+                receiver["type"],
+            "receiver_activity_id":
+                receiver["activity_id"],
+        })
+
+    return records
+
+
+def get_nested_iso_date(
+    node: Any,
+) -> str:
+
+    items = as_list(node)
+
+    if not items:
+        return ""
+
+    first = items[0]
+
+    if isinstance(first, dict):
+        return first.get("@iso-date", "") or ""
+
+    return ""
+
+
+def parse_single_code(
+    node: Any,
+) -> str:
+
+    items = as_list(node)
+
+    if not items:
+        return ""
+
+    first = items[0]
+
+    if isinstance(first, dict):
+        return first.get("@code", "") or ""
+
+    return ""
+
+
+def parse_org_node(
+    node: Any,
+) -> Dict[str, str]:
+
+    items = as_list(node)
+
+    if not items:
+        return {
+            "ref": "",
+            "name": "",
+            "type": "",
+            "activity_id": "",
+        }
+
+    org = items[0]
+
+    if not isinstance(org, dict):
+        return {
+            "ref": "",
+            "name": "",
+            "type": "",
+            "activity_id": "",
+        }
+
+    return {
+        "ref": org.get("@ref", "") or "",
+        "name": (
+            narrative_text(org.get("narrative"))
+            or ""
+        ),
+        "type": org.get("@type", "") or "",
+        "activity_id": (
+            org.get("@provider-activity-id")
+            or org.get("@receiver-activity-id")
+            or ""
+        ),
+    }
+
+
+# ============================================================================
+# ACTIVITY PARSER
+# ============================================================================
+
+def parse_activity(
+    raw_doc: dict,
+) -> Optional[Dict[str, Any]]:
+
+    blob = raw_doc.get(
+        "iati_json",
+        raw_doc,
+    )
+
     if isinstance(blob, str):
+
         try:
             blob = json.loads(blob)
         except json.JSONDecodeError:
             return None
+
     if not isinstance(blob, dict):
         return None
-    activities = _as_list(blob.get("iati-activity"))
+
+    activities = as_list(
+        blob.get("iati-activity")
+    )
+
     if not activities:
         return None
+
     activity = activities[0]
 
-    iati_id_list = _as_list(activity.get("iati-identifier"))
-    iati_id = _text(iati_id_list[0]) if iati_id_list else ""
-    if not iati_id:
+    if not isinstance(activity, dict):
         return None
 
-    reporting_ref, reporting_name = _reporting_org(activity)
-    funding_orgs = _participating_orgs_by_role(activity, ROLE_FUNDING)
-    implementing_orgs = _participating_orgs_by_role(activity, ROLE_IMPLEMENTING)
-    accountable_orgs = _participating_orgs_by_role(activity, ROLE_ACCOUNTABLE)
+    identifiers = as_list(
+        activity.get("iati-identifier")
+    )
 
-    status_list = _as_list(activity.get("activity-status"))
-    status_code = status_list[0].get("@code", "") if status_list and isinstance(status_list[0], dict) else ""
+    if not identifiers:
+        return None
 
-    dates = _activity_dates(activity)
-    budget_amount, budget_currency, n_budget_lines = _total_budget(activity)
-    sectors = _sectors(activity)
-    countries = _recipient_countries(activity)
-    title = _title(activity)
-    description, description_for_scan = _descriptions(activity)
-    eq_categories, eq_snippets = extract_equipment_targets(title, description_for_scan)
+    activity_id = text(
+        identifiers[0]
+    )
+
+    if not activity_id:
+        return None
+
+    reporting_ref, reporting_name = reporting_org(
+        activity
+    )
+
+    funding = participating_orgs(
+        activity,
+        ROLE_FUNDING,
+    )
+
+    implementing = participating_orgs(
+        activity,
+        ROLE_IMPLEMENTING,
+    )
+
+    accountable = participating_orgs(
+        activity,
+        ROLE_ACCOUNTABLE,
+    )
+
+    status_items = as_list(
+        activity.get("activity-status")
+    )
+
+    status_code = ""
+
+    if status_items:
+        if isinstance(status_items[0], dict):
+            status_code = (
+                status_items[0].get("@code", "")
+                or ""
+            )
+
+    dates = activity_dates(activity)
+
+    sectors_data = sectors(activity)
+
+    countries_data = recipient_countries(
+        activity
+    )
+
+    title = activity_title(activity)
+
+    description, scan_text = activity_descriptions(
+        activity
+    )
+
+    equipment_categories, equipment_snippets = (
+        extract_equipment_targets(
+            title,
+            description,
+            scan_text,
+        )
+    )
+
+    first_budget = (
+        parse_budgets(
+            activity,
+            activity_id,
+        )
+    )
+
+    total_budget = 0.0
+    budget_currency = ""
+
+    currencies = set()
+
+    for budget in first_budget:
+
+        if budget["amount"] is not None:
+            total_budget += budget["amount"]
+
+        if budget["currency"]:
+            currencies.add(
+                budget["currency"]
+            )
+
+    if len(currencies) == 1:
+        budget_currency = next(
+            iter(currencies)
+        )
+
+    elif len(currencies) > 1:
+        budget_currency = "MIXED"
+
+    humanitarian = (
+        activity.get("@humanitarian", "")
+        or ""
+    )
 
     return {
-        "iati_identifier": iati_id,
-        "project_title": title,
-        "reporting_org_ref": reporting_ref,
-        "reporting_org_name": reporting_name,
-        "funding_agencies": "; ".join(funding_orgs),
-        "implementing_partners": "; ".join(implementing_orgs),
-        "accountable_orgs": "; ".join(accountable_orgs),
-        "country_codes": "; ".join(countries),
-        "activity_status_code": status_code,
-        "activity_status_label": ACTIVITY_STATUS_LABELS.get(status_code, status_code),
-        "planned_start_date": dates.get(DATE_PLANNED_START, ""),
-        "actual_start_date": dates.get(DATE_ACTUAL_START, ""),
-        "planned_end_date": dates.get(DATE_PLANNED_END, ""),
-        "actual_end_date": dates.get(DATE_ACTUAL_END, ""),
-        "total_budget_amount": budget_amount,
-        "budget_currency": budget_currency,
-        "budget_line_count": n_budget_lines,
-        "sector_codes": "; ".join(c for c, _ in sectors),
-        "sector_names": "; ".join(n for _, n in sectors if n),
-        "description": description,
-        "equipment_target_summary": eq_categories,
-        "equipment_target_snippets": eq_snippets,
+        "iati_identifier":
+            activity_id,
+
+        "project_title":
+            title,
+
+        "reporting_org_ref":
+            reporting_ref,
+
+        "reporting_org_name":
+            reporting_name,
+
+        "funding_agencies":
+            "; ".join(
+                item["name"]
+                for item in funding
+            ),
+
+        "implementing_partners":
+            "; ".join(
+                item["name"]
+                for item in implementing
+            ),
+
+        "accountable_orgs":
+            "; ".join(
+                item["name"]
+                for item in accountable
+            ),
+
+        "funding_org_refs":
+            "; ".join(
+                item["ref"]
+                for item in funding
+                if item["ref"]
+            ),
+
+        "implementing_org_refs":
+            "; ".join(
+                item["ref"]
+                for item in implementing
+                if item["ref"]
+            ),
+
+        "country_codes":
+            "; ".join(
+                item["country_code"]
+                for item in countries_data
+            ),
+
+        "country_percentages":
+            "; ".join(
+                f"{item['country_code']}:{item['percentage']}"
+                for item in countries_data
+                if item["percentage"] is not None
+            ),
+
+        "activity_status_code":
+            status_code,
+
+        "activity_status_label":
+            ACTIVITY_STATUS_LABELS.get(
+                status_code,
+                status_code,
+            ),
+
+        "planned_start_date":
+            dates.get(
+                DATE_PLANNED_START,
+                "",
+            ),
+
+        "actual_start_date":
+            dates.get(
+                DATE_ACTUAL_START,
+                "",
+            ),
+
+        "planned_end_date":
+            dates.get(
+                DATE_PLANNED_END,
+                "",
+            ),
+
+        "actual_end_date":
+            dates.get(
+                DATE_ACTUAL_END,
+                "",
+            ),
+
+        "last_updated":
+            activity.get(
+                "@last-updated",
+                "",
+            )
+            or "",
+
+        "default_currency":
+            activity.get(
+                "@default-currency",
+                "",
+            )
+            or "",
+
+        "humanitarian":
+            humanitarian,
+
+        "default_flow_type_code":
+            activity.get(
+                "@default-flow-type",
+                "",
+            )
+            or "",
+
+        "default_finance_type_code":
+            activity.get(
+                "@default-finance-type",
+                "",
+            )
+            or "",
+
+        "default_aid_type_code":
+            activity.get(
+                "@default-aid-type",
+                "",
+            )
+            or "",
+
+        "default_tied_status_code":
+            activity.get(
+                "@default-tied-status",
+                "",
+            )
+            or "",
+
+        "total_budget_amount":
+            total_budget if first_budget else None,
+
+        "budget_currency":
+            budget_currency,
+
+        "budget_line_count":
+            len(first_budget),
+
+        "sector_codes":
+            "; ".join(
+                item["code"]
+                for item in sectors_data
+            ),
+
+        "sector_names":
+            "; ".join(
+                item["name"]
+                for item in sectors_data
+                if item["name"]
+            ),
+
+        "description":
+            description,
+
+        "equipment_target_summary":
+            equipment_categories,
+
+        "equipment_target_snippets":
+            equipment_snippets,
+
+        "data_retrieved_at":
+            now_utc(),
     }
 
-# =========================================================================
-# FETCHING & QUERYING
-# =========================================================================
 
-def build_query(countries: List[str], sector_codes: List[str], status_codes: List[str]) -> str:
-    country_clause = f"recipient_country_code:({' '.join(countries)})"
-    sector_clause = f"sector_code:({' '.join(sector_codes)})"
-    status_clause = f"activity_status_code:({' '.join(status_codes)})"
-    return f"{country_clause} AND {sector_clause} AND {status_clause}"
+# ============================================================================
+# API
+# ============================================================================
+
+def build_query(
+    countries: List[str],
+    sector_codes: List[str],
+    status_codes: List[str],
+) -> str:
+
+    country_clause = (
+        f"recipient_country_code:"
+        f"({' '.join(countries)})"
+    )
+
+    sector_clause = (
+        f"sector_code:"
+        f"({' '.join(sector_codes)})"
+    )
+
+    status_clause = (
+        f"activity_status_code:"
+        f"({' '.join(status_codes)})"
+    )
+
+    return (
+        f"{country_clause} "
+        f"AND {sector_clause} "
+        f"AND {status_clause}"
+    )
 
 
-def _session() -> requests.Session:
-    retry = Retry(total=5, backoff_factor=2, status_forcelist=[429, 500, 502, 503, 504], allowed_methods=["GET"])
-    s = requests.Session()
-    s.mount("https://", HTTPAdapter(max_retries=retry))
-    return s
+def create_session() -> requests.Session:
+
+    retry = Retry(
+        total=5,
+        backoff_factor=2,
+        status_forcelist=[
+            429,
+            500,
+            502,
+            503,
+            504,
+        ],
+        allowed_methods=["GET"],
+    )
+
+    session = requests.Session()
+
+    session.mount(
+        "https://",
+        HTTPAdapter(
+            max_retries=retry
+        ),
+    )
+
+    return session
 
 
 def fetch_all_activities(
-    query: str, api_key: str, rows_per_page: int, max_pages: int, sleep_seconds: float, dump_raw_path: Optional[str]
+    query: str,
+    api_key: str,
+    rows_per_page: int,
+    max_pages: int,
+    sleep_seconds: float,
+    dump_raw_path: Optional[str],
 ) -> List[dict]:
-    session = _session()
-    headers = {"Ocp-Apim-Subscription-Key": api_key}
-    docs: List[dict] = []
-    start, total_found, page = 0, None, 0
+
+    session = create_session()
+
+    headers = {
+        "Ocp-Apim-Subscription-Key":
+            api_key
+    }
+
+    documents = []
+
+    start = 0
+    total_found = None
+    page = 0
 
     while True:
-        params = {"q": query, "fl": "iati_json", "wt": "json", "rows": rows_per_page, "start": start}
-        resp = session.get(BASE_URL, headers=headers, params=params, timeout=60)
-        if resp.status_code == 401:
-            raise RuntimeError("401 Unauthorized: Verify IATI_API_KEY from https://developer.iatistandard.org")
-        resp.raise_for_status()
 
-        payload = resp.json()
+        params = {
+            "q": query,
+            "fl": "iati_json",
+            "wt": "json",
+            "rows": rows_per_page,
+            "start": start,
+        }
+
+        response = session.get(
+            BASE_URL,
+            headers=headers,
+            params=params,
+            timeout=90,
+        )
+
+        if response.status_code == 401:
+            raise RuntimeError(
+                "401 Unauthorized. "
+                "Verify IATI_API_KEY."
+            )
+
+        response.raise_for_status()
+
+        payload = response.json()
+
         if page == 0 and dump_raw_path:
-            with open(dump_raw_path, "w", encoding="utf-8") as fh:
-                json.dump(payload, fh, indent=2)
 
-        response_block = payload.get("response", {})
+            dump_path = Path(
+                dump_raw_path
+            )
+
+            dump_path.parent.mkdir(
+                parents=True,
+                exist_ok=True,
+            )
+
+            with dump_path.open(
+                "w",
+                encoding="utf-8",
+            ) as handle:
+
+                json.dump(
+                    payload,
+                    handle,
+                    indent=2,
+                    ensure_ascii=False,
+                )
+
+        response_block = payload.get(
+            "response",
+            {},
+        )
+
         if total_found is None:
-            total_found = response_block.get("numFound", 0)
-            print(f"[iati] API query matched {total_found} total activities")
 
-        page_docs = response_block.get("docs", [])
-        docs.extend(page_docs)
+            total_found = response_block.get(
+                "numFound",
+                0,
+            )
+
+            print(
+                f"[iati] API query matched "
+                f"{total_found} activities."
+            )
+
+        page_docs = response_block.get(
+            "docs",
+            [],
+        )
+
+        documents.extend(
+            page_docs
+        )
+
+        print(
+            f"[iati] Page {page + 1}: "
+            f"{len(page_docs)} records "
+            f"({len(documents)}/{total_found})"
+        )
 
         page += 1
         start += rows_per_page
-        if not page_docs or start >= total_found or page >= max_pages:
+
+        if (
+            not page_docs
+            or start >= total_found
+            or page >= max_pages
+        ):
             break
 
-        time.sleep(sleep_seconds)
+        time.sleep(
+            sleep_seconds
+        )
 
-    return docs
+    return documents
 
-# =========================================================================
-# DELTA ENGINE & WEBHOOK ALERTS
-# =========================================================================
 
-def process_deltas(df: pd.DataFrame, state_file: str, webhook_url: Optional[str]) -> None:
+# ============================================================================
+# NORMALIZED DATASET BUILDER
+# ============================================================================
+
+def build_datasets(
+    raw_docs: List[dict],
+) -> Tuple[
+    pd.DataFrame,
+    pd.DataFrame,
+    pd.DataFrame,
+    pd.DataFrame,
+    pd.DataFrame,
+    pd.DataFrame,
+]:
+
+    activity_records = []
+    transaction_records = []
+    budget_records = []
+    planned_records = []
+    country_records = []
+    organisation_records = []
+
+    for raw_doc in raw_docs:
+
+        parsed = parse_activity(
+            raw_doc
+        )
+
+        if not parsed:
+            continue
+
+        activity_records.append(
+            parsed
+        )
+
+        blob = raw_doc.get(
+            "iati_json",
+            raw_doc,
+        )
+
+        if isinstance(blob, str):
+
+            try:
+                blob = json.loads(blob)
+            except json.JSONDecodeError:
+                continue
+
+        activities = as_list(
+            blob.get("iati-activity")
+        )
+
+        if not activities:
+            continue
+
+        activity = activities[0]
+
+        activity_id = parsed[
+            "iati_identifier"
+        ]
+
+        # Transactions
+        transaction_records.extend(
+            parse_transactions(
+                activity,
+                activity_id,
+            )
+        )
+
+        # Budgets
+        budget_records.extend(
+            parse_budgets(
+                activity,
+                activity_id,
+            )
+        )
+
+        # Planned disbursements
+        planned_records.extend(
+            parse_planned_disbursements(
+                activity,
+                activity_id,
+            )
+        )
+
+        # Recipient countries
+        for country in recipient_countries(
+            activity
+        ):
+
+            country_records.append({
+                "activity_id":
+                    activity_id,
+
+                "country_code":
+                    country["country_code"],
+
+                "percentage":
+                    country["percentage"],
+            })
+
+        # Organisations
+        reporting_ref, reporting_name = (
+            reporting_org(activity)
+        )
+
+        if reporting_ref or reporting_name:
+
+            organisation_records.append({
+                "activity_id":
+                    activity_id,
+                "org_ref":
+                    reporting_ref,
+                "org_name":
+                    reporting_name,
+                "role":
+                    "reporting",
+                "org_type":
+                    "",
+            })
+
+        for role_code, role_name in [
+            (ROLE_FUNDING, "funding"),
+            (ROLE_IMPLEMENTING, "implementing"),
+            (ROLE_ACCOUNTABLE, "accountable"),
+        ]:
+
+            for org in participating_orgs(
+                activity,
+                role_code,
+            ):
+
+                organisation_records.append({
+                    "activity_id":
+                        activity_id,
+                    "org_ref":
+                        org["ref"],
+                    "org_name":
+                        org["name"],
+                    "role":
+                        role_name,
+                    "org_type":
+                        org["type"],
+                })
+
+    activities_df = pd.DataFrame(
+        activity_records
+    )
+
+    transactions_df = pd.DataFrame(
+        transaction_records
+    )
+
+    budgets_df = pd.DataFrame(
+        budget_records
+    )
+
+    planned_df = pd.DataFrame(
+        planned_records
+    )
+
+    countries_df = pd.DataFrame(
+        country_records
+    )
+
+    organisations_df = pd.DataFrame(
+        organisation_records
+    )
+
+    if not activities_df.empty:
+
+        activities_df = (
+            activities_df
+            .drop_duplicates(
+                subset=[
+                    "iati_identifier"
+                ]
+            )
+            .reset_index(drop=True)
+        )
+
+    return (
+        activities_df,
+        transactions_df,
+        budgets_df,
+        planned_df,
+        countries_df,
+        organisations_df,
+    )
+
+
+# ============================================================================
+# SQLITE STORAGE
+# ============================================================================
+
+def save_dataframe_to_sqlite(
+    df: pd.DataFrame,
+    table_name: str,
+    connection: sqlite3.Connection,
+) -> None:
+
+    if df.empty:
+        return
+
+    df.to_sql(
+        table_name,
+        connection,
+        if_exists="replace",
+        index=False,
+    )
+
+
+def save_database(
+    db_path: str,
+    activities_df: pd.DataFrame,
+    transactions_df: pd.DataFrame,
+    budgets_df: pd.DataFrame,
+    planned_df: pd.DataFrame,
+    countries_df: pd.DataFrame,
+    organisations_df: pd.DataFrame,
+) -> None:
+
+    path = Path(db_path)
+
+    path.parent.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    connection = sqlite3.connect(
+        path
+    )
+
+    try:
+
+        save_dataframe_to_sqlite(
+            activities_df,
+            "activities",
+            connection,
+        )
+
+        save_dataframe_to_sqlite(
+            transactions_df,
+            "transactions",
+            connection,
+        )
+
+        save_dataframe_to_sqlite(
+            budgets_df,
+            "budgets",
+            connection,
+        )
+
+        save_dataframe_to_sqlite(
+            planned_df,
+            "planned_disbursements",
+            connection,
+        )
+
+        save_dataframe_to_sqlite(
+            countries_df,
+            "activity_countries",
+            connection,
+        )
+
+        save_dataframe_to_sqlite(
+            organisations_df,
+            "organisations",
+            connection,
+        )
+
+        metadata = pd.DataFrame([
+            {
+                "key": "last_pipeline_run",
+                "value": now_utc(),
+            },
+            {
+                "key": "pipeline_version",
+                "value": "1.0-step1",
+            },
+            {
+                "key": "countries",
+                "value": ",".join(
+                    TARGET_COUNTRIES
+                ),
+            },
+        ])
+
+        save_dataframe_to_sqlite(
+            metadata,
+            "metadata",
+            connection,
+        )
+
+        connection.commit()
+
+    finally:
+        connection.close()
+
+
+# ============================================================================
+# CSV OUTPUT
+# ============================================================================
+
+def save_csvs(
+    output_dir: str,
+    datasets: Dict[str, pd.DataFrame],
+) -> None:
+
+    path = Path(output_dir)
+
+    path.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    for name, dataframe in datasets.items():
+
+        output_path = (
+            path / f"{name}.csv"
+        )
+
+        dataframe.to_csv(
+            output_path,
+            index=False,
+        )
+
+        print(
+            f"[iati] Saved "
+            f"{output_path} "
+            f"({len(dataframe)} rows)"
+        )
+
+
+# ============================================================================
+# DAILY SNAPSHOT
+# ============================================================================
+
+def save_daily_snapshot(
+    snapshot_root: str,
+    datasets: Dict[str, pd.DataFrame],
+) -> None:
+
+    date_string = (
+        datetime.now(timezone.utc)
+        .strftime("%Y-%m-%d")
+    )
+
+    snapshot_dir = (
+        Path(snapshot_root)
+        / date_string
+    )
+
+    snapshot_dir.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    for name, dataframe in datasets.items():
+
+        dataframe.to_csv(
+            snapshot_dir / f"{name}.csv",
+            index=False,
+        )
+
+    manifest = {
+        "snapshot_date":
+            date_string,
+
+        "created_at":
+            now_utc(),
+
+        "row_counts": {
+            name: len(dataframe)
+            for name, dataframe
+            in datasets.items()
+        },
+    }
+
+    with (
+        snapshot_dir
+        / "manifest.json"
+    ).open(
+        "w",
+        encoding="utf-8",
+    ) as handle:
+
+        json.dump(
+            manifest,
+            handle,
+            indent=2,
+        )
+
+
+# ============================================================================
+# DELTA STATE
+# ============================================================================
+
+def load_state(
+    state_file: str,
+) -> Dict[str, Any]:
+
+    path = Path(state_file)
+
+    if not path.exists():
+        return {}
+
+    with path.open(
+        "r",
+        encoding="utf-8",
+    ) as handle:
+
+        return json.load(handle)
+
+
+def save_state(
+    state_file: str,
+    activities_df: pd.DataFrame,
+) -> None:
+
     state = {}
-    if os.path.exists(state_file):
-        with open(state_file, "r", encoding="utf-8") as f:
-            state = json.load(f)
 
-    alerts = []
-    for _, row in df.iterrows():
-        doc_id = row["iati_identifier"]
-        title = row["project_title"]
-        status = str(row["activity_status_code"])
-        raw_budget = row["total_budget_amount"]
-        budget = 0.0 if pd.isna(raw_budget) else float(raw_budget)
-        eq_tags = set(filter(None, (row["equipment_target_summary"] or "").split("; ")))
+    for _, row in activities_df.iterrows():
 
-        is_new = doc_id not in state
-        if is_new:
-            alerts.append(f"🆕 *New Project Logged:* [{doc_id}] {title} (Budget: {budget:,.2f} {row['budget_currency']})")
-        else:
-            prev = state[doc_id]
-            if prev.get("status") == "1" and status == "2":
-                alerts.append(f"🚀 *Moved to Implementation:* [{doc_id}] {title}")
-            if budget > prev.get("budget", 0.0):
-                alerts.append(f"💰 *Budget Increased:* [{doc_id}] {title} (Now {budget:,.2f} {row['budget_currency']})")
-            
-            prev_tags = set(prev.get("equipment_tags", []))
-            new_tags = eq_tags - prev_tags
-            if new_tags:
-                alerts.append(f"🩺 *New Procurement Focus:* [{doc_id}] {title} -> Targeted: {', '.join(new_tags)}")
+        activity_id = row[
+            "iati_identifier"
+        ]
 
-        # Update in-memory state
-        state[doc_id] = {
-            "title": title,
-            "status": status,
-            "budget": budget,
-            "equipment_tags": list(eq_tags),
-            "last_updated": time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+        budget = row[
+            "total_budget_amount"
+        ]
+
+        if pd.isna(budget):
+            budget = 0.0
+
+        state[activity_id] = {
+            "title":
+                row.get(
+                    "project_title",
+                    "",
+                ),
+
+            "status":
+                str(
+                    row.get(
+                        "activity_status_code",
+                        "",
+                    )
+                ),
+
+            "budget":
+                float(budget),
+
+            "budget_currency":
+                row.get(
+                    "budget_currency",
+                    "",
+                ),
+
+            "equipment_tags":
+                [
+                    tag.strip()
+                    for tag in str(
+                        row.get(
+                            "equipment_target_summary",
+                            "",
+                        )
+                    ).split(";")
+                    if tag.strip()
+                ],
+
+            "last_updated":
+                row.get(
+                    "last_updated",
+                    "",
+                ),
+
+            "snapshot_timestamp":
+                now_utc(),
         }
 
-    # Save state
-    with open(state_file, "w", encoding="utf-8") as f:
-        json.dump(state, f, indent=2)
-    print(f"[iati] Saved tracking state ({len(state)} records) to {state_file}")
+    path = Path(state_file)
 
-    # Dispatch alerts
-    if alerts and webhook_url:
-        print(f"[iati] Sending {len(alerts)} alerts to Webhook...")
-        msg = "🚨 *IATI Health Equipment Tracker Alert*\n\n" + "\n".join(alerts[:15])
-        if len(alerts) > 15:
-            msg += f"\n\n...and {len(alerts) - 15} more updates."
-        try:
-            requests.post(webhook_url, json={"text": msg}, timeout=10)
-        except Exception as e:
-            print(f"[iati] Failed to send webhook alert: {e}", file=sys.stderr)
+    path.parent.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
 
-# =========================================================================
-# ENTRY POINT
-# =========================================================================
+    with path.open(
+        "w",
+        encoding="utf-8",
+    ) as handle:
+
+        json.dump(
+            state,
+            handle,
+            indent=2,
+            ensure_ascii=False,
+        )
+
+
+# ============================================================================
+# MANIFEST
+# ============================================================================
+
+def save_manifest(
+    output_dir: str,
+    datasets: Dict[str, pd.DataFrame],
+    query: str,
+) -> None:
+
+    manifest = {
+        "pipeline_version":
+            "1.0-step1",
+
+        "generated_at":
+            now_utc(),
+
+        "countries":
+            TARGET_COUNTRIES,
+
+        "query":
+            query,
+
+        "row_counts": {
+            name:
+                len(dataframe)
+            for name, dataframe
+            in datasets.items()
+        },
+
+        "files": {
+            name:
+                f"{name}.csv"
+            for name
+            in datasets
+        },
+    }
+
+    path = (
+        Path(output_dir)
+        / "manifest.json"
+    )
+
+    with path.open(
+        "w",
+        encoding="utf-8",
+    ) as handle:
+
+        json.dump(
+            manifest,
+            handle,
+            indent=2,
+            ensure_ascii=False,
+        )
+
+
+# ============================================================================
+# MAIN
+# ============================================================================
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="IATI Health Project Extraction & Monitoring Pipeline")
-    parser.add_argument("--api-key", default=os.environ.get("IATI_API_KEY"))
-    parser.add_argument("--countries", nargs="+", default=TARGET_COUNTRIES)
-    parser.add_argument("--statuses", nargs="+", default=TARGET_STATUS_CODES)
-    parser.add_argument("--rows", type=int, default=1000)
-    parser.add_argument("--max-pages", type=int, default=20)
-    parser.add_argument("--sleep", type=float, default=13.0)
-    parser.add_argument("--output-prefix", default="iati_health_projects")
-    parser.add_argument("--state-file", default="projects_state.json", help="Path to state file for delta tracking")
-    parser.add_argument("--webhook-url", default=os.environ.get("SLACK_WEBHOOK_URL"))
-    parser.add_argument("--dump-raw", metavar="PATH")
-    parser.add_argument("--mock", action="store_true")
+
+    parser = argparse.ArgumentParser(
+        description=(
+            "IATI Health Intelligence "
+            "Step 1 Data Foundation"
+        )
+    )
+
+    parser.add_argument(
+        "--api-key",
+        default=os.environ.get(
+            "IATI_API_KEY"
+        ),
+    )
+
+    parser.add_argument(
+        "--countries",
+        nargs="+",
+        default=TARGET_COUNTRIES,
+    )
+
+    parser.add_argument(
+        "--statuses",
+        nargs="+",
+        default=TARGET_STATUS_CODES,
+    )
+
+    parser.add_argument(
+        "--rows",
+        type=int,
+        default=1000,
+    )
+
+    parser.add_argument(
+        "--max-pages",
+        type=int,
+        default=50,
+    )
+
+    parser.add_argument(
+        "--sleep",
+        type=float,
+        default=13.0,
+    )
+
+    parser.add_argument(
+        "--output-dir",
+        default="data",
+    )
+
+    parser.add_argument(
+        "--database",
+        default="data/iati_intelligence.db",
+    )
+
+    parser.add_argument(
+        "--state-file",
+        default="data/projects_state.json",
+    )
+
+    parser.add_argument(
+        "--snapshot-dir",
+        default="data/history",
+    )
+
+    parser.add_argument(
+        "--dump-raw",
+        metavar="PATH",
+    )
+
+    parser.add_argument(
+        "--mock",
+        action="store_true",
+    )
+
     args = parser.parse_args()
 
+    # ------------------------------------------------------------------
+    # MOCK MODE
+    # ------------------------------------------------------------------
+
     if args.mock:
-        print("[iati] Running in --mock mode using built-in synthetic test record")
+
+        print(
+            "[iati] Running in mock mode."
+        )
+
         raw_docs = [{
             "iati_json": {
                 "iati-activity": [{
-                    "iati-identifier": [{"text()": "XM-DAC-41114-KE-001"}],
-                    "reporting-org": [{"narrative": [{"text()": "Global Fund"}]}],
-                    "title": [{"narrative": [{"text()": "Western Kenya Hospital Cold Chain and ICU Diagnostic Upgrade"}]}],
-                    "description": [{"narrative": [{"text()": "Procuring cold storage refrigerators, 4 ambulances, and diagnostic test kits."}]}],
-                    "activity-status": [{"@code": "2"}],
-                    "recipient-country": [{"@code": "KE"}],
-                    "sector": [{"@code": "12230"}],
-                    "budget": [{"value": [{"@currency": "USD", "text()": "1500000"}]}]
+                    "iati-identifier": [{
+                        "text()":
+                            "XM-DAC-41114-KE-001"
+                    }],
+
+                    "reporting-org": [{
+                        "@ref":
+                            "GB-GOV-1",
+
+                        "narrative": [{
+                            "text()":
+                                "Global Fund"
+                        }]
+                    }],
+
+                    "title": [{
+                        "narrative": [{
+                            "text()":
+                                "Western Kenya Hospital Cold Chain and ICU Diagnostic Upgrade"
+                        }]
+                    }],
+
+                    "description": [{
+                        "narrative": [{
+                            "text()":
+                                "Procuring cold storage refrigerators, 4 ambulances, laboratory equipment and diagnostic test kits."
+                        }]
+                    }],
+
+                    "activity-status": [{
+                        "@code": "2"
+                    }],
+
+                    "activity-date": [
+                        {
+                            "@type": "1",
+                            "@iso-date":
+                                "2025-01-01",
+                        },
+                        {
+                            "@type": "3",
+                            "@iso-date":
+                                "2027-12-31",
+                        },
+                    ],
+
+                    "recipient-country": [
+                        {
+                            "@code": "KE",
+                            "@percentage": "100",
+                        }
+                    ],
+
+                    "sector": [{
+                        "@code": "12230"
+                    }],
+
+                    "budget": [{
+                        "@type": "1",
+                        "@status": "1",
+                        "period-start": [{
+                            "@iso-date":
+                                "2026-01-01"
+                        }],
+                        "period-end": [{
+                            "@iso-date":
+                                "2026-12-31"
+                        }],
+                        "value": [{
+                            "@currency": "USD",
+                            "@value-date":
+                                "2026-01-01",
+                            "text()":
+                                "1500000"
+                        }]
+                    }],
+
+                    "transaction": [{
+                        "@ref":
+                            "TX001",
+
+                        "transaction-type": [{
+                            "@code": "3"
+                        }],
+
+                        "transaction-date": [{
+                            "@iso-date":
+                                "2026-06-01"
+                        }],
+
+                        "value": [{
+                            "@currency": "USD",
+                            "@value-date":
+                                "2026-06-01",
+                            "text()":
+                                "350000"
+                        }],
+
+                        "description": [{
+                            "narrative": [{
+                                "text()":
+                                    "First disbursement for laboratory equipment procurement."
+                            }]
+                        }],
+
+                        "provider-org": [{
+                            "@ref":
+                                "GB-GOV-1",
+
+                            "narrative": [{
+                                "text()":
+                                    "Global Fund"
+                            }]
+                        }],
+
+                        "receiver-org": [{
+                            "@ref":
+                                "KE-MOH",
+
+                            "narrative": [{
+                                "text()":
+                                    "Kenya Ministry of Health"
+                            }]
+                        }],
+
+                        "recipient-country": [{
+                            "@code":
+                                "KE"
+                        }],
+
+                        "finance-type": [{
+                            "@code":
+                                "110"
+                        }],
+
+                        "aid-type": [{
+                            "@code":
+                                "A01"
+                        }]
+                    }],
+
+                    "planned-disbursement": [{
+                        "@type": "1",
+
+                        "period-start": [{
+                            "@iso-date":
+                                "2026-10-01"
+                        }],
+
+                        "period-end": [{
+                            "@iso-date":
+                                "2026-12-31"
+                        }],
+
+                        "value": [{
+                            "@currency": "USD",
+                            "@value-date":
+                                "2026-10-01",
+                            "text()":
+                                "500000"
+                        }],
+
+                        "provider-org": [{
+                            "@ref":
+                                "GB-GOV-1",
+
+                            "narrative": [{
+                                "text()":
+                                    "Global Fund"
+                            }]
+                        }],
+
+                        "receiver-org": [{
+                            "@ref":
+                                "KE-MOH",
+
+                            "narrative": [{
+                                "text()":
+                                    "Kenya Ministry of Health"
+                            }]
+                        }]
+                    }]
                 }]
             }
         }]
+
     else:
+
         if not args.api_key:
-            print("[iati] ERROR: Missing API key. Pass --api-key or set IATI_API_KEY.", file=sys.stderr)
+
+            print(
+                "[iati] ERROR: Missing API key.",
+                file=sys.stderr,
+            )
+
             sys.exit(1)
-        query = build_query(args.countries, list(SECTOR_CODES.keys()), args.statuses)
-        raw_docs = fetch_all_activities(query, args.api_key, args.rows, args.max_pages, args.sleep, args.dump_raw)
 
-    records = [parse_activity(doc) for doc in raw_docs]
-    records = [r for r in records if r]
+        query = build_query(
+            args.countries,
+            list(SECTOR_CODES.keys()),
+            args.statuses,
+        )
 
-    df = pd.DataFrame(records)
-    if not df.empty:
-        df = df.drop_duplicates(subset=["iati_identifier"]).reset_index(drop=True)
+        raw_docs = fetch_all_activities(
+            query,
+            args.api_key,
+            args.rows,
+            args.max_pages,
+            args.sleep,
+            args.dump_raw,
+        )
 
-    print(f"[iati] Successfully parsed {len(df)} activities.")
-    
-    csv_path = f"{args.output_prefix}.csv"
-    json_path = f"{args.output_prefix}.json"
-    df.to_csv(csv_path, index=False)
-    df.to_json(json_path, orient="records", indent=2, force_ascii=False)
-    print(f"[iati] Datasets saved to {csv_path} and {json_path}")
+    # ------------------------------------------------------------------
+    # BUILD DATASETS
+    # ------------------------------------------------------------------
 
-    # Process deltas and dispatch alerts if tracking state is active
-    process_deltas(df, args.state_file, args.webhook_url)
+    (
+        activities_df,
+        transactions_df,
+        budgets_df,
+        planned_df,
+        countries_df,
+        organisations_df,
+    ) = build_datasets(
+        raw_docs
+    )
+
+    datasets = {
+        "iati_health_projects":
+            activities_df,
+
+        "transactions":
+            transactions_df,
+
+        "budgets":
+            budgets_df,
+
+        "planned_disbursements":
+            planned_df,
+
+        "activity_countries":
+            countries_df,
+
+        "organisations":
+            organisations_df,
+    }
+
+    print()
+    print(
+        "=========================================="
+    )
+    print(
+        "IATI DATA FOUNDATION"
+    )
+    print(
+        "=========================================="
+    )
+
+    for name, dataframe in datasets.items():
+
+        print(
+            f"{name:25} "
+            f"{len(dataframe):>8,} rows"
+        )
+
+    print(
+        "=========================================="
+    )
+
+    # ------------------------------------------------------------------
+    # SAVE CURRENT DATA
+    # ------------------------------------------------------------------
+
+    save_csvs(
+        args.output_dir,
+        datasets,
+    )
+
+    # ------------------------------------------------------------------
+    # SAVE SQLITE DATABASE
+    # ------------------------------------------------------------------
+
+    save_database(
+        args.database,
+        activities_df,
+        transactions_df,
+        budgets_df,
+        planned_df,
+        countries_df,
+        organisations_df,
+    )
+
+    print(
+        f"[iati] Database saved: "
+        f"{args.database}"
+    )
+
+    # ------------------------------------------------------------------
+    # SAVE DAILY SNAPSHOT
+    # ------------------------------------------------------------------
+
+    save_daily_snapshot(
+        args.snapshot_dir,
+        datasets,
+    )
+
+    # ------------------------------------------------------------------
+    # SAVE STATE
+    # ------------------------------------------------------------------
+
+    save_state(
+        args.state_file,
+        activities_df,
+    )
+
+    # ------------------------------------------------------------------
+    # SAVE MANIFEST
+    # ------------------------------------------------------------------
+
+    query = build_query(
+        args.countries,
+        list(SECTOR_CODES.keys()),
+        args.statuses,
+    )
+
+    save_manifest(
+        args.output_dir,
+        datasets,
+        query,
+    )
+
+    print()
+    print(
+        "[iati] Step 1 pipeline complete."
+    )
 
 
 if __name__ == "__main__":
