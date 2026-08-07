@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>East Africa Health Procurement Intelligence</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- PapaParse (CSV Reader) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        [x-cloak] { display: none !important; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans" x-data="dashboardData()" x-init="initDashboard()">
+    
+    <!-- Navbar -->
+    <nav class="bg-indigo-600 text-white shadow-md p-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold tracking-tight">IATI Health Procurement Intelligence</h1>
+            <div class="flex items-center space-x-4">
+                <span class="text-sm bg-indigo-500 px-3 py-1 rounded-full" x-text="projects.length + ' Projects Loaded'"></span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8" x-cloak>
+        
+        <!-- Loading State -->
+        <div x-show="loading" class="flex flex-col items-center justify-center py-20">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mb-4"></div>
+            <p class="text-slate-500">Loading datasets...</p>
+        </div>
+
+        <!-- Error State (Manual Upload Fallback) -->
+        <div x-show="error" class="bg-white p-8 rounded-xl shadow-sm text-center border border-red-100 max-w-lg mx-auto mt-10">
+            <svg class="mx-auto h-12 w-12 text-red-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <h3 class="text-lg font-medium text-slate-900 mb-2">Could not auto-load CSV file</h3>
+            <p class="text-sm text-slate-500 mb-6" x-text="errorMessage"></p>
+            <label class="cursor-pointer bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
+                <span>Upload CSV Manually</span>
+                <input type="file" accept=".csv" class="hidden" @change="handleFileUpload">
+            </label>
+        </div>
+
+        <!-- Main Dashboard View -->
+        <div x-show="!loading && !error">
+            
+            <!-- KPI Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 border-l-4 border-l-indigo-500">
+                    <p class="text-sm font-medium text-slate-500 uppercase">Total Funding</p>
+                    <p class="text-2xl font-bold text-slate-800" x-text="formatCurrency(metrics.totalBudget)"></p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 border-l-4 border-l-emerald-500">
+                    <p class="text-sm font-medium text-slate-500 uppercase">Active Projects</p>
+                    <p class="text-2xl font-bold text-slate-800" x-text="metrics.activeProjects"></p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 border-l-4 border-l-amber-500">
+                    <p class="text-sm font-medium text-slate-500 uppercase">Target Countries</p>
+                    <p class="text-2xl font-bold text-slate-800" x-text="metrics.uniqueCountries"></p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 border-l-4 border-l-rose-500">
+                    <p class="text-sm font-medium text-slate-500 uppercase">Eqpt. Procurements</p>
+                    <p class="text-2xl font-bold text-slate-800" x-text="metrics.equipmentProjects"></p>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                    <h3 class="text-lg font-semibold mb-4">Budget Distribution by Country</h3>
+                    <canvas id="countryChart" height="250"></canvas>
+                </div>
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                    <h3 class="text-lg font-semibold mb-4">Project Status Overview</h3>
+                    <canvas id="statusChart" height="250"></canvas>
+                </div>
+            </div>
+
+            <!-- Interactive Table -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-5 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4 bg-slate-50">
+                    <h3 class="text-lg font-semibold text-slate-800">Project Directory</h3>
+                    <div class="w-full sm:w-72 relative">
+                        <input type="text" x-model="searchQuery" placeholder="Search targets, titles, or countries..." 
+                            class="w-full pl-4 pr-10 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+                    </div>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-600 text-sm uppercase tracking-wider">
+                                <th class="p-4 font-semibold">Project Title</th>
+                                <th class="p-4 font-semibold">Country</th>
+                                <th class="p-4 font-semibold">Budget</th>
+                                <th class="p-4 font-semibold">Status</th>
+                                <th class="p-4 font-semibold">Equipment Targets</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 text-sm">
+                            <template x-for="proj in filteredProjects" :key="proj.iati_identifier">
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="p-4">
+                                        <p class="font-medium text-slate-900" x-text="proj.project_title || 'Untitled Project'"></p>
+                                        <p class="text-xs text-slate-500 mt-1" x-text="proj.reporting_org_name"></p>
+                                    </td>
+                                    <td class="p-4 text-slate-700" x-text="proj.country_codes"></td>
+                                    <td class="p-4 font-medium text-slate-900" x-text="formatCurrency(proj.total_budget_amount) + ' ' + (proj.budget_currency || '')"></td>
+                                    <td class="p-4">
+                                        <span class="px-2.5 py-1 rounded-full text-xs font-medium"
+                                              :class="proj.activity_status_label.includes('Implementation') ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-800'"
+                                              x-text="proj.activity_status_label"></span>
+                                    </td>
+                                    <td class="p-4">
+                                        <div class="flex flex-wrap gap-1">
+                                            <template x-if="proj.equipment_target_summary">
+                                                <template x-for="tag in proj.equipment_target_summary.split('; ')" :key="tag">
+                                                    <span class="bg-indigo-50 text-indigo-700 border border-indigo-200 px-2 py-0.5 rounded text-xs" x-text="tag"></span>
+                                                </template>
+                                            </template>
+                                            <template x-if="!proj.equipment_target_summary">
+                                                <span class="text-slate-400 italic text-xs">No targets detected</span>
+                                            </template>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </template>
+                            <tr x-show="filteredProjects.length === 0">
+                                <td colspan="5" class="p-8 text-center text-slate-500">No projects found matching your search.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Application Logic -->
+    <script>
+        function dashboardData() {
+            return {
+                loading: true,
+                error: false,
+                errorMessage: '',
+                projects: [],
+                searchQuery: '',
+                metrics: {
+                    totalBudget: 0,
+                    activeProjects: 0,
+                    uniqueCountries: 0,
+                    equipmentProjects: 0
+                },
+                charts: {},
+
+                initDashboard() {
+                    // Try to fetch the CSV generated by the Python script
+                    const csvUrl = 'data/iati_health_projects.csv';
+                    
+                    fetch(csvUrl)
+                        .then(response => {
+                            if (!response.ok) throw new Error('CSV file not found at ' + csvUrl);
+                            return response.text();
+                        })
+                        .then(csvText => {
+                            this.parseData(csvText);
+                        })
+                        .catch(err => {
+                            console.warn("Auto-load failed. Showing manual upload screen.", err);
+                            this.loading = false;
+                            this.error = true;
+                            this.errorMessage = 'Make sure the GitHub Action has run and generated data/iati_health_projects.csv';
+                        });
+                },
+
+                handleFileUpload(event) {
+                    const file = event.target.files[0];
+                    if (!file) return;
+                    this.loading = true;
+                    this.error = false;
+                    
+                    const reader = new FileReader();
+                    reader.onload = (e) => this.parseData(e.target.result);
+                    reader.readAsText(file);
+                },
+
+                parseData(csvString) {
+                    Papa.parse(csvString, {
+                        header: true,
+                        skipEmptyLines: true,
+                        complete: (results) => {
+                            this.projects = results.data;
+                            this.calculateMetrics();
+                            this.loading = false;
+                            
+                            // Initialize charts after Alpine renders the canvas
+                            setTimeout(() => this.renderCharts(), 100);
+                        }
+                    });
+                },
+
+                calculateMetrics() {
+                    let total = 0;
+                    let active = 0;
+                    let hasEquipment = 0;
+                    let countries = new Set();
+
+                    this.projects.forEach(p => {
+                        const amt = parseFloat(p.total_budget_amount || 0);
+                        if (!isNaN(amt)) total += amt;
+                        
+                        if (p.activity_status_code === '2') active++;
+                        
+                        if (p.equipment_target_summary && p.equipment_target_summary.trim() !== '') {
+                            hasEquipment++;
+                        }
+
+                        if (p.country_codes) {
+                            p.country_codes.split('; ').forEach(c => {
+                                if (c.trim()) countries.add(c.trim());
+                            });
+                        }
+                    });
+
+                    this.metrics = {
+                        totalBudget: total,
+                        activeProjects: active,
+                        uniqueCountries: countries.size,
+                        equipmentProjects: hasEquipment
+                    };
+                },
+
+                formatCurrency(value) {
+                    if (!value || isNaN(value)) return '$0';
+                    return new Intl.NumberFormat('en-US', { 
+                        style: 'currency', 
+                        currency: 'USD',
+                        maximumFractionDigits: 0
+                    }).format(value);
+                },
+
+                get filteredProjects() {
+                    if (this.searchQuery === '') return this.projects;
+                    const q = this.searchQuery.toLowerCase();
+                    return this.projects.filter(p => {
+                        const titleMatch = (p.project_title || '').toLowerCase().includes(q);
+                        const countryMatch = (p.country_codes || '').toLowerCase().includes(q);
+                        const equipMatch = (p.equipment_target_summary || '').toLowerCase().includes(q);
+                        return titleMatch || countryMatch || equipMatch;
+                    });
+                },
+
+                renderCharts() {
+                    // Destroy old charts if they exist
+                    if (this.charts.country) this.charts.country.destroy();
+                    if (this.charts.status) this.charts.status.destroy();
+
+                    // Process data for Country Chart
+                    const countryBudgets = {};
+                    const statusCounts = {};
+
+                    this.projects.forEach(p => {
+                        // Country aggregations
+                        const country = p.country_codes || 'Unknown';
+                        const amt = parseFloat(p.total_budget_amount || 0);
+                        countryBudgets[country] = (countryBudgets[country] || 0) + amt;
+
+                        // Status aggregations
+                        const status = p.activity_status_label || 'Unknown';
+                        statusCounts[status] = (statusCounts[status] || 0) + 1;
+                    });
+
+                    // Render Country Chart
+                    const ctxCountry = document.getElementById('countryChart');
+                    this.charts.country = new Chart(ctxCountry, {
+                        type: 'bar',
+                        data: {
+                            labels: Object.keys(countryBudgets),
+                            datasets: [{
+                                label: 'Total Budget',
+                                data: Object.values(countryBudgets),
+                                backgroundColor: '#6366f1',
+                                borderRadius: 4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
+                            scales: {
+                                y: { ticks: { callback: (val) => '$' + (val / 1000000).toFixed(1) + 'M' } }
+                            }
+                        }
+                    });
+
+                    // Render Status Chart
+                    const ctxStatus = document.getElementById('statusChart');
+                    this.charts.status = new Chart(ctxStatus, {
+                        type: 'doughnut',
+                        data: {
+                            labels: Object.keys(statusCounts),
+                            datasets: [{
+                                data: Object.values(statusCounts),
+                                backgroundColor: ['#10b981', '#f59e0b', '#3b82f6', '#94a3b8', '#ef4444', '#8b5cf6'],
+                                borderWidth: 0
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { position: 'right', labels: { boxWidth: 12 } }
+                            },
+                            cutout: '70%'
+                        }
+                    });
+                }
+            }
+        }
+    </script>
+</body>
+</html>
