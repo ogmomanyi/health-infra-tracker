@@ -2,21 +2,28 @@ name: IATI Health Project Tracker
 
 on:
   schedule:
-    - cron: '0 6 * * *'  # Runs automatically every day at 06:00 UTC
-  workflow_dispatch:     # Enables manual trigger button in GitHub UI
+    - cron: "0 6 * * *"
+
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   run-pipeline:
     runs-on: ubuntu-latest
 
     steps:
+
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install Dependencies
         run: |
@@ -24,20 +31,42 @@ jobs:
           pip install -r requirements.txt
 
       - name: Ensure Data Directory Exists
-        run: mkdir -p data
+        run: |
+          mkdir -p data
+          mkdir -p data/history
 
-      - name: Execute Pipeline
+      - name: Execute IATI Pipeline
         env:
           IATI_API_KEY: ${{ secrets.IATI_API_KEY }}
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |
           python iati_tracker.py \
-            --output-prefix data/iati_health_projects \
-            --state-file data/projects_state.json
+            --output-dir data \
+            --database data/iati_intelligence.db \
+            --state-file data/projects_state.json \
+            --snapshot-dir data/history \
+            --rows 1000 \
+            --max-pages 50 \
+            --sleep 13
 
-      - name: Commit Updated Datasets & State
+      - name: Show Dataset Summary
+        run: |
+          echo "Generated datasets:"
+          ls -lh data/
+
+          echo ""
+          echo "History:"
+          find data/history -maxdepth 2 -type f | sort | tail -30
+
+      - name: Commit Updated Datasets
         run: |
           git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
           git add data/
-          git diff --quiet && git diff --staged --quiet || (git commit -m "auto: update IATI health data & state [skip ci]" && git push)
+
+          if git diff --cached --quiet; then
+            echo "No data changes detected."
+          else
+            git commit -m "auto: update IATI health intelligence data"
+            git push
+          fi
