@@ -3,197 +3,269 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Dashboard</title>
+    <title>Enterprise Project Intelligence Platform</title>
     
-    <!-- CDNs for Frameworks -->
+    <!-- Tailwind CSS & Professional Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 50: '#f8fafc', 100: '#f1f5f9', 600: '#4f46e5', 700: '#4338ca', 900: '#0f172a' }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Chart.js, PapaParse, & Alpine.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
-<body class="bg-gray-100 p-8 text-gray-800">
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans antialiased">
 
-    <div x-data="dashboardData()" x-init="initDashboard()" class="max-w-7xl mx-auto">
+    <div x-data="analyticsDashboard()" x-init="initDashboard()" class="flex flex-col min-h-screen">
         
-        <!-- Header & Search (Debounced) -->
-        <div class="mb-8 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-            <h1 class="text-3xl font-bold">Project Dashboard</h1>
-            <input 
-                type="text" 
-                x-model.debounce.300ms="searchQuery" 
-                placeholder="Search projects by ID or Title..." 
-                class="px-4 py-2 border border-gray-300 rounded shadow-sm w-full md:w-80 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-        </div>
-
-        <!-- Loading State -->
-        <div x-show="loading" class="text-center py-20 text-gray-500">
-            <svg class="animate-spin h-8 w-8 mx-auto mb-4 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-            Loading dashboard data...
-        </div>
-
-        <!-- Error & File Upload State -->
-        <div x-show="error" style="display: none;" class="bg-white border-l-4 border-red-500 p-6 rounded shadow mb-6">
-            <h3 class="text-lg font-bold text-red-700 mb-2">Data Source Not Found</h3>
-            <p class="text-gray-600 mb-4" x-text="errorMessage"></p>
+        <!-- Top Navigation Bar -->
+        <header class="bg-slate-800 border-b border-slate-700 px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4 sticky top-0 z-50 shadow-md">
+            <div class="flex items-center space-x-3">
+                <div class="w-3 h-3 bg-indigo-500 rounded-full animate-pulse"></div>
+                <h1 class="text-xl font-bold tracking-tight text-white">Project Intelligence & Analytics Engine</h1>
+            </div>
             
-            <div class="border-t border-gray-200 pt-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Upload your CSV file manually:</label>
-                <input 
-                    type="file" 
-                    @change="handleFileUpload" 
-                    accept=".csv" 
-                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                >
-            </div>
-        </div>
-
-        <!-- Main Dashboard Content -->
-        <div x-show="!loading && !error" style="display: none;" class="space-y-6">
-            
-            <!-- Metrics Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="bg-white p-6 rounded-lg shadow border border-gray-100">
-                    <h2 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-2">Total Budget</h2>
-                    <p class="text-3xl font-bold text-gray-800">$<span x-text="formatCurrency(metrics.totalBudget)"></span></p>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow border border-gray-100">
-                    <h2 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-2">Projects Found</h2>
-                    <p class="text-3xl font-bold text-gray-800" x-text="metrics.projectCount"></p>
+            <div class="flex items-center gap-3 w-full md:w-auto">
+                <button 
+                    @click="exportToCSV()" 
+                    :disabled="filteredProjects.length === 0"
+                    class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg shadow transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    Export Filtered CSV
+                </button>
+                <div class="text-xs text-slate-400 bg-slate-900 px-3 py-2 rounded-lg border border-slate-700">
+                    Source: <span class="font-mono text-indigo-400">data.csv</span>
                 </div>
             </div>
+        </header>
 
-            <!-- Chart Section -->
-            <div class="bg-white p-6 rounded-lg shadow border border-gray-100 h-[400px]">
-                <canvas id="budgetChart"></canvas>
+        <!-- Main Workspace Container -->
+        <main class="flex-1 max-w-7xl w-full mx-auto p-6 space-y-6">
+
+            <!-- Loading State -->
+            <div x-show="loading" class="flex flex-col items-center justify-center py-32 space-y-4">
+                <svg class="animate-spin h-10 w-10 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                <p class="text-slate-400 text-sm font-medium">Ingesting and processing dataset...</p>
             </div>
 
-            <!-- Data Table with Pagination -->
-            <div class="bg-white rounded-lg shadow border border-gray-100 overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="min-w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-gray-50 border-b border-gray-200 text-sm uppercase tracking-wider text-gray-500">
-                                <th class="px-6 py-4 font-medium">IATI Identifier</th>
-                                <th class="px-6 py-4 font-medium">Title</th>
-                                <th class="px-6 py-4 font-medium text-right">Budget Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-200">
-                            <!-- Loop specifically through paginatedProjects, NOT filteredProjects -->
-                            <template x-for="proj in paginatedProjects" :key="proj.iati_identifier">
-                                <tr class="hover:bg-blue-50 transition-colors">
-                                    <td class="px-6 py-4 text-sm font-mono text-gray-600" x-text="proj.iati_identifier"></td>
-                                    <td class="px-6 py-4 text-sm text-gray-800" x-text="proj.title"></td>
-                                    <td class="px-6 py-4 text-sm font-medium text-gray-800 text-right">$<span x-text="formatCurrency(proj.total_budget_amount)"></span></td>
-                                </tr>
-                            </template>
-                        </tbody>
-                    </table>
-                </div>
-                
-                <!-- Pagination Controls -->
-                <div class="bg-gray-50 px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-                    <span class="text-sm text-gray-600">
-                        Showing page <span class="font-semibold text-gray-900" x-text="currentPage"></span> of <span class="font-semibold text-gray-900" x-text="totalPages"></span>
-                    </span>
-                    <div class="space-x-2">
-                        <button 
-                            @click="currentPage--" 
-                            :disabled="currentPage === 1" 
-                            class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
-                            Previous
-                        </button>
-                        <button 
-                            @click="currentPage++" 
-                            :disabled="currentPage === totalPages || totalPages === 0" 
-                            class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
-                            Next
-                        </button>
+            <!-- Error State -->
+            <div x-show="error" style="display: none;" class="bg-slate-800 border-l-4 border-rose-500 p-6 rounded-xl shadow-lg">
+                <h3 class="text-lg font-bold text-rose-400 mb-1">Data Ingestion Failed</h3>
+                <p class="text-slate-300 text-sm" x-text="errorMessage"></p>
+            </div>
+
+            <!-- Analytical Dashboard Canvas -->
+            <div x-show="!loading && !error" style="display: none;" class="space-y-6">
+
+                <!-- Statistical KPI Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                    <div class="bg-slate-800 p-5 rounded-xl border border-slate-700/80 shadow-sm">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Portfolio</span>
+                        <p class="text-2xl font-extrabold text-white mt-1">$<span x-text="formatCurrency(stats.totalBudget)"></span></p>
+                    </div>
+                    <div class="bg-slate-800 p-5 rounded-xl border border-slate-700/80 shadow-sm">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Active Projects</span>
+                        <p class="text-2xl font-extrabold text-white mt-1" x-text="stats.projectCount"></p>
+                    </div>
+                    <div class="bg-slate-800 p-5 rounded-xl border border-slate-700/80 shadow-sm">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Mean Budget</span>
+                        <p class="text-2xl font-extrabold text-indigo-400 mt-1">$<span x-text="formatCurrency(stats.meanBudget)"></span></p>
+                    </div>
+                    <div class="bg-slate-800 p-5 rounded-xl border border-slate-700/80 shadow-sm">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Median Budget</span>
+                        <p class="text-2xl font-extrabold text-indigo-400 mt-1">$<span x-text="formatCurrency(stats.medianBudget)"></span></p>
+                    </div>
+                    <div class="bg-slate-800 p-5 rounded-xl border border-slate-700/80 shadow-sm">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Max Value Project</span>
+                        <p class="text-2xl font-extrabold text-emerald-400 mt-1">$<span x-text="formatCurrency(stats.maxBudget)"></span></p>
                     </div>
                 </div>
-            </div>
 
-        </div>
+                <!-- Dual Visual Analytics Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Main Bar Chart -->
+                    <div class="lg:col-span-2 bg-slate-800 p-6 rounded-xl border border-slate-700/80 shadow-sm flex flex-col">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-sm font-bold text-slate-300 uppercase tracking-wider">Top 10 High-Value Allocations</h2>
+                            <span class="text-xs text-slate-400">Ranked by Financial Scale</span>
+                        </div>
+                        <div class="relative flex-1 min-h-[320px]">
+                            <canvas id="topProjectsChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Distribution Doughnut Chart -->
+                    <div class="bg-slate-800 p-6 rounded-xl border border-slate-700/80 shadow-sm flex flex-col">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-sm font-bold text-slate-300 uppercase tracking-wider">Budget Tier Split</h2>
+                            <span class="text-xs text-slate-400">Scale Breakdown</span>
+                        </div>
+                        <div class="relative flex-1 min-h-[320px] flex items-center justify-center">
+                            <canvas id="tierChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Filtering & Data Control Toolbar -->
+                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700/80 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div class="w-full md:w-96">
+                        <input 
+                            type="text" 
+                            x-model.debounce.300ms="searchQuery" 
+                            placeholder="Filter by Identifier or Title..." 
+                            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 transition"
+                        >
+                    </div>
+                    
+                    <div class="flex items-center gap-3 w-full md:w-auto justify-end">
+                        <div class="flex items-center space-x-2 text-sm text-slate-400">
+                            <span>Sort By:</span>
+                            <select 
+                                x-model="sortBy" 
+                                @change="resetAndRender()"
+                                class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500">
+                                <option value="budget-desc">Budget: High to Low</option>
+                                <option value="budget-asc">Budget: Low to High</option>
+                                <option value="title-asc">Title: A to Z</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center space-x-2 text-sm text-slate-400">
+                            <span>Per Page:</span>
+                            <select 
+                                x-model.number="pageSize" 
+                                @change="currentPage = 1"
+                                class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500">
+                                <option value="10">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Data Grid Table -->
+                <div class="bg-slate-800 rounded-xl border border-slate-700/80 shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-900/60 border-b border-slate-700 text-xs uppercase tracking-wider text-slate-400">
+                                    <th class="px-6 py-4 font-semibold">IATI Identifier</th>
+                                    <th class="px-6 py-4 font-semibold">Project Title</th>
+                                    <th class="px-6 py-4 font-semibold text-right">Total Budget Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-700/60">
+                                <template x-for="proj in paginatedProjects" :key="proj.iati_identifier">
+                                    <tr class="hover:bg-slate-750 hover:bg-slate-700/30 transition-colors">
+                                        <td class="px-6 py-4 text-sm font-mono text-indigo-400" x-text="proj.iati_identifier"></td>
+                                        <td class="px-6 py-4 text-sm text-slate-200" x-text="proj.title"></td>
+                                        <td class="px-6 py-4 text-sm font-semibold text-emerald-400 text-right">$<span x-text="formatCurrency(proj.total_budget_amount)"></span></td>
+                                    </tr>
+                                </template>
+                                <template x-if="paginatedProjects.length === 0">
+                                    <tr>
+                                        <td colspan="3" class="px-6 py-12 text-center text-slate-500 text-sm">No matching records found in dataset.</td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination Footer -->
+                    <div class="bg-slate-900/50 px-6 py-4 border-t border-slate-700 flex items-center justify-between text-sm">
+                        <span class="text-slate-400">
+                            Showing <span class="font-medium text-slate-200" x-text="filteredProjects.length ? (currentPage - 1) * pageSize + 1 : 0"></span> to 
+                            <span class="font-medium text-slate-200" x-text="Math.min(currentPage * pageSize, filteredProjects.length)"></span> of 
+                            <span class="font-medium text-slate-200" x-text="filteredProjects.length"></span> entries
+                        </span>
+                        <div class="flex items-center space-x-2">
+                            <button 
+                                @click="currentPage--" 
+                                :disabled="currentPage === 1" 
+                                class="px-4 py-2 bg-slate-800 border border-slate-700 text-slate-300 rounded-lg text-xs font-semibold hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition">
+                                Previous
+                            </button>
+                            <span class="text-xs text-slate-400 px-2">Page <span class="text-white font-medium" x-text="currentPage"></span> of <span class="text-white font-medium" x-text="totalPages"></span></span>
+                            <button 
+                                @click="currentPage++" 
+                                :disabled="currentPage >= totalPages || totalPages === 0" 
+                                class="px-4 py-2 bg-slate-800 border border-slate-700 text-slate-300 rounded-lg text-xs font-semibold hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition">
+                                Next
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
     </div>
 
-    <!-- Application Logic -->
+    <!-- Analytical Workspace Engine Script -->
     <script>
-        function dashboardData() {
+        function analyticsDashboard() {
             return {
-                // State variables
                 loading: true,
                 error: false,
                 errorMessage: '',
                 searchQuery: '',
+                sortBy: 'budget-desc',
                 
-                // Data arrays
                 projects: [],
                 filteredProjects: [],
                 
-                // Pagination state
                 currentPage: 1,
                 pageSize: 10,
                 
-                // Metrics & Chart objects
-                metrics: { totalBudget: 0, projectCount: 0 },
-                chartInstance: null,
+                stats: {
+                    totalBudget: 0,
+                    projectCount: 0,
+                    meanBudget: 0,
+                    medianBudget: 0,
+                    maxBudget: 0
+                },
+                
+                barChartInstance: null,
+                tierChartInstance: null,
 
                 initDashboard() {
-                    // Watch for search query changes and reset pagination
                     this.$watch('searchQuery', () => {
-                        this.currentPage = 1; 
+                        this.currentPage = 1;
                         this.resetAndRender();
                     });
-                    
-                    // Attempt to fetch data on load
                     this.fetchData();
                 },
 
                 fetchData() {
-                    // Look for a local data.csv. If it fails, fallback to manual upload UI.
                     fetch('data.csv')
                         .then(response => {
-                            if (!response.ok) throw new Error("Local data.csv not found.");
+                            if (!response.ok) throw new Error("Local data.csv endpoint not found.");
                             return response.text();
                         })
                         .then(csvText => this.parseData(csvText))
                         .catch(err => {
                             this.loading = false;
                             this.error = true;
-                            this.errorMessage = "Could not automatically load data.csv. Please upload a file manually.";
+                            this.errorMessage = "Unable to locate 'data.csv' in the root directory. Ensure a local server is running and the CSV file is present.";
                         });
                 },
 
-                handleFileUpload(event) {
-                    const file = event.target.files[0];
-                    if (!file) return;
-
-                    this.loading = true;
-                    this.error = false;
-
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        this.parseData(e.target.result);
-                    };
-                    reader.onerror = () => {
-                        this.errorMessage = "Failed to read the uploaded file.";
-                        this.error = true;
-                        this.loading = false;
-                    };
-                    reader.readAsText(file);
-                },
-
                 parseData(csvString) {
-                    // PapaParse handles edge cases like commas inside quotes automatically
                     Papa.parse(csvString, {
                         header: true,
                         skipEmptyLines: true,
                         complete: (results) => {
                             this.projects = results.data.map(item => ({
-                                iati_identifier: item.iati_identifier || 'Unknown ID',
-                                title: item.title || 'Untitled',
-                                // Fallback mapping in case headers differ slightly
+                                iati_identifier: item.iati_identifier || 'N/A',
+                                title: item.title || 'Untitled Project',
                                 total_budget_amount: parseFloat(item.total_budget_amount || item.budget || 0)
                             }));
                             this.loading = false;
@@ -201,7 +273,7 @@
                             this.resetAndRender();
                         },
                         error: (err) => {
-                            this.errorMessage = "Failed to parse the CSV formatting.";
+                            this.errorMessage = "Failed to parse CSV syntax structure.";
                             this.error = true;
                             this.loading = false;
                         }
@@ -211,78 +283,152 @@
                 resetAndRender() {
                     const query = this.searchQuery.toLowerCase();
                     
-                    // Filter based on query
-                    this.filteredProjects = this.projects.filter(p => 
+                    // Filter dataset
+                    let result = this.projects.filter(p => 
                         p.title.toLowerCase().includes(query) || 
                         p.iati_identifier.toLowerCase().includes(query)
                     );
 
-                    // Calculate Summary Metrics
-                    this.metrics.projectCount = this.filteredProjects.length;
-                    this.metrics.totalBudget = this.filteredProjects.reduce((sum, p) => sum + (p.total_budget_amount || 0), 0);
+                    // Sort dataset
+                    result.sort((a, b) => {
+                        if (this.sortBy === 'budget-desc') return b.total_budget_amount - a.total_budget_amount;
+                        if (this.sortBy === 'budget-asc') return a.total_budget_amount - b.total_budget_amount;
+                        if (this.sortBy === 'title-asc') return a.title.localeCompare(b.title);
+                        return 0;
+                    });
 
-                    // Wait for the DOM to update before drawing the chart
+                    this.filteredProjects = result;
+                    this.calculateStatistics(result);
+
                     this.$nextTick(() => {
-                        this.renderChart();
+                        this.renderCharts();
                     });
                 },
 
-                renderChart() {
-                    const ctx = document.getElementById('budgetChart');
-                    if (!ctx) return;
-
-                    // Destroy old chart instance to prevent hover/flicker glitches
-                    if (this.chartInstance) {
-                        this.chartInstance.destroy();
+                calculateStatistics(data) {
+                    const count = data.length;
+                    if (count === 0) {
+                        this.stats = { totalBudget: 0, projectCount: 0, meanBudget: 0, medianBudget: 0, maxBudget: 0 };
+                        return;
                     }
 
-                    // For the chart, we'll graph the top 10 largest budgets to keep it readable
-                    const sortedForChart = [...this.filteredProjects]
-                        .sort((a, b) => b.total_budget_amount - a.total_budget_amount)
-                        .slice(0, 10);
+                    const total = data.reduce((sum, p) => sum + p.total_budget_amount, 0);
+                    const mean = total / count;
+                    
+                    // Calculate Median
+                    const sortedBudgets = [...data].map(p => p.total_budget_amount).sort((a, b) => a - b);
+                    let median = 0;
+                    const mid = Math.floor(count / 2);
+                    if (count % 2 === 0) {
+                        median = (sortedBudgets[mid - 1] + sortedBudgets[mid]) / 2;
+                    } else {
+                        median = sortedBudgets[mid];
+                    }
 
-                    const labels = sortedForChart.map(p => p.iati_identifier);
-                    const data = sortedForChart.map(p => p.total_budget_amount);
+                    const max = sortedBudgets[sortedBudgets.length - 1] || 0;
 
-                    this.chartInstance = new Chart(ctx, {
-                        type: 'bar',
-                        data: {
-                            labels: labels.length ? labels : ['No Data'],
-                            datasets: [{
-                                label: 'Top 10 Project Budgets',
-                                data: data.length ? data : [0],
-                                backgroundColor: 'rgba(59, 130, 246, 0.7)',
-                                borderRadius: 4,
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: { display: false }
+                    this.stats = {
+                        totalBudget: total,
+                        projectCount: count,
+                        meanBudget: mean,
+                        medianBudget: median,
+                        maxBudget: max
+                    };
+                },
+
+                renderCharts() {
+                    // 1. Top Projects Bar Chart
+                    const barCtx = document.getElementById('topProjectsChart');
+                    if (barCtx) {
+                        if (this.barChartInstance) this.barChartInstance.destroy();
+
+                        const topSlice = [...this.filteredProjects].slice(0, 10);
+                        this.barChartInstance = new Chart(barCtx, {
+                            type: 'bar',
+                            data: {
+                                labels: topSlice.map(p => p.iati_identifier),
+                                datasets: [{
+                                    label: 'Budget Amount ($)',
+                                    data: topSlice.map(p => p.total_budget_amount),
+                                    backgroundColor: '#6366f1',
+                                    borderRadius: 6,
+                                }]
                             },
-                            scales: {
-                                y: { 
-                                    beginAtZero: true,
-                                    grid: { color: '#f3f4f6' }
-                                },
-                                x: {
-                                    grid: { display: false }
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: { legend: { display: false } },
+                                scales: {
+                                    y: { 
+                                        beginAtZero: true,
+                                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                                        ticks: { color: '#94a3b8' }
+                                    },
+                                    x: {
+                                        grid: { display: false },
+                                        ticks: { color: '#94a3b8' }
+                                    }
                                 }
                             }
-                        }
-                    });
+                        });
+                    }
+
+                    // 2. Tier Distribution Doughnut Chart
+                    const tierCtx = document.getElementById('tierChart');
+                    if (tierCtx) {
+                        if (this.tierChartInstance) this.tierChartInstance.destroy();
+
+                        let high = 0, mid = 0, low = 0;
+                        this.filteredProjects.forEach(p => {
+                            if (p.total_budget_amount >= 1000000) high++;
+                            else if (p.total_budget_amount >= 100000) mid++;
+                            else low++;
+                        });
+
+                        this.tierChartInstance = new Chart(tierCtx, {
+                            type: 'doughnut',
+                            data: {
+                                labels: ['High (> $1M)', 'Mid ($100k-$1M)', 'Low (< $100k)'],
+                                datasets: [{
+                                    data: [high, mid, low],
+                                    backgroundColor: ['#6366f1', '#38bdf8', '#334155'],
+                                    borderWidth: 0
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: { 
+                                        position: 'bottom',
+                                        labels: { color: '#94a3b8', boxWidth: 12 }
+                                    }
+                                },
+                                cutout: '70%'
+                            }
+                        });
+                    }
+                },
+
+                exportToCSV() {
+                    const csv = Papa.unparse(this.filteredProjects);
+                    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                    const link = document.createElement('a');
+                    const url = URL.createObjectURL(blob);
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', 'filtered_project_intelligence.csv');
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
                 },
 
                 formatCurrency(value) {
                     const num = parseFloat(value);
                     if (isNaN(num)) return '0';
-                    return new Intl.NumberFormat('en-US', { 
-                        maximumFractionDigits: 0 
-                    }).format(num);
+                    return new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(num);
                 },
 
-                // Pagination Getters
                 get paginatedProjects() {
                     const start = (this.currentPage - 1) * this.pageSize;
                     return this.filteredProjects.slice(start, start + this.pageSize);
