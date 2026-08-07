@@ -245,9 +245,9 @@
                 },
 
                 fetchData() {
-                    fetch('data.csv')
+                    fetch('iati_health_projects.csv')
                         .then(response => {
-                            if (!response.ok) throw new Error("Local data.csv endpoint not found.");
+                            if (!response.ok) throw new Error("Local iati_health_projects.csv endpoint not found.");
                             return response.text();
                         })
                         .then(csvText => this.parseData(csvText))
