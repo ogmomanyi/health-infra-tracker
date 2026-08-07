@@ -414,7 +414,8 @@ def process_deltas(df: pd.DataFrame, state_file: str, webhook_url: Optional[str]
         doc_id = row["iati_identifier"]
         title = row["project_title"]
         status = str(row["activity_status_code"])
-        budget = float(row["total_budget_amount"] or 0.0)
+        raw_budget = row["total_budget_amount"]
+        budget = 0.0 if pd.isna(raw_budget) else float(raw_budget)
         eq_tags = set(filter(None, (row["equipment_target_summary"] or "").split("; ")))
 
         is_new = doc_id not in state
