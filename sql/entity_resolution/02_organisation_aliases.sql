@@ -17,7 +17,7 @@ CREATE TABLE organisation_aliases (
 
     alias_name TEXT NOT NULL,
 
-    
+    source_system TEXT NOT NULL DEFAULT 'IATI',
 
     is_primary_alias INTEGER DEFAULT 0,
 
