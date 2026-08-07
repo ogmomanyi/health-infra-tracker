@@ -31,7 +31,7 @@ jobs:
         run: python iati_tracker.py
 
       - name: Commit Database State to Repository
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v3
         with:
           commit_message: "chore: update IATI projects state"
           file_pattern: "projects_state.json"
