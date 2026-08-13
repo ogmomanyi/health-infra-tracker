@@ -1,6 +1,6 @@
 {
   "pipeline_version": "1.0-step1",
-  "generated_at": "2026-08-12T07:42:30Z",
+  "generated_at": "2026-08-13T07:44:25Z",
   "countries": [
     "KE",
     "UG",
@@ -13,12 +13,12 @@
   ],
   "query": "recipient_country_code:(KE UG RW ET SS SO TZ CD) AND sector_code:(12110 12181 12182 12191 12196 12220 12230 12240 12250 12261 12262 12263 12264 12281 12310 12320 12330 12340 12350 12382) AND activity_status_code:(1 2)",
   "row_counts": {
-    "iati_health_projects": 3269,
-    "transactions": 68553,
-    "budgets": 13994,
+    "iati_health_projects": 3271,
+    "transactions": 68560,
+    "budgets": 13995,
     "planned_disbursements": 4694,
-    "activity_countries": 5768,
-    "organisations": 17580
+    "activity_countries": 5770,
+    "organisations": 17586
   },
   "files": {
     "iati_health_projects": "iati_health_projects.csv",
