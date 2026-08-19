@@ -1,0 +1,507 @@
+donor_intelligence_id,donor_name,project_count,active_projects,pipeline_projects,reported_budget,average_score,high_priority_opportunities,top_countries,top_equipment_categories,next_window,latest_update,source_layer
+donor_intel_bbee15e0daf9,Gates Foundation,407,394,13,1854710483.62,49.0,154,ET; KE; NG; CD,Diagnostic Equipment; Facility Infrastructure; IT / Health Information Systems; Medical Devices & Equipment,Q4 2026; Monitor,,intelligence
+donor_intel_52e7de1997eb,UNICEF Regular Resources,249,63,186,7407403961.0,40.4,77,ET; SS; SO; KE,Facility Infrastructure; Cold Chain / Storage; Diagnostic Equipment,Monitor; Q1 2027,,intelligence
+donor_intel_f57b5ccc1c49,United States Fund for UNICEF,119,47,72,4550526860.0,45.4,53,ET; KE; SS; SO,Facility Infrastructure,Monitor; Q1 2027,,intelligence
+donor_intel_ab65d8b9611f,Canada,141,60,81,4755244212.0,46.2,52,ET; SS; TZ; CD,Facility Infrastructure; Cold Chain / Storage; Diagnostic Equipment; IT / Health Information Systems,Monitor; Q1 2027,,intelligence
+donor_intel_9bdcb1c7604a,The United Kingdom,153,40,113,6058360014.0,40.7,49,ET; SS; SO; KE,Facility Infrastructure; Diagnostic Equipment,Monitor; Q1 2027,,intelligence
+donor_intel_a1b6785daa21,Global - Thematic Humanitarian Resp,130,32,98,5198283406.0,40.8,41,SO; ET; SS; KE,Facility Infrastructure; Diagnostic Equipment,Monitor; Q1 2027,,intelligence
+donor_intel_f9b4a4c01670,German Committee for UNICEF,75,29,46,3766436808.0,44.7,32,SS; ET; KE; SO,Facility Infrastructure,Monitor; Q1 2027,,intelligence
+donor_intel_9a682411f215,Consolidated Funds from NatComs,80,28,52,3742935256.0,44.3,32,ET; KE; SS; SO,Facility Infrastructure,Monitor; Q1 2027,,intelligence
+donor_intel_516e0a0029b6,GAVI The Vaccine Alliance,79,27,52,2919928277.0,44.5,32,ET; SO; SS; KE,Facility Infrastructure; Cold Chain / Storage,Monitor; Q1 2027,,intelligence
+donor_intel_ea94cb7c6529,Japan,122,22,100,4265469163.46,38.3,31,SS; ET; SO; KE,Facility Infrastructure; Cold Chain / Storage; Diagnostic Equipment,Monitor; Q1 2027,,intelligence
+donor_intel_b473bbd4bc8e,European Commission / ECHO,93,23,70,3906525102.0,40.5,29,SS; ET; SO; CD,Facility Infrastructure,Monitor; Q1 2027,,intelligence
+donor_intel_1a05dce4811a,UNOCHA,113,21,92,3863789376.0,38.3,29,ET; SS; SO; KE,Facility Infrastructure; Cold Chain / Storage; Diagnostic Equipment,Monitor; Q1 2027,,intelligence
+donor_intel_7a4a2ef27733,USA USAID,86,24,62,2821110816.0,41.4,29,ET; CD; KE; RW,Facility Infrastructure,Monitor; Q1 2027,,intelligence
+donor_intel_c40d3d0b2fe0,KfW - Germany,33,27,6,2006665572.0,60.8,29,ET; SS; CD; SO,,Q1 2027; Q4 2026,,intelligence
+donor_intel_91522dfaa318,Global - Nutrition,44,25,19,1307078820.0,52.3,29,ET; SS; KE; RW,Diagnostic Equipment,Q1 2027; Monitor,,intelligence
+donor_intel_a3cce5e8c205,Republic of Korea,61,24,37,2579380879.0,45.9,28,ET; RW; SS; SO,Facility Infrastructure,Monitor; Q1 2027,,intelligence
+donor_intel_b119ac060305,Canadian UNICEF Committee,40,25,15,1982799261.0,54.3,28,ET; CD; SS; RW,,Q1 2027; Monitor,,intelligence
+donor_intel_e8673420589f,Bureau for Humanitarian Assistance,103,21,82,3815229466.0,38.3,27,SO; SS; ET; KE,Facility Infrastructure; Diagnostic Equipment,Monitor; Q1 2027,,intelligence
+donor_intel_99c11c1b8b55,USA (State) GHSD,25,23,2,1772485158.0,65.2,25,KE; ET; CD; SO,,Q1 2027; Q4 2026,,intelligence
+donor_intel_a478d5b90491,World Health Organization,180,180,0,178889225.42,44.7,24,ET; SO; TZ; CD,Diagnostic Equipment; Facility Infrastructure; IT / Health Information Systems,Q4 2026,,intelligence
+donor_intel_e2271e6a7339,German Federal Foreign Office,24,19,5,2474316964.0,60.9,21,SS; CD; ET; KE,,Q1 2027; Q4 2026,,intelligence
+donor_intel_d6d7393015b9,United Kingdom Committee for UNICEF,48,21,27,2023657910.0,46.2,21,ET; SS; KE; TZ,Facility Infrastructure,Monitor; Q1 2027,,intelligence
+donor_intel_23e591e8c36d,France,52,36,16,1229019528.01,48.3,21,CD; SO; TZ; KE,Facility Infrastructure; Diagnostic Equipment,Monitor; Q4 2026,,intelligence
+donor_intel_f0c91f91f520,"The Global Fund to Fight AIDS, Tuberculosis and Malaria",33,64,0,5334356223.04,56.5,20,KE; CD; UG; ET,Facility Infrastructure; Diagnostic Equipment; Medical Devices & Equipment,Q4 2026; Active through Q4 2026,,intelligence
+donor_intel_e4f991936646,World Bank - Washington D.C.,28,14,14,2191576938.0,53.8,19,SS; ET; CD; RW,Cold Chain / Storage,Monitor; Q1 2027,,intelligence
+donor_intel_19d6673a2972,MPTFO - UN Multi Partner,73,14,59,1890950561.0,39.3,19,SS; SO; TZ; CD,Facility Infrastructure,Monitor; Q1 2027,,intelligence
+donor_intel_612de797c6a3,UN Joint Programme,46,16,30,1761704504.0,44.3,19,SO; TZ; CD; ET,Facility Infrastructure,Monitor; Q1 2027,,intelligence
+donor_intel_f68f1b021ccd,European Commission/EC,54,14,40,2019930550.0,41.0,18,ET; SO; KE; CD,Facility Infrastructure,Monitor; Q1 2027,,intelligence
+donor_intel_b50e1d89e4e7,Norway,32,13,19,1615172090.0,47.9,16,ET; SS; CD; TZ,Facility Infrastructure,Monitor; Q1 2027,,intelligence
+donor_intel_eefeeadfcf43,USA CDC,33,13,20,1612300778.0,46.7,16,KE; CD; ET; SS,,Monitor; Q1 2027,,intelligence
+donor_intel_761c87b61ba0,Committee for UNICEF Switzerland,36,12,24,1466823860.0,45.0,16,SS; ET; RW; CD,Facility Infrastructure,Monitor; Q4 2026,,intelligence
+donor_intel_ce9415510a40,Ireland,25,13,12,1060989544.0,53.6,16,TZ; ET; CD; KE,Facility Infrastructure,Q1 2027; Monitor,,intelligence
+donor_intel_2bf211d25341,Central Emergency Response Fund,16,14,2,939035640.0,65.3,16,SS; CD; ET; SO,,Q1 2027; Q4 2026,,intelligence
+donor_intel_9b584d4cb718,European Investment Bank,16,13,3,968552691.21,66.3,15,CD; ET; TZ; KE,Diagnostic Equipment; Facility Infrastructure,Q1 2027; Q4 2026,,intelligence
+donor_intel_9aec35c79b4e,Germany,54,15,39,1811552542.07,38.6,14,SS; ET; SO; UG,Facility Infrastructure; Medical Devices & Equipment,Monitor; Q4 2026,,intelligence
+donor_intel_3fcead5e1762,SIDA - Sweden,66,12,54,2598085724.0,36.8,13,SO; ET; KE; SS,Facility Infrastructure,Monitor; Q1 2027,,intelligence
+donor_intel_39263389d035,Nutrition International,35,10,25,1346742914.0,42.5,13,ET; SS; RW; KE,Facility Infrastructure; Diagnostic Equipment,Monitor; Q1 2027,,intelligence
+donor_intel_2f967c50ef62,UNICEF-United Arab Emirates,13,12,1,811086092.0,64.7,13,TZ; CD; KE; SS,,Q1 2027; Q4 2026,,intelligence
+donor_intel_53a0c2b7bc6d,Ministry of Foreign Affairs,37,37,0,19284387920.0,54.9,12,TZ; CD; ET; KE,Diagnostic Equipment; Facility Infrastructure; Medical Devices & Equipment; Vehicles & Transport,Q4 2026,,intelligence
+donor_intel_38dbd967082d,Global - Health,23,10,13,2081932398.0,46.6,11,SS; KE; RW; ET,Facility Infrastructure,Monitor; Q1 2027,,intelligence
+donor_intel_be2152057d47,The Global Fund to Fight AIDS,22,9,13,1147443522.0,46.8,10,SO; SS; ET; KE,Facility Infrastructure,Monitor; Q1 2027,,intelligence
+donor_intel_0de2f262e6f5,UNFPA - UN Population Fund,31,9,22,953110612.0,41.7,10,ET; KE; UG; SS,Facility Infrastructure,Monitor; Q1 2027,,intelligence
+donor_intel_2da4d0b37c84,United States of America,14,9,5,556142372.0,56.9,10,TZ; KE; SS; ET,Facility Infrastructure,Q1 2027; Monitor,,intelligence
+donor_intel_4df979cf24d1,Ministry of Health and Welfare,11,11,0,10339000000.0,61.8,9,UG; ET; TZ; RW,Medical Devices & Equipment,Q4 2026,,intelligence
+donor_intel_d433ca55e43d,Republic of South Sudan,17,7,10,1520803132.0,48.3,9,SS,Facility Infrastructure,Monitor; Q4 2026,,intelligence
+donor_intel_6ace185eedb8,Netherlands,47,2,45,822971830.0,35.6,9,ET; RW; SS; KE,Facility Infrastructure; Diagnostic Equipment,Monitor; Q1 2027,,intelligence
+donor_intel_ec9f74ca516a,Saudi Arabia,12,8,4,817979574.0,56.1,9,SO; CD; ET; TZ,,Q1 2027; Monitor,,intelligence
+donor_intel_245b5cd13122,Danish Committee for UNICEF,12,8,4,489710342.0,59.2,9,ET; KE; CD; RW,Facility Infrastructure,Q1 2027; Monitor,,intelligence
+donor_intel_31869c0b6efa,USA (State) BPRM,24,7,17,996786624.0,41.1,8,ET; UG; SS; KE,,Monitor; Q1 2027,,intelligence
+donor_intel_4d2a7c1d4384,Korea International Cooperation Age,9,7,2,847347336.0,65.7,8,CD; KE; TZ,,Q1 2027,,intelligence
+donor_intel_3fe95ee0be57,Global - HIV and AIDS,20,9,11,462468670.0,46.1,8,ET; KE; RW; SS,,Monitor; Q1 2027,,intelligence
+donor_intel_275719ea1460,Global - Water Sanitation & Hygiene,22,3,19,438656210.0,42.1,8,SS; KE; RW; ET,Facility Infrastructure,Monitor; Q4 2026,,intelligence
+donor_intel_73579e467d93,Ministry for Foreign Affairs of Finland,279,279,0,124752296.27,28.2,8,SO; TZ; ET; KE,Facility Infrastructure; Diagnostic Equipment; Medical Devices & Equipment; Vehicles & Transport,Monitor; Q4 2026,,intelligence
+donor_intel_53c418bf108c,UNAIDS - Joint UN Programme,16,8,8,1096518964.0,46.3,7,ET; KE; SS; RW,,Monitor; Q1 2027,,intelligence
+donor_intel_630ab987ad47,British Government (DFID),11,7,4,452660112.0,54.7,7,ET; CD; TZ; KE,Facility Infrastructure,Q1 2027; Monitor,,intelligence
+donor_intel_2732dd1226ad,United Nations Office for Project Services,22,22,0,99670231.0,52.0,7,ET; TZ; CD; KE,Diagnostic Equipment; Facility Infrastructure; Medical Devices & Equipment; Vehicles & Transport,Monitor; Q4 2026,,intelligence
+donor_intel_d005f43fe239,Ministry of Economy and Finance,11,0,11,0.0,53.5,7,TZ; ET; RW; SS,Facility Infrastructure; Medical Devices & Equipment,Q4 2026,,intelligence
+donor_intel_64e6da45051a,French Committee for UNICEF,17,5,12,1109471136.0,41.3,6,SS; ET; CD; TZ,Facility Infrastructure,Monitor; Q4 2026,,intelligence
+donor_intel_18078e984611,Democratic Republic of the Congo,15,9,6,942092668.91,47.1,6,CD,,Q1 2027; Monitor,,intelligence
+donor_intel_58b454c049e6,WHO - World Health Organization,13,5,8,873734112.0,46.0,6,UG; SS; KE; CD,,Monitor; Q1 2027,,intelligence
+donor_intel_ff22d85bfd98,Kenya,11,7,4,495010382.0,51.0,6,KE,,Q1 2027; Monitor,,intelligence
+donor_intel_d74e1accd391,UK - Department of Health and Social Care (DHSC),18,17,1,237755661.74,47.1,6,KE; UG; GB; ZA,Facility Infrastructure; IT / Health Information Systems; Vehicles & Transport,Q2 2027; Monitor,,intelligence
+donor_intel_48a87665eaa6,Norwegian Government,27,27,0,171273494.0,43.0,6,UG; ET; TZ; KE,Facility Infrastructure,Q4 2026; Monitor,,intelligence
+donor_intel_5a11f2f9bc44,Canada. Parliament,26,26,0,27943293.0,53.3,6,KE; UG; TZ; CD,Facility Infrastructure; Diagnostic Equipment; IT / Health Information Systems,Q2 2027; Q1 2027,,intelligence
+donor_intel_857837852594,Global - Programmes,5,3,2,638727520.0,67.6,5,CD; RW,,Q1 2027,,intelligence
+donor_intel_bbe956747bd1,Switzerland,10,4,6,521063826.0,47.4,5,SO; CD; TZ; SS,,Monitor; Q1 2027,,intelligence
+donor_intel_c1a682ee3490,Ethiopia,11,5,6,452736786.0,45.4,5,ET,,Monitor; Q1 2027,,intelligence
+donor_intel_3ab9380fa252,China,9,4,5,304447410.0,49.8,5,KE; RW; SO,,Q1 2027; Monitor,,intelligence
+donor_intel_d901cc4bb813,Norwegian Committee for UNICEF,6,5,1,141750134.0,57.8,5,SS; KE; ET,,Q4 2026; Q1 2027,,intelligence
+donor_intel_c8bbef7def40,Cyprus,5,3,2,99901230.0,65.9,5,TZ; KE; SS; UG,,Q1 2027; Q4 2026,,intelligence
+donor_intel_c65161bf90f8,Bill &amp,32,32,0,43006494.87,46.3,5,UG; KE; ET; SO,Diagnostic Equipment; Facility Infrastructure; IT / Health Information Systems,Q4 2026,,intelligence
+donor_intel_9dc9d84fbfe4,Melinda Gates Foundation,32,32,0,43006494.87,46.3,5,UG; KE; ET; SO,Diagnostic Equipment; Facility Infrastructure; IT / Health Information Systems,Q4 2026,,intelligence
+donor_intel_b56ccae6449d,"Development Office (FCDO), United Kingdom",12,12,0,31007565.04,56.2,5,CD; KE; TZ; UG,Diagnostic Equipment,Q4 2026,,intelligence
+donor_intel_0dd36ab81e93,"Foreign, Commonwealth &amp",12,12,0,31007565.04,56.2,5,CD; KE; TZ; UG,Diagnostic Equipment,Q4 2026,,intelligence
+donor_intel_6b90538ee3f4,United Arab Emirates,16,3,13,610313078.0,38.1,4,ET; SO; SS; KE,,Monitor; Q4 2026,,intelligence
+donor_intel_3e9d27577e59,UNOPS - UN Office for Project,9,4,5,577947186.0,44.8,4,ET; KE; RW; SS,,Monitor; Q1 2027,,intelligence
+donor_intel_7346e5497efa,Netherlands Committee for UNICEF,14,4,10,416053978.0,38.9,4,KE; SO; UG,,Monitor; Q1 2027,,intelligence
+donor_intel_29bb94f5978b,Somalia,4,4,0,358792166.0,65.3,4,SO,,Q1 2027,,intelligence
+donor_intel_57aa8b00a136,Global - Education,7,3,4,262980312.0,55.2,4,SS; CD; KE; RW,,Q1 2027; Monitor,,intelligence
+donor_intel_466e5906ddec,Finland,7,3,4,182526868.0,49.6,4,TZ; SO; ET; UG,,Q1 2027; Monitor,,intelligence
+donor_intel_aab90aecd1a7,Pandemic Fund,6,6,0,29411923.85,66.2,4,ET; TZ; CD; RW,Diagnostic Equipment,Q4 2026,,intelligence
+donor_intel_6f2b16ab6b9f,United Nations Multi-Partner Trust Fund Office (MPTFO),13,13,0,22291344.79,52.1,4,TZ; RW; ET; KE,IT / Health Information Systems; Diagnostic Equipment; Facility Infrastructure,Q4 2026,,intelligence
+donor_intel_cee943fea72c,WHO Contingency Fund for Emergencies,6,6,0,18497987.48,65.6,4,SS; UG; CD; SO,Diagnostic Equipment,Q4 2026,,intelligence
+donor_intel_b7d4c310a94f,"Federal Ministry for Economic Cooperation and Development (BMZ), Germany",4,4,0,16583490.92,78.2,4,ET; KE; SO; SS,Diagnostic Equipment,Q4 2026,,intelligence
+donor_intel_59b07177ac15,USAID/Food for Peace,28,1,27,1055361208.0,33.1,3,SS; KE; SO; ET,Facility Infrastructure,Monitor; Q1 2027,,intelligence
+donor_intel_65d36d0e8501,Canada/IHA,31,0,31,953733928.0,32.9,3,SO; ET; KE,Facility Infrastructure; Diagnostic Equipment,Monitor,,intelligence
+donor_intel_14899e19366e,Japan Committee for UNICEF,28,0,28,618724812.0,32.6,3,SO; ET; KE; UG,Facility Infrastructure,Monitor; Q1 2027,,intelligence
+donor_intel_bae35b4e1ad8,Rotary International,15,2,13,512601828.07,37.9,3,CD; ET; SO; SS,Diagnostic Equipment; Cold Chain / Storage,Monitor; Q4 2026,,intelligence
+donor_intel_ec4462881a13,UNICEF-Saudi Arabia,14,1,13,383595298.0,36.8,3,ET; SS; SO,Facility Infrastructure,Monitor; Q4 2026,,intelligence
+donor_intel_2ff1de41845b,Global - Social Policy & Social,3,2,1,372009090.0,67.5,3,CD,,Q1 2027,,intelligence
+donor_intel_c2def7b3fe28,Federal Ministry for Economic Cooperation and Development (BMZ),104,104,0,321941625.77,31.2,3,CD; ET; TZ; KE,Facility Infrastructure; Medical Devices & Equipment; Diagnostic Equipment; IT / Health Information Systems,Active through Q4 2026; Q4 2026,,intelligence
+donor_intel_34be5e881e6b,Global - Child Protection,7,2,5,316615080.0,44.9,3,SS; RW; UG,,Monitor; Q4 2026,,intelligence
+donor_intel_20633f5a038a,Global Partnership for Education,4,2,2,199982806.0,57.3,3,SS; ET; RW,,Q1 2027; Monitor,,intelligence
+donor_intel_858f4e7af636,New Zealand Committee for UNICEF,3,2,1,141923582.0,64.8,3,SS,Facility Infrastructure,Q4 2026; Monitor,,intelligence
+donor_intel_47efb4639043,United Republic of Tanzania,6,6,0,89426390.09,58.2,3,TZ,Facility Infrastructure,Q1 2027; Q4 2026,,intelligence
+donor_intel_27f3950087e4,Uganda,6,4,2,61538837.24,51.4,3,UG,,Q1 2027; Q4 2026,,intelligence
+donor_intel_d6765f2be355,European Commission,92,81,11,42725000.0,29.3,3,CD; ET; RW; SO,Facility Infrastructure; IT / Health Information Systems,Q3 2026; Monitor,,intelligence
+donor_intel_a0407a9e18b1,"Ministry of Foreign Affairs, Ireland",13,13,0,22504375.33,49.0,3,UG; TZ; CD; ET,Diagnostic Equipment; Facility Infrastructure,Q4 2026,,intelligence
+donor_intel_c6d0f9aa14d6,"Directorate-General for European Civil Protection and Humanitarian Aid Operations (ECHO), European Commission",4,4,0,19422983.33,68.9,3,SS; CD; ET,Diagnostic Equipment,Q4 2026,,intelligence
+donor_intel_a413c79fc8be,United Nations Central Emergency Response Fund (CERF),4,4,0,18713726.7,68.8,3,CD; ET; SO; SS,Diagnostic Equipment,Q4 2026,,intelligence
+donor_intel_8b8feb0d49cf,"Department of Foreign Affairs, Trade and Development (DFATD), Canada",5,5,0,14536256.03,63.1,3,ET; CD; KE; SO,Diagnostic Equipment,Q4 2026,,intelligence
+donor_intel_5c912d2db51d,Embassy of the Kingdom of the Netherlands Ethiopia,3,3,0,13355687.0,78.5,3,ET,Facility Infrastructure; IT / Health Information Systems,Q3 2026,,intelligence
+donor_intel_bab51023cc03,UK - Department for International Development (DFID),49,47,2,1214042438.9,33.4,2,UG; TZ; ET; SO,Facility Infrastructure; Medical Devices & Equipment; IT / Health Information Systems,Monitor; Q1 2027,,intelligence
+donor_intel_402a3b91f677,YOUNG CHILD SURVIVAL & DEVELOPMENT,37,0,37,999623760.0,31.3,2,SO; ET; KE; CD,Facility Infrastructure,Monitor,,intelligence
+donor_intel_c073d97dd896,Italy,24,0,24,782096236.0,32.0,2,SS; SO; UG; ET,Facility Infrastructure,Monitor,,intelligence
+donor_intel_2b97181027e2,UNDP - UN Development Programme,32,1,31,757888926.0,30.7,2,RW; SS; SO; ET,Diagnostic Equipment,Monitor; Q1 2027,,intelligence
+donor_intel_dd561b8eaa1b,Denmark,23,1,22,732291874.0,32.7,2,SS; SO; ET; TZ,Facility Infrastructure,Monitor; Q1 2027,,intelligence
+donor_intel_dd5249166741,Donor Pooled Fund (mixed donors),16,1,15,456514350.0,33.3,2,ET; SS; KE; CD,Facility Infrastructure,Monitor; Q1 2027,,intelligence
+donor_intel_75b298a477a7,Australia,19,0,19,308425864.0,32.4,2,SO; ET; SS; KE,Diagnostic Equipment; Facility Infrastructure,Monitor,,intelligence
+donor_intel_51288d140528,Spain,8,0,8,250760834.0,37.7,2,SO; SS,Facility Infrastructure,Monitor,,intelligence
+donor_intel_dbaec751ef47,SAFE AND HEALTHY ENVIRONMENT,2,2,0,224593372.0,64.9,2,KE; SO,,Q1 2027,,intelligence
+donor_intel_e808c78670fe,Hong Kong Committee for UNICEF,4,2,2,201682146.0,46.8,2,SS; KE; SO,,Monitor; Q4 2026,,intelligence
+donor_intel_0422969a3b44,Education Cannot Wait Fund,2,2,0,149882412.0,65.6,2,CD; ET,,Q1 2027,,intelligence
+donor_intel_ec5ae0362db0,Italian Committee for UNICEF,9,2,7,125878068.0,36.1,2,CD; SO; UG; KE,,Monitor; Q1 2027,,intelligence
+donor_intel_0247e5c03fca,Global - Gender Equality,2,1,1,80661410.0,67.9,2,CD; SO,,Q1 2027,,intelligence
+donor_intel_3dcf21e1de40,Catalan Agency for Development,2,2,0,77738492.0,64.0,2,KE,,Q1 2027,,intelligence
+donor_intel_b69019b5e4e8,UNICEF-QATAR,2,1,1,48026474.0,66.2,2,KE; TZ,,Q1 2027,,intelligence
+donor_intel_3054055cd6b5,Invest International B.V.,7,7,0,36283129.91,48.7,2,KE; UG; ET; RW,Diagnostic Equipment; Facility Infrastructure; IT / Health Information Systems; Medical Devices & Equipment,Q1 2027; Monitor,,intelligence
+donor_intel_d7a7af416a91,African Development Fund,2,2,0,36000000.0,79.4,2,ET; KE,Diagnostic Equipment; Facility Infrastructure,Q4 2026,,intelligence
+donor_intel_336ce1ee11dd,"Gavi, the Vaccine Alliance",16,16,0,29463119.24,45.5,2,SS; TZ; ET; KE,Diagnostic Equipment,Q4 2026,,intelligence
+donor_intel_b056c762d02a,Directorate-general Development Cooperation and Humanitarian Aid,11,11,0,27409686.0,31.4,2,CD; UG; KE; RW,Facility Infrastructure,Q1 2027; Active through Q1 2028,,intelligence
+donor_intel_e345baa6ac47,NIHR,8,8,0,24908570.06,50.6,2,GB; UG; ET; KE,Diagnostic Equipment; Facility Infrastructure; IT / Health Information Systems,Monitor; Q1 2027,,intelligence
+donor_intel_02cffff7406c,United Nations Children&apos,8,8,0,18198796.59,50.2,2,SS; ET; SO; CD,Diagnostic Equipment,Q4 2026,,intelligence
+donor_intel_266cbb2230b2,s Fund (UNICEF),8,8,0,18198796.59,50.2,2,SS; ET; SO; CD,Diagnostic Equipment,Q4 2026,,intelligence
+donor_intel_7487c6ab5805,"Ministry of Foreign Affairs, Japan",4,4,0,14678399.18,60.1,2,ET; TZ,Diagnostic Equipment; Facility Infrastructure,Q4 2026,,intelligence
+donor_intel_3d5023781142,South Sudan,8,8,0,9262778.7,49.8,2,SS,Diagnostic Equipment; IT / Health Information Systems,Q4 2026,,intelligence
+donor_intel_a4487acae707,"Great Britain. Foreign, Commonwealth & Development Office",6,6,0,7472400.0,57.1,2,KE; ET; GH; NG,Facility Infrastructure; IT / Health Information Systems,Q2 2027; Q1 2027,,intelligence
+donor_intel_5b5eed9ca6ea,William and Flora Hewlett Foundation,2,2,0,2495200.0,89.2,2,ET; KE; MW; NG,Facility Infrastructure,Q2 2027,,intelligence
+donor_intel_a25086f8e206,The Aids Support Organisation (TASO) Uganda Limited,1,1,0,10700321916.0,60.0,1,UG,Facility Infrastructure,Monitor,,intelligence
+donor_intel_07c795ab3e7d,UNICEF,53,10,43,1692496732.37,25.9,1,CD; SO; SS; TZ,Facility Infrastructure,Monitor; Q4 2026,,intelligence
+donor_intel_66a0c2942a23,Netherlands Ministry of Foreign Affairs,16,16,0,1393724242.21,40.1,1,ET; KE; NG; UG,Facility Infrastructure,Monitor; Q4 2026,,intelligence
+donor_intel_f932fd483c1e,International Development Association,5,5,0,1102000015.0,48.1,1,CD; ET; KE; RW,Facility Infrastructure,Q3 2026,,intelligence
+donor_intel_c213a54f5e72,EU-Commission of the European Communities,10,10,0,815897484.34,44.6,1,SO; ET; CD; RW,Facility Infrastructure,Q2 2028; Monitor,,intelligence
+donor_intel_d9b6a2b7ed57,Canada/GID,34,0,34,761232878.0,30.1,1,ET; SS; CD; TZ,Diagnostic Equipment,Monitor,,intelligence
+donor_intel_2af479609fef,Norway - Ministry of Foreign Affairs,9,9,0,732311155.5,45.3,1,SO; CD; ET; KE,Facility Infrastructure,Q1 2027; Q2 2027,,intelligence
+donor_intel_53a0c2b7bc6d,MINISTRY OF FOREIGN AFFAIRS,8,8,0,709207805.5,46.6,1,SO; CD; ET; RW,Facility Infrastructure,Q1 2027; Q2 2027,,intelligence
+donor_intel_75db7f29d80a,Swedish International Development Cooperation Agency (SIDA),6,6,0,650265563.7,43.7,1,SO; ET; UG,Facility Infrastructure,Q2 2028; Monitor,,intelligence
+donor_intel_c838f8466b14,Belgium,11,1,10,576328586.0,34.0,1,SS; KE; SO; ET,,Monitor; Q1 2027,,intelligence
+donor_intel_214f38a1ad92,United States Agency for International Development (USAID),5,5,0,560484854.44,42.6,1,SO; ET; RW,Facility Infrastructure,Q2 2028; Monitor,,intelligence
+donor_intel_066441a55f08,Finland - Ministry of Foreign Affairs,4,4,0,543575884.86,47.3,1,SO,Facility Infrastructure,Q2 2028; Monitor,,intelligence
+donor_intel_40d44f98a9e3,Canada - Department of Foreign Affairscomma Trade and Development,8,8,0,457240644.78,47.4,1,ET; SO; CD; KE,Facility Infrastructure,Q1 2027; Q2 2027,,intelligence
+donor_intel_13fe1c0219ef,WFP - World Food Programme,6,1,5,361623016.0,35.2,1,KE; RW; CD; SS,,Monitor; Q1 2027,,intelligence
+donor_intel_8b80a62f35a0,Swiss Agency for Development and Cooperation (SDC),589,589,0,308771532.38,16.1,1,CD; TZ; SO; SS,Facility Infrastructure; IT / Health Information Systems; Diagnostic Equipment; Medical Devices & Equipment,Monitor; Active through Q4 2026,,intelligence
+donor_intel_c4d69adbb918,"Foreign, Commonwealth and Development Office (FCDO)",64,64,0,270863585.0,25.8,1,ET; KE; SS; SO,Facility Infrastructure; Diagnostic Equipment,Monitor; Active through Q1 2028,,intelligence
+donor_intel_f485d2281231,Estonia,4,0,4,174325810.0,38.0,1,SS,Facility Infrastructure,Monitor,,intelligence
+donor_intel_e2994d5fdae0,IOM - International Organization,1,1,0,108200732.0,65.5,1,SS,,Q4 2026,,intelligence
+donor_intel_42f1c2216790,Malta,1,1,0,101966286.0,65.9,1,ET,,Q1 2027,,intelligence
+donor_intel_58edc55862cc,Agence Francaise de Developpement A,1,1,0,94050800.0,65.8,1,CD,,Q1 2027,,intelligence
+donor_intel_e9badbaf44a5,Iceland,2,1,1,87716582.0,46.8,1,KE; UG,,Monitor; Q1 2027,,intelligence
+donor_intel_8213cac0883c,Global Financing Facility,3,1,2,86783488.0,52.5,1,ET; TZ,Facility Infrastructure,Monitor; Q1 2027,,intelligence
+donor_intel_2c018b11e9d2,Deutsche Gesellschaft für,1,1,0,55831612.0,65.3,1,ET,,Q1 2027,,intelligence
+donor_intel_1b0a2eb74aad,Government of Austria,2,1,1,44989884.0,46.0,1,ET; TZ,,Monitor; Q1 2027,,intelligence
+donor_intel_2c85d1258c2f,USAID,2,2,0,38691512.0,47.1,1,KE,,Monitor; Q1 2027,,intelligence
+donor_intel_14c34525f1c9,Innovation Norway,1,1,0,38387474.0,64.0,1,KE,,Q1 2027,,intelligence
+donor_intel_302efee24674,The Pandemic Fund,5,5,0,36673218.33,47.0,1,CD; ET; SO; SS,Diagnostic Equipment,Q1 2028; Q2 2029,,intelligence
+donor_intel_a17d7046e0a7,Country - Survive & Thrive,1,1,0,35477782.0,64.8,1,ET,,Q1 2027,,intelligence
+donor_intel_842db1022359,Netherlands Enterprise Agency,10,10,0,29789778.81,39.5,1,KE; ET; GH; IN,Facility Infrastructure,Q4 2027; Monitor,,intelligence
+donor_intel_d03c42d47476,King Salman Humanitarian Aid and Relief Centre,17,16,1,22383412.0,51.4,1,SO; SS,Facility Infrastructure; Medical Devices & Equipment; Diagnostic Equipment; Cold Chain / Storage,Monitor; Active through Q1 2027,,intelligence
+donor_intel_f3dc3416e140,WHO Foundation,13,13,0,21056375.33,43.8,1,ET; UG; RW; KE,Diagnostic Equipment,Q4 2026,,intelligence
+donor_intel_31ad75705eb9,Germany - Ministry for Economic Cooperation and Development,6,6,0,20683831.0,47.9,1,UG; CD; SO; SS,Facility Infrastructure,Q1 2027,,intelligence
+donor_intel_27bdd2ed372f,AICS - Italian Agency for Cooperation and Development,17,17,0,13142376.01,41.9,1,ET; KE; SS; UG,Facility Infrastructure; Diagnostic Equipment; IT / Health Information Systems; Cold Chain / Storage,Q1 2027; Active through Q4 2026,,intelligence
+donor_intel_4fbf6cf89d89,"Deutsche Gesellschaft f?r Internationale Zusammenarbeit (GIZ), Germany",2,2,0,11661050.42,60.7,1,CD,Diagnostic Equipment,Q4 2026,,intelligence
+donor_intel_4ccc93a2dad5,National Institute for Health and Care Research,3,2,1,10426335.5,50.1,1,GB; GM; KE; CM,Facility Infrastructure; IT / Health Information Systems,Monitor; Q1 2027,,intelligence
+donor_intel_080661cfcbb0,UNICEF-Rwanda,1,1,0,10339866.0,63.5,1,RW,,Q1 2027,,intelligence
+donor_intel_85f28fde5d10,UNDP South Sudan,1,1,0,9118886.0,79.4,1,SS,Diagnostic Equipment; Facility Infrastructure; IT / Health Information Systems,Q4 2026,,intelligence
+donor_intel_d1ab167bb3a4,"Ministry of Foreign Affairs, Greece",2,2,0,8995359.96,59.4,1,CD,Diagnostic Equipment,Q4 2026,,intelligence
+donor_intel_b1e8873de998,"Ministry for Europe and Foreign Affairs (MEAE), France",1,1,0,8723754.94,79.2,1,CD,Diagnostic Equipment,Q4 2026,,intelligence
+donor_intel_30915106c606,Ministry of Foreign Affairs NL,1,1,0,7666421.0,63.2,1,ET,,Q1 2027,,intelligence
+donor_intel_bf582465e170,University of Birmingham,1,1,0,4030527.81,78.4,1,GB; KE; NG; US,Facility Infrastructure,Q4 2026,,intelligence
+donor_intel_8bd2341e341d,Special Relief Funds,4,0,4,2988603.23,47.8,1,UG; CD; SS,Facility Infrastructure,Monitor; Q4 2026,,intelligence
+donor_intel_e92cd0d53862,"Ministry of Development Cooperation and Humanitarian Affairs, Luxembourg",1,1,0,2927708.06,78.0,1,SS,Diagnostic Equipment,Q4 2026,,intelligence
+donor_intel_f039529436c5,"DEPARTMENT FOR SCIENCE, INNOVATION AND TECHNOLOGY",3,3,0,2634796.97,65.0,1,KE; TZ; UG,Facility Infrastructure; Vehicles & Transport,Q4 2026; Q3 2026,,intelligence
+donor_intel_b44f0bee1d36,United Nations Office for the Coordination of Humanitarian Affairs (UNOCHA),2,2,0,2467903.25,58.6,1,SS,Diagnostic Equipment,Q4 2026,,intelligence
+donor_intel_62301607505b,UK - Department of Health and Social Care,1,1,0,1972801.0,74.6,1,GB; UG,Diagnostic Equipment,Q2 2027,,intelligence
+donor_intel_71394c727186,Cordaid Global Office,4,4,0,1339962.0,61.8,1,SS,Facility Infrastructure,Monitor; Q3 2026,,intelligence
+donor_intel_bb36857f5035,Department of Health and Social Care,1,1,0,1009629.4,73.8,1,KE,IT / Health Information Systems,Q2 2027,,intelligence
+donor_intel_a20c8d81c56c,Bloomberg Family Foundation,4,4,0,858142.46,48.1,1,ET; KE; RW; UG,IT / Health Information Systems,Q4 2026,,intelligence
+donor_intel_38282a4b48a3,"Global Fund to Fight AIDS, Tuberculosis and Malaria (GFATM)",2,2,0,758142.26,57.8,1,ET; UG,IT / Health Information Systems,Q4 2026,,intelligence
+donor_intel_0a92fab32301,Anonymous,1,0,1,658097.0,62.7,1,UG,Diagnostic Equipment; Facility Infrastructure,Monitor,,intelligence
+donor_intel_d79f252f729f,CBM eV,1,1,0,210000.0,87.9,1,SS,Facility Infrastructure,Q4 2027,,intelligence
+donor_intel_edfc1ac7f185,Japan International Cooperation Agency,3,3,0,6518000000.0,24.0,0,ET; KE; UG,,Active through Q3 2027; Active through Q2 2031,,intelligence
+donor_intel_c6c84f727764,Stichting Simavi,6,6,0,699558933.0,22.2,0,KE; UG,,Monitor,,intelligence
+donor_intel_49e7175a145c,UNITAID,20,5,15,536971544.72,30.9,0,ET; KE; UG; TZ,,Monitor; Q4 2026,,intelligence
+donor_intel_21600d77f474,FCDO,2,2,0,482514151.0,24.0,0,ET; GH; KE; NP,,Monitor,,intelligence
+donor_intel_84fc6cd2ead2,Kreditanstalt für Wiederaufbau (KfW) (Reconstruction Credit Institute),4,4,0,369850018.78,36.2,0,SO; ET; UG,,Q2 2028; Monitor,,intelligence
+donor_intel_2214b03e2857,Italy - Ministry of Foreign Affairs International Cooperation,5,5,0,360959996.19,37.7,0,SO; ET; RW,,Q2 2027; Monitor,,intelligence
+donor_intel_0a4ee6450a2e,United Nations Foundation Inc.,10,0,10,354164774.0,29.1,0,ET; KE; TZ; CD,,Monitor,,intelligence
+donor_intel_ace4a9126337,Netherlands - Ministry of Foreign Affairs,12,12,0,348484185.68,41.9,0,KE; TZ; ET; GH,Facility Infrastructure,Q1 2027; Active through Q2 2027,,intelligence
+donor_intel_652b99fc3480,Bill and Melinda Gates Foundation,8,8,0,306871967.36,44.1,0,ET; CD; KE; RW,,Q1 2027; Q2 2027,,intelligence
+donor_intel_51ad75b59904,HIV-AIDS AND CHILDREN,8,0,8,270355014.0,28.9,0,SS; KE; CD; RW,,Monitor,,intelligence
+donor_intel_92f0dc9d03d4,Andalucia,7,0,7,247337152.0,29.8,0,SO,,Monitor,,intelligence
+donor_intel_1456472f55a4,Belgian Committee for UNICEF,10,0,10,238440870.0,28.9,0,SS; CD; SO,,Monitor,,intelligence
+donor_intel_4e0981ac9923,Swedish Committee for UNICEF,12,0,12,237968022.0,28.6,0,SO; RW; UG; KE,,Monitor,,intelligence
+donor_intel_aae4e8b27f98,Japan - Ministry of Finance,9,9,0,233061146.29,41.6,0,ET; RW; SO; CD,,Q2 2027; Q1 2027,,intelligence
+donor_intel_e8298cbc410d,Luxembourg Committee for UNICEF,9,0,9,227279938.0,28.7,0,ET; CD; KE; SO,,Monitor,,intelligence
+donor_intel_6e292d49d0e8,Merck Sharp & Dohme Corp,7,7,0,226936551.68,43.3,0,ET; CD; KE; RW,,Q1 2027; Q2 2027,,intelligence
+donor_intel_f74523252ffd,Norwegian Agency for Development Cooperation (NORAD),7,7,0,226936551.68,43.3,0,ET; CD; KE; RW,,Q1 2027; Q2 2027,,intelligence
+donor_intel_841cb64d2497,The Susan Thompson Buffett Foundati,7,7,0,226936551.68,43.3,0,ET; CD; KE; RW,,Q1 2027; Q2 2027,,intelligence
+donor_intel_3d38ce5e0b0d,UNICEF-Mexico,4,0,4,222634456.0,29.5,0,KE; SO; SS; UG,,Monitor,,intelligence
+donor_intel_4301e6c64274,Irish Aidcomma Department of Foreign Affairs and Trade,5,5,0,204651127.16,40.6,0,ET; CD; UG,,Q1 2027; Monitor,,intelligence
+donor_intel_80d814630523,Effective Altruism Foundation,1,1,0,180837765.0,24.0,0,BF; GB; GW; MZ,,Monitor,,intelligence
+donor_intel_95f23404d9b5,Givewell,1,1,0,180837765.0,24.0,0,BF; GB; GW; MZ,,Monitor,,intelligence
+donor_intel_d8fcfebb5f5b,Good Ventures,1,1,0,180837765.0,24.0,0,BF; GB; GW; MZ,,Monitor,,intelligence
+donor_intel_7564c659402e,Three Graces Foundation Inc,1,1,0,180837765.0,24.0,0,BF; GB; GW; MZ,,Monitor,,intelligence
+donor_intel_57a309afacc0,Netherlands - Ministry for Foreign Trade and Development Cooperation,3,3,0,179570168.88,51.4,0,ET; SO; UG,,Q1 2027; Q2 2027,,intelligence
+donor_intel_a998354a0b01,The Power of Nutrition,5,3,2,168220000.0,37.9,0,ET; RW; TZ,Facility Infrastructure; IT / Health Information Systems,Monitor,,intelligence
+donor_intel_0e208bd9b422,Rockefeller Foundation,8,8,0,167157409.66,43.1,0,ET; KE; TZ; GH,,Q1 2027; Q2 2027,,intelligence
+donor_intel_027de2e7c95e,UK Department for International Development (DFID),1,1,0,165629919.37,24.0,0,AF; BG; BI; ET,,Monitor,,intelligence
+donor_intel_af36c741bea9,Denmark - Ministry of Foreign Affairs,5,5,0,164986509.66,43.4,0,ET; KE; SO; TZ,,Q1 2027; Q2 2027,,intelligence
+donor_intel_375e2907dfec,Laerdal Global Health,5,5,0,164986509.66,43.4,0,ET; KE; SO; TZ,,Q1 2027; Q2 2027,,intelligence
+donor_intel_1f99027fc79e,Qatar Fund for Development,5,5,0,164986509.66,43.4,0,ET; KE; SO; TZ,,Q1 2027; Q2 2027,,intelligence
+donor_intel_cee71a2ada3d,United Kingdom - Children's Investment Fund Foundation (CIFF),5,5,0,164986509.66,43.4,0,ET; KE; SO; TZ,,Q1 2027; Q2 2027,,intelligence
+donor_intel_105e10920524,"UK - Foreign, Commonwealth and Development Office",12,12,0,141812406.5,30.8,0,KE; UG; CD; NG,Diagnostic Equipment,Monitor; Q2 2027,,intelligence
+donor_intel_e1cceee31bdd,Red Barnet,4,4,0,135121005.43,23.3,0,SO; SS,,Active through Q4 2026,,intelligence
+donor_intel_382b10b3d6b1,Australian Committee for UNICEF,11,0,11,124938292.0,28.2,0,SO; ET,,Monitor,,intelligence
+donor_intel_133f5f567509,Qatar,4,0,4,116314732.0,29.2,0,SS,,Monitor,,intelligence
+donor_intel_db286136dd0c,Spanish Committee for UNICEF,6,0,6,105946710.0,28.6,0,CD; ET,,Monitor,,intelligence
+donor_intel_3a5bd571b079,Permanent Mission of the Slovakia,2,0,2,85846338.0,29.4,0,SS,,Monitor,,intelligence
+donor_intel_fd31526ec4ad,BASIC EDUCATION AND GENDER EQUALITY,7,0,7,84239596.0,28.3,0,ET; RW; SO; UG,,Monitor,,intelligence
+donor_intel_dc22e4fbded9,Australia - Ministry for Foreign Affairs and Trade,3,3,0,78467439.28,42.3,0,ET; RW; SO,,Q2 2027; Q4 2028,,intelligence
+donor_intel_3c711a4da735,UNICEF Kenya,3,0,3,78142848.0,28.9,0,KE,,Monitor,,intelligence
+donor_intel_f13cea63f9bf,Finnish Committee for UNICEF,3,0,3,77552610.0,28.9,0,KE; ET,,Monitor,,intelligence
+donor_intel_d6f8d358252b,Georgia,2,0,2,67399376.0,28.8,0,SO,,Monitor,,intelligence
+donor_intel_90d014520eed,Brazil,2,0,2,67002184.0,28.7,0,SO,,Monitor,,intelligence
+donor_intel_1086609940e5,FAO - Food and Agriculture,1,0,1,60539302.0,29.7,0,KE,,Monitor,,intelligence
+donor_intel_84662f067c26,UN Office - Geneva,1,0,1,57492350.0,29.6,0,ET,,Monitor,,intelligence
+donor_intel_9ed44cd552ee,Ministry of Commerce - MOFCOM,2,0,2,53914668.0,28.7,0,ET,,Monitor,,intelligence
+donor_intel_5a3dfdd91ee5,Slovak Committee for UNICEF,1,0,1,49329108.0,29.5,0,UG,,Monitor,,intelligence
+donor_intel_045a315104b7,Conrad N. Hilton Foundation,2,2,0,47688204.43,37.6,0,ET; RW,,Q2 2027; Q4 2028,,intelligence
+donor_intel_f5d8b57771a6,LEGO Fonden,2,2,0,47688204.43,37.6,0,ET; RW,,Q2 2027; Q4 2028,,intelligence
+donor_intel_b7f2ea342242,Rockefeller Philanthropy Advisors,2,2,0,47688204.43,37.6,0,ET; RW,,Q2 2027; Q4 2028,,intelligence
+donor_intel_2fbeb0c5a6b6,The William and Flora Hewlett Foundation,2,2,0,47688204.43,37.6,0,ET; RW,,Q2 2027; Q4 2028,,intelligence
+donor_intel_35f52a63984c,Première Urgence Internationale,3,3,0,45000000.0,40.9,0,CD; ET; BF; FR,,Q1 2027,,intelligence
+donor_intel_2e1e33684b77,Czech Republic (The),1,0,1,40746100.0,29.4,0,SS,,Monitor,,intelligence
+donor_intel_fd2aaebb5ad9,CAFIN / Power of nutrition,1,1,0,40266158.24,42.0,0,RW,,Q2 2027,,intelligence
+donor_intel_f44769c65bd4,The Queen Elizabeth Diamond Jubilee Trust,1,1,0,40100000.0,23.4,0,KE; MW; MZ; NG,,Monitor,,intelligence
+donor_intel_57e84c14826b,"UK Foreign, Commonwealth & Development Office (FCDO)",2,2,0,39820245.0,49.9,0,ET; ID; IN; MM,Diagnostic Equipment,Monitor; Q1 2027,,intelligence
+donor_intel_fdb1db750aef,Polish National Comm for UNICEF,1,0,1,36008154.0,29.3,0,ET,,Monitor,,intelligence
+donor_intel_b8a01fc0fcb2,DFID,13,13,0,34964924.97,24.4,0,ET; UG; KE; SO,Diagnostic Equipment,Monitor,,intelligence
+donor_intel_7d8a54c72799,Nordic Development Fund,1,1,0,34826360.27,44.9,0,TZ,,Q3 2028,,intelligence
+donor_intel_c4583b68ff05,Embassy of the Kingdome of the Netherlands in Rwanda,2,2,0,33130654.0,22.8,0,RW,,Monitor,,intelligence
+donor_intel_76f0e1f77f3c,Belgian Development Cooperation,9,9,0,32919219.14,21.7,0,CD; ET; KE; RW,,Monitor,,intelligence
+donor_intel_8a9503842c77,UNICEF South Sudan,2,1,1,31255954.61,25.6,0,SS,,Monitor,,intelligence
+donor_intel_c34a40fb2755,Austria - Ministry of Finance,1,1,0,30779234.85,51.7,0,SO,,Q2 2027,,intelligence
+donor_intel_7cb84b642224,ClimateWorks Foundation,1,1,0,30779234.85,51.7,0,SO,,Q2 2027,,intelligence
+donor_intel_5b7d38929a28,Foreign Office,1,1,0,30779234.85,51.7,0,SO,,Q2 2027,,intelligence
+donor_intel_5b28e0853a37,Germany - Ministry for the Environmentcomma Nature Conservation and Nuclear Safety,1,1,0,30779234.85,51.7,0,SO,,Q2 2027,,intelligence
+donor_intel_89361b9fecca,Iceland - Ministry for Foreign Affairs,1,1,0,30779234.85,51.7,0,SO,,Q2 2027,,intelligence
+donor_intel_b8ffc5005315,Luxembourg Ministry for Sustainable Development and Infrastructure,1,1,0,30779234.85,51.7,0,SO,,Q2 2027,,intelligence
+donor_intel_a56c6be8c0a2,Spain - Ministry of Economycomma Industry and Competitiveness,1,1,0,30779234.85,51.7,0,SO,,Q2 2027,,intelligence
+donor_intel_751a49f0fa90,State Secretariat for Economic Affairscomma SECO,1,1,0,30779234.85,51.7,0,SO,,Q2 2027,,intelligence
+donor_intel_6f55222d867c,United Kingdom - Department of Energy and Climate Change,1,1,0,30779234.85,51.7,0,SO,,Q2 2027,,intelligence
+donor_intel_1d41b7567924,UNICEF-Argentina,1,0,1,30616302.0,29.2,0,KE,,Monitor,,intelligence
+donor_intel_f3fe0a0eae06,Save The Children UK,23,23,0,30110359.0,22.0,0,ET; TZ,,Monitor,,intelligence
+donor_intel_1f867f88f574,University of Cape Town,1,0,1,29447354.0,29.2,0,BJ; BW; KE; LS,,Active through Q4 2027,,intelligence
+donor_intel_251717e78a82,OPEC Fund,3,0,3,28705880.0,28.4,0,KE; TZ,,Monitor,,intelligence
+donor_intel_2c43c180fbbf,UK - Department for Work and Pensions,1,1,0,27000000.0,59.1,0,SO,IT / Health Information Systems; Medical Devices & Equipment,Monitor,,intelligence
+donor_intel_be4ca47b9211,Austrian Development Agency GmbH,1,1,0,26754263.16,23.1,0,ET,,Monitor,,intelligence
+donor_intel_6516e151177e,Korean Committee for UNICEF,1,0,1,26317518.0,29.1,0,SO,,Monitor,,intelligence
+donor_intel_8a4add221ac1,Innovations For Poverty Action,62,62,0,24508393.98,19.6,0,KE; UG,,Monitor; Q3 2026,,intelligence
+donor_intel_92bcd73b04cc,Russian Federation,2,0,2,23892704.0,28.6,0,KE; SO,,Monitor,,intelligence
+donor_intel_38b73b9aec07,Luxembourg,2,0,2,22532396.0,28.6,0,KE,,Monitor,,intelligence
+donor_intel_3e4a6b39b1b5,Kuwait,1,0,1,22257678.0,29.0,0,SS,,Monitor,,intelligence
+donor_intel_99e9e64ecf32,New Zealand - Ministry of Foreign Affairs and Trade,1,1,0,21683883.78,44.3,0,CD,,Q1 2027,,intelligence
+donor_intel_c2306b9a51d8,International Planned Parenthood Federation,3,3,0,20286092.0,33.8,0,ET; SS; SO; UG,,Q2 2027; Monitor,,intelligence
+donor_intel_a582d5aeb7b4,IOGT-NTO Movement,6,6,0,18654950.0,42.2,0,KE; TZ; UG,,Q1 2027,,intelligence
+donor_intel_304dc4000907,"Directorate-General for International Partnerships (INTPA), European Commission",19,19,0,17553882.47,40.4,0,UG; CD; TZ; ET,,Q4 2026,,intelligence
+donor_intel_c4abb81e3880,UNICEF-Uganda,1,0,1,17447362.0,28.9,0,UG,,Monitor,,intelligence
+donor_intel_11539bda8c88,Hungarian National Comm for UNICEF,1,0,1,17046842.0,28.8,0,SO,,Monitor,,intelligence
+donor_intel_1e7b44082aab,Dutch Ministry of Foreign Affairs,4,3,1,16746061.0,24.9,0,UG; CD; ET; KE,,Active through Q4 2026; Monitor,,intelligence
+donor_intel_4b72b9638df8,Care Nederland,3,3,0,16623943.0,24.7,0,ET; KE; UG,,Active through Q4 2026,,intelligence
+donor_intel_1a4bce264831,XM-DAC-302,1,1,0,16537226.14,43.2,0,TZ,,Q4 2026,,intelligence
+donor_intel_47de2ed29088,XM-DAC-41305,1,1,0,16537226.14,43.2,0,TZ,,Q4 2026,,intelligence
+donor_intel_17bfcf32f703,XM-DAC-7,1,1,0,16537226.14,43.2,0,TZ,,Q4 2026,,intelligence
+donor_intel_a13c1d42b108,XM-DAC-966,1,1,0,16537226.14,43.2,0,TZ,,Q4 2026,,intelligence
+donor_intel_4946f4fb200b,Norwegian Refugee Council,6,6,0,16374634.51,24.5,0,SO,,Monitor; Q3 2027,,intelligence
+donor_intel_86e399c0d7b3,Oxford Policy Management,1,1,0,15724357.0,22.8,0,BD; GH; KI; SL,,Active through Q4 2026,,intelligence
+donor_intel_de46fa360ad6,Children&apos,10,10,0,14906445.6,41.1,0,KE; UG; CD; ET,,Q4 2026,,intelligence
+donor_intel_a945bcd85dc7,s Investment Fund Foundation (UK),10,10,0,14906445.6,41.1,0,KE; UG; CD; ET,,Q4 2026,,intelligence
+donor_intel_62ac3965d121,UK - Foreign & Commonwealth Office,5,5,0,13089710.96,30.4,0,CH; GB; BE; ID,Diagnostic Equipment,Monitor; Active through Q1 2030,,intelligence
+donor_intel_867d1edb34df,UNICEF-United Republic of Tanzania,1,0,1,11679086.0,28.6,0,TZ,,Monitor,,intelligence
+donor_intel_ac241b24dca1,Clean Air Fund (CAF),1,1,0,11322313.0,42.9,0,IN; KE; KG; KH,,Q4 2026,,intelligence
+donor_intel_84c07d08140c,GIZ,1,1,0,11322313.0,42.9,0,IN; KE; KG; KH,,Q4 2026,,intelligence
+donor_intel_c0318c304410,PayTM Foundation,1,1,0,11322313.0,42.9,0,IN; KE; KG; KH,,Q4 2026,,intelligence
+donor_intel_d4ac67de4503,UN Children's Fund (UNICEF),1,1,0,11322313.0,42.9,0,IN; KE; KG; KH,,Q4 2026,,intelligence
+donor_intel_e0c9035898dd,AA,2,2,0,11167352.0,31.9,0,CD; ET,,Monitor; Q1 2027,,intelligence
+donor_intel_124cc94ec77c,Department for International Development,3,3,0,10839959.18,21.4,0,ET; RW; SO,,Monitor,,intelligence
+donor_intel_6cc9019737dd,Susan Thompson Buffett Foundation,13,13,0,10335451.89,40.3,0,RW; CD; ET; KE,,Q4 2026,,intelligence
+donor_intel_ab5ba877d22c,United Nations Population Fund (UNFPA),8,8,0,10078362.85,40.9,0,KE; CD; ET; RW,,Q4 2026,,intelligence
+donor_intel_ed84edb4f4cd,MPTFO AS AA FOR JP PASS THROUGH,4,4,0,9077859.0,16.9,0,CD,,Monitor,,intelligence
+donor_intel_642aef9fe0e3,Crown Agents,7,7,0,9075684.99,41.6,0,SS,Facility Infrastructure,Monitor,,intelligence
+donor_intel_837c7cca167d,UNTFHS - UN Trust Fund for,1,0,1,9031442.0,28.4,0,RW,,Monitor,,intelligence
+donor_intel_22731de6ee48,"Foreign, Commonwealth & Development Office",2,2,0,8708395.0,48.7,0,CD; KE; ML; MR,IT / Health Information Systems,Monitor; Q2 2027,,intelligence
+donor_intel_d7e933058fed,Malaria Consortium US Inc,14,14,0,8237744.0,35.2,0,UG; ET; SS,IT / Health Information Systems,Monitor; Q2 2027,,intelligence
+donor_intel_84707374a843,Plan Nederland,5,5,0,7617966.0,21.0,0,ET; KE; ID; MW,,Monitor,,intelligence
+donor_intel_59a54cc5f7cd,French Development Agency (Agence Française de Developpement),1,1,0,7422046.19,33.2,0,ET,,Q4 2028,,intelligence
+donor_intel_88259d3821e9,International Rescue Committee UK,11,10,0,7382214.66,24.9,0,SS; SO; ET; CD,Facility Infrastructure,Monitor; Q2 2027,,intelligence
+donor_intel_95f23404d9b5,GiveWell,3,3,0,7321580.45,32.8,0,CD; KE; SS,,Active through Q1 2027; Q1 2028,,intelligence
+donor_intel_1ac5120f1455,Sasakawa Health Foundation,5,5,0,6651403.37,41.0,0,CD; ET; SO; SS,,Q4 2026,,intelligence
+donor_intel_dcff44867e88,Wellcome Trust,6,6,0,6426995.72,33.8,0,ET; KE; RW; UG,,Q4 2026; Monitor,,intelligence
+donor_intel_8f57af39e89d,PSFR - consolidated pool funding,1,0,1,6140000.0,28.2,0,SS,,Monitor,,intelligence
+donor_intel_28c26141c923,Save the Children Netherlands,3,3,0,6093305.0,20.9,0,SS,,Monitor,,intelligence
+donor_intel_71f015d491f6,Oxfam Novib,3,3,0,5673611.0,34.2,0,SO; CD,,Q4 2026; Monitor,,intelligence
+donor_intel_243103a85414,UNOCHA - United Nations Office for the Coordination of Humanitarian Affairs,5,5,0,5337230.0,22.4,0,ET,,Monitor,,intelligence
+donor_intel_d072e8e5b07d,Sanofi-Aventis,5,5,0,5256916.02,40.7,0,ET; KE; RW; SS,,Q4 2026,,intelligence
+donor_intel_87b34d4752b0,CHILD PROTECTION: PREVENTING/ R,1,0,1,5197092.0,28.1,0,KE,,Monitor,,intelligence
+donor_intel_e801ea855f3f,Rutgers,2,2,0,5013447.0,20.8,0,UG; GH; ID; KE,,Monitor,,intelligence
+donor_intel_62b0bce0aac1,Helmsley Charitable Trust,3,3,0,4990360.93,41.2,0,KE; RW; TZ,,Q4 2026,,intelligence
+donor_intel_ec6621080d35,MSI Reproductive Choices,1,1,0,4801997.0,39.5,0,CD; ML; MR; NE,,Q2 2027,,intelligence
+donor_intel_69f2e5640f29,"Myriad USA, Inc (Previously King Baudouin Foundation United States ? KBFUS)",3,3,0,4780817.23,41.3,0,KE; TZ,,Q4 2026,,intelligence
+donor_intel_8f490545013b,AFLAM,1,2,0,4708848.0,21.6,0,CD,,Monitor,,intelligence
+donor_intel_979104c6ba3b,Keele University,1,1,0,4576819.0,22.0,0,BR; ET; GB; LK,,Monitor,,intelligence
+donor_intel_25ca1321be31,ULB-Coopération,2,2,0,4576189.0,21.5,0,CD,,Monitor,,intelligence
+donor_intel_de25bff458a2,EngenderHealth,1,1,0,3948600.0,21.9,0,ET,,Monitor,,intelligence
+donor_intel_a5d29f3a1ade,Marie Stopes International,1,1,0,3906398.0,57.9,0,KE,IT / Health Information Systems,Monitor,,intelligence
+donor_intel_2ed348875e27,World Diabetes Foundation,3,3,0,3491407.91,40.9,0,UG; SO,,Q4 2026,,intelligence
+donor_intel_d7b12369ff89,National Institute of Health Research (NIHR),2,2,0,3410610.0,53.3,0,BF; GB; GH; GM,Diagnostic Equipment; Vehicles & Transport,Active through Q3 2026; Monitor,,intelligence
+donor_intel_53fede1512c1,UNITED NATIONS DEVELOPMENT PROGRAMME,5,5,0,3393124.0,24.9,0,CD; SS; UG,,Active through Q4 2026; Q4 2026,,intelligence
+donor_intel_487b3c7825dc,GlaxoSmithKline (GSK),3,3,0,3366309.0,44.7,0,ET; AO; BI; KE,Facility Infrastructure; Diagnostic Equipment; PPE,Monitor,,intelligence
+donor_intel_1d0cb3a4a6ba,Charity Projects Ltd (Comic Relief),9,9,0,3347802.01,20.3,0,KE,,Monitor,,intelligence
+donor_intel_950c2c204c95,Belgian Development Agency (Enabel),1,1,0,3252663.75,57.8,0,RW,Facility Infrastructure,Monitor,,intelligence
+donor_intel_b0299b5a7b32,"UK - Foreign, Commonwealth and Development Office (FCDO)",1,1,0,3252663.75,57.8,0,RW,Facility Infrastructure,Monitor,,intelligence
+donor_intel_933b9c221e13,The Institute of Development Studies,1,1,0,3200000.0,21.8,0,AR; BD; BR; CD,,Monitor,,intelligence
+donor_intel_07af06bb0987,European Commission - Development and Cooperation - EuropeAid,1,1,0,3191599.0,21.8,0,CD,,Monitor,,intelligence
+donor_intel_c61caad4350d,British Council,1,1,0,3139366.0,21.7,0,SO,,Monitor,,intelligence
+donor_intel_f749e7bf725a,PricewaterhouseCoopers,1,1,0,3139366.0,21.7,0,SO,,Monitor,,intelligence
+donor_intel_d6af6490fb4b,UniversitiesUK International,1,1,0,3139366.0,21.7,0,SO,,Monitor,,intelligence
+donor_intel_6ac83d9a4037,Global Fund To Fight AidscommaTuberculosis And Malaria,1,1,0,3124594.61,21.7,0,SO,,Monitor,,intelligence
+donor_intel_ea421dd1009a,The HALO Trust,1,1,0,3117548.0,21.7,0,SO,,Monitor,,intelligence
+donor_intel_c3e99dc6c0a6,Roche Kenya Limited,2,2,0,3102418.43,41.0,0,KE; TZ,,Q4 2026,,intelligence
+donor_intel_fc987769ab6f,GAVI,2,2,0,3093124.0,35.1,0,SS,,Active through Q4 2026; Q4 2026,,intelligence
+donor_intel_b9f8a872e42a,ATScale,1,1,0,3085538.16,21.7,0,BR; GB; GH; IN,,Monitor,,intelligence
+donor_intel_710a97b96392,Google Inc.,1,1,0,3085538.16,21.7,0,BR; GB; GH; IN,,Monitor,,intelligence
+donor_intel_57d15d84b3ac,Novo Nordisk Foundation,5,5,0,3072413.14,39.4,0,SO; SS; KE,,Q4 2026,,intelligence
+donor_intel_cef253b1a402,University College London,1,1,0,3026376.39,57.7,0,CI; GB; GH; KE,Diagnostic Equipment,Active through Q2 2028,,intelligence
+donor_intel_16c2c065c852,Health Research Operations Kenya Limited,1,1,0,3026376.0,57.7,0,KE,Diagnostic Equipment,Monitor,,intelligence
+donor_intel_7dd841631189,The Hunger Project Netherlands,4,4,0,3008889.24,20.4,0,UG; ET; SS,,Monitor,,intelligence
+donor_intel_026a02bf1332,London School of Hygiene and Tropical Medicine,1,1,0,2984447.0,21.7,0,GB; KE; UG,,Monitor,,intelligence
+donor_intel_36fdb1572757,Joint United Nations Programme on HIV/AIDS (UNAIDS),2,2,0,2961042.24,41.3,0,UG,,Q4 2026,,intelligence
+donor_intel_faa694d9516f,DAI Global Health,1,1,0,2952566.0,21.7,0,SS,,Monitor,,intelligence
+donor_intel_a16986d3001c,"Ministry of Foreign Affairs, Denmark",44,44,0,2909859.96,17.8,0,KE; TZ; RW; SO,Facility Infrastructure,Monitor; Q4 2026,,intelligence
+donor_intel_a74be3a55fe2,AECID Agencia Española de Cooperación Internacional para el Desarrollo,3,3,0,2811929.02,39.5,0,ET; EG; JO; MA,,Q4 2026; Q3 2026,,intelligence
+donor_intel_eae3995dc72d,Department of Health and Social Care (DHSC) Global Health Research,1,1,0,2789607.0,57.7,0,GB; KE,Diagnostic Equipment; Facility Infrastructure,Monitor,,intelligence
+donor_intel_74eb16c16b5c,National Institute for Health and Care Research (NIHR),1,1,0,2749920.0,36.1,0,UG,,Q4 2027,,intelligence
+donor_intel_3bb280c5675d,ACTION AGAINST HUNGER SPAIN,4,4,0,2658832.24,20.6,0,ET; KE; SS; UG,,Monitor,,intelligence
+donor_intel_2b33df212831,Danish Refugee Council / Danish Demining Group (DRC/DDG),2,2,0,2600000.01,29.6,0,TZ; UG,,Monitor; Q2 2027,,intelligence
+donor_intel_4f7955367d91,OneSight EssilorLuxottica Foundation,1,1,0,2542109.43,41.9,0,KE,,Q4 2026,,intelligence
+donor_intel_002d05315493,OXFAM CANADA,4,4,0,2459307.0,29.9,0,UG,,Q4 2026; Active through Q2 2028,,intelligence
+donor_intel_67c596500639,LEGO Foundation,2,2,0,2401550.98,40.7,0,TZ,,Q4 2026,,intelligence
+donor_intel_88228032cc5c,ACTION AGAINST HUNGER USA,1,1,0,2388168.0,39.6,0,SO,,Monitor,,intelligence
+donor_intel_817cdf91d747,"Department of Health and Social Care, United Kingdom",2,2,0,2381572.66,40.8,0,ET; KE,,Q4 2026,,intelligence
+donor_intel_30a14d1476de,Fondation NIF,1,1,0,2354424.0,21.6,0,CD,,Monitor,,intelligence
+donor_intel_903356eb58d0,Louvain Coopération,1,1,0,2354424.0,21.6,0,CD,,Monitor,,intelligence
+donor_intel_0d7013f5a11c,Mangrove Foundation,1,1,0,2354424.0,21.6,0,CD,,Monitor,,intelligence
+donor_intel_039ebb987cf2,Orval,1,1,0,2354424.0,21.6,0,CD,,Monitor,,intelligence
+donor_intel_d798b1ff638d,Spanish Agency for International Cooperation (AECID),2,2,0,2348648.72,40.8,0,ET; RW,,Q4 2026,,intelligence
+donor_intel_12d8613048f1,Crown Agents Limited,3,3,0,2215681.0,42.5,0,SS,Facility Infrastructure,Monitor,,intelligence
+donor_intel_2261cc55a9c7,Donor Entity,1,1,0,2192989.0,21.5,0,UG,,Monitor,,intelligence
+donor_intel_57d57b8301da,"Gilead Sciences, Inc.",4,4,0,2123953.58,39.6,0,SS; ET; KE,,Q4 2026,,intelligence
+donor_intel_5b7d0263566d,Amref Flying Doctors,5,4,1,2121386.0,27.2,0,KE; ET; UG; ZM,Facility Infrastructure,Monitor,,intelligence
+donor_intel_1dd754f8dd5e,Health Pooled Fund South Sudan,3,3,0,2079860.0,30.6,0,SS,,Monitor,,intelligence
+donor_intel_cef42f2be67b,Education Cannot Wait,1,1,0,2036105.0,21.5,0,UG,,Monitor,,intelligence
+donor_intel_5827adb67bf6,Ministry of Foreign Affairs of the Netherlands,2,2,0,2000000.0,21.0,0,UG,,Monitor,,intelligence
+donor_intel_4667cf729cbc,"Global Fund to Fight AIDS, Tuberculosis and Malaria",2,2,0,1893837.0,34.7,0,SO; UG,Diagnostic Equipment,Active through Q4 2026; Monitor,,intelligence
+donor_intel_413f8fd9f558,Bayer AG,1,1,0,1864130.0,41.6,0,CD,,Q4 2026,,intelligence
+donor_intel_9babfe29e78f,Send a Cow UK,3,3,0,1825111.0,17.8,0,ET; UG,,Monitor,,intelligence
+donor_intel_f1479c2590a0,DE-1,1,1,0,1780699.0,41.4,0,KE,,Q1 2027,,intelligence
+donor_intel_a4fb0b4e2d9e,Abt Associates Inc.,1,1,0,1663360.0,21.3,0,GB; MW; TZ; ZM,,Monitor,,intelligence
+donor_intel_244d94344828,Heifer Nederland,1,1,0,1625111.0,21.3,0,ET,,Monitor,,intelligence
+donor_intel_dd735da7e42a,Australian Centre for International Agricultural Research,2,2,0,1595700.0,51.3,0,UG; KE,,Q2 2027,,intelligence
+donor_intel_f0017815f126,Direction-Générale Coopération au Développement et Aide humanitaire,34,34,0,1582330.0,27.0,0,CD; UG; ET; KE,Diagnostic Equipment; Facility Infrastructure; IT / Health Information Systems,Active through Q3 2027; Q4 2026,,intelligence
+donor_intel_b1d2fb9e3b13,ARES,9,9,0,1582330.0,23.6,0,CD,,Active through Q3 2027; Q4 2026,,intelligence
+donor_intel_9b8572428089,World Vision International,1,1,0,1493908.26,41.3,0,SO,,Q4 2026,,intelligence
+donor_intel_de41976ccb8a,Dutch Relief Alliance,1,1,0,1468342.84,21.3,0,SO,,Monitor,,intelligence
+donor_intel_78b948f88f6e,"Government of Wallonia, Belgium",1,1,0,1451934.94,41.3,0,CD,,Q4 2026,,intelligence
+donor_intel_5e0e381f539b,World Vision Netherlands,1,1,0,1430231.64,21.2,0,UG,,Monitor,,intelligence
+donor_intel_579c450159ed,GSK plc,1,1,0,1428786.03,41.3,0,UG,,Q4 2026,,intelligence
+donor_intel_b380814d6c43,Swiss Development Cooperation Agency (SDC/DDC),1,1,0,1409069.42,41.2,0,TZ,,Q4 2026,,intelligence
+donor_intel_09a23944edc5,Loterie Nationale,1,1,0,1384590.0,21.2,0,CD,,Monitor,,intelligence
+donor_intel_0e975985ae7a,UNOPS,3,3,0,1353331.0,27.0,0,SS; KE,,Monitor; Q4 2026,,intelligence
+donor_intel_291f0d8e8b07,"Merck Sharp and Dohme Corp.,",1,1,0,1346992.63,41.2,0,KE,,Q4 2026,,intelligence
+donor_intel_9b862e9b95e3,Carter Center,2,2,0,1141850.86,40.2,0,ET; SS,,Q4 2026,,intelligence
+donor_intel_d5654472772f,Open Philanthropy,1,1,0,1139087.0,21.1,0,CD,,Active through Q1 2027,,intelligence
+donor_intel_4fe0be3f4a8c,UNDP Administered Donor Joint Trust Fund (UNJ),1,1,0,1100000.01,38.1,0,SO,,Q1 2027,,intelligence
+donor_intel_981796dffcb4,The Task Force for Global Health,2,2,0,1097730.0,20.5,0,TZ,,Active through Q4 2026,,intelligence
+donor_intel_936cd4450a53,Christian Blind Mission (UK) Ltd.,1,1,0,901802.87,20.9,0,RW,,Monitor,,intelligence
+donor_intel_2068c19d2e43,Grand Challenges Canada,1,1,0,896427.0,20.9,0,UG,,Monitor,,intelligence
+donor_intel_9ab34d6b2aaa,Mainline,2,2,0,891093.0,38.2,0,KE; TZ,Diagnostic Equipment,Monitor,,intelligence
+donor_intel_2fab632c6784,Gesundes Afrika e.V.,1,1,0,872726.0,56.9,0,UG,Facility Infrastructure,Monitor,,intelligence
+donor_intel_4fee3e53afa7,World Health Orgaisation,1,1,0,838311.0,56.9,0,KE,Diagnostic Equipment,Monitor,,intelligence
+donor_intel_61e4d1a7b175,Chaîne de l'Espoir Belgique / Keten van Hoop België / Chain of Hope Belgium,1,1,0,837704.75,20.9,0,CD,,Monitor,,intelligence
+donor_intel_d28e608ba338,Sightsavers,2,2,0,815020.0,20.4,0,TZ; UG,,Active through Q4 2026; Monitor,,intelligence
+donor_intel_80c91f0290f4,Action Against Hunger UK,1,1,0,809916.0,20.9,0,SO,,Monitor,,intelligence
+donor_intel_57ffd823e908,Bill & Melinda Gates Foundation,1,1,0,801497.0,20.9,0,UG,,Monitor,,intelligence
+donor_intel_0b2600433840,KE-NCB-21805113043590,1,1,0,797909.0,20.9,0,KE,,Monitor,,intelligence
+donor_intel_ea66d2742686,Fundaci?n Anesvad,1,1,0,791591.02,40.6,0,ET,,Q4 2026,,intelligence
+donor_intel_03e653fbcd02,Hilfsaktion Noma e.V.,1,1,0,791591.02,40.6,0,ET,,Q4 2026,,intelligence
+donor_intel_98b07f87399e,Country Learn & Skilled for Work &,1,1,0,754820.0,59.7,0,UG,,Q1 2027,,intelligence
+donor_intel_76ef05ceec1c,Global Innovation Fund,2,2,0,750000.0,16.4,0,KE; UG,,Monitor,,intelligence
+donor_intel_dec6361e4fb9,United Nations Development Programme (UNDP),1,1,0,749804.28,40.6,0,SO,,Q4 2026,,intelligence
+donor_intel_4fb0e0630a94,Handicap International Belgique,1,1,0,737536.0,20.8,0,CD,,Monitor,,intelligence
+donor_intel_519ac5e8dee8,DfID - Department for International Development UK,1,1,0,701999.99,20.8,0,SS,,Monitor,,intelligence
+donor_intel_7c8cea41586a,Biovision Foundation,1,1,0,689965.0,20.8,0,KE,,Monitor,,intelligence
+donor_intel_3bc15c8aae3e,-,1,1,0,687733.0,28.8,0,KE,,Active through Q4 2029,,intelligence
+donor_intel_0cd98147ba2a,National Institutes of Health,1,0,1,676425.0,26.7,0,KE,,Monitor,,intelligence
+donor_intel_59ad77e1e169,Alliance for Health Policy and Systems Research (AHPSR),1,1,0,647738.0,40.4,0,ET,,Q4 2026,,intelligence
+donor_intel_78ff8090c1a4,UK Department of Health and Social Care (DHSC),1,1,0,645407.56,20.7,0,IN; KE; LA; MW,,Monitor,,intelligence
+donor_intel_462e03d90897,GLOBALFUND,1,1,0,633592.0,20.7,0,KE,,Monitor,,intelligence
+donor_intel_912b2ccf682a,World Federation of Neurology,1,1,0,623663.96,40.4,0,ET,,Q4 2026,,intelligence
+donor_intel_ac1c90668ff9,Global Fund,1,1,0,613682.0,20.7,0,KE,,Monitor,,intelligence
+donor_intel_db9a022b7562,GOAL,1,1,0,592118.0,30.7,0,SS,,Monitor,,intelligence
+donor_intel_78f6775a7176,Disasters Emergency Committee,1,1,0,570000.0,20.6,0,SO; SS; YE,,Monitor,,intelligence
+donor_intel_e1e2891fbe96,Pre-Qualification Fees (PQF),1,1,0,550086.42,40.2,0,RW,,Q4 2026,,intelligence
+donor_intel_c31db80210ba,Stichting Vluchteling,1,1,0,481685.0,56.5,0,BI; CD,Facility Infrastructure,Monitor,,intelligence
+donor_intel_4b0b5fdab098,Amref Health Africa NL,3,3,0,480087.0,20.2,0,ET; KE; UG,,Active through Q4 2027; Active through Q4 2029,,intelligence
+donor_intel_e44ab3b321f9,Resolve To Save Lives,1,1,0,460706.22,40.0,0,ET,,Q4 2026,,intelligence
+donor_intel_6661ac6a9e0b,Stichting Beheer Subsidiegelden DRA,1,1,0,455000.0,20.5,0,UG,,Monitor,,intelligence
+donor_intel_95a7b09b32bc,Irish Aid,3,3,0,444202.0,14.8,0,ET,,Monitor,,intelligence
+donor_intel_6411ea893d61,Amref Health Africa - UK,1,0,1,430000.0,26.5,0,ET,,Monitor,,intelligence
+donor_intel_6c14c6b278d8,DFID GPAF,1,1,0,420004.09,20.4,0,ET,,Monitor,,intelligence
+donor_intel_8c4ac0ef2805,HelpAge Deutschland e.V.,1,1,0,382343.0,39.0,0,TZ,,Q3 2026,,intelligence
+donor_intel_2dd347322450,HelpAge International,1,1,0,382343.0,39.0,0,TZ,,Q3 2026,,intelligence
+donor_intel_affc39548185,UNILEVER,1,1,0,341576.0,20.3,0,KE,,Monitor,,intelligence
+donor_intel_7131dc063a2d,Federation Internationale de Football Association (FIFA),1,1,0,326261.0,39.7,0,TZ,,Q4 2026,,intelligence
+donor_intel_64b5725b5078,UK Foreign Commonwealth and Development Office,1,1,0,303611.0,30.2,0,LR; RW; SL,,Monitor,,intelligence
+donor_intel_3e1d9f3d1cf3,Hospice Africa Ltd,1,1,0,302462.0,20.2,0,UG,,Monitor,,intelligence
+donor_intel_164bb844b0f1,OCHA,1,1,0,300000.0,20.2,0,SS,,Monitor,,intelligence
+donor_intel_a8a87f23374d,"Ministry of Foreign Affairs, Netherlands",1,1,0,291706.44,39.5,0,ET,,Q4 2026,,intelligence
+donor_intel_09f31309864e,Expertise France,1,1,0,290744.0,20.2,0,ET,,Monitor,,intelligence
+donor_intel_3f013fc06bf4,HealthNet TPO,1,1,0,255275.0,30.1,0,SS,,Monitor,,intelligence
+donor_intel_e12ab8c93d21,International Centre of Insect Physiology and Ecology (icipe),2,2,0,212413.0,24.5,0,KE,,Monitor,,intelligence
+donor_intel_2b23c220f656,Biological Sciences Research Council BBSRC,3,3,0,200734.4,22.5,0,KE,,Monitor,,intelligence
+donor_intel_a26a5329cf96,Amref Health Africa Uganda,1,1,0,199974.0,56.0,0,UG,Facility Infrastructure,Monitor,,intelligence
+donor_intel_8e581bfe5b16,Comic Relief,1,1,0,187500.0,49.1,0,UG,,Q4 2026,,intelligence
+donor_intel_fc3a9bf07186,Fred Hollows Foundation,1,1,0,184835.0,19.9,0,KE,,Monitor,,intelligence
+donor_intel_00a1e72e72ca,Heifer Netherlands,1,1,0,175680.0,19.9,0,UG,,Monitor,,intelligence
+donor_intel_227d1f0530bd,CIFF,1,1,0,167972.0,19.8,0,KE,,Monitor,,intelligence
+donor_intel_cd02a818c46b,ADRA Danmark,1,1,0,162750.0,55.8,0,CD,Facility Infrastructure,Monitor,,intelligence
+donor_intel_155aae01a63a,Infectious Diseases Research Collaboration (IDRC),1,1,0,153000.0,36.0,0,SS,,Q2 2027,,intelligence
+donor_intel_c408937e1aae,GSK,1,1,0,150000.0,19.8,0,KE,,Monitor,,intelligence
+donor_intel_c8dd4d9588a9,National Institutes Health,1,1,0,132413.0,19.7,0,KE,,Monitor,,intelligence
+donor_intel_b7553af148f9,United Nations Environment Programme (UNEP),1,1,0,100000.0,38.4,0,UG,,Q4 2026,,intelligence
+donor_intel_2241dc8eeab8,Waterloo Foudation,1,1,0,100000.0,19.5,0,ET,,Monitor,,intelligence
+donor_intel_3fd8667dc9c0,Faculty of Nursing and Midwifery ? Royal College of Surgeons in Ireland (RCSI),1,1,0,97524.12,38.3,0,KE,,Q4 2026,,intelligence
+donor_intel_3e5e257a8de8,National Institute of Health (NIH),1,1,0,92856.0,19.5,0,KE,,Monitor,,intelligence
+donor_intel_0a50e27daeea,Catholic Agency For Overseas Development (CAFOD),2,2,0,85534.35,19.0,0,CD,,Active through Q3 2026; Active through Q4 2026,,intelligence
+donor_intel_4f52f4274968,Audere,1,1,0,82773.0,19.4,0,KE,,Monitor,,intelligence
+donor_intel_8e206ba991d9,KOICA,1,1,0,81990.5,19.4,0,TZ,,Monitor,,intelligence
+donor_intel_8ba43b87d430,OXFAM HONGKONG,1,1,0,73038.0,55.3,0,UG,Facility Infrastructure,Monitor,,intelligence
+donor_intel_c02013beb1c7,UK Department for International Development,1,1,0,55434.0,19.1,0,GB; RW,,Monitor,,intelligence
+donor_intel_fce79b7fe1fe,GCC,1,1,0,25042.0,18.6,0,KE,,Monitor,,intelligence
+donor_intel_57f8e44c3f5e,Malaria Consortium,43,43,0,25000.0,15.0,0,SS; UG; ET; TZ,Facility Infrastructure; IT / Health Information Systems,Monitor; Active through Q2 2027,,intelligence
+donor_intel_98601d9b422e,"Taysha Consulting, Ltd",1,1,0,21000.0,18.5,0,SS,,Monitor,,intelligence
+donor_intel_d5fe2995550d,In2Care BV,1,1,0,18151.0,18.4,0,KE,,Monitor,,intelligence
+donor_intel_05c75a4034b6,Univeristy of Oxford,1,1,0,13864.0,26.2,0,MW; TZ; ZA,,Active through Q3 2028,,intelligence
+donor_intel_13ed02427658,Mercury Phoenx Trust,1,1,0,11738.87,18.1,0,KE,,Monitor,,intelligence
+donor_intel_a30b7a46e94b,CABI,1,1,0,10000.0,18.0,0,KE,,Monitor,,intelligence
+donor_intel_244300042c57,OXFAM GB,1,1,0,9424.0,18.0,0,SO,,Monitor,,intelligence
+donor_intel_fd1ef82aa521,Kilpatrick Fraser Charitable Trust,1,1,0,8590.0,53.9,0,KE,Diagnostic Equipment,Monitor,,intelligence
+donor_intel_310113cc6e2f,Veta Bailey Charitable Trust,1,1,0,8590.0,53.9,0,KE,Diagnostic Equipment,Monitor,,intelligence
+donor_intel_2aaa8e8876eb,"Aga Khan University, Tanzania",1,1,0,4326.17,17.5,0,TZ,,Monitor,,intelligence
+donor_intel_0dc29a2c38f5,University of Oxford - Wolfson College,1,1,0,3000.0,17.2,0,KE,,Monitor,,intelligence
+donor_intel_c9e8d0261dbb,Ministry of Foreign and European Affairs of the Slovak Republic,112,112,0,0.0,29.1,0,KE; RW; SS; UG,Facility Infrastructure; Diagnostic Equipment; Medical Devices & Equipment; Vehicles & Transport,Monitor,,intelligence
+donor_intel_adf9cce1c940,Sweden,36,36,0,0.0,22.9,0,UG; TZ; ET; KE,Facility Infrastructure; Diagnostic Equipment; IT / Health Information Systems; Medical Devices & Equipment,Monitor; Active through Q2 2027,,intelligence
+donor_intel_e0a7a2af8524,VLIR-UOS,25,25,0,0.0,28.2,0,CD; UG; ET; KE,Diagnostic Equipment; Facility Infrastructure; IT / Health Information Systems,Active through Q3 2027,,intelligence
+donor_intel_c236ded63a5b,UN Pooled Funds,24,24,0,0.0,12.0,0,KE; TZ; UG; SS,,Active through Q4 2030; Monitor,,intelligence
+donor_intel_8a4add221ac1,Innovations for Poverty Action,19,19,0,0.0,12.0,0,KE; UG,,Monitor,,intelligence
+donor_intel_336ce1ee11dd,"Gavi, The Vaccine Alliance",8,8,0,0.0,12.0,0,CD; ET; KE; RW,,Active through Q4 2027; Active through Q4 2028,,intelligence
+donor_intel_36e8c6ad2cdb,Ethiopiaid,6,5,1,0.0,31.0,0,ET,Facility Infrastructure,Monitor,,intelligence
+donor_intel_1e16df83ea8b,Ethiopiaid UK,5,5,0,0.0,14.0,0,ET,,Monitor,,intelligence
+donor_intel_f1631affdffb,Commission of the European Communities,4,4,0,0.0,23.0,0,RW; CD,IT / Health Information Systems,Active through Q4 2028; Active through Q2 2027,,intelligence
+donor_intel_26719f6a7ad4,Danish Family Planning Association,3,3,0,0.0,12.0,0,KE; UG,,Monitor,,intelligence
+donor_intel_b1e8e9d085f7,Ethiopiaid Ireland,3,3,0,0.0,36.0,0,ET,Facility Infrastructure,Monitor,,intelligence
+donor_intel_335492b33cf1,JP-2,3,3,0,0.0,27.3,0,CD; KE; UG,Medical Devices & Equipment,Monitor,,intelligence
+donor_intel_368f8bc492d2,Send a Cow,3,3,0,0.0,12.0,0,ET; KE,,Monitor,,intelligence
+donor_intel_dbf7eea8c8be,University of Edinburgh,3,3,0,0.0,12.0,0,KE; ZA; GB; GH,,Active through Q2 2028; Active through Q3 2028,,intelligence
+donor_intel_dfbb2bd76c39,Individual donors to Ethiopiaid,2,1,1,0.0,33.0,0,ET,Facility Infrastructure,Monitor,,intelligence
+donor_intel_543a45eeeeab,MAEDI,2,2,0,0.0,12.0,0,ET; UG,,Monitor,,intelligence
+donor_intel_4b0d680679a3,"Sida is Sweden's government agency for development cooperation. We strive to reduce poverty and oppression around the world. In cooperation with organisations, government agencies and the private sector we invest in sustainable development for all people.",2,2,0,0.0,12.0,0,ET; GB; PK; TZ,,Active through Q4 2028; Monitor,,intelligence
+donor_intel_f1d07931609e,Austrian Development Agency,1,1,0,0.0,12.0,0,UG,,Active through Q4 2030,,intelligence
+donor_intel_652b99fc3480,BILL AND MELINDA GATES FOUNDATION,1,1,0,0.0,12.0,0,UG,,Active through Q4 2030,,intelligence
+donor_intel_26884e325fb6,CHPF,1,1,0,0.0,12.0,0,KE,,Monitor,,intelligence
+donor_intel_e4c9f5078dc7,COMESA,1,1,0,0.0,12.0,0,UG,,Active through Q4 2030,,intelligence
+donor_intel_29f95ec7d58b,"Conflict, Stability and Security Fund (CSSF)",1,1,0,0.0,12.0,0,AF; CO; DZ; EG,,Monitor,,intelligence
+donor_intel_403320fe84eb,Cordaid,1,1,0,0.0,12.0,0,CD,,Active through Q4 2026,,intelligence
+donor_intel_9db1a1654fd1,European Commission - International Partnerships,1,1,0,0.0,12.0,0,BD; GH; ID; KE,,Active through Q4 2026,,intelligence
+donor_intel_ac10679bdfb1,GREEN CLIMATE FUND,1,1,0,0.0,12.0,0,UG,,Active through Q4 2030,,intelligence
+donor_intel_1e68203a6199,HALYK BANK KAZAKHSTAN,1,1,0,0.0,12.0,0,UG,,Active through Q4 2030,,intelligence
+donor_intel_096d8cc01b55,Hennecke Family Foundation,1,1,0,0.0,48.0,0,KE; NL,Facility Infrastructure,Monitor,,intelligence
+donor_intel_fa123c83f68b,INTERNATIONAL TELECOMMUNICATIONS UNION,1,1,0,0.0,12.0,0,UG,,Active through Q4 2030,,intelligence
+donor_intel_cb961a82f396,JP-8,1,1,0,0.0,12.0,0,KE,,Monitor,,intelligence
+donor_intel_fc96133a0c65,KOREA INTERN. COOPERATION AGENCY,1,1,0,0.0,12.0,0,UG,,Active through Q4 2030,,intelligence
+donor_intel_61c1a668b407,Lillian Lincoln foundation,1,1,0,0.0,48.0,0,KE; NL,Facility Infrastructure,Monitor,,intelligence
+donor_intel_74d1db94b65d,MPTF-Joint SDG Fund,1,1,0,0.0,12.0,0,UG,,Active through Q4 2030,,intelligence
+donor_intel_3b561da0f248,MPTF-Spotlight Initiative Fund,1,1,0,0.0,12.0,0,UG,,Active through Q4 2030,,intelligence
+donor_intel_7a0bf09b2850,Ministry of Foreign Affairs and Trade of,1,1,0,0.0,12.0,0,UG,,Active through Q4 2030,,intelligence
+donor_intel_d5b5fcaeb087,NOR - MINISTRY OF FOREIGN AFFAIRS,1,1,0,0.0,12.0,0,UG,,Active through Q4 2030,,intelligence
+donor_intel_36f8d5acf539,North coast medical training college Kenya,1,1,0,0.0,12.0,0,KE,,Monitor,,intelligence
+donor_intel_5a1b92e86027,Nuffic,1,1,0,0.0,12.0,0,KE,,Monitor,,intelligence
+donor_intel_4ff7a69f9edd,Population Services International (PSI),1,1,0,0.0,12.0,0,SS,,Monitor,,intelligence
+donor_intel_735ba58ed4c2,Skills Meducation BV,1,1,0,0.0,12.0,0,KE,,Monitor,,intelligence
+donor_intel_0e038fd4f3d4,UK - Scottish Government,1,1,0,0.0,12.0,0,RW,,Monitor,,intelligence
+donor_intel_db695f4669dd,UN HIGH COMMISSIONER FOR REFUGEES (UNHCR),1,1,0,0.0,12.0,0,UG,,Active through Q4 2030,,intelligence
+donor_intel_d5d4cd07616a,Undefined,1,1,0,0.0,12.0,0,UG,,Active through Q4 2030,,intelligence
+donor_intel_f49268365522,United Nations Children's Fund,1,1,0,0.0,12.0,0,TZ,,Monitor,,intelligence
+donor_intel_3d6ca8c143f7,United Nations Children's Fund (UNICEF),1,1,0,0.0,12.0,0,SS,,Monitor,,intelligence

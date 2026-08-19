@@ -1,0 +1,193 @@
+{
+  "generated_at": "2026-08-19T12:10:08Z",
+  "as_of": "2026-08-19",
+  "source_generated_at": "2026-08-18T15:09:15Z",
+  "pipeline_version": "3.0-layered-commercial",
+  "pipeline_layers": [
+    {
+      "layer": "RAW",
+      "datasets": [
+        "iati_activities",
+        "iati_transactions",
+        "iati_organisations"
+      ],
+      "purpose": "Preserve source-shaped IATI records before business rules."
+    },
+    {
+      "layer": "NORMALIZED",
+      "datasets": [
+        "activities",
+        "transactions",
+        "organisations"
+      ],
+      "purpose": "Store clean activity, finance, and participant records."
+    },
+    {
+      "layer": "CANONICAL",
+      "datasets": [
+        "organisation_entities",
+        "organisation_aliases",
+        "equipment_entities",
+        "manufacturer_entities"
+      ],
+      "purpose": "Resolve reusable commercial entities from normalized IATI data."
+    },
+    {
+      "layer": "INTELLIGENCE",
+      "datasets": [
+        "opportunity_scores",
+        "organisation_intelligence",
+        "programme_intelligence",
+        "donor_intelligence"
+      ],
+      "purpose": "Score programmes, donors, and organisations for market signals."
+    },
+    {
+      "layer": "COMMERCIAL",
+      "datasets": [
+        "target_accounts",
+        "engagements",
+        "crm_notes",
+        "recommended_actions"
+      ],
+      "purpose": "Turn intelligence into sales and partnership workflows."
+    }
+  ],
+  "layer_counts": {
+    "raw": {},
+    "normalized": {
+      "activities": 3270,
+      "transactions": 68471,
+      "organisations": 17577
+    },
+    "canonical": {
+      "organisation_entities": 2410,
+      "organisation_aliases": 3188,
+      "equipment_entities": 7,
+      "manufacturer_entities": 0
+    },
+    "intelligence": {
+      "opportunity_scores": 3270,
+      "organisation_intelligence": 2410,
+      "programme_intelligence": 3270,
+      "donor_intelligence": 506
+    },
+    "commercial": {
+      "target_accounts": 2410,
+      "engagements": 1820,
+      "crm_notes": 1820,
+      "recommended_actions": 1277
+    }
+  },
+  "currency_note": "Amounts are source-reported nominal values and are not converted across currencies.",
+  "metrics": {
+    "projects": 3270,
+    "active_projects": 2962,
+    "pipeline_projects": 307,
+    "reported_budget": 69942464153.93,
+    "future_disbursement": 39156483508.86,
+    "future_budget": 34854506191.2,
+    "procurement_signal_projects": 689,
+    "high_priority_opportunities": 409,
+    "donors": 506,
+    "equipment_categories": 7,
+    "tender_predictions": 1277,
+    "countries": 154
+  },
+  "top_countries": [
+    {
+      "country_code": "KE",
+      "country_name": "Kenya",
+      "project_count": 643
+    },
+    {
+      "country_code": "ET",
+      "country_name": "Ethiopia",
+      "project_count": 603
+    },
+    {
+      "country_code": "CD",
+      "country_name": "Democratic Republic of the Congo",
+      "project_count": 600
+    },
+    {
+      "country_code": "TZ",
+      "country_name": "Tanzania",
+      "project_count": 527
+    },
+    {
+      "country_code": "SO",
+      "country_name": "Somalia",
+      "project_count": 388
+    },
+    {
+      "country_code": "UG",
+      "country_name": "Uganda",
+      "project_count": 372
+    },
+    {
+      "country_code": "SS",
+      "country_name": "South Sudan",
+      "project_count": 302
+    },
+    {
+      "country_code": "RW",
+      "country_name": "Rwanda",
+      "project_count": 252
+    },
+    {
+      "country_code": "NG",
+      "country_name": "NG",
+      "project_count": 140
+    },
+    {
+      "country_code": "GH",
+      "country_name": "GH",
+      "project_count": 78
+    }
+  ],
+  "plan_progress": [
+    {
+      "id": "01",
+      "name": "Market Overview",
+      "status": "ready",
+      "output": "Country, sector, status, and funding views"
+    },
+    {
+      "id": "02B",
+      "name": "Procurement Intelligence",
+      "status": "ready",
+      "output": "Equipment and infrastructure demand signals"
+    },
+    {
+      "id": "02C",
+      "name": "Opportunity Scoring",
+      "status": "ready",
+      "output": "Priority, confidence, and recommended actions"
+    },
+    {
+      "id": "02D",
+      "name": "Opportunity Intelligence UI",
+      "status": "ready",
+      "output": "Ranked opportunity workspace"
+    },
+    {
+      "id": "03",
+      "name": "Donor / Organisation Intelligence",
+      "status": "launch_baseline",
+      "output": "Donor pipeline, countries, and equipment focus"
+    },
+    {
+      "id": "04",
+      "name": "Equipment / Product Intelligence",
+      "status": "launch_baseline",
+      "output": "Category demand by country and donor"
+    },
+    {
+      "id": "05",
+      "name": "Tender / Procurement Prediction",
+      "status": "launch_baseline",
+      "output": "Predicted tender windows from IATI signals"
+    }
+  ]
+}
