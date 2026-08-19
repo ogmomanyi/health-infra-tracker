@@ -1,1070 +1,1531 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Infrastructure Commercial Intelligence</title>
 
-    <title>East Africa Health Procurement Intelligence</title>
-
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Alpine.js -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
-    <!-- PapaParse (CSV Reader) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
-        [x-cloak] {
+        :root {
+            --bg: #f5f7fb;
+            --panel: #ffffff;
+            --ink: #172033;
+            --muted: #647084;
+            --line: #d9e0ea;
+            --soft: #eef3f8;
+            --teal: #0f766e;
+            --blue: #2563eb;
+            --amber: #b45309;
+            --rose: #be123c;
+            --green: #15803d;
+            --shadow: 0 10px 24px rgba(23, 32, 51, 0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--ink);
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font-size: 14px;
+            letter-spacing: 0;
+        }
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            background: rgba(255, 255, 255, 0.96);
+            border-bottom: 1px solid var(--line);
+            backdrop-filter: blur(10px);
+        }
+
+        .topbar-inner {
+            max-width: 1480px;
+            margin: 0 auto;
+            padding: 14px 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            min-width: 0;
+            gap: 12px;
+        }
+
+        .brand-mark {
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            display: grid;
+            place-items: center;
+            color: white;
+            background: linear-gradient(135deg, var(--teal), var(--blue));
+            flex: 0 0 auto;
+        }
+
+        .brand-title {
+            margin: 0;
+            font-size: 18px;
+            line-height: 1.25;
+        }
+
+        .brand-subtitle {
+            margin: 2px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .status-strip {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            min-height: 26px;
+            gap: 6px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            background: var(--panel);
+            color: var(--muted);
+            padding: 4px 10px;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .shell {
+            max-width: 1480px;
+            margin: 0 auto;
+            padding: 22px;
+        }
+
+        .loading,
+        .error {
+            min-height: 58vh;
+            display: grid;
+            place-items: center;
+        }
+
+        .message-panel {
+            max-width: 520px;
+            padding: 28px;
+            border-radius: 8px;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .spinner {
+            width: 34px;
+            height: 34px;
+            margin: 0 auto 14px;
+            border: 3px solid #dbeafe;
+            border-top-color: var(--blue);
+            border-radius: 999px;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .hidden {
             display: none !important;
         }
 
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
         }
 
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
+        .metric {
+            min-height: 110px;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .metric-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .metric-label {
+            color: var(--muted);
+            font-size: 12px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .metric-value {
+            margin-top: 14px;
+            font-size: 26px;
+            line-height: 1;
+            font-weight: 800;
+        }
+
+        .metric-note {
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .icon-box {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: grid;
+            place-items: center;
+            flex: 0 0 auto;
+        }
+
+        .icon-teal {
+            color: var(--teal);
+            background: #ccfbf1;
+        }
+
+        .icon-blue {
+            color: var(--blue);
+            background: #dbeafe;
+        }
+
+        .icon-amber {
+            color: var(--amber);
+            background: #fef3c7;
+        }
+
+        .icon-rose {
+            color: var(--rose);
+            background: #ffe4e6;
+        }
+
+        .icon-green {
+            color: var(--green);
+            background: #dcfce7;
+        }
+
+        .control-band {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            padding: 12px;
+            margin-bottom: 16px;
+            display: grid;
+            grid-template-columns: minmax(240px, 1.5fr) repeat(3, minmax(160px, 1fr)) auto;
+            gap: 10px;
+            align-items: end;
+        }
+
+        .field {
+            min-width: 0;
+        }
+
+        .field label {
+            display: block;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-wrap .input-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            color: var(--muted);
+            pointer-events: none;
+        }
+
+        input,
+        select {
+            width: 100%;
+            min-height: 38px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: #fbfdff;
+            color: var(--ink);
+            padding: 8px 10px;
+            outline: none;
+        }
+
+        input {
+            padding-left: 34px;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+        }
+
+        .icon-button {
+            width: 38px;
+            height: 38px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--panel);
+            color: var(--muted);
+            display: grid;
+            place-items: center;
+        }
+
+        .icon-button:hover {
+            color: var(--ink);
+            border-color: #b9c5d6;
+        }
+
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.7fr) minmax(320px, 0.9fr);
+            gap: 16px;
+            align-items: start;
+            margin-bottom: 16px;
+        }
+
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            min-height: 54px;
+            padding: 13px 14px;
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            background: #fbfdff;
+        }
+
+        .panel-title {
+            margin: 0;
+            font-size: 15px;
+            line-height: 1.25;
+        }
+
+        .panel-meta {
+            color: var(--muted);
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 278px;
+        }
+
+        .chart-cell {
+            min-height: 278px;
+            padding: 14px;
+            border-right: 1px solid var(--line);
+        }
+
+        .chart-cell:last-child {
+            border-right: 0;
+        }
+
+        .chart-title {
+            margin: 0 0 8px;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .chart-frame {
+            position: relative;
+            height: 232px;
+            width: 100%;
+        }
+
+        .queue {
+            max-height: 332px;
+            overflow: auto;
+        }
+
+        .queue-item {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .queue-item:last-child {
+            border-bottom: 0;
+        }
+
+        .queue-title {
+            margin: 0;
+            font-weight: 750;
+            line-height: 1.35;
+        }
+
+        .queue-detail {
+            margin: 6px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.45;
+        }
+
+        .tabs {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            min-height: 34px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: #f8fafc;
+            color: var(--muted);
+            padding: 7px 11px;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            font-weight: 750;
+        }
+
+        .tab-button.active {
+            background: #e7f5f2;
+            border-color: #9dd6cf;
+            color: var(--teal);
+        }
+
+        .table-wrap {
+            overflow: auto;
+            max-height: 590px;
+        }
+
+        table {
+            width: 100%;
+            min-width: 980px;
+            border-collapse: collapse;
+        }
+
+        th {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            background: #f3f6fa;
+            color: var(--muted);
+            font-size: 11px;
+            text-align: left;
+            text-transform: uppercase;
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--line);
+            vertical-align: top;
+            line-height: 1.35;
+        }
+
+        tr:hover td {
+            background: #fbfdff;
+        }
+
+        .primary {
+            font-weight: 780;
+            color: var(--ink);
+        }
+
+        .secondary {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .tag-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            max-width: 340px;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            min-height: 22px;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            padding: 3px 8px;
+            background: #f8fafc;
+            color: #475569;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .tag.teal {
+            color: var(--teal);
+            border-color: #99f6e4;
+            background: #f0fdfa;
+        }
+
+        .tag.blue {
+            color: var(--blue);
+            border-color: #bfdbfe;
+            background: #eff6ff;
+        }
+
+        .tag.amber {
+            color: var(--amber);
+            border-color: #fde68a;
+            background: #fffbeb;
+        }
+
+        .tag.rose {
+            color: var(--rose);
+            border-color: #fecdd3;
+            background: #fff1f2;
+        }
+
+        .score {
+            width: 52px;
+            height: 30px;
+            border-radius: 8px;
+            display: inline-grid;
+            place-items: center;
+            color: white;
+            font-weight: 800;
+            background: var(--blue);
+        }
+
+        .score.high {
+            background: var(--teal);
+        }
+
+        .score.medium {
+            background: var(--amber);
+        }
+
+        .score.low {
+            background: #64748b;
+        }
+
+        .empty-state {
+            padding: 34px 16px;
+            text-align: center;
+            color: var(--muted);
+        }
+
+        .footnote {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.5;
+            margin-top: 14px;
+        }
+
+        @media (max-width: 1180px) {
+            .metric-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
+            .control-band {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .workspace-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 760px) {
+            .topbar-inner,
+            .shell {
+                padding-left: 14px;
+                padding-right: 14px;
+            }
+
+            .topbar-inner {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .metric-grid,
+            .control-band,
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-cell {
+                border-right: 0;
+                border-bottom: 1px solid var(--line);
+            }
+
+            .chart-cell:last-child {
+                border-bottom: 0;
+            }
+
+            .metric-value {
+                font-size: 24px;
+            }
         }
     </style>
 </head>
-
-<body
-    class="bg-slate-50 text-slate-800 font-sans"
-    x-data="dashboardData()"
-    x-init="initDashboard()"
->
-
-    <!-- Navbar -->
-    <nav class="bg-indigo-600 text-white shadow-md p-4">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-bold tracking-tight">
-                East Africa Health Procurement Intelligence
-            </h1>
-
-            <div class="flex items-center space-x-4">
-                <span
-                    class="text-sm bg-indigo-500 px-3 py-1 rounded-full"
-                    x-text="projects.length + ' Projects Loaded'"
-                ></span>
+<body>
+    <header class="topbar">
+        <div class="topbar-inner">
+            <div class="brand">
+                <div class="brand-mark">
+                    <i data-lucide="activity"></i>
+                </div>
+                <div>
+                    <h1 class="brand-title">Health Infrastructure Commercial Intelligence</h1>
+                    <p class="brand-subtitle">East Africa funding, programmes, accounts, and actions</p>
+                </div>
+            </div>
+            <div class="status-strip">
+                <span class="pill">
+                    <i data-lucide="layers"></i>
+                    <span id="pipelineVersion">Loading</span>
+                </span>
+                <span class="pill">
+                    <i data-lucide="calendar-days"></i>
+                    <span id="asOfDate">As of</span>
+                </span>
             </div>
         </div>
-    </nav>
+    </header>
 
-    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8" x-cloak>
-
-        <!-- Loading State -->
-        <div
-            x-show="loading"
-            class="flex flex-col items-center justify-center py-20"
-        >
-            <div
-                class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mb-4"
-            ></div>
-
-            <p class="text-slate-500">
-                Loading datasets...
-            </p>
-        </div>
-
-        <!-- Error State -->
-        <div
-            x-show="error"
-            class="bg-white p-8 rounded-xl shadow-sm text-center border border-red-100 max-w-lg mx-auto mt-10"
-        >
-            <svg
-                class="mx-auto h-12 w-12 text-red-400 mb-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-            >
-                <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                />
-            </svg>
-
-            <h3 class="text-lg font-medium text-slate-900 mb-2">
-                Could not auto-load CSV file
-            </h3>
-
-            <p
-                class="text-sm text-slate-500 mb-6"
-                x-text="errorMessage"
-            ></p>
-
-            <label
-                class="cursor-pointer bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition"
-            >
-                <span>Upload CSV Manually</span>
-
-                <input
-                    type="file"
-                    accept=".csv"
-                    class="hidden"
-                    @change="handleFileUpload"
-                >
-            </label>
-        </div>
-
-        <!-- Main Dashboard View -->
-        <div x-show="!loading && !error">
-
-            <!-- KPI Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 border-l-4 border-l-indigo-500">
-                    <p class="text-sm font-medium text-slate-500 uppercase">
-                        Total Funding
-                    </p>
-
-                    <p
-                        class="text-2xl font-bold text-slate-800"
-                        x-text="formatCurrency(metrics.totalBudget)"
-                    ></p>
-                </div>
-
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 border-l-4 border-l-emerald-500">
-                    <p class="text-sm font-medium text-slate-500 uppercase">
-                        Active Projects
-                    </p>
-
-                    <p
-                        class="text-2xl font-bold text-slate-800"
-                        x-text="metrics.activeProjects"
-                    ></p>
-                </div>
-
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 border-l-4 border-l-amber-500">
-                    <p class="text-sm font-medium text-slate-500 uppercase">
-                        Target Countries
-                    </p>
-
-                    <p
-                        class="text-2xl font-bold text-slate-800"
-                        x-text="metrics.uniqueCountries"
-                    ></p>
-                </div>
-
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 border-l-4 border-l-rose-500">
-                    <p class="text-sm font-medium text-slate-500 uppercase">
-                        Eqpt. Procurements
-                    </p>
-
-                    <p
-                        class="text-2xl font-bold text-slate-800"
-                        x-text="metrics.equipmentProjects"
-                    ></p>
-                </div>
-
+    <main class="shell">
+        <section id="loadingState" class="loading">
+            <div class="message-panel">
+                <div class="spinner"></div>
+                <strong>Loading commercial intelligence</strong>
             </div>
+        </section>
 
-            <!-- Charts Section -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <section id="errorState" class="error hidden">
+            <div class="message-panel">
+                <div class="icon-box icon-rose" style="margin: 0 auto 12px;">
+                    <i data-lucide="triangle-alert"></i>
+                </div>
+                <h2 style="margin: 0 0 8px; font-size: 18px;">Dataset Load Failed</h2>
+                <p id="errorMessage" style="margin: 0; color: var(--muted);"></p>
+            </div>
+        </section>
 
-                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-                    <h3 class="text-lg font-semibold mb-4">
-                        Budget Distribution by Country
-                    </h3>
+        <section id="dashboard" class="hidden">
+            <section class="metric-grid" aria-label="Commercial metrics">
+                <article class="metric">
+                    <div class="metric-top">
+                        <span class="metric-label">Reported Funding</span>
+                        <span class="icon-box icon-teal"><i data-lucide="circle-dollar-sign"></i></span>
+                    </div>
+                    <div>
+                        <div id="metricFunding" class="metric-value">$0</div>
+                        <div class="metric-note">source-reported values</div>
+                    </div>
+                </article>
+                <article class="metric">
+                    <div class="metric-top">
+                        <span class="metric-label">Target Accounts</span>
+                        <span class="icon-box icon-blue"><i data-lucide="building-2"></i></span>
+                    </div>
+                    <div>
+                        <div id="metricAccounts" class="metric-value">0</div>
+                        <div id="metricTierOne" class="metric-note">0 Tier 1</div>
+                    </div>
+                </article>
+                <article class="metric">
+                    <div class="metric-top">
+                        <span class="metric-label">Open Actions</span>
+                        <span class="icon-box icon-amber"><i data-lucide="list-checks"></i></span>
+                    </div>
+                    <div>
+                        <div id="metricActions" class="metric-value">0</div>
+                        <div id="metricTenderWatch" class="metric-note">0 tender watches</div>
+                    </div>
+                </article>
+                <article class="metric">
+                    <div class="metric-top">
+                        <span class="metric-label">High Priority</span>
+                        <span class="icon-box icon-rose"><i data-lucide="radar"></i></span>
+                    </div>
+                    <div>
+                        <div id="metricHighPriority" class="metric-value">0</div>
+                        <div>programmes</div>
+                    </div>
+                </article>
+                <article class="metric">
+                    <div class="metric-top">
+                        <span class="metric-label">Donors</span>
+                        <span class="icon-box icon-green"><i data-lucide="hand-coins"></i></span>
+                    </div>
+                    <div>
+                        <div id="metricDonors" class="metric-value">0</div>
+                        <div id="metricCountries" class="metric-note">0 countries</div>
+                    </div>
+                </article>
+            </section>
 
-                    <div class="relative h-64">
-                        <canvas id="countryChart"></canvas>
+            <section class="control-band" aria-label="Filters">
+                <div class="field">
+                    <label for="queryInput">Search</label>
+                    <div class="input-wrap">
+                        <i class="input-icon" data-lucide="search"></i>
+                        <input id="queryInput" type="search" placeholder="Account, programme, donor, country, action">
                     </div>
                 </div>
-
-                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-                    <h3 class="text-lg font-semibold mb-4">
-                        Project Status Overview
-                    </h3>
-
-                    <div class="relative h-64">
-                        <canvas id="statusChart"></canvas>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Data Filters -->
-            <div class="flex flex-col sm:flex-row gap-4 mb-6">
-
-                <!-- Country Filter -->
-                <div class="flex-1">
-                    <label class="block text-sm font-medium text-slate-600 mb-1">
-                        Filter by Country
-                    </label>
-
-                    <select
-                        x-model="selectedCountry"
-                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"
-                    >
-                        <option value="">
-                            All Countries
-                        </option>
-
-                        <template
-                            x-for="country in availableCountries"
-                            :key="country"
-                        >
-                            <option
-                                :value="country"
-                                x-text="country"
-                            ></option>
-                        </template>
+                <div class="field">
+                    <label for="countryFilter">Country</label>
+                    <select id="countryFilter">
+                        <option value="">All countries</option>
                     </select>
                 </div>
-
-                <!-- Status Filter -->
-                <div class="flex-1">
-                    <label class="block text-sm font-medium text-slate-600 mb-1">
-                        Filter by Status
-                    </label>
-
-                    <select
-                        x-model="selectedStatus"
-                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"
-                    >
-                        <option value="">
-                            All Statuses
-                        </option>
-
-                        <template
-                            x-for="status in availableStatuses"
-                            :key="status"
-                        >
-                            <option
-                                :value="status"
-                                x-text="status"
-                            ></option>
-                        </template>
+                <div class="field">
+                    <label for="tierFilter">Account Tier</label>
+                    <select id="tierFilter">
+                        <option value="">All tiers</option>
                     </select>
                 </div>
-
-            </div>
-
-            <!-- Interactive Table -->
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-
-                <div class="p-5 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4 bg-slate-50">
-
-                    <h3 class="text-lg font-semibold text-slate-800">
-                        Project Directory
-                    </h3>
-
-                    <div class="w-full sm:w-72 relative">
-                        <input
-                            type="text"
-                            x-model="searchQuery"
-                            placeholder="Search targets, titles, or countries..."
-                            class="w-full pl-4 pr-10 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
-                        >
-                    </div>
-
+                <div class="field">
+                    <label for="categoryFilter">Equipment Category</label>
+                    <select id="categoryFilter">
+                        <option value="">All categories</option>
+                    </select>
                 </div>
+                <button id="resetFilters" class="icon-button" type="button" title="Reset filters" aria-label="Reset filters">
+                    <i data-lucide="rotate-ccw"></i>
+                </button>
+            </section>
 
-                <div class="overflow-x-auto">
+            <section class="workspace-grid">
+                <article class="panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">Market Shape</h2>
+                        <span id="chartMeta" class="panel-meta">0 accounts</span>
+                    </div>
+                    <div class="chart-grid">
+                        <div class="chart-cell">
+                            <h3 class="chart-title">Accounts by Tier</h3>
+                            <div class="chart-frame">
+                                <canvas id="tierChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-cell">
+                            <h3 class="chart-title">Equipment Demand</h3>
+                            <div class="chart-frame">
+                                <canvas id="equipmentChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </article>
 
-                    <table class="w-full text-left border-collapse">
+                <article class="panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">Priority Action Queue</h2>
+                        <span id="queueMeta" class="panel-meta">0 open</span>
+                    </div>
+                    <div id="actionQueue" class="queue"></div>
+                </article>
+            </section>
 
-                        <thead>
-                            <tr class="bg-slate-100 text-slate-600 text-sm uppercase tracking-wider">
-
-                                <th class="p-4 font-semibold">
-                                    Project Title
-                                </th>
-
-                                <th class="p-4 font-semibold">
-                                    Country
-                                </th>
-
-                                <th class="p-4 font-semibold">
-                                    Budget
-                                </th>
-
-                                <th class="p-4 font-semibold">
-                                    Status
-                                </th>
-
-                                <th class="p-4 font-semibold">
-                                    Equipment Targets
-                                </th>
-
-                            </tr>
-                        </thead>
-
-                        <tbody class="divide-y divide-slate-200 text-sm">
-
-                            <template
-                                x-for="proj in paginatedProjects"
-                                :key="proj.iati_identifier"
-                            >
-
-                                <tr class="hover:bg-slate-50 transition">
-
-                                    <!-- Project -->
-                                    <td class="p-4">
-
-                                        <p
-                                            class="font-medium text-slate-900"
-                                            x-text="proj.project_title || 'Untitled Project'"
-                                        ></p>
-
-                                        <p
-                                            class="text-xs text-slate-500 mt-1"
-                                            x-text="proj.reporting_org_name || ''"
-                                        ></p>
-
-                                    </td>
-
-                                    <!-- Country -->
-                                    <td
-                                        class="p-4 text-slate-700"
-                                        x-text="proj.country_codes || 'Unspecified'"
-                                    ></td>
-
-                                    <!-- Budget -->
-                                    <td
-                                        class="p-4 font-medium text-slate-900"
-                                        x-text="formatCurrency(proj.total_budget_amount) + ' ' + (proj.budget_currency || '')"
-                                    ></td>
-
-                                    <!-- Status -->
-                                    <td class="p-4">
-
-                                        <span
-                                            class="px-2.5 py-1 rounded-full text-xs font-medium"
-                                            :class="(proj.activity_status_label || '').includes('Implementation')
-                                                ? 'bg-emerald-100 text-emerald-800'
-                                                : 'bg-slate-100 text-slate-800'"
-                                            x-text="proj.activity_status_label || 'Unspecified'"
-                                        ></span>
-
-                                    </td>
-
-                                    <!-- Equipment -->
-                                    <td class="p-4">
-
-                                        <div class="flex flex-wrap gap-1">
-
-                                            <template x-if="proj.equipment_target_summary">
-
-                                                <template
-                                                    x-for="tag in proj.equipment_target_summary.split('; ')"
-                                                    :key="tag"
-                                                >
-                                                    <span
-                                                        class="bg-indigo-50 text-indigo-700 border border-indigo-200 px-2 py-0.5 rounded text-xs"
-                                                        x-text="tag"
-                                                    ></span>
-                                                </template>
-
-                                            </template>
-
-                                            <template x-if="!proj.equipment_target_summary">
-
-                                                <span class="text-slate-400 italic text-xs">
-                                                    No targets detected
-                                                </span>
-
-                                            </template>
-
-                                        </div>
-
-                                    </td>
-
-                                </tr>
-
-                            </template>
-
-                            <!-- Empty State -->
-                            <tr x-show="filteredProjects.length === 0">
-
-                                <td
-                                    colspan="5"
-                                    class="p-8 text-center text-slate-500"
-                                >
-                                    No projects found matching your search.
-                                </td>
-
-                            </tr>
-
-                        </tbody>
-
+            <section class="panel">
+                <div class="panel-header">
+                    <div class="tabs" role="tablist" aria-label="Commercial views">
+                        <button class="tab-button active" data-tab="accounts" type="button">
+                            <i data-lucide="building-2"></i>
+                            Accounts
+                        </button>
+                        <button class="tab-button" data-tab="actions" type="button">
+                            <i data-lucide="list-checks"></i>
+                            Actions
+                        </button>
+                        <button class="tab-button" data-tab="programmes" type="button">
+                            <i data-lucide="briefcase-business"></i>
+                            Programmes
+                        </button>
+                        <button class="tab-button" data-tab="donors" type="button">
+                            <i data-lucide="hand-coins"></i>
+                            Donors
+                        </button>
+                    </div>
+                    <span id="tableMeta" class="panel-meta">0 rows</span>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead id="tableHead"></thead>
+                        <tbody id="tableBody"></tbody>
                     </table>
-
                 </div>
+            </section>
 
-                <!-- Pagination -->
-                <div
-                    x-show="filteredProjects.length > 0"
-                    class="p-4 border-t border-slate-200 flex items-center justify-between bg-slate-50"
-                >
+            <p id="currencyNote" class="footnote"></p>
+        </section>
+    </main>
 
-                    <div class="text-sm text-slate-500">
-                        Showing
-                        <span
-                            class="font-medium text-slate-700"
-                            x-text="Math.min((currentPage - 1) * pageSize + 1, filteredProjects.length)"
-                        ></span>
-                        -
-                        <span
-                            class="font-medium text-slate-700"
-                            x-text="Math.min(currentPage * pageSize, filteredProjects.length)"
-                        ></span>
-                        of
-                        <span
-                            class="font-medium text-slate-700"
-                            x-text="filteredProjects.length"
-                        ></span>
-                        projects
-                    </div>
-
-                    <div class="flex gap-2">
-
-                        <button
-                            @click="previousPage()"
-                            :disabled="currentPage === 1"
-                            class="px-3 py-1.5 text-sm border border-slate-300 rounded-md bg-white hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            Previous
-                        </button>
-
-                        <span
-                            class="px-3 py-1.5 text-sm text-slate-600"
-                            x-text="'Page ' + currentPage + ' of ' + totalPages"
-                        ></span>
-
-                        <button
-                            @click="nextPage()"
-                            :disabled="currentPage >= totalPages"
-                            class="px-3 py-1.5 text-sm border border-slate-300 rounded-md bg-white hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            Next
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- Application Logic -->
     <script>
-        function dashboardData() {
+        const state = {
+            summary: {},
+            accounts: [],
+            actions: [],
+            programmes: [],
+            donors: [],
+            equipment: [],
+            activeTab: "accounts",
+            filters: {
+                query: "",
+                country: "",
+                tier: "",
+                category: ""
+            },
+            charts: {}
+        };
+
+        const datasetPaths = {
+            accounts: "data/target_accounts.csv",
+            actions: "data/recommended_actions.csv",
+            programmes: "data/programme_intelligence.csv",
+            donors: "data/donor_intelligence.csv",
+            equipment: "data/equipment_entities.csv",
+            summary: "data/market_summary.json"
+        };
+
+        document.addEventListener("DOMContentLoaded", () => {
+            createIcons();
+            bindEvents();
+            loadDashboard();
+        });
+
+        function createIcons() {
+            if (window.lucide) {
+                window.lucide.createIcons();
+            }
+        }
+
+        function bindEvents() {
+            const queryInput = document.getElementById("queryInput");
+            let queryTimer = null;
+
+            queryInput.addEventListener("input", event => {
+                clearTimeout(queryTimer);
+                queryTimer = setTimeout(() => {
+                    state.filters.query = event.target.value.trim().toLowerCase();
+                    render();
+                }, 120);
+            });
+
+            document.getElementById("countryFilter").addEventListener("change", event => {
+                state.filters.country = event.target.value;
+                render();
+            });
+
+            document.getElementById("tierFilter").addEventListener("change", event => {
+                state.filters.tier = event.target.value;
+                render();
+            });
+
+            document.getElementById("categoryFilter").addEventListener("change", event => {
+                state.filters.category = event.target.value;
+                render();
+            });
+
+            document.getElementById("resetFilters").addEventListener("click", () => {
+                state.filters = {
+                    query: "",
+                    country: "",
+                    tier: "",
+                    category: ""
+                };
+                queryInput.value = "";
+                document.getElementById("countryFilter").value = "";
+                document.getElementById("tierFilter").value = "";
+                document.getElementById("categoryFilter").value = "";
+                render();
+            });
+
+            document.querySelectorAll(".tab-button").forEach(button => {
+                button.addEventListener("click", () => {
+                    state.activeTab = button.dataset.tab;
+                    document.querySelectorAll(".tab-button").forEach(tab => {
+                        tab.classList.toggle("active", tab.dataset.tab === state.activeTab);
+                    });
+                    renderTable();
+                    createIcons();
+                });
+            });
+        }
+
+        async function loadDashboard() {
+            try {
+                const [summary, accounts, actions, programmes, donors, equipment] = await Promise.all([
+                    fetchJson(datasetPaths.summary),
+                    fetchCsv(datasetPaths.accounts),
+                    fetchCsv(datasetPaths.actions),
+                    fetchCsv(datasetPaths.programmes),
+                    fetchCsv(datasetPaths.donors),
+                    fetchCsv(datasetPaths.equipment)
+                ]);
+
+                state.summary = summary || {};
+                state.accounts = sortByNumber(accounts, "fit_score");
+                state.actions = sortByNumber(actions, "opportunity_score");
+                state.programmes = sortByNumber(programmes, "opportunity_score");
+                state.donors = sortByNumber(donors, "high_priority_opportunities");
+                state.equipment = sortByNumber(equipment, "high_priority_opportunities");
+
+                populateFilters();
+                showDashboard();
+                render();
+            } catch (error) {
+                showError(error);
+            }
+        }
+
+        async function fetchJson(path) {
+            const response = await fetch(path);
+
+            if (!response.ok) {
+                throw new Error(`${path} returned ${response.status}`);
+            }
+
+            return response.json();
+        }
+
+        async function fetchCsv(path) {
+            const response = await fetch(path);
+
+            if (!response.ok) {
+                throw new Error(`${path} returned ${response.status}`);
+            }
+
+            const text = await response.text();
+
+            return new Promise((resolve, reject) => {
+                Papa.parse(text, {
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: result => {
+                        if (result.errors && result.errors.length) {
+                            console.warn(path, result.errors);
+                        }
+                        resolve((result.data || []).filter(row => {
+                            return Object.values(row).some(value => String(value || "").trim());
+                        }));
+                    },
+                    error: reject
+                });
+            });
+        }
+
+        function showDashboard() {
+            document.getElementById("loadingState").classList.add("hidden");
+            document.getElementById("errorState").classList.add("hidden");
+            document.getElementById("dashboard").classList.remove("hidden");
+        }
+
+        function showError(error) {
+            console.error(error);
+            document.getElementById("loadingState").classList.add("hidden");
+            document.getElementById("dashboard").classList.add("hidden");
+            document.getElementById("errorState").classList.remove("hidden");
+            document.getElementById("errorMessage").textContent = error.message || "The commercial datasets could not be loaded.";
+            createIcons();
+        }
+
+        function populateFilters() {
+            const countries = new Set();
+            const tiers = new Set();
+            const categories = new Set();
+
+            state.accounts.forEach(account => {
+                splitList(account.country_codes).forEach(value => countries.add(value));
+                if (account.priority_tier) {
+                    tiers.add(account.priority_tier);
+                }
+                splitList(account.top_needs).forEach(value => categories.add(value));
+            });
+
+            state.programmes.forEach(programme => {
+                splitList(programme.country_codes).forEach(value => countries.add(value));
+                splitList(programme.equipment_target_summary).forEach(value => categories.add(value));
+            });
+
+            state.equipment.forEach(item => {
+                if (item.equipment_category) {
+                    categories.add(item.equipment_category);
+                }
+            });
+
+            setOptions("countryFilter", Array.from(countries).sort(), "All countries");
+            setOptions("tierFilter", orderTiers(Array.from(tiers)), "All tiers");
+            setOptions("categoryFilter", Array.from(categories).sort(), "All categories");
+        }
+
+        function setOptions(id, values, label) {
+            const select = document.getElementById(id);
+            select.innerHTML = "";
+            const defaultOption = document.createElement("option");
+            defaultOption.value = "";
+            defaultOption.textContent = label;
+            select.appendChild(defaultOption);
+
+            values.forEach(value => {
+                const option = document.createElement("option");
+                option.value = value;
+                option.textContent = value;
+                select.appendChild(option);
+            });
+        }
+
+        function render() {
+            renderHeader();
+            renderMetrics();
+            renderQueue();
+            renderCharts();
+            renderTable();
+            createIcons();
+        }
+
+        function renderHeader() {
+            const version = state.summary.pipeline_version || "Layered commercial pipeline";
+            document.getElementById("pipelineVersion").textContent = version;
+            document.getElementById("asOfDate").textContent = state.summary.as_of ? `As of ${state.summary.as_of}` : "As of current data";
+            document.getElementById("currencyNote").textContent = state.summary.currency_note || "";
+        }
+
+        function renderMetrics() {
+            const metrics = state.summary.metrics || {};
+            const visibleAccounts = filteredAccounts();
+            const visibleActions = filteredActions();
+            const visibleProgrammes = filteredProgrammes();
+            const visibleDonors = filteredDonors();
+            const tierOne = visibleAccounts.filter(account => account.priority_tier === "Tier 1").length;
+            const tenderWatch = visibleActions.filter(action => action.action_type === "Tender watch").length;
+            const filteredFunding = sumNumber(visibleProgrammes, "total_budget_amount");
+            const highPriority = visibleProgrammes.filter(programme => {
+                return ["Strategic Priority", "Qualified Lead"].includes(programme.priority_band);
+            }).length;
+
+            document.getElementById("metricFunding").textContent = formatMoney(filteredFunding);
+            document.getElementById("metricAccounts").textContent = formatInteger(visibleAccounts.length);
+            document.getElementById("metricTierOne").textContent = `${formatInteger(tierOne)} Tier 1`;
+            document.getElementById("metricActions").textContent = formatInteger(visibleActions.length);
+            document.getElementById("metricTenderWatch").textContent = `${formatInteger(tenderWatch)} tender watches`;
+            document.getElementById("metricHighPriority").textContent = formatInteger(highPriority);
+            document.getElementById("metricDonors").textContent = formatInteger(visibleDonors.length);
+            document.getElementById("metricCountries").textContent = `${formatInteger(uniqueCountries(visibleProgrammes).size)} countries`;
+        }
+
+        function renderQueue() {
+            const container = document.getElementById("actionQueue");
+            const rows = filteredActions().slice(0, 8);
+            document.getElementById("queueMeta").textContent = `${formatInteger(filteredActions().length)} open`;
+
+            if (!rows.length) {
+                container.innerHTML = `<div class="empty-state">No actions match the current filters.</div>`;
+                return;
+            }
+
+            container.innerHTML = rows.map(action => {
+                const score = numberValue(action.opportunity_score);
+                const tagClass = score >= 75 ? "teal" : score >= 55 ? "amber" : "blue";
+
+                return `
+                    <div class="queue-item">
+                        <p class="queue-title">${escapeHtml(action.recommended_action || "Recommended action")}</p>
+                        <p class="queue-detail">${escapeHtml(action.account_name || "Unassigned account")} · ${escapeHtml(action.programme_title || action.iati_identifier || "")}</p>
+                        <div class="tag-row" style="margin-top: 8px;">
+                            <span class="tag ${tagClass}">${escapeHtml(action.priority_band || "Monitor")}</span>
+                            <span class="tag">${formatScore(score)}</span>
+                            <span class="tag">${escapeHtml(action.action_type || "Action")}</span>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+        }
+
+        function renderCharts() {
+            if (!window.Chart) {
+                return;
+            }
+
+            const accounts = filteredAccounts();
+            const programmes = filteredProgrammes();
+            document.getElementById("chartMeta").textContent = `${formatInteger(accounts.length)} accounts`;
+
+            destroyChart("tier");
+            destroyChart("equipment");
+
+            const tierCounts = groupCount(accounts, "priority_tier", orderTiers(["Tier 1", "Tier 2", "Tier 3", "Monitor"]));
+            const equipmentCounts = topEquipmentCounts(programmes, 8);
+
+            state.charts.tier = new Chart(document.getElementById("tierChart"), {
+                type: "bar",
+                data: {
+                    labels: tierCounts.map(item => item.label),
+                    datasets: [{
+                        data: tierCounts.map(item => item.count),
+                        backgroundColor: ["#0f766e", "#2563eb", "#b45309", "#94a3b8"],
+                        borderRadius: 6
+                    }]
+                },
+                options: chartOptions(false)
+            });
+
+            state.charts.equipment = new Chart(document.getElementById("equipmentChart"), {
+                type: "bar",
+                data: {
+                    labels: equipmentCounts.map(item => item.label),
+                    datasets: [{
+                        data: equipmentCounts.map(item => item.count),
+                        backgroundColor: "#2563eb",
+                        borderRadius: 6
+                    }]
+                },
+                options: chartOptions(true)
+            });
+        }
+
+        function renderTable() {
+            const configs = {
+                accounts: {
+                    rows: filteredAccounts().slice(0, 80),
+                    total: filteredAccounts().length,
+                    headers: ["Account", "Type", "Tier", "Fit", "Countries", "Needs", "Next Action"],
+                    renderer: accountRow
+                },
+                actions: {
+                    rows: filteredActions().slice(0, 100),
+                    total: filteredActions().length,
+                    headers: ["Action", "Account", "Programme", "Priority", "Score", "Owner", "Status"],
+                    renderer: actionRow
+                },
+                programmes: {
+                    rows: filteredProgrammes().slice(0, 100),
+                    total: filteredProgrammes().length,
+                    headers: ["Programme", "Countries", "Donor", "Score", "Tender Window", "Equipment", "Recommended Action"],
+                    renderer: programmeRow
+                },
+                donors: {
+                    rows: filteredDonors().slice(0, 80),
+                    total: filteredDonors().length,
+                    headers: ["Donor", "Projects", "High Priority", "Budget", "Countries", "Equipment", "Next Window"],
+                    renderer: donorRow
+                }
+            };
+
+            const config = configs[state.activeTab];
+            document.getElementById("tableMeta").textContent = `${formatInteger(config.total)} rows`;
+            document.getElementById("tableHead").innerHTML = `<tr>${config.headers.map(header => `<th>${escapeHtml(header)}</th>`).join("")}</tr>`;
+
+            if (!config.rows.length) {
+                document.getElementById("tableBody").innerHTML = `<tr><td colspan="${config.headers.length}"><div class="empty-state">No rows match the current filters.</div></td></tr>`;
+                return;
+            }
+
+            document.getElementById("tableBody").innerHTML = config.rows.map(config.renderer).join("");
+        }
+
+        function accountRow(account) {
+            return `
+                <tr>
+                    <td>
+                        <div class="primary">${escapeHtml(account.account_name || "Unnamed account")}</div>
+                        <div class="secondary">${escapeHtml(account.target_account_id || "")}</div>
+                    </td>
+                    <td>${tag(account.account_type || "Organisation", "blue")}</td>
+                    <td>${tag(account.priority_tier || "Monitor", tierClass(account.priority_tier))}</td>
+                    <td>${scoreBadge(account.fit_score)}</td>
+                    <td>${tagList(account.country_codes, "")}</td>
+                    <td>${tagList(account.top_needs, "teal")}</td>
+                    <td>${escapeHtml(account.recommended_action || "")}</td>
+                </tr>
+            `;
+        }
+
+        function actionRow(action) {
+            return `
+                <tr>
+                    <td>
+                        <div class="primary">${escapeHtml(action.action_type || "Action")}</div>
+                        <div class="secondary">${escapeHtml(action.recommended_action || "")}</div>
+                    </td>
+                    <td>${escapeHtml(action.account_name || "Unassigned")}</td>
+                    <td>
+                        <div class="primary">${escapeHtml(action.programme_title || "Unspecified programme")}</div>
+                        <div class="secondary">${escapeHtml(action.iati_identifier || "")}</div>
+                    </td>
+                    <td>${tag(action.priority_band || "Monitor", priorityClass(action.priority_band))}</td>
+                    <td>${scoreBadge(action.opportunity_score)}</td>
+                    <td>${escapeHtml(action.action_owner || "Commercial")}</td>
+                    <td>${tag(action.action_status || "Open", "teal")}</td>
+                </tr>
+            `;
+        }
+
+        function programmeRow(programme) {
+            return `
+                <tr>
+                    <td>
+                        <div class="primary">${escapeHtml(programme.programme_name || "Unnamed programme")}</div>
+                        <div class="secondary">${escapeHtml(programme.iati_identifier || "")}</div>
+                    </td>
+                    <td>${tagList(programme.country_codes, "")}</td>
+                    <td>${escapeHtml(programme.funding_agencies || "Unspecified")}</td>
+                    <td>${scoreBadge(programme.opportunity_score)}</td>
+                    <td>${tag(programme.predicted_tender_window || "Monitor", "amber")}</td>
+                    <td>${tagList(programme.equipment_target_summary, "teal")}</td>
+                    <td>${escapeHtml(programme.recommended_action || "")}</td>
+                </tr>
+            `;
+        }
+
+        function donorRow(donor) {
+            return `
+                <tr>
+                    <td>
+                        <div class="primary">${escapeHtml(donor.donor_name || "Unnamed donor")}</div>
+                        <div class="secondary">${escapeHtml(donor.latest_update || "")}</div>
+                    </td>
+                    <td>${formatInteger(donor.project_count)}</td>
+                    <td>${formatInteger(donor.high_priority_opportunities)}</td>
+                    <td>${formatMoney(donor.reported_budget)}</td>
+                    <td>${tagList(donor.top_countries, "")}</td>
+                    <td>${tagList(donor.top_equipment_categories, "teal")}</td>
+                    <td>${tagList(donor.next_window, "amber")}</td>
+                </tr>
+            `;
+        }
+
+        function filteredAccounts() {
+            return state.accounts.filter(account => {
+                return matchesQuery(account, ["account_name", "account_type", "priority_tier", "country_codes", "country_names", "top_needs", "recommended_action"]) &&
+                    matchesList(account.country_codes, state.filters.country) &&
+                    matchesValue(account.priority_tier, state.filters.tier) &&
+                    matchesContains(account.top_needs, state.filters.category);
+            });
+        }
+
+        function filteredActions() {
+            const accountsById = accountMap();
+            const programmesById = programmeMap();
+
+            return state.actions.filter(action => {
+                const account = accountsById.get(action.target_account_id) || {};
+                const programme = programmesById.get(action.iati_identifier) || {};
+                const merged = {
+                    ...programme,
+                    ...account,
+                    ...action
+                };
+
+                return matchesQuery(merged, ["account_name", "programme_title", "programme_name", "funding_agencies", "country_codes", "equipment_target_summary", "recommended_action", "action_type"]) &&
+                    matchesList(programme.country_codes || account.country_codes, state.filters.country) &&
+                    matchesValue(account.priority_tier, state.filters.tier) &&
+                    matchesContains(programme.equipment_target_summary || account.top_needs, state.filters.category);
+            });
+        }
+
+        function filteredProgrammes() {
+            return state.programmes.filter(programme => {
+                return matchesQuery(programme, ["programme_name", "funding_agencies", "implementing_partners", "country_codes", "country_names", "equipment_target_summary", "recommended_action"]) &&
+                    matchesList(programme.country_codes, state.filters.country) &&
+                    matchesContains(programme.equipment_target_summary, state.filters.category);
+            });
+        }
+
+        function filteredDonors() {
+            return state.donors.filter(donor => {
+                return matchesQuery(donor, ["donor_name", "top_countries", "top_equipment_categories", "next_window"]) &&
+                    matchesContains(donor.top_countries, state.filters.country) &&
+                    matchesContains(donor.top_equipment_categories, state.filters.category);
+            });
+        }
+
+        function matchesQuery(row, fields) {
+            if (!state.filters.query) {
+                return true;
+            }
+
+            return fields.some(field => String(row[field] || "").toLowerCase().includes(state.filters.query));
+        }
+
+        function matchesList(value, selected) {
+            if (!selected) {
+                return true;
+            }
+
+            return splitList(value).includes(selected);
+        }
+
+        function matchesValue(value, selected) {
+            return !selected || value === selected;
+        }
+
+        function matchesContains(value, selected) {
+            if (!selected) {
+                return true;
+            }
+
+            return splitList(value).some(item => item === selected || item.includes(selected));
+        }
+
+        function accountMap() {
+            return new Map(state.accounts.map(account => [account.target_account_id, account]));
+        }
+
+        function programmeMap() {
+            return new Map(state.programmes.map(programme => [programme.iati_identifier, programme]));
+        }
+
+        function splitList(value) {
+            return String(value || "")
+                .split(";")
+                .map(item => item.trim())
+                .filter(Boolean);
+        }
+
+        function uniqueCountries(rows) {
+            const countries = new Set();
+            rows.forEach(row => splitList(row.country_codes).forEach(country => countries.add(country)));
+            return countries;
+        }
+
+        function topEquipmentCounts(programmes, limit) {
+            const counts = {};
+            programmes.forEach(programme => {
+                splitList(programme.equipment_target_summary).forEach(category => {
+                    counts[category] = (counts[category] || 0) + 1;
+                });
+            });
+
+            return Object.entries(counts)
+                .map(([label, count]) => ({ label, count }))
+                .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label))
+                .slice(0, limit);
+        }
+
+        function groupCount(rows, field, preferredOrder) {
+            const counts = {};
+            rows.forEach(row => {
+                const label = row[field] || "Unspecified";
+                counts[label] = (counts[label] || 0) + 1;
+            });
+
+            const ordered = preferredOrder
+                .filter(label => counts[label] !== undefined)
+                .map(label => ({ label, count: counts[label] }));
+            const rest = Object.entries(counts)
+                .filter(([label]) => !preferredOrder.includes(label))
+                .map(([label, count]) => ({ label, count }))
+                .sort((a, b) => b.count - a.count);
+
+            return [...ordered, ...rest];
+        }
+
+        function orderTiers(values) {
+            const rank = {
+                "Tier 1": 1,
+                "Tier 2": 2,
+                "Tier 3": 3,
+                Monitor: 4
+            };
+
+            return values.sort((a, b) => (rank[a] || 99) - (rank[b] || 99) || a.localeCompare(b));
+        }
+
+        function chartOptions(horizontal) {
             return {
-                loading: true,
-                error: false,
-                errorMessage: '',
-
-                projects: [],
-
-                // Search and Pagination
-                searchQuery: '',
-                currentPage: 1,
-                pageSize: 10,
-
-                // Filters
-                selectedCountry: '',
-                selectedStatus: '',
-
-                availableCountries: [],
-                availableStatuses: [],
-
-                // Metrics
-                metrics: {
-                    totalBudget: 0,
-                    activeProjects: 0,
-                    uniqueCountries: 0,
-                    equipmentProjects: 0
-                },
-
-                // Charts
-                charts: {},
-
-                initDashboard() {
-
-                    this.$watch('searchQuery', () => {
-                        this.resetAndRender();
-                    });
-
-                    this.$watch('selectedCountry', () => {
-                        this.resetAndRender();
-                    });
-
-                    this.$watch('selectedStatus', () => {
-                        this.resetAndRender();
-                    });
-
-                    const csvUrl = 'data/iati_health_projects.csv';
-
-                    fetch(csvUrl)
-                        .then(res => {
-                            if (!res.ok) {
-                                throw new Error('CSV not found');
-                            }
-
-                            return res.text();
-                        })
-                        .then(csvText => {
-                            this.parseData(csvText);
-                        })
-                        .catch(err => {
-                            console.error('CSV loading error:', err);
-
-                            this.loading = false;
-                            this.error = true;
-                            this.errorMessage =
-                                'The CSV file could not be loaded automatically. Please upload the CSV file manually.';
-                        });
-                },
-
-                handleFileUpload(event) {
-
-                    const file = event.target.files[0];
-
-                    if (!file) {
-                        return;
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: horizontal ? "y" : "x",
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        displayColors: false
                     }
-
-                    this.loading = true;
-                    this.error = false;
-
-                    const reader = new FileReader();
-
-                    reader.onload = event => {
-                        this.parseData(event.target.result);
-                    };
-
-                    reader.onerror = () => {
-                        this.loading = false;
-                        this.error = true;
-                        this.errorMessage =
-                            'There was a problem reading the uploaded CSV file.';
-                    };
-
-                    reader.readAsText(file);
                 },
-
-                resetAndRender() {
-
-                    this.currentPage = 1;
-
-                    this.calculateMetrics();
-
-                    this.$nextTick(() => {
-                        this.renderCharts();
-                    });
-                },
-
-                parseData(csvString) {
-
-                    Papa.parse(csvString, {
-                        header: true,
-                        skipEmptyLines: true,
-
-                        complete: results => {
-
-                            if (results.errors && results.errors.length > 0) {
-                                console.warn(
-                                    'CSV parsing warnings:',
-                                    results.errors
-                                );
-                            }
-
-                            this.projects = results.data || [];
-
-                            this.extractFilterOptions();
-
-                            this.calculateMetrics();
-
-                            this.loading = false;
-                            this.error = false;
-
-                            this.$nextTick(() => {
-                                this.renderCharts();
-                            });
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: {
+                            color: "#e7edf5"
                         },
-
-                        error: error => {
-
-                            console.error(
-                                'PapaParse error:',
-                                error
-                            );
-
-                            this.loading = false;
-                            this.error = true;
-
-                            this.errorMessage =
-                                'The CSV file could not be parsed.';
+                        ticks: {
+                            color: "#647084",
+                            precision: 0
                         }
-                    });
-                },
-
-                extractFilterOptions() {
-
-                    const countries = new Set();
-                    const statuses = new Set();
-
-                    this.projects.forEach(p => {
-
-                        if (p.country_codes) {
-
-                            p.country_codes
-                                .split(';')
-                                .forEach(c => {
-
-                                    if (c.trim()) {
-                                        countries.add(c.trim());
-                                    }
-
-                                });
+                    },
+                    y: {
+                        grid: {
+                            display: !horizontal,
+                            color: "#e7edf5"
+                        },
+                        ticks: {
+                            color: "#647084",
+                            autoSkip: false
                         }
-
-                        if (p.activity_status_label) {
-
-                            statuses.add(
-                                p.activity_status_label.trim()
-                            );
-                        }
-                    });
-
-                    this.availableCountries =
-                        Array.from(countries).sort();
-
-                    this.availableStatuses =
-                        Array.from(statuses).sort();
-                },
-
-                get filteredProjects() {
-
-                    return this.projects.filter(p => {
-
-                        // Text Search
-                        const q =
-                            this.searchQuery
-                                .toLowerCase()
-                                .trim();
-
-                        const searchableText = [
-                            p.project_title || '',
-                            p.reporting_org_name || '',
-                            p.country_codes || '',
-                            p.equipment_target_summary || '',
-                            p.activity_status_label || ''
-                        ]
-                            .join(' ')
-                            .toLowerCase();
-
-                        const matchesSearch =
-                            !q ||
-                            searchableText.includes(q);
-
-                        // Country Filter
-                        const matchesCountry =
-                            !this.selectedCountry ||
-                            (p.country_codes || '')
-                                .split(';')
-                                .map(c => c.trim())
-                                .includes(this.selectedCountry);
-
-                        // Status Filter
-                        const matchesStatus =
-                            !this.selectedStatus ||
-                            (p.activity_status_label || '') ===
-                                this.selectedStatus;
-
-                        return (
-                            matchesSearch &&
-                            matchesCountry &&
-                            matchesStatus
-                        );
-                    });
-                },
-
-                get paginatedProjects() {
-
-                    const start =
-                        (this.currentPage - 1) *
-                        this.pageSize;
-
-                    return this.filteredProjects.slice(
-                        start,
-                        start + this.pageSize
-                    );
-                },
-
-                get totalPages() {
-
-                    return (
-                        Math.ceil(
-                            this.filteredProjects.length /
-                                this.pageSize
-                        ) || 1
-                    );
-                },
-
-                previousPage() {
-
-                    if (this.currentPage > 1) {
-                        this.currentPage--;
-                    }
-                },
-
-                nextPage() {
-
-                    if (this.currentPage < this.totalPages) {
-                        this.currentPage++;
-                    }
-                },
-
-                calculateMetrics() {
-
-                    let total = 0;
-                    let active = 0;
-                    let hasEq = 0;
-
-                    const countries = new Set();
-
-                    this.filteredProjects.forEach(p => {
-
-                        const amt =
-                            parseFloat(
-                                p.total_budget_amount || 0
-                            );
-
-                        if (!isNaN(amt)) {
-                            total += amt;
-                        }
-
-                        if (
-                            (p.activity_status_label || '')
-                                .toLowerCase()
-                                .includes('implementation')
-                        ) {
-                            active++;
-                        }
-
-                        if (
-                            p.equipment_target_summary &&
-                            p.equipment_target_summary.trim() !== ''
-                        ) {
-                            hasEq++;
-                        }
-
-                        if (p.country_codes) {
-
-                            p.country_codes
-                                .split(';')
-                                .forEach(c => {
-
-                                    if (c.trim()) {
-                                        countries.add(
-                                            c.trim()
-                                        );
-                                    }
-
-                                });
-                        }
-                    });
-
-                    this.metrics = {
-                        totalBudget: total,
-                        activeProjects: active,
-                        uniqueCountries: countries.size,
-                        equipmentProjects: hasEq
-                    };
-                },
-
-                formatCurrency(value) {
-
-                    const number = parseFloat(value);
-
-                    if (isNaN(number)) {
-                        return '$0';
-                    }
-
-                    if (number >= 1000000000) {
-                        return (
-                            '$' +
-                            (number / 1000000000)
-                                .toFixed(1) +
-                            'B'
-                        );
-                    }
-
-                    if (number >= 1000000) {
-                        return (
-                            '$' +
-                            (number / 1000000)
-                                .toFixed(1) +
-                            'M'
-                        );
-                    }
-
-                    if (number >= 1000) {
-                        return (
-                            '$' +
-                            (number / 1000)
-                                .toFixed(1) +
-                            'K'
-                        );
-                    }
-
-                    return '$' + number.toLocaleString();
-                },
-
-                renderCharts() {
-
-                    // Destroy existing charts
-                    if (this.charts.country) {
-                        this.charts.country.destroy();
-                    }
-
-                    if (this.charts.status) {
-                        this.charts.status.destroy();
-                    }
-
-                    const countryBudgets = {};
-                    const statusCounts = {};
-
-                    this.filteredProjects.forEach(p => {
-
-                        const amt =
-                            parseFloat(
-                                p.total_budget_amount || 0
-                            );
-
-                        const rawCountries =
-                            p.country_codes
-                                ? p.country_codes
-                                      .split(';')
-                                      .map(c => c.trim())
-                                      .filter(Boolean)
-                                : ['Unspecified'];
-
-                        const allocatedAmount =
-                            !isNaN(amt)
-                                ? amt /
-                                  (rawCountries.length || 1)
-                                : 0;
-
-                        rawCountries.forEach(country => {
-
-                            countryBudgets[country] =
-                                (countryBudgets[country] || 0) +
-                                allocatedAmount;
-                        });
-
-                        const status =
-                            p.activity_status_label ||
-                            'Unspecified';
-
-                        statusCounts[status] =
-                            (statusCounts[status] || 0) + 1;
-                    });
-
-                    // Top 10 countries
-                    const sortedCountries =
-                        Object.entries(countryBudgets)
-                            .sort((a, b) => b[1] - a[1]);
-
-                    const topCountries =
-                        sortedCountries.slice(0, 10);
-
-                    const otherSum =
-                        sortedCountries
-                            .slice(10)
-                            .reduce(
-                                (sum, item) =>
-                                    sum + item[1],
-                                0
-                            );
-
-                    if (otherSum > 0) {
-                        topCountries.push([
-                            'Other',
-                            otherSum
-                        ]);
-                    }
-
-                    const chartLabels =
-                        topCountries.map(item => item[0]);
-
-                    const chartData =
-                        topCountries.map(item => item[1]);
-
-                    // Country Chart
-                    const ctxCountry =
-                        document.getElementById(
-                            'countryChart'
-                        );
-
-                    if (ctxCountry) {
-
-                        this.charts.country =
-                            new Chart(ctxCountry, {
-
-                                type: 'bar',
-
-                                data: {
-                                    labels: chartLabels,
-
-                                    datasets: [
-                                        {
-                                            label:
-                                                'Allocated Budget (USD)',
-
-                                            data: chartData,
-
-                                            backgroundColor:
-                                                '#6366f1',
-
-                                            borderRadius: 4
-                                        }
-                                    ]
-                                },
-
-                                options: {
-
-                                    responsive: true,
-
-                                    maintainAspectRatio:
-                                        false,
-
-                                    plugins: {
-                                        legend: {
-                                            display: false
-                                        }
-                                    },
-
-                                    scales: {
-
-                                        y: {
-
-                                            beginAtZero: true,
-
-                                            ticks: {
-
-                                                callback: val => {
-
-                                                    if (
-                                                        val >=
-                                                        1000000
-                                                    ) {
-                                                        return (
-                                                            '$' +
-                                                            (
-                                                                val /
-                                                                1000000
-                                                            ).toFixed(
-                                                                1
-                                                            ) +
-                                                            'M'
-                                                        );
-                                                    }
-
-                                                    if (
-                                                        val >=
-                                                        1000
-                                                    ) {
-                                                        return (
-                                                            '$' +
-                                                            (
-                                                                val /
-                                                                1000
-                                                            ).toFixed(
-                                                                0
-                                                            ) +
-                                                            'K'
-                                                        );
-                                                    }
-
-                                                    return '$' + val;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            });
-                    }
-
-                    // Status Chart
-                    const ctxStatus =
-                        document.getElementById(
-                            'statusChart'
-                        );
-
-                    if (ctxStatus) {
-
-                        this.charts.status =
-                            new Chart(ctxStatus, {
-
-                                type: 'doughnut',
-
-                                data: {
-
-                                    labels:
-                                        Object.keys(
-                                            statusCounts
-                                        ),
-
-                                    datasets: [
-                                        {
-                                            data:
-                                                Object.values(
-                                                    statusCounts
-                                                ),
-
-                                            backgroundColor: [
-                                                '#10b981',
-                                                '#f59e0b',
-                                                '#3b82f6',
-                                                '#94a3b8',
-                                                '#ef4444',
-                                                '#8b5cf6'
-                                            ],
-
-                                            borderWidth: 0
-                                        }
-                                    ]
-                                },
-
-                                options: {
-
-                                    responsive: true,
-
-                                    maintainAspectRatio:
-                                        false,
-
-                                    cutout: '70%',
-
-                                    plugins: {
-
-                                        legend: {
-                                            position: 'bottom'
-                                        }
-                                    }
-                                }
-                            });
                     }
                 }
             };
         }
-    </script>
 
+        function destroyChart(key) {
+            if (state.charts[key]) {
+                state.charts[key].destroy();
+                state.charts[key] = null;
+            }
+        }
+
+        function sortByNumber(rows, field) {
+            return [...rows].sort((a, b) => numberValue(b[field]) - numberValue(a[field]));
+        }
+
+        function sumNumber(rows, field) {
+            return rows.reduce((sum, row) => sum + numberValue(row[field]), 0);
+        }
+
+        function numberValue(value) {
+            const number = Number.parseFloat(value);
+            return Number.isFinite(number) ? number : 0;
+        }
+
+        function formatInteger(value) {
+            return Math.round(numberValue(value)).toLocaleString();
+        }
+
+        function formatMoney(value) {
+            const number = numberValue(value);
+            const sign = number < 0 ? "-" : "";
+            const absolute = Math.abs(number);
+
+            if (absolute >= 1_000_000_000) {
+                return `${sign}$${(absolute / 1_000_000_000).toFixed(1)}B`;
+            }
+
+            if (absolute >= 1_000_000) {
+                return `${sign}$${(absolute / 1_000_000).toFixed(1)}M`;
+            }
+
+            if (absolute >= 1_000) {
+                return `${sign}$${(absolute / 1_000).toFixed(1)}K`;
+            }
+
+            return `${sign}$${absolute.toLocaleString()}`;
+        }
+
+        function formatScore(value) {
+            return numberValue(value).toFixed(1).replace(".0", "");
+        }
+
+        function scoreBadge(value) {
+            const score = numberValue(value);
+            const scoreClass = score >= 75 ? "high" : score >= 50 ? "medium" : "low";
+            return `<span class="score ${scoreClass}">${formatScore(score)}</span>`;
+        }
+
+        function tag(value, className) {
+            const safeClass = className ? ` ${className}` : "";
+            return `<span class="tag${safeClass}">${escapeHtml(value)}</span>`;
+        }
+
+        function tagList(value, className) {
+            const items = splitList(value).slice(0, 4);
+
+            if (!items.length) {
+                return `<span class="secondary">None</span>`;
+            }
+
+            return `<div class="tag-row">${items.map(item => tag(item, className)).join("")}</div>`;
+        }
+
+        function tierClass(value) {
+            if (value === "Tier 1") {
+                return "teal";
+            }
+
+            if (value === "Tier 2") {
+                return "blue";
+            }
+
+            if (value === "Tier 3") {
+                return "amber";
+            }
+
+            return "";
+        }
+
+        function priorityClass(value) {
+            if (value === "Strategic Priority") {
+                return "teal";
+            }
+
+            if (value === "Qualified Lead") {
+                return "blue";
+            }
+
+            if (value === "Watchlist") {
+                return "amber";
+            }
+
+            return "";
+        }
+
+        function escapeHtml(value) {
+            return String(value || "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
+    </script>
 </body>
 </html>
-```
