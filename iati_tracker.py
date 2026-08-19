@@ -499,7 +499,9 @@ def parse_budgets(
         if not isinstance(budget, dict):
             continue
 
-        values = as_list(budget.get("value"))
+        values = as_list(
+            budget.get("value")
+        )
 
         if not values:
             continue
@@ -509,43 +511,95 @@ def parse_budgets(
         if not isinstance(value, dict):
             continue
 
-        amount = clean_number(value.get("text()"))
+        amount = clean_number(
+            value.get("text()")
+        )
 
         if amount is None:
             continue
 
+        period_start = ""
+        period_end = ""
+
+        period_start_values = as_list(
+            budget.get("period-start")
+        )
+
+        if period_start_values:
+            first_period_start = period_start_values[0]
+
+            if isinstance(
+                first_period_start,
+                dict,
+            ):
+                period_start = (
+                    first_period_start.get(
+                        "@iso-date",
+                        "",
+                    )
+                    or ""
+                )
+
+        period_end_values = as_list(
+            budget.get("period-end")
+        )
+
+        if period_end_values:
+            first_period_end = period_end_values[0]
+
+            if isinstance(
+                first_period_end,
+                dict,
+            ):
+                period_end = (
+                    first_period_end.get(
+                        "@iso-date",
+                        "",
+                    )
+                    or ""
+                )
+
         records.append({
             "activity_id": activity_id,
+
             "budget_index": index,
-            "budget_type_code": budget.get("@type", "") or "",
-            "budget_status_code": budget.get("@status", "") or "",
-            "period_start": budget.get(
-                "period-start",
-                [{}],
-            )[0].get("@iso-date", "")
-            if isinstance(
-                budget.get("period-start"),
-                list,
-            ) and budget.get("period-start")
-            else "",
-            "period_end": budget.get(
-                "period-end",
-                [{}],
-            )[0].get("@iso-date", "")
-            if isinstance(
-                budget.get("period-end"),
-                list,
-            ) and budget.get("period-end")
-            else "",
-            "amount": amount,
-            "currency": (
-                value.get("@currency", "")
-                or ""
-            ),
-            "value_date": (
-                value.get("@value-date", "")
-                or ""
-            ),
+
+            "budget_type_code":
+                budget.get(
+                    "@type",
+                    "",
+                )
+                or "",
+
+            "budget_status_code":
+                budget.get(
+                    "@status",
+                    "",
+                )
+                or "",
+
+            "period_start":
+                period_start,
+
+            "period_end":
+                period_end,
+
+            "amount":
+                amount,
+
+            "currency":
+                value.get(
+                    "@currency",
+                    "",
+                )
+                or "",
+
+            "value_date":
+                value.get(
+                    "@value-date",
+                    "",
+                )
+                or "",
         })
 
     return records
@@ -878,6 +932,109 @@ def parse_org_node(
 # ACTIVITY PARSER
 # ============================================================================
 
+def resolve_activity_budget(
+    budgets: List[Dict[str, Any]],
+) -> Dict[str, Any]:
+    """Resolve an activity-level budget without treating IATI versions as additive."""
+
+    if not budgets:
+        return {
+            "total": None,
+            "currency": "",
+            "budget_type": "",
+            "status": "NO_BUDGET",
+            "confidence": "NONE",
+        }
+
+    original = [b for b in budgets if b.get("budget_type_code") == "1"]
+    revised = [b for b in budgets if b.get("budget_type_code") == "2"]
+
+    selected = revised or original or budgets
+    selected_type = (
+        "REVISED" if revised else
+        "ORIGINAL" if original else
+        "UNKNOWN"
+    )
+
+    def currencies_for(items: List[Dict[str, Any]]) -> set:
+        return {
+            str(b.get("currency") or "").strip().upper()
+            for b in items
+            if str(b.get("currency") or "").strip()
+        }
+
+    currencies = currencies_for(selected)
+
+    if len(currencies) > 1:
+        return {
+            "total": None,
+            "currency": "MIXED",
+            "budget_type": selected_type,
+            "status": "MIXED_CURRENCY",
+            "confidence": "LOW",
+        }
+
+    currency = next(iter(currencies), "")
+
+    net_total = sum(
+        float(b["amount"])
+        for b in selected
+        if b.get("amount") is not None
+    )
+
+    if net_total > 0:
+        return {
+            "total": net_total,
+            "currency": currency,
+            "budget_type": selected_type,
+            "status": "VALID",
+            "confidence": "HIGH",
+        }
+
+    # Some publishers expose negative revision/adjustment lines.
+    # Never pass a negative project budget into commercial scoring.
+    positive_total = sum(
+        float(b["amount"])
+        for b in selected
+        if b.get("amount") is not None and float(b["amount"]) > 0
+    )
+
+    if positive_total > 0:
+        return {
+            "total": positive_total,
+            "currency": currency,
+            "budget_type": selected_type,
+            "status": "POSITIVE_COMPONENTS_ONLY",
+            "confidence": "MEDIUM",
+        }
+
+    # Revised data can be negative-only while the original budget contains
+    # the actual positive allocation. Use it as a safe fallback.
+    if revised and original:
+        original_currencies = currencies_for(original)
+        original_positive = sum(
+            float(b["amount"])
+            for b in original
+            if b.get("amount") is not None and float(b["amount"]) > 0
+        )
+        if len(original_currencies) == 1 and original_positive > 0:
+            return {
+                "total": original_positive,
+                "currency": next(iter(original_currencies)),
+                "budget_type": "ORIGINAL_FALLBACK",
+                "status": "REVISED_NEGATIVE_OR_EMPTY",
+                "confidence": "MEDIUM",
+            }
+
+    return {
+        "total": None,
+        "currency": currency,
+        "budget_type": selected_type,
+        "status": "NO_POSITIVE_BUDGET",
+        "confidence": "LOW",
+    }
+
+
 def parse_activity(
     raw_doc: dict,
 ) -> Optional[Dict[str, Any]]:
@@ -984,28 +1141,12 @@ def parse_activity(
         )
     )
 
-    total_budget = 0.0
-    budget_currency = ""
+    budget_resolution = resolve_activity_budget(
+    first_budget
+    )
 
-    currencies = set()
-
-    for budget in first_budget:
-
-        if budget["amount"] is not None:
-            total_budget += budget["amount"]
-
-        if budget["currency"]:
-            currencies.add(
-                budget["currency"]
-            )
-
-    if len(currencies) == 1:
-        budget_currency = next(
-            iter(currencies)
-        )
-
-    elif len(currencies) > 1:
-        budget_currency = "MIXED"
+    total_budget = budget_resolution["total"]
+    budget_currency = budget_resolution["currency"]
 
     humanitarian = (
         activity.get("@humanitarian", "")
@@ -1934,10 +2075,8 @@ def main() -> None:
     )
 
     parser.add_argument(
-        "--api-key",
-        default=os.environ.get(
-            "IATI_API_KEY"
-        ),
+    "--api-key",
+    default=os.environ.get("IATI_API_KEY"),
     )
 
     parser.add_argument(

@@ -21,3 +21,4 @@ env/
 
 # Raw API dumps
 raw_*.json
+data/iati_intelligence_backup_before_alias_cleanup.db
