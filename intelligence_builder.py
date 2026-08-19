@@ -1902,6 +1902,12 @@ def write_sqlite_tables(
 
     try:
         for name, dataframe in datasets.items():
+            # opportunity_scores is owned by the SQL scoring layer as a VIEW.
+            # The Python builder still writes data/opportunity_scores.csv,
+            # but must not overwrite the SQLite view with a table.
+            if name == "opportunity_scores":
+                continue
+
             dataframe.to_sql(
                 name,
                 connection,
