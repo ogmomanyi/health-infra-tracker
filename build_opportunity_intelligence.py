@@ -198,8 +198,11 @@ def intelligence_confidence(row):
     if has_text(row["implementing_partners"]):
         evidence += 1
 
-    if num(row["total_budget_amount"]) > 0:
-        evidence += 1
+    def has_valid_budget_evidence(row):
+        return (
+          num(row["budget_positive_amount"]) > 0
+          or num(row["budget_latest_amount"]) > 0
+         )
 
     if has_text(row["equipment_target_summary"]):
         evidence += 1

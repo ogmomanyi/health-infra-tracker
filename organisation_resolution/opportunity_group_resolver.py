@@ -2,6 +2,11 @@ import sqlite3
 
 from organisation_resolution.normalizer import normalize_name
 from organisation_resolution.database_resolver import get_canonical_entity_id
+from organisation_resolution.database_resolver import (
+    get_canonical_entity_id,
+    load_entity_candidates,
+    load_alias_candidates,
+)
 
 
 DB = "data/iati_intelligence.db"
@@ -111,33 +116,40 @@ def load_group_keys(conn):
     return aliases
 
 
-def resolve_entity(conn, value):
+def resolve_entity(conn, value, candidates=None):
     """
-    Use the existing database resolver.
+    Resolve an opportunity organisation name to an entity_id.
 
-    Returns entity_id or None.
+    This resolves the NAME first, then canonicalizes the resulting
+    entity through DUPLICATE_OF relationships.
     """
 
-    try:
-        return get_canonical_entity_id(
-            conn,
-            value
-        )
+    normalized = normalize_name(value)
 
-    except TypeError:
-        # Some versions of the resolver may expect the database
-        # path rather than a connection. Fall back safely.
-        try:
-            return get_canonical_entity_id(
-                value,
-                DB
-            )
-        except Exception:
-            return None
-
-    except Exception:
+    if not normalized:
         return None
 
+    if candidates is None:
+        candidates = (
+            load_entity_candidates(conn)
+            + load_alias_candidates(conn)
+        )
+
+    matches = {
+        candidate["entity_id"]
+        for candidate in candidates
+        if candidate["normalized_name"] == normalized
+    }
+
+    if len(matches) != 1:
+        return None
+
+    entity_id = next(iter(matches))
+
+    return get_canonical_entity_id(
+        conn,
+        entity_id
+    )
 
 def resolve_group(
     value,
@@ -228,7 +240,8 @@ def resolve_reference(
     conn,
     value,
     group_aliases,
-    group_keys
+    group_keys,
+    entity_candidates,
 ):
     """
     Resolve one opportunity organisation reference.
@@ -280,8 +293,9 @@ def resolve_reference(
     # ---------------------------------------------------------
 
     entity_id = resolve_entity(
-        conn,
-        value
+         conn,
+         value,
+         entity_candidates,
     )
 
     if entity_id:
