@@ -45,7 +45,9 @@ def canonical_map():
         WHERE entity_status = 'ACTIVE'
         """
     ):
-        by_name[normalize_name(canonical_name)] = canonical_id(entity_id)
+        normalized = normalize_name(canonical_name)
+        if normalized:
+            by_name[normalized] = canonical_id(entity_id)
 
     for org_ref, entity_id in conn.execute(
         """
@@ -71,7 +73,11 @@ def resolve_row(row, by_ref, by_name):
         if ref and ref in by_ref:
             return by_ref[ref]
 
-    return by_name.get(normalize_name(row.get("canonical_name", "")), "")
+    normalized_name = normalize_name(row.get("canonical_name", ""))
+    if normalized_name:
+        return by_name.get(normalized_name, "")
+
+    return ""
 
 
 _original_build_org_intel = builder.build_organisation_intelligence
@@ -80,6 +86,32 @@ _original_build_org_intel = builder.build_organisation_intelligence
 def build_org_intel_fixed(derived):
     by_ref, by_name = canonical_map()
     fixed = derived.copy()
+
+    # IATI occasionally contains placeholder organisation names such as "-".
+    # They are useful as source records but are not canonical organisations.
+    # Drop them only when they also have no resolvable org reference; real
+    # organisations must still fail loudly if entity resolution cannot map them.
+    def has_resolvable_reference(row):
+        refs = []
+        refs.extend(builder.split_values(row.get("primary_org_ref")))
+        refs.extend(builder.split_values(row.get("org_refs")))
+        return any(
+            ref.strip().lower() in by_ref
+            for ref in refs
+            if ref.strip()
+        )
+
+    placeholder_mask = fixed["canonical_name"].apply(
+        lambda value: not normalize_name(value)
+    )
+    placeholder_without_ref = placeholder_mask & ~fixed.apply(
+        has_resolvable_reference,
+        axis=1,
+    )
+    dropped = int(placeholder_without_ref.sum())
+    if dropped:
+        fixed = fixed.loc[~placeholder_without_ref].copy()
+
     fixed["organisation_entity_id"] = fixed.apply(
         lambda row: resolve_row(row, by_ref, by_name),
         axis=1,
@@ -91,6 +123,9 @@ def build_org_intel_fixed(derived):
         raise RuntimeError(
             f"Unresolved canonical organisations: {len(unresolved)}; examples: {examples}"
         )
+
+    if dropped:
+        print(f"Ignored {dropped} non-canonical placeholder organisation record(s)")
 
     return _original_build_org_intel(fixed)
 
