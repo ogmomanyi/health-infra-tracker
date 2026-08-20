@@ -1,6 +1,6 @@
 {
-  "pipeline_version": "3.0-layered-commercial",
-  "generated_at": "2026-08-18T15:09:15Z",
+  "pipeline_version": "1.0-step1",
+  "generated_at": "2026-08-20T06:56:45Z",
   "countries": [
     "KE",
     "UG",
@@ -13,27 +13,12 @@
   ],
   "query": "recipient_country_code:(KE UG RW ET SS SO TZ CD) AND sector_code:(12110 12181 12182 12191 12196 12220 12230 12240 12250 12261 12262 12263 12264 12281 12310 12320 12330 12340 12350 12382) AND activity_status_code:(1 2)",
   "row_counts": {
-    "iati_health_projects": 3270,
-    "transactions": 68471,
-    "budgets": 13632,
-    "planned_disbursements": 4691,
-    "activity_countries": 5773,
-    "organisations": 17577,
-    "organisation_entities": 2410,
-    "organisation_aliases": 3188,
-    "equipment_entities": 7,
-    "manufacturer_entities": 0,
-    "opportunity_scores": 3270,
-    "organisation_intelligence": 2410,
-    "programme_intelligence": 3270,
-    "donor_intelligence": 506,
-    "target_accounts": 2410,
-    "engagements": 1820,
-    "crm_notes": 1820,
-    "recommended_actions": 1277,
-    "opportunities": 3270,
-    "equipment_intelligence": 7,
-    "tender_predictions": 1277
+    "iati_health_projects": 3264,
+    "transactions": 70104,
+    "budgets": 13664,
+    "planned_disbursements": 4694,
+    "activity_countries": 5727,
+    "organisations": 17638
   },
   "files": {
     "iati_health_projects": "iati_health_projects.csv",
@@ -41,146 +26,6 @@
     "budgets": "budgets.csv",
     "planned_disbursements": "planned_disbursements.csv",
     "activity_countries": "activity_countries.csv",
-    "organisations": "organisations.csv",
-    "organisation_entities": "organisation_entities.csv",
-    "organisation_aliases": "organisation_aliases.csv",
-    "equipment_entities": "equipment_entities.csv",
-    "manufacturer_entities": "manufacturer_entities.csv",
-    "opportunity_scores": "opportunity_scores.csv",
-    "organisation_intelligence": "organisation_intelligence.csv",
-    "programme_intelligence": "programme_intelligence.csv",
-    "donor_intelligence": "donor_intelligence.csv",
-    "target_accounts": "target_accounts.csv",
-    "engagements": "engagements.csv",
-    "crm_notes": "crm_notes.csv",
-    "recommended_actions": "recommended_actions.csv",
-    "opportunities": "opportunities.csv",
-    "equipment_intelligence": "equipment_intelligence.csv",
-    "tender_predictions": "tender_predictions.csv"
-  },
-  "intelligence_generated_at": "2026-08-19T12:10:08Z",
-  "plan_progress": [
-    {
-      "id": "01",
-      "name": "Market Overview",
-      "status": "ready",
-      "output": "Country, sector, status, and funding views"
-    },
-    {
-      "id": "02B",
-      "name": "Procurement Intelligence",
-      "status": "ready",
-      "output": "Equipment and infrastructure demand signals"
-    },
-    {
-      "id": "02C",
-      "name": "Opportunity Scoring",
-      "status": "ready",
-      "output": "Priority, confidence, and recommended actions"
-    },
-    {
-      "id": "02D",
-      "name": "Opportunity Intelligence UI",
-      "status": "ready",
-      "output": "Ranked opportunity workspace"
-    },
-    {
-      "id": "03",
-      "name": "Donor / Organisation Intelligence",
-      "status": "launch_baseline",
-      "output": "Donor pipeline, countries, and equipment focus"
-    },
-    {
-      "id": "04",
-      "name": "Equipment / Product Intelligence",
-      "status": "launch_baseline",
-      "output": "Category demand by country and donor"
-    },
-    {
-      "id": "05",
-      "name": "Tender / Procurement Prediction",
-      "status": "launch_baseline",
-      "output": "Predicted tender windows from IATI signals"
-    }
-  ],
-  "pipeline_layers": [
-    {
-      "layer": "RAW",
-      "datasets": [
-        "iati_activities",
-        "iati_transactions",
-        "iati_organisations"
-      ],
-      "purpose": "Preserve source-shaped IATI records before business rules."
-    },
-    {
-      "layer": "NORMALIZED",
-      "datasets": [
-        "activities",
-        "transactions",
-        "organisations"
-      ],
-      "purpose": "Store clean activity, finance, and participant records."
-    },
-    {
-      "layer": "CANONICAL",
-      "datasets": [
-        "organisation_entities",
-        "organisation_aliases",
-        "equipment_entities",
-        "manufacturer_entities"
-      ],
-      "purpose": "Resolve reusable commercial entities from normalized IATI data."
-    },
-    {
-      "layer": "INTELLIGENCE",
-      "datasets": [
-        "opportunity_scores",
-        "organisation_intelligence",
-        "programme_intelligence",
-        "donor_intelligence"
-      ],
-      "purpose": "Score programmes, donors, and organisations for market signals."
-    },
-    {
-      "layer": "COMMERCIAL",
-      "datasets": [
-        "target_accounts",
-        "engagements",
-        "crm_notes",
-        "recommended_actions"
-      ],
-      "purpose": "Turn intelligence into sales and partnership workflows."
-    }
-  ],
-  "layer_outputs": {
-    "raw": [
-      "iati_activities",
-      "iati_transactions",
-      "iati_organisations"
-    ],
-    "normalized": [
-      "activities",
-      "transactions",
-      "organisations"
-    ],
-    "canonical": [
-      "organisation_entities",
-      "organisation_aliases",
-      "equipment_entities",
-      "manufacturer_entities"
-    ],
-    "intelligence": [
-      "opportunity_scores",
-      "organisation_intelligence",
-      "programme_intelligence",
-      "donor_intelligence"
-    ],
-    "commercial": [
-      "target_accounts",
-      "engagements",
-      "crm_notes",
-      "recommended_actions"
-    ]
+    "organisations": "organisations.csv"
   }
 }
