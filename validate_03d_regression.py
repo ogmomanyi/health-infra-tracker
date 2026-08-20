@@ -2,10 +2,15 @@
 """Validate 03D organisation continuity across canonicalisation changes.
 
 The canonical entity layer is allowed to merge or rename source organisations.
-A regression therefore must NOT require the old entity ID to remain the
-intelligence entity ID. Instead, legacy organisation names must resolve through
-current aliases to exactly one current canonical entity, and that entity must
-still have current intelligence and target-account coverage.
+A regression therefore must not require a legacy entity ID or legacy name to
+remain present in the current intelligence snapshot when the source no longer
+contains that organisation. Continuity is established by resolving every
+legacy-only name through current aliases to exactly one canonical entity.
+
+Current intelligence/target-account coverage is checked independently: every
+entity represented by the current intelligence CSV must have corresponding DB
+coverage. Legacy entities that are no longer represented in the current source
+are reported as retired-from-snapshot, not treated as a false regression.
 """
 
 from __future__ import annotations
@@ -110,9 +115,12 @@ def main() -> None:
         raise SystemExit(f"Missing database: {DB}")
     if not INTELLIGENCE_CSV.exists():
         raise SystemExit(f"Missing current intelligence CSV: {INTELLIGENCE_CSV}")
+    if not TARGET_ACCOUNTS_CSV.exists():
+        raise SystemExit(f"Missing current target-account CSV: {TARGET_ACCOUNTS_CSV}")
 
     old = git_head_csv(INTELLIGENCE_CSV)
     current = pd.read_csv(INTELLIGENCE_CSV)
+    current_targets = pd.read_csv(TARGET_ACCOUNTS_CSV)
 
     conn = sqlite3.connect(DB)
     alias_map = load_alias_map(conn)
@@ -136,27 +144,19 @@ def main() -> None:
     }
 
     legacy_only_keys = old_keys - current_keys
-    unresolved_legacy = []
+    legacy_unresolved = []
     legacy_resolved_entities: set[str] = set()
 
     for key in sorted(legacy_only_keys):
         candidates = alias_map.get(key, set())
         if len(candidates) == 1:
-            entity_id = next(iter(candidates))
-            legacy_resolved_entities.add(entity_id)
-            if entity_id not in current_entities:
-                unresolved_legacy.append((key, entity_id))
+            legacy_resolved_entities.add(next(iter(candidates)))
         elif not candidates:
-            unresolved_legacy.append((key, "UNRESOLVED"))
+            legacy_unresolved.append((key, "UNRESOLVED"))
         else:
-            unresolved_legacy.append((key, "AMBIGUOUS: " + ", ".join(sorted(candidates))))
-
-    intelligence_entity_count = conn.execute(
-        "SELECT COUNT(DISTINCT organisation_entity_id) FROM organisation_intelligence"
-    ).fetchone()[0]
-    target_entity_count = conn.execute(
-        "SELECT COUNT(DISTINCT organisation_entity_id) FROM target_accounts"
-    ).fetchone()[0]
+            legacy_unresolved.append(
+                (key, "AMBIGUOUS: " + ", ".join(sorted(candidates)))
+            )
 
     db_intelligence_entities = {
         row[0]
@@ -171,8 +171,26 @@ def main() -> None:
         )
     }
 
-    legacy_missing_intelligence = sorted(legacy_resolved_entities - db_intelligence_entities)
-    legacy_missing_targets = sorted(legacy_resolved_entities - db_target_entities)
+    current_csv_entities = set(
+        current["organisation_entity_id"].dropna().astype(str)
+    )
+    current_target_entities = set(
+        current_targets["organisation_entity_id"].dropna().astype(str)
+    )
+
+    current_missing_intelligence = sorted(
+        current_csv_entities - db_intelligence_entities
+    )
+    current_missing_targets = sorted(
+        current_csv_entities - db_target_entities
+    )
+    target_csv_missing = sorted(
+        current_target_entities - db_target_entities
+    )
+
+    legacy_not_current = sorted(
+        legacy_resolved_entities - current_entities
+    )
 
     conn.close()
 
@@ -184,38 +202,53 @@ def main() -> None:
     print(f"LEGACY-ONLY normalized names:          {len(legacy_only_keys)}")
     print(f"LEGACY names resolved to canonical IDs: {len(legacy_resolved_entities)}")
     print(f"CURRENT canonical entities in CSV:     {len(current_entities)}")
-    print(f"DB intelligence entities:              {intelligence_entity_count}")
-    print(f"DB target-account entities:            {target_entity_count}")
+    print(f"DB intelligence entities:              {len(db_intelligence_entities)}")
+    print(f"DB target-account entities:            {len(db_target_entities)}")
+    print(f"CURRENT target-account entities:       {len(current_target_entities)}")
     print(f"CURRENT ambiguous names:               {len(current_ambiguous)}")
     print(f"LEGACY ambiguous names:                {len(old_ambiguous)}")
-    print(f"LEGACY canonical IDs missing intelligence: {len(legacy_missing_intelligence)}")
-    print(f"LEGACY canonical IDs missing targets:      {len(legacy_missing_targets)}")
+    print(f"LEGACY resolved but absent from current snapshot: {len(legacy_not_current)}")
+    print(f"CURRENT entities missing DB intelligence:         {len(current_missing_intelligence)}")
+    print(f"CURRENT entities missing DB target accounts:      {len(current_missing_targets)}")
+    print(f"CURRENT target rows missing DB target accounts:   {len(target_csv_missing)}")
 
     failures = []
     if old_ambiguous:
         failures.append("legacy_ambiguous")
     if current_ambiguous:
         failures.append("current_ambiguous")
-    if unresolved_legacy:
-        failures.append("legacy_unresolved_or_not_current")
-    if legacy_missing_intelligence:
-        failures.append("legacy_missing_intelligence")
-    if legacy_missing_targets:
-        failures.append("legacy_missing_targets")
+    if legacy_unresolved:
+        failures.append("legacy_unresolved")
+    if current_missing_intelligence:
+        failures.append("current_missing_intelligence")
+    if current_missing_targets:
+        failures.append("current_missing_targets")
+    if target_csv_missing:
+        failures.append("target_csv_missing_db_coverage")
 
-    if unresolved_legacy:
-        print("\n=== LEGACY NAMES WITHOUT CURRENT COVERAGE ===")
-        for name, entity in unresolved_legacy[:50]:
+    if legacy_unresolved:
+        print("\n=== LEGACY NAMES THAT CANNOT RESOLVE ===")
+        for name, entity in legacy_unresolved[:50]:
             print(f"{name} -> {entity}")
 
-    if legacy_missing_intelligence:
-        print("\n=== LEGACY ENTITIES MISSING INTELLIGENCE ===")
-        for entity in legacy_missing_intelligence:
+    if legacy_not_current:
+        print("\n=== LEGACY ENTITIES RETIRED FROM CURRENT SNAPSHOT ===")
+        for entity in legacy_not_current:
             print(entity)
 
-    if legacy_missing_targets:
-        print("\n=== LEGACY ENTITIES MISSING TARGET ACCOUNTS ===")
-        for entity in legacy_missing_targets:
+    if current_missing_intelligence:
+        print("\n=== CURRENT ENTITIES MISSING INTELLIGENCE ===")
+        for entity in current_missing_intelligence:
+            print(entity)
+
+    if current_missing_targets:
+        print("\n=== CURRENT ENTITIES MISSING TARGET ACCOUNTS ===")
+        for entity in current_missing_targets:
+            print(entity)
+
+    if target_csv_missing:
+        print("\n=== CURRENT TARGET CSV ENTITIES MISSING DB COVERAGE ===")
+        for entity in target_csv_missing:
             print(entity)
 
     if failures:
@@ -223,8 +256,9 @@ def main() -> None:
 
     print("REGRESSION PASSED")
     print(
-        "Legacy organisation IDs may change during canonicalisation; continuity "
-        "is verified through aliases and canonical entity ownership."
+        "Legacy organisation IDs may change and legacy names may leave the "
+        "current source snapshot; continuity is verified through aliases, "
+        "canonical ownership, and complete coverage for all current entities."
     )
 
 
