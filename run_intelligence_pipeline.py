@@ -15,6 +15,7 @@ def canonical_map():
     conn = sqlite3.connect(DB)
     by_ref = {}
     by_name = {}
+    alias_candidates = {}
     names_by_id = {}
     parent_by_child = {
         child: parent
@@ -50,7 +51,7 @@ def canonical_map():
         names_by_id[canonical_entity_id] = canonical_name
         normalized = normalize_name(canonical_name)
         if normalized:
-            by_name[normalized] = canonical_entity_id
+            alias_candidates.setdefault(normalized, set()).add(canonical_entity_id)
 
     for org_ref, entity_id in conn.execute(
         """
@@ -60,6 +61,26 @@ def canonical_map():
         """
     ):
         by_ref[org_ref.strip().lower()] = canonical_id(entity_id)
+
+    # A source record may have a useful organisation name but no resolvable
+    # org_ref.  Include aliases in the name index so those records still resolve
+    # to their canonical entity.  Ambiguous aliases are deliberately excluded.
+    for alias_name, entity_id in conn.execute(
+        """
+        SELECT alias_name, entity_id
+        FROM organisation_aliases
+        WHERE alias_name IS NOT NULL AND alias_name != ''
+        """
+    ):
+        normalized = normalize_name(alias_name)
+        if normalized:
+            alias_candidates.setdefault(normalized, set()).add(
+                canonical_id(entity_id)
+            )
+
+    for normalized, entity_ids in alias_candidates.items():
+        if len(entity_ids) == 1:
+            by_name[normalized] = next(iter(entity_ids))
 
     conn.close()
     return by_ref, by_name, names_by_id
@@ -76,9 +97,10 @@ def resolve_row(row, by_ref, by_name):
         if ref and ref in by_ref:
             return by_ref[ref]
 
-    normalized_name = normalize_name(row.get("canonical_name", ""))
-    if normalized_name:
-        return by_name.get(normalized_name, "")
+    for name_field in ("canonical_name", "organisation_name", "org_name"):
+        normalized_name = normalize_name(row.get(name_field, ""))
+        if normalized_name and normalized_name in by_name:
+            return by_name[normalized_name]
 
     return ""
 
