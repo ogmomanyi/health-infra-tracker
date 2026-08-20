@@ -15,6 +15,7 @@ def canonical_map():
     conn = sqlite3.connect(DB)
     by_ref = {}
     by_name = {}
+    names_by_id = {}
     parent_by_child = {
         child: parent
         for parent, child in conn.execute(
@@ -45,9 +46,11 @@ def canonical_map():
         WHERE entity_status = 'ACTIVE'
         """
     ):
+        canonical_entity_id = canonical_id(entity_id)
+        names_by_id[canonical_entity_id] = canonical_name
         normalized = normalize_name(canonical_name)
         if normalized:
-            by_name[normalized] = canonical_id(entity_id)
+            by_name[normalized] = canonical_entity_id
 
     for org_ref, entity_id in conn.execute(
         """
@@ -59,7 +62,7 @@ def canonical_map():
         by_ref[org_ref.strip().lower()] = canonical_id(entity_id)
 
     conn.close()
-    return by_ref, by_name
+    return by_ref, by_name, names_by_id
 
 
 def resolve_row(row, by_ref, by_name):
@@ -80,17 +83,92 @@ def resolve_row(row, by_ref, by_name):
     return ""
 
 
+def _unique_join(values):
+    return builder.join_unique(values)
+
+
+def _numeric(value):
+    return builder.safe_float(value)
+
+
+def collapse_canonical_rows(frame, canonical_names):
+    """Collapse derived source-organisation rows to one row per canonical ID.
+
+    The source organisations table can contain several ref/name variants that
+    resolve to one canonical entity. Intelligence must therefore be keyed by
+    the canonical entity, not by the pre-resolution stable source ID.
+    """
+    if frame.empty:
+        return frame
+
+    rows = []
+    numeric_sum = {
+        "activity_count",
+        "active_activity_count",
+        "pipeline_activity_count",
+        "reported_budget",
+        "high_priority_opportunities",
+    }
+    union_fields = {
+        "org_refs",
+        "org_types",
+        "roles",
+        "country_codes",
+        "country_names",
+        "top_equipment_categories",
+    }
+
+    for entity_id, group in frame.groupby("organisation_entity_id", sort=False):
+        row = group.iloc[0].copy()
+        row["organisation_entity_id"] = entity_id
+        row["canonical_name"] = canonical_names.get(
+            entity_id,
+            row.get("canonical_name", ""),
+        )
+
+        for field in union_fields:
+            row[field] = _unique_join(
+                value
+                for value in group[field].tolist()
+                if builder.clean_text(value)
+            )
+
+        for field in numeric_sum:
+            row[field] = sum(_numeric(value) for value in group[field].tolist())
+
+        # Preserve the strongest useful reference rather than inventing one.
+        refs = [builder.clean_text(v) for v in group["primary_org_ref"].tolist()]
+        refs = [v for v in refs if v]
+        row["primary_org_ref"] = refs[0] if refs else ""
+
+        weights = [max(0.0, _numeric(v)) for v in group["activity_count"].tolist()]
+        scores = [_numeric(v) for v in group["average_opportunity_score"].tolist()]
+        if sum(weights) > 0:
+            row["average_opportunity_score"] = sum(
+                score * weight for score, weight in zip(scores, weights)
+            ) / sum(weights)
+        else:
+            row["average_opportunity_score"] = (
+                sum(scores) / len(scores) if scores else 0.0
+            )
+
+        updates = [builder.clean_text(v) for v in group["latest_update"].tolist()]
+        updates = [v for v in updates if v]
+        row["latest_update"] = max(updates) if updates else ""
+        rows.append(row)
+
+    return frame.__class__(rows, columns=frame.columns).reset_index(drop=True)
+
+
+_original_build_org_entities = builder.build_organisation_entities
 _original_build_org_intel = builder.build_organisation_intelligence
 
 
-def build_org_intel_fixed(derived):
-    by_ref, by_name = canonical_map()
+def build_org_entities_fixed(organisations, opportunities):
+    derived = _original_build_org_entities(organisations, opportunities)
+    by_ref, by_name, canonical_names = canonical_map()
     fixed = derived.copy()
 
-    # IATI occasionally contains placeholder organisation names such as "-".
-    # They are useful as source records but are not canonical organisations.
-    # Drop them only when they also have no resolvable org reference; real
-    # organisations must still fail loudly if entity resolution cannot map them.
     def has_resolvable_reference(row):
         refs = []
         refs.extend(builder.split_values(row.get("primary_org_ref")))
@@ -101,8 +179,17 @@ def build_org_intel_fixed(derived):
             if ref.strip()
         )
 
+    # IATI uses this as a real participant label, but it is not a commercial
+    # organisation and should never become an account/intelligence target.
+    placeholder_names = {
+        "ip not published",
+        "not published",
+        "unknown",
+        "unspecified organisation",
+        "-",
+    }
     placeholder_mask = fixed["canonical_name"].apply(
-        lambda value: not normalize_name(value)
+        lambda value: normalize_name(value) in placeholder_names
     )
     placeholder_without_ref = placeholder_mask & ~fixed.apply(
         has_resolvable_reference,
@@ -124,17 +211,75 @@ def build_org_intel_fixed(derived):
             f"Unresolved canonical organisations: {len(unresolved)}; examples: {examples}"
         )
 
+    fixed = collapse_canonical_rows(fixed, canonical_names)
+
+    if dropped:
+        print(f"Ignored {dropped} non-canonical placeholder organisation record(s)")
+
+    return fixed
+
+
+def build_org_intel_fixed(derived):
+    # build_org_entities_fixed has already resolved and collapsed the source
+    # rows. Keep this guard because the builder may call this function directly
+    # in tests or future integrations.
+    by_ref, by_name, canonical_names = canonical_map()
+    fixed = derived.copy()
+
+    def has_resolvable_reference(row):
+        refs = []
+        refs.extend(builder.split_values(row.get("primary_org_ref")))
+        refs.extend(builder.split_values(row.get("org_refs")))
+        return any(
+            ref.strip().lower() in by_ref
+            for ref in refs
+            if ref.strip()
+        )
+
+    placeholder_names = {
+        "ip not published",
+        "not published",
+        "unknown",
+        "unspecified organisation",
+        "-",
+    }
+    placeholder_mask = fixed["canonical_name"].apply(
+        lambda value: normalize_name(value) in placeholder_names
+    )
+    placeholder_without_ref = placeholder_mask & ~fixed.apply(
+        has_resolvable_reference,
+        axis=1,
+    )
+    dropped = int(placeholder_without_ref.sum())
+    if dropped:
+        fixed = fixed.loc[~placeholder_without_ref].copy()
+
+    fixed["organisation_entity_id"] = fixed.apply(
+        lambda row: resolve_row(row, by_ref, by_name),
+        axis=1,
+    )
+
+    unresolved = fixed[fixed["organisation_entity_id"] == ""]
+    if not unresolved.empty:
+        examples = ", ".join(unresolved["canonical_name"].head(10).tolist())
+        raise RuntimeError(
+            f"Unresolved canonical organisations: {len(unresolved)}; examples: {examples}"
+        )
+
+    fixed = collapse_canonical_rows(fixed, canonical_names)
+
     if dropped:
         print(f"Ignored {dropped} non-canonical placeholder organisation record(s)")
 
     return _original_build_org_intel(fixed)
 
 
+builder.build_organisation_entities = build_org_entities_fixed
 builder.build_organisation_intelligence = build_org_intel_fixed
 
 
 def build_org_activity_lookup_fixed(organisations):
-    by_ref, by_name = canonical_map()
+    by_ref, by_name, _ = canonical_map()
     lookup = {}
 
     for _, row in organisations.iterrows():
