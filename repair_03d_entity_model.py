@@ -2,13 +2,12 @@
 """Repair the 03D organisation/entity schema mismatch.
 
 The intelligence builder historically wrote its derived organisation dataframe
-into ``organisation_entities``.  That table is owned by entity resolution and
-uses ``entity_id``.  This migration moves the incompatible derived tables out
-of the way, recreates the canonical entity-resolution schema, and rebuilds
-entities/aliases from the normalized organisations CSV.
+into ``organisation_entities``. That table is owned by entity resolution and
+uses ``entity_id``. This migration preserves the derived table as a legacy
+backup, recreates the canonical entity-resolution schema, and rebuilds the
+canonical registry/aliases from the normalized organisations CSV.
 
-Run this once against the affected database before running the entity
-resolution/semantic deduplication stages again.
+Run once against the affected database before running semantic deduplication.
 """
 
 import csv
@@ -16,6 +15,7 @@ import hashlib
 import sqlite3
 from pathlib import Path
 
+from organisation_resolution.normalizer import normalize_name
 
 DB_PATH = Path("data/iati_intelligence.db")
 ORGANISATIONS_CSV = Path("data/organisations.csv")
@@ -33,7 +33,9 @@ def table_exists(conn, table):
 
 
 def stable_entity_id(canonical_name):
-    digest = hashlib.sha1(canonical_name.strip().lower().encode("utf-8")).hexdigest()[:8].upper()
+    digest = hashlib.sha1(
+        canonical_name.strip().lower().encode("utf-8")
+    ).hexdigest()[:8].upper()
     return f"ORG-{digest}"
 
 
@@ -41,12 +43,7 @@ def clean(value):
     return " ".join(str(value or "").split())
 
 
-def normalise_name(value):
-    return clean(value).lower()
-
-
 def ensure_schema(conn):
-    """Move incompatible builder-owned tables aside and create canonical tables."""
     conn.execute("PRAGMA foreign_keys=OFF")
 
     if table_exists(conn, "organisation_entities"):
@@ -142,41 +139,49 @@ def rebuild_entities(conn, rows):
         if not org_ref and not org_name:
             continue
 
-        key = f"ref:{org_ref.lower()}" if org_ref else f"name:{normalise_name(org_name)}"
-        canonical = org_name or org_ref
-        entity_id = stable_entity_id(key)
+        raw_name = org_name or org_ref
+        canonical = normalize_name(raw_name)
+        if not canonical:
+            continue
 
-        entities.setdefault(entity_id, {
-            "canonical_name": canonical,
-            "organisation_type": org_type,
-        })
+        entity_id = stable_entity_id(canonical)
+        organisation_key = (
+            f"ref:{org_ref.lower()}"
+            if org_ref
+            else f"name:{canonical}"
+        )
 
-        alias_key = (entity_id, org_ref, org_name, role, activity_id)
+        existing = entities.get(entity_id)
+        if existing is None:
+            entities[entity_id] = {
+                "canonical_name": canonical,
+                "organisation_type": org_type,
+            }
+        elif not existing["organisation_type"] and org_type:
+            existing["organisation_type"] = org_type
+
+        alias_key = (entity_id, organisation_key, org_ref, raw_name, role, activity_id)
         aliases[alias_key] = {
             "entity_id": entity_id,
-            "organisation_key": key,
+            "organisation_key": organisation_key,
             "org_ref": org_ref,
-            "alias_name": org_name or org_ref,
-            "role": role,
+            "alias_name": raw_name,
         }
 
     for entity_id, entity in entities.items():
-        existing = conn.execute(
-            "SELECT entity_id FROM organisation_entities WHERE entity_id=?",
-            (entity_id,),
-        ).fetchone()
-        if not existing:
-            conn.execute(
-                """
-                INSERT INTO organisation_entities
-                    (entity_id, canonical_name, organisation_type, entity_status)
-                VALUES (?, ?, ?, 'ACTIVE')
-                """,
-                (entity_id, entity["canonical_name"], entity["organisation_type"]),
-            )
+        conn.execute(
+            """
+            INSERT OR IGNORE INTO organisation_entities
+                (entity_id, canonical_name, organisation_type, entity_status)
+            VALUES (?, ?, ?, 'ACTIVE')
+            """,
+            (entity_id, entity["canonical_name"], entity["organisation_type"]),
+        )
 
     for alias_key, alias in aliases.items():
-        alias_id = hashlib.sha1("|".join(map(str, alias_key)).encode("utf-8")).hexdigest()
+        alias_id = hashlib.sha1(
+            "|".join(map(str, alias_key)).encode("utf-8")
+        ).hexdigest()
         conn.execute(
             """
             INSERT OR IGNORE INTO organisation_aliases
@@ -206,9 +211,6 @@ def main():
         ensure_schema(conn)
         entities, aliases = rebuild_entities(conn, rows)
 
-        # Existing relationships refer to the incompatible UUID-style entity
-        # registry and cannot be safely inferred from those IDs. Keep a backup
-        # and rebuild semantic relationships by canonical name afterward.
         orphan_count = conn.execute(
             """
             SELECT COUNT(*)
