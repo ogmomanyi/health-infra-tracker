@@ -136,7 +136,6 @@ def collapse_canonical_rows(frame, canonical_names):
         for field in numeric_sum:
             row[field] = sum(_numeric(value) for value in group[field].tolist())
 
-        # Preserve the strongest useful reference rather than inventing one.
         refs = [builder.clean_text(v) for v in group["primary_org_ref"].tolist()]
         refs = [v for v in refs if v]
         row["primary_org_ref"] = refs[0] if refs else ""
@@ -164,6 +163,25 @@ _original_build_org_entities = builder.build_organisation_entities
 _original_build_org_intel = builder.build_organisation_intelligence
 
 
+def _is_placeholder_name(value):
+    """Return True for known non-commercial participant placeholders.
+
+    ``normalize_name`` strips punctuation, so a raw IATI value such as ``-``
+    normalizes to an empty string and would otherwise evade the placeholder
+    filter, later producing an unresolved canonical organisation error.
+    """
+    raw = builder.clean_text(value).strip().lower()
+    normalized = normalize_name(raw)
+    placeholder_names = {
+        "ip not published",
+        "not published",
+        "unknown",
+        "unspecified organisation",
+        "-",
+    }
+    return raw in placeholder_names or normalized in placeholder_names or not normalized
+
+
 def build_org_entities_fixed(organisations, opportunities):
     derived = _original_build_org_entities(organisations, opportunities)
     by_ref, by_name, canonical_names = canonical_map()
@@ -179,18 +197,7 @@ def build_org_entities_fixed(organisations, opportunities):
             if ref.strip()
         )
 
-    # IATI uses this as a real participant label, but it is not a commercial
-    # organisation and should never become an account/intelligence target.
-    placeholder_names = {
-        "ip not published",
-        "not published",
-        "unknown",
-        "unspecified organisation",
-        "-",
-    }
-    placeholder_mask = fixed["canonical_name"].apply(
-        lambda value: normalize_name(value) in placeholder_names
-    )
+    placeholder_mask = fixed["canonical_name"].apply(_is_placeholder_name)
     placeholder_without_ref = placeholder_mask & ~fixed.apply(
         has_resolvable_reference,
         axis=1,
@@ -220,9 +227,6 @@ def build_org_entities_fixed(organisations, opportunities):
 
 
 def build_org_intel_fixed(derived):
-    # build_org_entities_fixed has already resolved and collapsed the source
-    # rows. Keep this guard because the builder may call this function directly
-    # in tests or future integrations.
     by_ref, by_name, canonical_names = canonical_map()
     fixed = derived.copy()
 
@@ -236,16 +240,7 @@ def build_org_intel_fixed(derived):
             if ref.strip()
         )
 
-    placeholder_names = {
-        "ip not published",
-        "not published",
-        "unknown",
-        "unspecified organisation",
-        "-",
-    }
-    placeholder_mask = fixed["canonical_name"].apply(
-        lambda value: normalize_name(value) in placeholder_names
-    )
+    placeholder_mask = fixed["canonical_name"].apply(_is_placeholder_name)
     placeholder_without_ref = placeholder_mask & ~fixed.apply(
         has_resolvable_reference,
         axis=1,
