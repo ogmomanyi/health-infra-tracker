@@ -60,11 +60,33 @@ def main():
         """
     ).fetchone()[0]
 
-    checks["duplicate_relationships"] = conn.execute(
+    # DUPLICATE_OF rows are valid semantic relationships produced by the
+    # relationship rebuild. They are not duplicate database rows themselves.
+    checks["semantic_duplicate_relationships"] = conn.execute(
         """
         SELECT COUNT(*)
         FROM organisation_relationships
         WHERE relationship_type='DUPLICATE_OF'
+        """
+    ).fetchone()[0]
+
+    # Detect actual duplicate relationship records. The relationship identity
+    # includes the source and confidence because those are part of the stored
+    # relationship definition in this schema.
+    checks["duplicate_relationship_rows"] = conn.execute(
+        """
+        SELECT COALESCE(SUM(duplicate_count - 1), 0)
+        FROM (
+            SELECT COUNT(*) AS duplicate_count
+            FROM organisation_relationships
+            GROUP BY
+                parent_entity_id,
+                child_entity_id,
+                relationship_type,
+                source_system,
+                confidence_score
+            HAVING COUNT(*) > 1
+        )
         """
     ).fetchone()[0]
 
@@ -90,7 +112,11 @@ def main():
 
     failures = [
         name for name, value in checks.items()
-        if name.endswith("_unmatched") or name.endswith("_broken")
+        if (
+            name.endswith("_unmatched")
+            or name.endswith("_broken")
+            or name == "duplicate_relationship_rows"
+        )
         if value != 0
     ]
     failures += [
