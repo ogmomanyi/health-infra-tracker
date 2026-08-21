@@ -12,9 +12,9 @@ relationships = conn.execute("""
         c.canonical_name
     FROM organisation_relationships r
     JOIN organisation_entities p
-        ON p.entity_id = r.parent_entity_id
+        ON p.organisation_entity_id = r.parent_entity_id
     JOIN organisation_entities c
-        ON c.entity_id = r.child_entity_id
+        ON c.organisation_entity_id = r.child_entity_id
     WHERE r.relationship_type = 'DUPLICATE_OF'
     ORDER BY p.canonical_name
 """).fetchall()
