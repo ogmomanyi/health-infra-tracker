@@ -7,7 +7,9 @@ uses ``entity_id``. This migration preserves the derived table as a legacy
 backup, recreates the canonical entity-resolution schema, and rebuilds the
 canonical registry/aliases from the normalized organisations CSV.
 
-Run once against the affected database before running semantic deduplication.
+Entity IDs deliberately use the same deterministic ``org_*`` namespace as the
+current intelligence pipeline. This prevents the repair script from reintroducing
+the retired ``ORG-*`` namespace.
 """
 
 import csv
@@ -32,11 +34,16 @@ def table_exists(conn, table):
     ).fetchone() is not None
 
 
-def stable_entity_id(canonical_name):
-    digest = hashlib.sha1(
-        canonical_name.strip().lower().encode("utf-8")
-    ).hexdigest()[:8].upper()
-    return f"ORG-{digest}"
+def stable_entity_id(org_ref, canonical_name):
+    """Return the deterministic ID used by the intelligence builder."""
+    ref = " ".join(str(org_ref or "").split())
+    if ref:
+        key = f"ref:{ref.lower()}"
+    else:
+        key = f"name:{canonical_name.lower()}"
+
+    digest = hashlib.sha1(key.encode("utf-8")).hexdigest()[:12]
+    return f"org_{digest}"
 
 
 def clean(value):
@@ -73,11 +80,8 @@ def ensure_schema(conn):
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
 
-        CREATE INDEX IF NOT EXISTS idx_org_type
-        ON organisation_entities(organisation_type);
-
-        CREATE INDEX IF NOT EXISTS idx_org_status
-        ON organisation_entities(entity_status);
+        CREATE INDEX IF NOT EXISTS idx_org_type ON organisation_entities(organisation_type);
+        CREATE INDEX IF NOT EXISTS idx_org_status ON organisation_entities(entity_status);
 
         CREATE TABLE IF NOT EXISTS organisation_aliases (
             alias_id TEXT PRIMARY KEY,
@@ -93,14 +97,10 @@ def ensure_schema(conn):
             FOREIGN KEY (entity_id) REFERENCES organisation_entities(entity_id)
         );
 
-        CREATE INDEX IF NOT EXISTS idx_alias_entity
-        ON organisation_aliases(entity_id);
-        CREATE INDEX IF NOT EXISTS idx_alias_org_key
-        ON organisation_aliases(organisation_key);
-        CREATE INDEX IF NOT EXISTS idx_alias_org_ref
-        ON organisation_aliases(org_ref);
-        CREATE INDEX IF NOT EXISTS idx_alias_name
-        ON organisation_aliases(alias_name);
+        CREATE INDEX IF NOT EXISTS idx_alias_entity ON organisation_aliases(entity_id);
+        CREATE INDEX IF NOT EXISTS idx_alias_org_key ON organisation_aliases(organisation_key);
+        CREATE INDEX IF NOT EXISTS idx_alias_org_ref ON organisation_aliases(org_ref);
+        CREATE INDEX IF NOT EXISTS idx_alias_name ON organisation_aliases(alias_name);
 
         CREATE TABLE IF NOT EXISTS organisation_relationships (
             relationship_id TEXT PRIMARY KEY,
@@ -144,12 +144,8 @@ def rebuild_entities(conn, rows):
         if not canonical:
             continue
 
-        entity_id = stable_entity_id(canonical)
-        organisation_key = (
-            f"ref:{org_ref.lower()}"
-            if org_ref
-            else f"name:{canonical}"
-        )
+        entity_id = stable_entity_id(org_ref, canonical)
+        organisation_key = f"ref:{org_ref.lower()}" if org_ref else f"name:{canonical}"
 
         existing = entities.get(entity_id)
         if existing is None:
@@ -179,9 +175,7 @@ def rebuild_entities(conn, rows):
         )
 
     for alias_key, alias in aliases.items():
-        alias_id = hashlib.sha1(
-            "|".join(map(str, alias_key)).encode("utf-8")
-        ).hexdigest()
+        alias_id = hashlib.sha1("|".join(map(str, alias_key)).encode("utf-8")).hexdigest()
         conn.execute(
             """
             INSERT OR IGNORE INTO organisation_aliases
@@ -215,23 +209,15 @@ def main():
             """
             SELECT COUNT(*)
             FROM organisation_relationships r
-            WHERE NOT EXISTS (
-                SELECT 1 FROM organisation_entities e
-                WHERE e.entity_id = r.parent_entity_id
-            )
-            OR NOT EXISTS (
-                SELECT 1 FROM organisation_entities e
-                WHERE e.entity_id = r.child_entity_id
-            )
+            WHERE NOT EXISTS (SELECT 1 FROM organisation_entities e WHERE e.entity_id = r.parent_entity_id)
+               OR NOT EXISTS (SELECT 1 FROM organisation_entities e WHERE e.entity_id = r.child_entity_id)
             """
         ).fetchone()[0]
 
         if orphan_count:
             if table_exists(conn, "organisation_relationships_legacy"):
                 conn.execute("DROP TABLE organisation_relationships_legacy")
-            conn.execute(
-                "ALTER TABLE organisation_relationships RENAME TO organisation_relationships_legacy"
-            )
+            conn.execute("ALTER TABLE organisation_relationships RENAME TO organisation_relationships_legacy")
             conn.execute(
                 """
                 CREATE TABLE organisation_relationships (
