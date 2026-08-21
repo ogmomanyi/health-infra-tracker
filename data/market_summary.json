@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-08-20T14:22:58Z",
-  "as_of": "2026-08-20",
+  "generated_at": "2026-08-21T11:39:23Z",
+  "as_of": "2026-08-21",
   "source_generated_at": "2026-08-18T15:09:15Z",
   "pipeline_version": "3.0-layered-commercial",
   "pipeline_layers": [
@@ -61,21 +61,21 @@
       "organisations": 17577
     },
     "canonical": {
-      "organisation_entities": 2194,
+      "organisation_entities": 2410,
       "organisation_aliases": 3188,
       "equipment_entities": 7,
       "manufacturer_entities": 0
     },
     "intelligence": {
       "opportunity_scores": 3270,
-      "organisation_intelligence": 2194,
+      "organisation_intelligence": 2410,
       "programme_intelligence": 3270,
       "donor_intelligence": 506
     },
     "commercial": {
-      "target_accounts": 2194,
-      "engagements": 1658,
-      "crm_notes": 1658,
+      "target_accounts": 2410,
+      "engagements": 1820,
+      "crm_notes": 1820,
       "recommended_actions": 1277
     }
   },
