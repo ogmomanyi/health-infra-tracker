@@ -84,3 +84,50 @@ def test_legacy_namespace_is_not_a_valid_current_entity():
     }
     assert all(not entity_id.startswith("ORG-") for entity_id in current)
     conn.close()
+
+
+def test_duplicate_relationships_are_deduplicated_logically():
+    conn = make_db()
+    conn.executemany(
+        "INSERT INTO organisation_entities(entity_id, canonical_name) VALUES (?, ?)",
+        [("org_parent", "parent"), ("org_child", "child")],
+    )
+    conn.executemany(
+        """
+        INSERT INTO organisation_relationships
+        (relationship_id, parent_entity_id, child_entity_id, relationship_type,
+         source_system, confidence_score)
+        VALUES (?, ?, ?, 'DUPLICATE_OF', 'MANUAL_AUDIT', 1.0)
+        """,
+        [("rel-a", "org_parent", "org_child"), ("rel-b", "org_parent", "org_child")],
+    )
+    duplicate_count = conn.execute(
+        """
+        SELECT COUNT(*) FROM (
+            SELECT parent_entity_id, child_entity_id, relationship_type,
+                   source_system, confidence_score
+            FROM organisation_relationships
+            GROUP BY parent_entity_id, child_entity_id, relationship_type,
+                     source_system, confidence_score
+            HAVING COUNT(*) > 1
+        )
+        """
+    ).fetchone()[0]
+    assert duplicate_count == 1
+    conn.close()
+
+
+def test_current_entity_ids_are_unique_and_canonical():
+    conn = make_db()
+    conn.executemany(
+        "INSERT INTO organisation_entities(entity_id, canonical_name) VALUES (?, ?)",
+        [("org_one", "one"), ("org_two", "two")],
+    )
+    rows = conn.execute(
+        "SELECT entity_id FROM organisation_entities WHERE entity_id LIKE 'ORG-%'"
+    ).fetchall()
+    assert rows == []
+    assert conn.execute(
+        "SELECT COUNT(*) FROM organisation_entities"
+    ).fetchone()[0] == 2
+    conn.close()
