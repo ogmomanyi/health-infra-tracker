@@ -17,6 +17,25 @@ from organisation_resolution.resolver import resolve_organisation
 DB_PATH = "data/iati_intelligence.db"
 
 
+def table_columns(conn, table_name):
+    return {
+        row[1]
+        for row in conn.execute(f"PRAGMA table_info({table_name})")
+    }
+
+
+def table_exists(conn, table_name):
+    return conn.execute(
+        """
+        SELECT 1
+        FROM sqlite_master
+        WHERE type = 'table'
+          AND name = ?
+        """,
+        (table_name,),
+    ).fetchone() is not None
+
+
 def load_entity_candidates(conn):
     """
     Load canonical organisation entities as matcher candidates.
@@ -240,18 +259,47 @@ def load_unresolved_source_records(conn):
     Return source records that do not currently have an alias.
     """
 
+    if (
+        table_exists(conn, "organisation_intelligence")
+        and {
+            "organisation_key",
+            "org_ref",
+            "org_name",
+        }.issubset(table_columns(conn, "organisation_intelligence"))
+    ):
+        return conn.execute(
+            """
+            SELECT
+                oi.organisation_key,
+                oi.org_ref,
+                oi.org_name
+            FROM organisation_intelligence oi
+            LEFT JOIN organisation_aliases oa
+                ON oi.organisation_key = oa.organisation_key
+            WHERE oa.organisation_key IS NULL
+              AND oi.org_name IS NOT NULL
+            ORDER BY oi.org_name
+            """
+        ).fetchall()
+
+    if not table_exists(conn, "organisations"):
+        return []
+
     return conn.execute(
         """
         SELECT
-            oi.organisation_key,
-            oi.org_ref,
-            oi.org_name
-        FROM organisation_intelligence oi
+            COALESCE(NULLIF(o.org_ref, ''), o.org_name) AS organisation_key,
+            o.org_ref,
+            o.org_name
+        FROM organisations o
         LEFT JOIN organisation_aliases oa
-            ON oi.organisation_key = oa.organisation_key
+            ON COALESCE(NULLIF(o.org_ref, ''), o.org_name) = oa.organisation_key
+            OR o.org_ref = oa.org_ref
+            OR o.org_name = oa.alias_name
         WHERE oa.organisation_key IS NULL
-          AND oi.org_name IS NOT NULL
-        ORDER BY oi.org_name
+          AND o.org_name IS NOT NULL
+        GROUP BY organisation_key, o.org_ref, o.org_name
+        ORDER BY o.org_name
         """
     ).fetchall()
 
@@ -318,7 +366,12 @@ def is_non_entity_name(name):
     placeholder rather than a real organisation.
     """
 
-    return normalize_name(name) in NON_ENTITY_NAMES
+    normalized = normalize_name(name)
+
+    if not normalized:
+        return True
+
+    return normalized in NON_ENTITY_NAMES
 
 
 def inspect_resolution():
@@ -354,4 +407,3 @@ def inspect_resolution():
 
 if __name__ == "__main__":
     inspect_resolution()
-    

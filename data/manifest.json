@@ -19,21 +19,26 @@
     "planned_disbursements": 4654,
     "activity_countries": 5749,
     "organisations": 17777,
-    "organisation_entities": 2247,
-    "organisation_aliases": 17237,
-    "equipment_entities": 9,
-    "manufacturer_entities": 5,
+    "organisation_entities": 2248,
+    "organisation_aliases": 17173,
+    "equipment_entities": 11,
+    "manufacturer_entities": 1,
     "opportunity_scores": 3280,
-    "organisation_intelligence": 2450,
+    "organisation_intelligence": 2378,
     "programme_intelligence": 3280,
-    "donor_intelligence": 515,
-    "target_accounts": 2450,
-    "engagements": 2260,
-    "crm_notes": 2260,
-    "recommended_actions": 2696,
+    "donor_intelligence": 397,
+    "target_accounts": 2378,
+    "engagements": 2040,
+    "crm_notes": 2040,
+    "recommended_actions": 1867,
     "opportunities": 3280,
-    "equipment_intelligence": 9,
-    "tender_predictions": 1479
+    "equipment_intelligence": 11,
+    "tender_predictions": 983,
+    "activities": 3280,
+    "iati_activities": 3280,
+    "iati_transactions": 70971,
+    "iati_organisations": 17777,
+    "opportunity_organisation_resolution": 16074
   },
   "files": {
     "iati_health_projects": "iati_health_projects.csv",
@@ -56,9 +61,14 @@
     "recommended_actions": "recommended_actions.csv",
     "opportunities": "opportunities.csv",
     "equipment_intelligence": "equipment_intelligence.csv",
-    "tender_predictions": "tender_predictions.csv"
+    "tender_predictions": "tender_predictions.csv",
+    "activities": "activities.csv",
+    "iati_activities": "iati_activities.csv",
+    "iati_transactions": "iati_transactions.csv",
+    "iati_organisations": "iati_organisations.csv",
+    "opportunity_organisation_resolution": "opportunity_organisation_resolution.csv"
   },
-  "intelligence_generated_at": "2026-09-11T11:01:33Z",
+  "intelligence_generated_at": "2026-09-11T13:21:50Z",
   "plan_progress": [
     {
       "id": "01",
@@ -126,7 +136,8 @@
         "opportunity_scores",
         "organisation_intelligence",
         "programme_intelligence",
-        "donor_intelligence"
+        "donor_intelligence",
+        "opportunity_organisation_resolution"
       ],
       "purpose": "Score programmes, donors, and organisations for market signals."
     },
@@ -170,7 +181,8 @@
       "opportunity_scores",
       "organisation_intelligence",
       "programme_intelligence",
-      "donor_intelligence"
+      "donor_intelligence",
+      "opportunity_organisation_resolution"
     ],
     "commercial": [
       "target_accounts",

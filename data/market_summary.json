@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-11T11:01:33Z",
+  "generated_at": "2026-09-11T13:21:50Z",
   "as_of": "2026-09-11",
   "source_generated_at": "2026-09-11T11:01:00Z",
   "pipeline_version": "3.2-project-detail-intelligence",
@@ -38,7 +38,8 @@
         "opportunity_scores",
         "organisation_intelligence",
         "programme_intelligence",
-        "donor_intelligence"
+        "donor_intelligence",
+        "opportunity_organisation_resolution"
       ],
       "purpose": "Score programmes, donors, and organisations for market signals."
     },
@@ -62,33 +63,38 @@
     }
   ],
   "layer_counts": {
-    "raw": {},
+    "raw": {
+      "iati_activities": 3280,
+      "iati_transactions": 70971,
+      "iati_organisations": 17777
+    },
     "normalized": {
       "activities": 3280,
       "transactions": 70971,
       "organisations": 17777
     },
     "canonical": {
-      "organisation_entities": 2247,
-      "organisation_aliases": 17237,
-      "equipment_entities": 9,
-      "manufacturer_entities": 5
+      "organisation_entities": 2248,
+      "organisation_aliases": 17173,
+      "equipment_entities": 11,
+      "manufacturer_entities": 1
     },
     "intelligence": {
       "opportunity_scores": 3280,
-      "organisation_intelligence": 2450,
+      "organisation_intelligence": 2378,
       "programme_intelligence": 3280,
-      "donor_intelligence": 515
+      "donor_intelligence": 397,
+      "opportunity_organisation_resolution": 16074
     },
     "commercial": {
-      "target_accounts": 2450,
-      "engagements": 2260,
-      "crm_notes": 2260,
-      "recommended_actions": 2696
+      "target_accounts": 2378,
+      "engagements": 2040,
+      "crm_notes": 2040,
+      "recommended_actions": 1867
     },
     "predictive_product": {
-      "equipment_intelligence": 9,
-      "tender_predictions": 1479
+      "equipment_intelligence": 11,
+      "tender_predictions": 983
     }
   },
   "currency_note": "Amounts are source-reported nominal values and are not converted across currencies.",
@@ -99,13 +105,13 @@
     "reported_budget": 78262307873.93,
     "future_disbursement": 37163607175.66,
     "future_budget": 43157402600.09,
-    "procurement_signal_projects": 781,
-    "high_priority_opportunities": 783,
-    "donors": 515,
-    "equipment_categories": 9,
-    "tender_predictions": 1479,
-    "likely_procurement": 711,
-    "direct_equipment_projects": 682,
+    "procurement_signal_projects": 787,
+    "high_priority_opportunities": 587,
+    "donors": 397,
+    "equipment_categories": 11,
+    "tender_predictions": 983,
+    "likely_procurement": 194,
+    "direct_equipment_projects": 659,
     "countries": 145
   },
   "top_countries": [

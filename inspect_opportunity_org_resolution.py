@@ -1,6 +1,8 @@
 import sqlite3
+import html
 from collections import Counter
 
+from organisation_resolution.database_resolver import table_exists
 from organisation_resolution.normalizer import normalize_name
 
 DB = "data/iati_intelligence.db"
@@ -12,7 +14,7 @@ def split_values(value):
 
     return [
         item.strip()
-        for item in value.split(";")
+        for item in html.unescape(str(value)).split(";")
         if item.strip()
     ]
 
@@ -49,14 +51,24 @@ try:
                 set()
             ).add(entity_id)
 
-    rows = conn.execute("""
-        SELECT
-            opportunity_id,
-            funding_agencies,
-            implementing_partners,
-            reporting_org_name
-        FROM opportunity_intelligence
-    """).fetchall()
+    if table_exists(conn, "opportunities"):
+        rows = conn.execute("""
+            SELECT
+                iati_identifier AS opportunity_id,
+                funding_agencies,
+                implementing_partners,
+                reporting_org_name
+            FROM opportunities
+        """).fetchall()
+    else:
+        rows = conn.execute("""
+            SELECT
+                opportunity_id,
+                funding_agencies,
+                implementing_partners,
+                reporting_org_name
+            FROM opportunity_intelligence
+        """).fetchall()
 
     unresolved = Counter()
     resolved = 0

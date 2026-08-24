@@ -1,19 +1,21 @@
 """
 Opportunity Organisation Resolution
 
-Resolves organisation references appearing in opportunity_intelligence
+Resolves organisation references appearing in the active opportunities layer
 against the existing 03B organisation entity/alias layer.
 
 This module does NOT modify the database.
 It produces resolution decisions only.
 """
 
+import html
 import sqlite3
 
 from organisation_resolution.database_resolver import (
     get_canonical_entity_id,
     load_alias_candidates,
     load_entity_candidates,
+    table_exists,
 )
 from organisation_resolution.normalizer import normalize_name
 
@@ -31,7 +33,7 @@ def split_values(value):
 
     return [
         item.strip()
-        for item in str(value).split(";")
+        for item in html.unescape(str(value)).split(";")
         if item.strip()
     ]
 
@@ -195,15 +197,26 @@ def load_opportunity_references(conn):
     reporting
     """
 
-    rows = conn.execute("""
-        SELECT
-            opportunity_id,
-            funding_agencies,
-            implementing_partners,
-            reporting_org_name
-        FROM opportunity_intelligence
-        ORDER BY opportunity_id
-    """).fetchall()
+    if table_exists(conn, "opportunities"):
+        rows = conn.execute("""
+            SELECT
+                iati_identifier AS opportunity_id,
+                funding_agencies,
+                implementing_partners,
+                reporting_org_name
+            FROM opportunities
+            ORDER BY iati_identifier
+        """).fetchall()
+    else:
+        rows = conn.execute("""
+            SELECT
+                opportunity_id,
+                funding_agencies,
+                implementing_partners,
+                reporting_org_name
+            FROM opportunity_intelligence
+            ORDER BY opportunity_id
+        """).fetchall()
 
     references = []
 

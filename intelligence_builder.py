@@ -7,7 +7,7 @@ The IATI fetcher creates normalized activity, transaction, budget,
 disbursement, country, and organisation tables. This script follows the
 project layer plan:
 
-    RAW -> NORMALIZED -> CANONICAL -> INTELLIGENCE -> COMMERCIAL
+    RAW -> NORMALIZED -> CANONICAL -> INTELLIGENCE -> COMMERCIAL -> PREDICTIVE_PRODUCT
 
 and turns the normalized data into compact CSV/JSON products:
 
@@ -31,6 +31,7 @@ and turns the normalized data into compact CSV/JSON products:
 
 import argparse
 import hashlib
+import html
 import json
 import math
 import sqlite3
@@ -153,6 +154,7 @@ PIPELINE_LAYERS = [
             "organisation_intelligence",
             "programme_intelligence",
             "donor_intelligence",
+            "opportunity_organisation_resolution",
         ],
         "purpose": "Score programmes, donors, and organisations for market signals.",
     },
@@ -239,7 +241,7 @@ def read_first_available_csv(data_dir: Path, *names: str) -> pd.DataFrame:
 
 
 def clean_text(value: object) -> str:
-    return " ".join(str(value or "").split())
+    return " ".join(html.unescape(str(value or "")).split())
 
 
 def stable_id(prefix: str, *parts: object) -> str:
@@ -267,7 +269,7 @@ def organisation_entity_key(org_ref: object, org_name: object) -> str:
 
 
 def split_values(value: object) -> List[str]:
-    text = "" if value is None else str(value)
+    text = "" if value is None else html.unescape(str(value))
 
     return [
         part.strip()
@@ -1308,7 +1310,9 @@ def build_organisation_entities(
 ) -> pd.DataFrame:
     columns = [
         "organisation_entity_id",
+        "entity_id",
         "canonical_name",
+        "organisation_type",
         "primary_org_ref",
         "org_refs",
         "org_types",
@@ -1323,6 +1327,8 @@ def build_organisation_entities(
         "high_priority_opportunities",
         "top_equipment_categories",
         "latest_update",
+        "entity_status",
+        "updated_at",
         "source_layer",
     ]
 
@@ -1360,6 +1366,7 @@ def build_organisation_entities(
     rows = []
 
     for entity_key, group in work.groupby("entity_key"):
+        entity_id = stable_id("org", entity_key)
         activity_ids = list(dict.fromkeys(
             clean_text(value)
             for value in group["activity_id"]
@@ -1389,8 +1396,10 @@ def build_organisation_entities(
         average_score = mean_numeric(related, "opportunity_score")
 
         rows.append({
-            "organisation_entity_id": stable_id("org", entity_key),
+            "organisation_entity_id": entity_id,
+            "entity_id": entity_id,
             "canonical_name": canonical_name,
+            "organisation_type": top_value(group["org_type"]),
             "primary_org_ref": primary_ref,
             "org_refs": join_unique(group["org_ref"]),
             "org_types": join_unique(group["org_type"]),
@@ -1424,6 +1433,8 @@ def build_organisation_entities(
                 if not related.empty
                 else ""
             ),
+            "entity_status": "ACTIVE",
+            "updated_at": "",
             "source_layer": "canonical",
         })
 
@@ -1440,11 +1451,19 @@ def build_organisation_entities(
 def build_organisation_aliases(organisations: pd.DataFrame) -> pd.DataFrame:
     columns = [
         "organisation_alias_id",
+        "alias_id",
         "organisation_entity_id",
+        "entity_id",
         "alias",
+        "alias_name",
         "org_ref",
+        "organisation_key",
         "role",
         "source_activity_count",
+        "source_system",
+        "is_primary_alias",
+        "match_method",
+        "confidence_score",
         "source_layer",
     ]
 
@@ -1484,20 +1503,29 @@ def build_organisation_aliases(organisations: pd.DataFrame) -> pd.DataFrame:
         "role",
     ]):
         entity_id, alias, org_ref, role = key
+        alias_id = stable_id(
+            "org_alias",
+            entity_id,
+            alias,
+            org_ref,
+            role,
+        )
 
         rows.append({
-            "organisation_alias_id": stable_id(
-                "org_alias",
-                entity_id,
-                alias,
-                org_ref,
-                role,
-            ),
+            "organisation_alias_id": alias_id,
+            "alias_id": alias_id,
             "organisation_entity_id": entity_id,
+            "entity_id": entity_id,
             "alias": alias or org_ref,
+            "alias_name": alias or org_ref,
             "org_ref": org_ref,
+            "organisation_key": org_ref or alias,
             "role": role,
             "source_activity_count": int(group["activity_id"].nunique()),
+            "source_system": "IATI",
+            "is_primary_alias": 0,
+            "match_method": "GENERATED_ALIAS",
+            "confidence_score": 1.0,
             "source_layer": "canonical",
         })
 

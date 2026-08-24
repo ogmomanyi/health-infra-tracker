@@ -8,7 +8,8 @@ Builds a normalized, persistent data foundation from the IATI Datastore v3 API.
 
 Outputs:
 
-    data/iati_health_projects.csv
+    data/activities.csv
+    data/iati_health_projects.csv  (legacy dashboard alias)
     data/transactions.csv
     data/budgets.csv
     data/planned_disbursements.csv
@@ -2382,7 +2383,7 @@ def main() -> None:
     )
 
     datasets = {
-        "iati_health_projects":
+        "activities":
             activities_df,
 
         "transactions":
@@ -2399,6 +2400,12 @@ def main() -> None:
 
         "organisations":
             organisations_df,
+    }
+
+    csv_datasets = {
+        **datasets,
+        "iati_health_projects":
+            activities_df,
     }
 
     print()
@@ -2429,7 +2436,7 @@ def main() -> None:
 
     save_csvs(
         args.output_dir,
-        datasets,
+        csv_datasets,
     )
 
     # ------------------------------------------------------------------
@@ -2457,7 +2464,7 @@ def main() -> None:
 
     save_daily_snapshot(
         args.snapshot_dir,
-        datasets,
+        csv_datasets,
     )
 
     # ------------------------------------------------------------------
@@ -2481,7 +2488,7 @@ def main() -> None:
 
     save_manifest(
         args.output_dir,
-        datasets,
+        csv_datasets,
         query,
     )
 

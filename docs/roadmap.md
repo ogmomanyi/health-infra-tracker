@@ -59,12 +59,15 @@ Primary outputs:
 - `data/organisation_aliases.csv`
 - `data/organisation_intelligence.csv`
 - `data/donor_intelligence.csv`
+- `data/opportunity_organisation_resolution.csv`
 - SQLite tables for relationships, groups, and opportunity organisation resolution
 
 Guardrail:
 
 - `run_intelligence_pipeline.py` keeps SQLite as the source of truth for canonical organisation entities and aliases.
-- Derived-only unresolved organisations are excluded from target-account generation until canonical resolution catches up.
+- Non-entity placeholders are removed from canonical/account outputs.
+- Missing real source organisations are appended to the canonical registry before account generation.
+- Organisation groups are reseeded dynamically from the active canonical registry before opportunity relationship resolution.
 - Published canonical CSVs are synced back from SQLite after each intelligence run.
 
 ## 4. Commercial Intelligence
@@ -127,5 +130,4 @@ Next enhancement frontier:
 - Add richer product-family aliases and specification-level matching.
 - Link product families to Faram's actual principal/distributor catalogue and authorization status.
 - Validate manufacturer/product matches against awarded tenders and supplier information where publicly available.
-- Refresh the canonical organisation registry before each intelligence build rather than only preserving the current registry.
 - Add dashboard views for product family, manufacturer, validation performance, and competitor signals.

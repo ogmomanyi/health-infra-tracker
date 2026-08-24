@@ -1003,6 +1003,7 @@
             actions: [],
             programmes: [],
             opportunities: [],
+            relationships: [],
             engagements: [],
             notes: [],
             donors: [],
@@ -1023,6 +1024,7 @@
             actions: "data/recommended_actions.csv",
             programmes: "data/programme_intelligence.csv",
             opportunities: "data/opportunities.csv",
+            relationships: "data/opportunity_organisation_resolution.csv",
             engagements: "data/engagements.csv",
             notes: "data/crm_notes.csv",
             donors: "data/donor_intelligence.csv",
@@ -1168,12 +1170,13 @@
 
         async function loadDashboard() {
             try {
-                const [summary, accounts, actions, programmes, opportunities, engagements, notes, donors, equipment, tenders] = await Promise.all([
+                const [summary, accounts, actions, programmes, opportunities, relationships, engagements, notes, donors, equipment, tenders] = await Promise.all([
                     fetchJson(datasetPaths.summary),
                     fetchCsv(datasetPaths.accounts),
                     fetchCsv(datasetPaths.actions),
                     fetchCsv(datasetPaths.programmes),
                     fetchCsv(datasetPaths.opportunities),
+                    fetchCsv(datasetPaths.relationships),
                     fetchCsv(datasetPaths.engagements),
                     fetchCsv(datasetPaths.notes),
                     fetchCsv(datasetPaths.donors),
@@ -1186,6 +1189,7 @@
                 state.actions = sortByNumber(actions, "opportunity_score");
                 state.programmes = sortByNumber(programmes, "opportunity_score");
                 state.opportunities = sortByNumber(opportunities, "opportunity_score");
+                state.relationships = relationships;
                 state.engagements = engagements;
                 state.notes = notes;
                 state.donors = sortByNumber(donors, "donor_score");
@@ -1458,8 +1462,13 @@
         }
 
         function accountRow(account) {
+            const programmeId = accountProgrammeId(account);
+            const rowAttrs = programmeId
+                ? ` class="clickable-row" data-programme-id="${escapeAttr(programmeId)}" tabindex="0"`
+                : "";
+
             return `
-                <tr>
+                <tr${rowAttrs}>
                     <td>
                         <div class="primary">${escapeHtml(account.account_name || "Unnamed account")}</div>
                         <div class="secondary">${escapeHtml(account.target_account_id || "")}</div>
@@ -1472,6 +1481,18 @@
                     <td>${escapeHtml(account.recommended_action || "")}</td>
                 </tr>
             `;
+        }
+
+        function accountProgrammeId(account) {
+            const actions = state.actions.filter(action => {
+                return action.target_account_id === account.target_account_id && hasValue(action.iati_identifier);
+            });
+
+            if (!actions.length) {
+                return "";
+            }
+
+            return sortByNumber(actions, "opportunity_score")[0].iati_identifier;
         }
 
         function actionRow(action) {
@@ -1575,6 +1596,7 @@
             const opportunity = opportunityMap().get(id) || {};
             const tender = tenderMap().get(id) || {};
             const actions = state.actions.filter(action => action.iati_identifier === id);
+            const relationships = state.relationships.filter(relationship => relationship.opportunity_id === id);
             const engagements = state.engagements.filter(engagement => engagement.related_iati_identifier === id);
             const notes = state.notes.filter(note => note.related_iati_identifier === id);
             const record = mergeRows(opportunity, programme, tender, actions[0] || {});
@@ -1626,6 +1648,7 @@
                     ["Target Accounts", uniqueValues(actions.map(action => action.account_name)).join("; ")],
                     ["Countries", firstValue(record.country_names, record.country_codes)]
                 ]))}
+                ${detailSection("Resolved Relationships", detailRelationships(relationships))}
                 ${detailSection("Equipment Signals", `
                     ${detailGrid([
                         ["Targets", record.equipment_target_summary, value => tagList(value, "teal")],
@@ -1934,6 +1957,34 @@
                             ${detailCopy(engagement.next_step)}
                         </div>
                     `).join("")}
+                </div>
+            `;
+        }
+
+        function detailRelationships(relationships) {
+            if (!relationships.length) {
+                return "";
+            }
+
+            return `
+                <div class="detail-actions">
+                    ${relationships.slice(0, 12).map(relationship => `
+                        <div class="detail-action">
+                            <strong>${escapeHtml(relationship.organisation_name || "Organisation")}</strong>
+                            <div class="secondary">
+                                ${escapeHtml([
+                                    relationship.organisation_role,
+                                    relationship.entity_id ? `Entity ${relationship.entity_id}` : relationship.group_id ? `Group ${relationship.group_id}` : relationship.resolution_level,
+                                    relationship.resolution_method
+                                ].filter(hasValue).join(" · "))}
+                            </div>
+                            <div class="tag-row" style="margin-top: 8px;">
+                                ${tag(relationship.resolution_level || "UNRESOLVED", relationship.resolution_level === "ENTITY" ? "teal" : relationship.resolution_level === "GROUP" ? "blue" : "amber")}
+                                ${tag(`${Math.round(numberValue(relationship.confidence_score) * 100)}%`, "")}
+                            </div>
+                        </div>
+                    `).join("")}
+                    ${relationships.length > 12 ? `<div class="secondary">${formatInteger(relationships.length - 12)} more relationships</div>` : ""}
                 </div>
             `;
         }
@@ -2313,4 +2364,3 @@
     </script>
 </body>
 </html>
-

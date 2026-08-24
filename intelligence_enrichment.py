@@ -1,333 +1,575 @@
-"""Commercial intelligence enrichment helpers used by intelligence_builder.
+#!/usr/bin/env python3
 
-This module intentionally contains deterministic, dependency-light rules so the
-pipeline can run in CI and in local/offline environments.
+"""
+Intelligence enrichment models for the health infrastructure tracker.
+
+These functions sit on top of normalized IATI data. They do not replace
+source records. They convert messy names, mixed currencies, and weak
+keyword hits into commercially usable donor, equipment, and tender signals.
 """
 
+from __future__ import annotations
+
+import html
+import math
 import re
-from collections import Counter
-from typing import Dict, Iterable, List, Tuple
+from datetime import date
+from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 
 
-# Approximate USD conversion factors (units of source currency per USD).
-# These are deliberately conservative fallback rates for intelligence ranking,
-# not accounting or treasury rates.
-_FX_PER_USD = {
+USD_RATES = {
     "USD": 1.0,
-    "US": 1.0,
-    "EUR": 0.92,
-    "GBP": 0.78,
-    "KES": 129.0,
-    "UGX": 3700.0,
-    "RWF": 1400.0,
-    "ETB": 145.0,
-    "TZS": 2500.0,
-    "SSP": 130.0,
-    "SOS": 570.0,
-    "CDF": 2850.0,
+    "EUR": 1.17,
+    "GBP": 1.35,
+    "KES": 0.00775,
+    "UGX": 0.00027,
+    "TZS": 0.00039,
+    "RWF": 0.00069,
+    "ETB": 0.00725,
+    "SSP": 0.00077,
+    "SOS": 0.00775,
+    "CDF": 0.00035,
+    "NGN": 0.00077,
+    "ZAR": 0.055,
+    "EGP": 0.019,
+    "GHS": 0.078,
+    "XOF": 0.00180,
+    "XAF": 0.00180,
+    "CAD": 0.73,
+    "AUD": 0.65,
+    "CHF": 1.25,
+    "SEK": 0.108,
+    "NOK": 0.095,
+    "DKK": 0.157,
+    "JPY": 0.0067,
+    "CNY": 0.139,
+    "INR": 0.0117,
 }
 
-
-def _text(value: object) -> str:
-    return " ".join(str(value or "").split())
-
-
-def _number(value: object) -> float:
-    try:
-        return float(value or 0)
-    except (TypeError, ValueError):
-        return 0.0
-
-
-def _tokens(value: object) -> List[str]:
-    text = _text(value).replace("|", ";")
-    return [part.strip() for part in text.split(";") if part.strip()]
-
-
-def amount_to_usd(amount: object, currency: object = "USD") -> Tuple[float, str]:
-    """Return (USD amount, normalization status).
-
-    Unknown currencies are left unconverted rather than silently applying a
-    misleading rate. USD and common East African reporting currencies are
-    supported using deterministic fallback rates.
-    """
-    number = _number(amount)
-    code = _text(currency).upper().replace("$", "USD")
-    code = {"US DOLLAR": "USD", "DOLLAR": "USD", "EURO": "EUR", "POUND": "GBP"}.get(code, code)
-
-    if not number:
-        return 0.0, "no_amount"
-
-    rate = _FX_PER_USD.get(code)
-    if rate is None:
-        return number, f"unconverted_unknown_currency:{code or 'UNKNOWN'}"
-
-    return round(number / rate, 2), f"converted:{code}->USD"
-
-
-def canonical_donor_name(name: object) -> str:
-    """Normalize common donor naming variants without aggressive fuzzy merging."""
-    raw = _text(name)
-    key = re.sub(r"[^a-z0-9]+", " ", raw.lower()).strip()
-    key = re.sub(r"\s+", " ", key)
-
-    aliases = {
-        "world bank": "World Bank",
-        "the world bank": "World Bank",
-        "world bank group": "World Bank",
-        "international development association": "World Bank",
-        "ida": "World Bank",
-        "international bank for reconstruction and development": "World Bank",
-        "ib rd": "World Bank",
-        "united states agency for international development": "USAID",
-        "usaid": "USAID",
-        "u s agency for international development": "USAID",
-        "department for international development": "UK FCDO",
-        "foreign commonwealth and development office": "UK FCDO",
-        "foreign commonwealth development office": "UK FCDO",
-        "fcdo": "UK FCDO",
-        "uk foreign commonwealth development office": "UK FCDO",
-        "the global fund": "The Global Fund",
-        "global fund to fight aids tuberculosis and malaria": "The Global Fund",
-        "global fund": "The Global Fund",
-        "united nations childrens fund": "UNICEF",
-        "unicef": "UNICEF",
-        "world health organization": "WHO",
-        "who": "WHO",
-    }
-    if key in aliases:
-        return aliases[key]
-    return raw
-
-
-_EQUIPMENT_CATEGORY_ALIASES = {
-    "facility infrastructure": "Facility Infrastructure",
-    "facility / hospital infrastructure": "Facility Infrastructure",
-    "diagnostic equipment": "Diagnostic Equipment",
-    "laboratory equipment": "Laboratory Equipment",
-    "medical devices": "Medical Devices",
-    "medical devices & equipment": "Medical Devices",
-    "cold chain": "Cold Chain / Storage",
-    "cold chain / storage": "Cold Chain / Storage",
-    "health it / information systems": "IT / Health Information Systems",
-    "it / health information systems": "IT / Health Information Systems",
-    "vehicles / transport": "Vehicles / Transport",
-    "vehicles & transport": "Vehicles / Transport",
-    "blood bank equipment": "Blood Bank Equipment",
-    "ppe": "PPE",
+EQUIPMENT_TAXONOMY: Dict[str, List[str]] = {
+    "Diagnostic Equipment": [
+        r"diagnostic",
+        r"rapid test",
+        r"test kit",
+        r"point.of.care",
+        r"in.vitro diagnostic",
+        r"\bivd\b",
+        r"analy[sz]er",
+        r"\bgenexpert\b",
+        r"\bpcr\b",
+        r"molecular test",
+        r"lab(oratory)? network",
+    ],
+    "Laboratory Systems": [
+        r"laboratory equipment",
+        r"lab equipment",
+        r"biosafety cabinet",
+        r"centrifuge",
+        r"microscope",
+        r"pathology",
+        r"blood bank",
+        r"sample transport",
+        r"laboratory system",
+    ],
+    "Medical Devices & Equipment": [
+        r"medical device",
+        r"medical equipment",
+        r"biomedical equipment",
+        r"surgical equipment",
+        r"operating theatre",
+        r"operating theater",
+        r"autoclave",
+        r"sterili[sz]",
+        r"patient monitor",
+        r"defibrillator",
+        r"incubator",
+        r"dialysis",
+        r"hospital bed",
+    ],
+    "Imaging": [
+        r"imaging equipment",
+        r"x-?ray",
+        r"\bmri\b",
+        r"\bct scan",
+        r"ultrasound",
+        r"mammograph",
+        r"fluoroscop",
+    ],
+    "Oxygen & Respiratory": [
+        r"\boxygen\b",
+        r"ventilator",
+        r"cpap",
+        r"psa plant",
+        r"oxygen plant",
+        r"concentrator",
+    ],
+    "Cold Chain / Storage": [
+        r"cold chain",
+        r"cold storage",
+        r"refrigerat",
+        r"vaccine storage",
+        r"\bfridge\b",
+        r"freezer",
+        r"\bilr\b",
+    ],
+    "Vehicles & Transport": [
+        r"ambulance",
+        r"\bvehicles?\b",
+        r"motorcycle",
+        r"\b4x4\b",
+        r"fleet of",
+        r"mobile clinic",
+    ],
+    "PPE": [
+        r"personal protective equipment",
+        r"\bppe\b",
+        r"protective gear",
+        r"protective clothing",
+    ],
+    "Facility Infrastructure": [
+        r"construction",
+        r"renovation",
+        r"rehabilitat",
+        r"health facilit",
+        r"hospital building",
+        r"clinic\b",
+        r"dispensary",
+        r"dispensaries",
+        r"infrastructure",
+        r"maternity ward",
+        r"health centre",
+        r"health center",
+    ],
+    "Power & Utilities": [
+        r"solar",
+        r"generator",
+        r"backup power",
+        r"electrification",
+        r"incinerat",
+        r"medical waste",
+        r"water treatment",
+        r"\bwash\b",
+    ],
+    "IT / Health Information Systems": [
+        r"health information system",
+        r"\bhmis\b",
+        r"electronic medical record",
+        r"\bemr\b",
+        r"\behr\b",
+        r"digital health",
+        r"data system",
+        r"software platform",
+        r"telemedicine",
+        r"telehealth",
+    ],
 }
 
-def canonical_equipment_category(value: object) -> str:
-    raw = _text(value)
-    if not raw:
-        return ""
-    key = re.sub(r"\\s+", " ", raw.lower()).strip()
-    return _EQUIPMENT_CATEGORY_ALIASES.get(key, raw)
+SECTOR_INFERRED_EQUIPMENT = {
+    "12230": "Facility Infrastructure",
+    "12191": "Medical Devices & Equipment",
+    "12250": "Diagnostic Equipment",
+    "12262": "Diagnostic Equipment",
+    "14020": "Power & Utilities",
+    "14030": "Power & Utilities",
+    "23030": "Power & Utilities",
+    "23040": "Power & Utilities",
+}
 
+MANUFACTURER_PATTERNS: Sequence[Tuple[str, str]] = (
+    ("Abbott", r"\babbott\b"),
+    ("Roche", r"\broche\b"),
+    ("Cepheid", r"\bcepheid\b|\bgenexpert\b"),
+    ("Siemens Healthineers", r"siemens"),
+    ("GE HealthCare", r"\bge healthcare\b|\bge medical\b"),
+    ("Philips", r"\bphilips\b"),
+    ("Mindray", r"\bmindray\b"),
+    ("Bio-Rad", r"\bbio-?rad\b"),
+    ("BD", r"\bbecton dickinson\b|\bbd biosciences\b"),
+    ("Sysmex", r"\bsysmex\b"),
+    ("Hologic", r"\bhologic\b"),
+    ("Qiagen", r"\bqiagen\b"),
+    ("Thermo Fisher", r"thermo fisher"),
+    ("Dräger", r"\bdr[aä]ger\b"),
+    ("Getinge", r"\bgetinge\b"),
+    ("Stryker", r"\bstryker\b"),
+    ("Medtronic", r"\bmedtronic\b"),
+    ("Fujifilm", r"\bfujifilm\b"),
+    ("Canon Medical", r"canon medical"),
+    ("Samsung Medison", r"\bmedison\b"),
+)
 
-_EQUIPMENT_PATTERNS = [
-    ("Laboratory equipment", r"\b(laboratory|lab|analy[sz]er|centrifuge|microscope|incubator|autoclave)\b"),
-    ("Diagnostic equipment", r"\b(diagnostic|diagnostics|diagnosis|testing|test kits?|assay|pcr|gene ?xpert)\b"),
-    ("Medical devices", r"\b(medical device|medical devices|patient monitor|infusion|ventilator|ultrasound|x[- ]?ray)\b"),
-    ("Cold chain", r"\b(cold chain|refrigerator|freezer|vaccine carrier|cold storage)\b"),
-    ("Blood bank equipment", r"\b(blood bank|blood storage|blood screening|apheresis|blood analyser)\b"),
-    ("Health IT / information systems", r"\b(digital health|health information system|\bhis\b|\behr\b|electronic medical record|telemedicine)\b"),
-    ("Facility / hospital infrastructure", r"\b(hospital|health facilit|clinic|facility|construction|renovation|rehabilitation)\b"),
-    ("Vehicles / transport", r"\b(ambulance|vehicle|motorcycle|transport fleet)\b"),
+DONOR_FAMILY_RULES: Sequence[Tuple[str, Sequence[str]]] = (
+    ("Bill & Melinda Gates Foundation", (r"gates foundation", r"bill (&|and) melinda gates", r"\bbmgf\b")),
+    ("USAID", (r"\busaid\b", r"united states agency for international development")),
+    ("Gavi, the Vaccine Alliance", (r"\bgavi\b",)),
+    ("The Global Fund", (r"global fund", r"\bgfatm\b")),
+    ("World Health Organization", (r"world health organi", r"\bwho\b")),
+    ("UNICEF", (r"\bunicef\b", r"united nations children")),
+    ("World Bank", (r"world bank", r"\bibrd\b", r"\bida\b", r"international development association")),
+    ("FCDO / United Kingdom", (r"foreign.{0,20}development office", r"\bdfid\b", r"\bfcdo\b", r"^the united kingdom$", r"united kingdom")),
+    ("European Commission", (r"european commission", r"\becho\b", r"\beuropeaid\b", r"\bdg intpa\b")),
+    ("Germany / BMZ / KfW", (r"\bbmz\b", r"\bkfw\b", r"federal ministry for economic cooperation", r"giz")),
+    ("France / AFD", (r"\bafd\b", r"agence fran", r"expertise france")),
+    ("Japan / JICA", (r"\bjica\b", r"^japan$", r"japan international cooperation")),
+    ("Canada", (r"^canada$", r"global affairs canada", r"\bcida\b")),
+    ("Sweden / Sida", (r"^sweden$", r"\bsida\b", r"swedish international")),
+    ("Norway / Norad", (r"^norway$", r"\bnorad\b")),
+    ("Netherlands", (r"netherlands", r"\bdgid\b", r"ministry of foreign affairs of the netherlands")),
+    ("Switzerland / SDC", (r"\bsdc\b", r"swiss agency for development")),
+    ("Italy / AICS", (r"\baics\b", r"italian agency for cooperation")),
+    ("Finland MFA", (r"ministry for foreign affairs of finland", r"finland")),
+    ("UN OCHA", (r"\bunocha\b", r"ocha")),
+    ("UNDP", (r"\bundp\b", r"united nations development programme")),
+    ("UNFPA", (r"\bunfpa\b",)),
+    ("UNOPS", (r"\bunops\b",)),
+    ("African Development Bank", (r"african development bank", r"\bafdb\b")),
+    ("Islamic Development Bank", (r"islamic development bank", r"\bisdb\b")),
+)
+
+_COMPILED_EQUIPMENT = {
+    category: [re.compile(pattern, re.IGNORECASE) for pattern in patterns]
+    for category, patterns in EQUIPMENT_TAXONOMY.items()
+}
+
+_COMPILED_MANUFACTURERS = [
+    (name, re.compile(pattern, re.IGNORECASE))
+    for name, pattern in MANUFACTURER_PATTERNS
 ]
+
+_COMPILED_DONOR_FAMILIES = [
+    (family, [re.compile(pattern, re.IGNORECASE) for pattern in patterns])
+    for family, patterns in DONOR_FAMILY_RULES
+]
+
+
+def clean_text(value: object) -> str:
+    return " ".join(html.unescape(str(value or "")).split())
+
+
+def split_values(value: object) -> List[str]:
+    text = "" if value is None else html.unescape(str(value))
+    return [
+        part.strip()
+        for part in text.replace("|", ";").split(";")
+        if part.strip()
+    ]
+
+
+def normalize_org_name(value: object) -> str:
+    text = clean_text(value).lower()
+    text = text.replace("&", " and ")
+    text = re.sub(r"[^a-z0-9\s]", " ", text)
+    text = re.sub(
+        r"\b(the|inc|ltd|llc|org|organisation|organization|agency|foundation)\b",
+        " ",
+        text,
+    )
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def amount_to_usd(amount: object, currency: object) -> Tuple[float, str]:
+    try:
+        number = float(amount or 0)
+    except (TypeError, ValueError):
+        return 0.0, "NO_AMOUNT"
+
+    if number == 0:
+        return 0.0, "NO_AMOUNT"
+
+    code = clean_text(currency).upper()
+
+    if not code or code == "MIXED":
+        return 0.0, "UNKNOWN_CURRENCY"
+
+    rate = USD_RATES.get(code)
+
+    if rate is None:
+        return 0.0, "UNKNOWN_CURRENCY"
+
+    return round(number * rate, 2), "CONVERTED"
+
+
+def canonical_donor_name(value: object) -> str:
+    original = clean_text(value)
+
+    if not original:
+        return "Unspecified donor"
+
+    if "who foundation" in original.lower():
+        return "WHO Foundation"
+
+    normalized = normalize_org_name(original)
+
+    if re.search(r"food for peace", normalized):
+        return "USAID"
+
+    for family, patterns in _COMPILED_DONOR_FAMILIES:
+        if family == "World Health Organization" and "foundation" in normalized:
+            continue
+
+        if any(pattern.search(normalized) or pattern.search(original) for pattern in patterns):
+            return family
+
+    return original
 
 
 def extract_equipment_signals(
-    project_title: object,
-    description: object,
-    snippets: object,
-    *,
+    *texts: object,
     sector_codes: object = "",
     existing_categories: object = "",
 ) -> Dict[str, str]:
-    """Extract direct and sector-inferred equipment categories."""
-    title = _text(project_title)
-    desc = _text(description)
-    snippet = _text(snippets)
-    haystack = f"{title} {desc} {snippet}".lower()
+    haystack = " ".join(clean_text(value) for value in texts)
+    categories: List[str] = []
+    snippets: List[str] = []
 
-    direct: List[str] = []
-    for category, pattern in _EQUIPMENT_PATTERNS:
-        if re.search(pattern, haystack, flags=re.I):
-            direct.append(category)
+    for category, patterns in _COMPILED_EQUIPMENT.items():
+        for pattern in patterns:
+            match = pattern.search(haystack)
 
-    for category in _tokens(existing_categories):
-        category = canonical_equipment_category(category)
-        if category and category not in direct:
-            # Existing extracted categories are evidence from the source layer.
-            direct.append(category)
+            if not match:
+                continue
 
-    direct = list(dict.fromkeys(
-        canonical_equipment_category(category)
-        for category in direct
-        if canonical_equipment_category(category)
-    ))
+            categories.append(category)
+            start = max(0, match.start() - 60)
+            end = min(len(haystack), match.end() + 90)
+            snippets.append(f"{category}: …{haystack[start:end].strip()}…")
+            break
 
-    inferred: List[str] = []
-    sectors = _text(sector_codes)
-    if not direct:
-        if "12220" in sectors or "12230" in sectors:
-            inferred.append("Facility Infrastructure")
-        elif "122" in sectors:
-            inferred.append("Medical Devices")
+    direct = list(dict.fromkeys(categories + split_values(existing_categories)))
+    inferred = []
 
-    evidence = "direct_keyword" if direct else ("sector_inferred" if inferred else "")
-    categories = "; ".join(dict.fromkeys(direct))
-    inferred_text = "; ".join(dict.fromkeys(canonical_equipment_category(category) for category in inferred if canonical_equipment_category(category)))
-    combined = categories or inferred_text
+    for code in split_values(sector_codes):
+        mapped = SECTOR_INFERRED_EQUIPMENT.get(code.strip())
+
+        if mapped and mapped not in direct:
+            inferred.append(mapped)
+
+    inferred = list(dict.fromkeys(inferred))
+
+    if direct:
+        evidence = "direct_keyword"
+        summary = "; ".join(direct)
+    elif inferred:
+        evidence = "sector_inferred"
+        summary = "; ".join(inferred)
+    else:
+        evidence = "none"
+        summary = ""
 
     return {
-        "equipment_target_summary": combined,
-        "equipment_target_snippets": snippet,
+        "equipment_target_summary": summary,
+        "equipment_target_snippets": " | ".join(dict.fromkeys(snippets)),
         "equipment_evidence": evidence,
-        "direct_equipment_categories": categories,
-        "inferred_equipment_categories": inferred_text,
+        "direct_equipment_categories": "; ".join(direct),
+        "inferred_equipment_categories": "; ".join(inferred),
     }
 
 
-_MANUFACTURERS = [
-    "Abbott", "Beckman Coulter", "Becton Dickinson", "BD", "Bio-Rad",
-    "bioMérieux", "Cepheid", "Danaher", "Fujifilm", "GE HealthCare",
-    "Hologic", "Mindray", "Nihon Kohden", "Roche", "Siemens Healthineers",
-    "Sysmex", "Thermo Fisher", "Philips", "B. Braun", "Bausch + Lomb",
-]
-
-
-def extract_manufacturers(project_title: object, description: object, snippets: object) -> str:
-    haystack = f"{_text(project_title)} {_text(description)} {_text(snippets)}"
-    found = []
-    lower = haystack.lower()
-    for manufacturer in _MANUFACTURERS:
-        if manufacturer.lower() in lower:
-            found.append(manufacturer)
+def extract_manufacturers(*texts: object) -> str:
+    haystack = " ".join(clean_text(value) for value in texts)
+    found = [
+        name
+        for name, pattern in _COMPILED_MANUFACTURERS
+        if pattern.search(haystack)
+    ]
     return "; ".join(dict.fromkeys(found))
 
 
-def herfindahl(items: Iterable[object]) -> float:
-    values = [_text(item) for item in items if _text(item)]
-    if not values:
+def herfindahl(values: Iterable[str]) -> float:
+    counts: Dict[str, int] = {}
+
+    for item in values:
+        text = clean_text(item)
+
+        if not text:
+            continue
+
+        counts[text] = counts.get(text, 0) + 1
+
+    total = sum(counts.values())
+
+    if total <= 0:
         return 0.0
-    counts = Counter(values)
-    total = len(values)
+
     return round(sum((count / total) ** 2 for count in counts.values()), 3)
 
 
-def donor_score(metrics: Dict[str, object]) -> Tuple[float, str]:
-    """Score donor commercial attractiveness on a 0-100 deterministic scale."""
-    average = max(0.0, min(100.0, _number(metrics.get("average_score"))))
-    priority_share = max(0.0, min(1.0, _number(metrics.get("high_priority_share"))))
-    specificity = max(0.0, min(1.0, _number(metrics.get("equipment_specificity"))))
-    budget = max(0.0, _number(metrics.get("reported_budget_usd")))
-    future = max(0.0, _number(metrics.get("future_disbursement_usd")))
-    active = max(0.0, min(1.0, _number(metrics.get("active_share"))))
-    recency = max(0.0, _number(metrics.get("recency_days")))
-    countries = max(0.0, _number(metrics.get("country_count")))
-
-    budget_component = min(15.0, (budget / 1_000_000.0) * 3.0)
-    future_component = min(10.0, (future / 1_000_000.0) * 4.0)
-    recency_component = 10.0 if recency <= 90 else 6.0 if recency <= 365 else 2.0 if recency < 9999 else 0.0
-    country_component = min(5.0, countries)
-
-    score = (
-        average * 0.40
-        + priority_share * 20.0
-        + specificity * 15.0
-        + active * 10.0
-        + budget_component
-        + future_component
-        + recency_component
-        + country_component
-    )
-    score = round(min(100.0, score), 1)
-
-    if score >= 75:
-        tier = "Tier 1"
-    elif score >= 55:
-        tier = "Tier 2"
-    elif score >= 35:
-        tier = "Tier 3"
-    else:
-        tier = "Monitor"
-    return score, tier
+def soonest_positive_days(deltas: Iterable[Optional[int]]) -> Optional[int]:
+    upcoming = [delta for delta in deltas if delta is not None and delta >= 0]
+    return min(upcoming) if upcoming else None
 
 
-def tender_model(row: Dict[str, object], as_of) -> Dict[str, object]:
-    """Estimate procurement likelihood, stage and timing from available IATI signals."""
-    title = _text(row.get("project_title")).lower()
-    description = _text(row.get("description")).lower()
-    evidence = _text(row.get("equipment_evidence"))
-    direct = _tokens(row.get("direct_equipment_categories"))
-    procurement = _text(row.get("procurement_signal")).lower() == "yes"
-    status = _text(row.get("activity_status_code"))
-    future_disb = _number(row.get("future_disbursement_usd"))
-    future_budget = _number(row.get("future_budget_usd"))
-    next_date = _text(row.get("next_disbursement_date")) or _text(row.get("next_budget_date"))
-    score = _number(row.get("opportunity_score"))
+def tender_model(row: Dict[str, object], as_of: date) -> Dict[str, object]:
+    score = 0.0
+    evidence: List[str] = []
+    equipment_evidence = str(row.get("equipment_evidence") or "")
+    direct_categories = split_values(row.get("direct_equipment_categories"))
+    procurement = str(row.get("procurement_signal") or "") == "Yes"
+    status = str(row.get("activity_status_code") or "").strip()
+    future_disbursement = float(row.get("future_disbursement_usd") or row.get("future_disbursement_amount") or 0)
+    future_budget = float(row.get("future_budget_usd") or row.get("future_budget_amount") or 0)
+    implementers = split_values(row.get("implementing_partners"))
 
-    probability = 20.0
-    reasons = []
-    if direct or evidence == "direct_keyword":
-        probability += 28
-        reasons.append("direct equipment evidence")
-    elif evidence == "sector_inferred":
-        probability += 10
-        reasons.append("sector-inferred equipment demand")
+    if equipment_evidence == "direct_keyword" or direct_categories:
+        score += 26
+        evidence.append("direct equipment language")
+    elif equipment_evidence == "sector_inferred":
+        score += 8
+        evidence.append("sector-implied demand")
+
     if procurement:
-        probability += 15
-        reasons.append("procurement language")
-    if future_disb > 0 or future_budget > 0:
-        probability += 18
-        reasons.append("future funding")
-    if status == "2":
-        probability += 8
-        reasons.append("active programme")
-    elif status == "1":
-        probability += 4
-        reasons.append("pipeline programme")
-    if score >= 65:
-        probability += 10
-        reasons.append("high opportunity score")
-    elif score >= 50:
-        probability += 5
-        reasons.append("moderate opportunity score")
+        score += 14
+        evidence.append("procurement language")
 
-    if any(term in f"{title} {description}" for term in ["tender", "procurement", "purchase", "supply", "bid"]):
-        probability += 5
-        reasons.append("explicit procurement wording")
+    next_dates = [
+        _days_until(row.get("next_disbursement_date"), as_of),
+        _days_until(row.get("next_budget_date"), as_of),
+        _days_until(row.get("planned_start_date"), as_of),
+    ]
+    soonest = soonest_positive_days(next_dates)
 
-    probability = round(min(100.0, probability), 1)
+    if soonest is not None:
+        if soonest <= 90:
+            score += 22
+            evidence.append("funding window within 90 days")
+        elif soonest <= 180:
+            score += 16
+            evidence.append("funding window within 6 months")
+        elif soonest <= 365:
+            score += 11
+            evidence.append("funding window within 12 months")
+        elif soonest <= 730:
+            score += 6
+            evidence.append("funding window within 24 months")
 
-    if probability >= 70:
-        stage = "Likely procurement"
-    elif probability >= 50:
-        stage = "Funding window"
+    if future_disbursement > 0:
+        score += min(12, 4 + math.log10(future_disbursement + 1))
+        evidence.append("future planned disbursement")
+
+    if future_budget > 0:
+        score += min(8, 2 + math.log10(future_budget + 1))
+        evidence.append("future budget period")
+
+    if status == "1":
+        score += 10
+        evidence.append("pipeline activity")
+    elif status == "2":
+        score += 7
+        evidence.append("active implementation")
+    elif status in {"3", "4", "5"}:
+        score -= 18
+        evidence.append("closed or completed activity")
+
+    if implementers:
+        score += 5
+        evidence.append("named implementing buyer")
+
+    updated_age = _days_until(row.get("last_updated"), as_of)
+
+    if updated_age is not None:
+        age = abs(updated_age) if updated_age < 0 else 0
+
+        if age <= 180:
+            score += 7
+            evidence.append("updated in last 6 months")
+        elif age > 730:
+            score -= 8
+            evidence.append("stale activity record")
+
+    score = max(0.0, min(100.0, round(score, 1)))
+
+    if soonest is None:
+        horizon = "Unspecified"
+        window = ""
+        basis = str(row.get("prediction_basis") or "no dated funding signal")
+    elif soonest <= 180:
+        horizon = "0-6 months"
+        window = str(row.get("predicted_tender_window") or "")
+        basis = str(row.get("prediction_basis") or "near-term funding date")
+    elif soonest <= 365:
+        horizon = "6-12 months"
+        window = str(row.get("predicted_tender_window") or "")
+        basis = str(row.get("prediction_basis") or "12-month funding date")
     else:
-        stage = "Demand signal"
+        horizon = "12-24 months"
+        window = str(row.get("predicted_tender_window") or "")
+        basis = str(row.get("prediction_basis") or "long-range funding date")
 
-    horizon = "Near term" if probability >= 70 else "Medium term" if probability >= 50 else "Longer term"
-    window = next_date or "Monitor"
-    confidence = "High" if len(reasons) >= 4 else "Medium" if len(reasons) >= 2 else "Low"
-    basis = "; ".join(reasons) if reasons else "limited procurement evidence"
-    action = (
-        "Engage donor/implementer and validate procurement route now."
-        if stage == "Likely procurement"
-        else "Monitor funding movement and begin stakeholder mapping."
-        if stage == "Funding window"
-        else "Monitor programme for stronger equipment or procurement evidence."
-    )
+    if window.lower() == "monitor":
+        window = ""
+
+    if score >= 70 and (direct_categories or procurement) and soonest is not None and soonest <= 365:
+        stage = "Likely procurement"
+    elif soonest is not None and (future_disbursement > 0 or future_budget > 0):
+        stage = "Funding window"
+    elif direct_categories:
+        stage = "Demand signal"
+    else:
+        stage = "Watch"
+
+    confidence = min(95, 30 + len(dict.fromkeys(evidence)) * 8)
+
+    if equipment_evidence == "direct_keyword":
+        action = "Map buyer, lot structure, and national/UN procurement channels before the funding window."
+    elif stage == "Funding window":
+        action = "Track disbursement timing and confirm whether a supply contract is expected."
+    elif stage == "Demand signal":
+        action = "Validate equipment need with the implementer; do not treat this as an open tender."
+    else:
+        action = "Keep on watch until a dated funding or procurement signal appears."
 
     return {
-        "tender_probability": probability,
+        "tender_probability": score,
         "tender_stage": stage,
         "tender_horizon": horizon,
         "tender_window": window,
         "tender_basis": basis,
         "tender_confidence": confidence,
-        "tender_evidence": "; ".join(reasons),
+        "tender_evidence": "; ".join(dict.fromkeys(evidence)),
         "recommended_procurement_action": action,
     }
+
+
+def donor_score(metrics: Dict[str, float]) -> Tuple[float, str]:
+    score = 0.0
+    score += min(28, metrics.get("average_score", 0) * 0.28)
+    score += min(18, metrics.get("high_priority_share", 0) * 18)
+    score += min(16, metrics.get("equipment_specificity", 0) * 16)
+    score += min(12, math.log10(metrics.get("reported_budget_usd", 0) + 1) * 1.4)
+    score += min(10, math.log10(metrics.get("future_disbursement_usd", 0) + 1) * 1.3)
+    score += min(8, metrics.get("active_share", 0) * 8)
+
+    if metrics.get("recency_days", 9999) <= 180:
+        score += 8
+    elif metrics.get("recency_days", 9999) <= 365:
+        score += 4
+
+    if 2 <= metrics.get("country_count", 0) <= 8:
+        score += 4
+
+    score = max(0.0, min(100.0, round(score, 1)))
+
+    if score >= 75 or metrics.get("high_priority_count", 0) >= 12:
+        tier = "Strategic donor"
+    elif score >= 55:
+        tier = "Priority donor"
+    elif score >= 35:
+        tier = "Watch donor"
+    else:
+        tier = "Background"
+
+    return score, tier
+
+
+def _days_until(value: object, as_of: date) -> Optional[int]:
+    text = clean_text(value)
+
+    if not text:
+        return None
+
+    try:
+        parsed = date.fromisoformat(text[:10])
+    except ValueError:
+        return None
+
+    return (parsed - as_of).days
