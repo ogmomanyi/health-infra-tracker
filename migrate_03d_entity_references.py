@@ -1,17 +1,5 @@
 #!/usr/bin/env python3
-"""Safely migrate legacy organisation references into the canonical 03D model.
-
-The 03D repair introduced stable ``org_*`` entity IDs while older semantic,
-group, and opportunity tables may still contain ``ORG-*`` IDs. This migration
-rewrites those references only when the source ID can be mapped unambiguously
-to one active canonical entity. Existing ``org_*`` duplicate children are also
-collapsed to their canonical parent before downstream references are persisted.
-
-Relationship evidence is never silently discarded. Every source relationship
-is classified as MIGRATED, DUPLICATE, or UNRESOLVED in an audit table. Any
-unresolved relationship aborts the transaction so a partially migrated database
-cannot be committed.
-"""
+"""Safely migrate legacy organisation references into the canonical 03D model."""
 
 import hashlib
 import sqlite3
@@ -25,8 +13,7 @@ AUDIT_TABLE = "organisation_relationship_migration_audit"
 
 def table_exists(conn, name):
     return conn.execute(
-        "SELECT 1 FROM sqlite_master WHERE type='table' AND name=?",
-        (name,),
+        "SELECT 1 FROM sqlite_master WHERE type='table' AND name=?", (name,)
     ).fetchone() is not None
 
 
@@ -35,11 +22,7 @@ def columns(conn, table):
 
 
 def build_canonical_map(conn):
-    """Build a map from every known entity ID to its canonical root."""
-    entity_ids = {
-        row[0]
-        for row in conn.execute("SELECT entity_id FROM organisation_entities")
-    }
+    entity_ids = {row[0] for row in conn.execute("SELECT entity_id FROM organisation_entities")}
     parents = {
         child: parent
         for parent, child in conn.execute(
@@ -58,9 +41,7 @@ def build_canonical_map(conn):
         seen = set()
         while current in parents:
             if current in seen:
-                raise RuntimeError(
-                    f"Cycle detected in DUPLICATE_OF relationships at {current}"
-                )
+                raise RuntimeError(f"Cycle detected in DUPLICATE_OF relationships at {current}")
             seen.add(current)
             current = parents[current]
             if current not in entity_ids:
@@ -71,7 +52,7 @@ def build_canonical_map(conn):
 
 
 def build_legacy_map(conn, canonical_map):
-    """Map legacy entity IDs to exactly one active canonical entity."""
+    """Map genuinely legacy ORG-* IDs to exactly one canonical entity."""
     if not table_exists(conn, LEGACY_ENTITIES):
         return {}, {}
 
@@ -82,10 +63,8 @@ def build_legacy_map(conn, canonical_map):
         if status not in (None, "ACTIVE"):
             continue
         root_id = canonical_map.get(entity_id)
-        if not root_id:
-            continue
         key = normalize_name(name)
-        if key:
+        if root_id and key:
             canonical.setdefault(key, set()).add(root_id)
 
     mapping = {}
@@ -93,6 +72,13 @@ def build_legacy_map(conn, canonical_map):
     for legacy_id, name in conn.execute(
         f"SELECT organisation_entity_id, canonical_name FROM {LEGACY_ENTITIES}"
     ):
+        # The repair keeps a historical snapshot table, which may contain the
+        # current org_* namespace as well as genuinely legacy ORG-* IDs.
+        # org_* IDs are already canonical references and must not be remapped by
+        # name (their historical names may legitimately no longer be active).
+        if not str(legacy_id).startswith("ORG-"):
+            continue
+
         key = normalize_name(name)
         candidates = canonical.get(key, set())
         if len(candidates) == 1:
@@ -104,7 +90,6 @@ def build_legacy_map(conn, canonical_map):
 
 
 def resolve_reference(entity_id, legacy_map, canonical_map):
-    """Resolve a reference through legacy mapping and DUPLICATE_OF roots."""
     mapped = legacy_map.get(entity_id, entity_id)
     return canonical_map.get(mapped, mapped)
 
@@ -112,22 +97,16 @@ def resolve_reference(entity_id, legacy_map, canonical_map):
 def migrate_entity_column(conn, table, column, legacy_map, canonical_map):
     if not table_exists(conn, table) or column not in columns(conn, table):
         return 0
-
     changed = 0
     rows = conn.execute(
         f'SELECT rowid, "{column}" FROM "{table}" WHERE "{column}" IS NOT NULL'
     ).fetchall()
-
     for rowid, old_id in rows:
         new_id = resolve_reference(old_id, legacy_map, canonical_map)
         if not new_id or new_id == old_id:
             continue
-        conn.execute(
-            f'UPDATE "{table}" SET "{column}"=? WHERE rowid=?',
-            (new_id, rowid),
-        )
+        conn.execute(f'UPDATE "{table}" SET "{column}"=? WHERE rowid=?', (new_id, rowid))
         changed += 1
-
     return changed
 
 
@@ -135,14 +114,12 @@ def migrate_group_members(conn, legacy_map, canonical_map):
     table = "organisation_group_members"
     if not table_exists(conn, table):
         return 0
-
     changed = 0
     rows = conn.execute("SELECT group_id, entity_id FROM organisation_group_members").fetchall()
     for group_id, old_id in rows:
         new_id = resolve_reference(old_id, legacy_map, canonical_map)
         if not new_id or new_id == old_id:
             continue
-
         collision = conn.execute(
             "SELECT 1 FROM organisation_group_members WHERE group_id=? AND entity_id=?",
             (group_id, new_id),
@@ -184,17 +161,13 @@ def ensure_audit_table(conn):
 
 
 def deterministic_relationship_id(original_id, parent, child, rel_type, source, confidence):
-    payload = "|".join(
-        [str(original_id), parent, child, rel_type, str(source), str(confidence)]
-    )
+    payload = "|".join([str(original_id), parent, child, rel_type, str(source), str(confidence)])
     return "rel-03d-" + hashlib.sha256(payload.encode("utf-8")).hexdigest()[:24]
 
 
 def rebuild_relationships(conn, legacy_map, canonical_map):
-    """Rebuild relationships without silently dropping any source row."""
     if not table_exists(conn, "organisation_relationships"):
         return {"migrated": 0, "duplicates": 0, "unresolved": 0}
-
     ensure_audit_table(conn)
 
     rows = conn.execute(
@@ -214,9 +187,7 @@ def rebuild_relationships(conn, legacy_map, canonical_map):
         ).fetchall()
 
     conn.execute("DROP TABLE IF EXISTS organisation_relationships_03d_backup")
-    conn.execute(
-        "ALTER TABLE organisation_relationships RENAME TO organisation_relationships_03d_backup"
-    )
+    conn.execute("ALTER TABLE organisation_relationships RENAME TO organisation_relationships_03d_backup")
     conn.execute(
         """
         CREATE TABLE organisation_relationships (
@@ -239,47 +210,37 @@ def rebuild_relationships(conn, legacy_map, canonical_map):
     for relationship_id, parent, child, rel_type, source, confidence, created_at in rows:
         mapped_parent = resolve_reference(parent, legacy_map, canonical_map)
         mapped_child = resolve_reference(child, legacy_map, canonical_map)
-        parent_exists = conn.execute(
-            "SELECT 1 FROM organisation_entities WHERE entity_id=?",
-            (mapped_parent,),
-        ).fetchone()
-        child_exists = conn.execute(
-            "SELECT 1 FROM organisation_entities WHERE entity_id=?",
-            (mapped_child,),
-        ).fetchone()
+        parent_exists = conn.execute("SELECT 1 FROM organisation_entities WHERE entity_id=?", (mapped_parent,)).fetchone()
+        child_exists = conn.execute("SELECT 1 FROM organisation_entities WHERE entity_id=?", (mapped_child,)).fetchone()
 
         if not parent_exists or not child_exists:
             stats["unresolved"] += 1
             conn.execute(
                 f"""
                 INSERT INTO {AUDIT_TABLE}
-                (relationship_id, parent_entity_id, child_entity_id,
-                 relationship_type, source_system, confidence_score, created_at,
-                 mapped_parent_entity_id, mapped_child_entity_id, action, reason)
+                (relationship_id, parent_entity_id, child_entity_id, relationship_type,
+                 source_system, confidence_score, created_at, mapped_parent_entity_id,
+                 mapped_child_entity_id, action, reason)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'UNRESOLVED', ?)
                 """,
-                (
-                    relationship_id, parent, child, rel_type, source, confidence, created_at,
-                    mapped_parent, mapped_child,
-                    "relationship endpoint does not resolve to an active canonical entity",
-                ),
+                (relationship_id, parent, child, rel_type, source, confidence, created_at,
+                 mapped_parent, mapped_child,
+                 "relationship endpoint does not resolve to an active canonical entity"),
             )
             continue
 
-        if mapped_parent == mapped_child and rel_type == 'DUPLICATE_OF':
+        if mapped_parent == mapped_child and rel_type == "DUPLICATE_OF":
             stats["duplicates"] += 1
             conn.execute(
                 f"""
                 INSERT INTO {AUDIT_TABLE}
-                (relationship_id, parent_entity_id, child_entity_id,
-                 relationship_type, source_system, confidence_score, created_at,
-                 mapped_parent_entity_id, mapped_child_entity_id, action, reason)
+                (relationship_id, parent_entity_id, child_entity_id, relationship_type,
+                 source_system, confidence_score, created_at, mapped_parent_entity_id,
+                 mapped_child_entity_id, action, reason)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'DUPLICATE', ?)
                 """,
-                (
-                    relationship_id, parent, child, rel_type, source, confidence, created_at,
-                    mapped_parent, mapped_child, "relationship collapses to one canonical entity",
-                ),
+                (relationship_id, parent, child, rel_type, source, confidence, created_at,
+                 mapped_parent, mapped_child, "relationship collapses to one canonical entity"),
             )
             continue
 
@@ -289,31 +250,26 @@ def rebuild_relationships(conn, legacy_map, canonical_map):
             conn.execute(
                 f"""
                 INSERT INTO {AUDIT_TABLE}
-                (relationship_id, parent_entity_id, child_entity_id,
-                 relationship_type, source_system, confidence_score, created_at,
-                 mapped_parent_entity_id, mapped_child_entity_id, action, reason)
+                (relationship_id, parent_entity_id, child_entity_id, relationship_type,
+                 source_system, confidence_score, created_at, mapped_parent_entity_id,
+                 mapped_child_entity_id, action, reason)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'DUPLICATE', ?)
                 """,
-                (
-                    relationship_id, parent, child, rel_type, source, confidence, created_at,
-                    mapped_parent, mapped_child, "duplicate logical relationship",
-                ),
+                (relationship_id, parent, child, rel_type, source, confidence, created_at,
+                 mapped_parent, mapped_child, "duplicate logical relationship"),
             )
             continue
 
         seen.add(logical_key)
         new_id = relationship_id
         if new_id in used_ids:
-            new_id = deterministic_relationship_id(
-                relationship_id, mapped_parent, mapped_child, rel_type, source, confidence
-            )
+            new_id = deterministic_relationship_id(relationship_id, mapped_parent, mapped_child, rel_type, source, confidence)
         used_ids.add(new_id)
-
         conn.execute(
             """
             INSERT INTO organisation_relationships
-            (relationship_id, parent_entity_id, child_entity_id,
-             relationship_type, source_system, confidence_score, created_at)
+            (relationship_id, parent_entity_id, child_entity_id, relationship_type,
+             source_system, confidence_score, created_at)
             VALUES (?, ?, ?, ?, ?, ?, ?)
             """,
             (new_id, mapped_parent, mapped_child, rel_type, source, confidence, created_at),
@@ -321,23 +277,20 @@ def rebuild_relationships(conn, legacy_map, canonical_map):
         conn.execute(
             f"""
             INSERT INTO {AUDIT_TABLE}
-            (relationship_id, parent_entity_id, child_entity_id,
-             relationship_type, source_system, confidence_score, created_at,
-             mapped_parent_entity_id, mapped_child_entity_id, action, reason)
+            (relationship_id, parent_entity_id, child_entity_id, relationship_type,
+             source_system, confidence_score, created_at, mapped_parent_entity_id,
+             mapped_child_entity_id, action, reason)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'MIGRATED', ?)
             """,
-            (
-                relationship_id, parent, child, rel_type, source, confidence, created_at,
-                mapped_parent, mapped_child,
-                "relationship rewritten into canonical namespace",
-            ),
+            (relationship_id, parent, child, rel_type, source, confidence, created_at,
+             mapped_parent, mapped_child,
+             "relationship rewritten into canonical namespace"),
         )
         stats["migrated"] += 1
 
     if stats["unresolved"]:
         raise RuntimeError(
-            f"Refusing to commit migration: {stats['unresolved']} relationship(s) "
-            "have unresolved canonical endpoints."
+            f"Refusing to commit migration: {stats['unresolved']} relationship(s) have unresolved canonical endpoints."
         )
     return stats
 
@@ -360,7 +313,6 @@ def validate_no_legacy_references(conn):
             checks[f"{table}.{column}"] = conn.execute(
                 f'SELECT COUNT(*) FROM "{table}" WHERE "{column}" LIKE \'ORG-%\''
             ).fetchone()[0]
-
     failures = {key: value for key, value in checks.items() if value}
     if failures:
         raise RuntimeError(f"Legacy ORG-* references remain: {failures}")
@@ -371,50 +323,33 @@ def main():
     try:
         conn.execute("PRAGMA foreign_keys=OFF")
         conn.execute("BEGIN")
-
-        # Build the canonical root map from the pre-migration relationship graph.
         canonical_map = build_canonical_map(conn)
-        mapping, ambiguous = build_legacy_map(conn, canonical_map)
-        if ambiguous:
+        mapping, unresolved = build_legacy_map(conn, canonical_map)
+        if unresolved:
             raise RuntimeError(
-                "Ambiguous legacy entity mappings; refusing to guess: "
-                + repr(ambiguous)
+                "Unresolved legacy ORG-* entity mappings; refusing to guess: "
+                + repr(unresolved)
             )
         print(f"Legacy entity mappings available: {len(mapping)}")
 
         migrated = {}
         for table in (
-            "organisation_intelligence",
-            "target_accounts",
-            "recommended_actions",
-            "programme_intelligence",
-            "donor_intelligence",
-            "equipment_entities",
-            "opportunity_organisation_resolution",
-            "organisation_resolution_log",
+            "organisation_intelligence", "target_accounts", "recommended_actions",
+            "programme_intelligence", "donor_intelligence", "equipment_entities",
+            "opportunity_organisation_resolution", "organisation_resolution_log",
             "organisation_manual_overrides",
         ):
-            migrated[table] = migrate_entity_column(
-                conn, table, "organisation_entity_id", mapping, canonical_map
-            )
-            migrated[f"{table}.entity_id"] = migrate_entity_column(
-                conn, table, "entity_id", mapping, canonical_map
-            )
+            migrated[table] = migrate_entity_column(conn, table, "organisation_entity_id", mapping, canonical_map)
+            migrated[f"{table}.entity_id"] = migrate_entity_column(conn, table, "entity_id", mapping, canonical_map)
 
-        migrated["organisation_group_members"] = migrate_group_members(
-            conn, mapping, canonical_map
-        )
-        migrated["organisation_relationships"] = rebuild_relationships(
-            conn, mapping, canonical_map
-        )
-
+        migrated["organisation_group_members"] = migrate_group_members(conn, mapping, canonical_map)
+        migrated["organisation_relationships"] = rebuild_relationships(conn, mapping, canonical_map)
         validate_no_legacy_references(conn)
         conn.commit()
 
         for table, result in migrated.items():
             print(f"{table}: {result}")
         print("03D entity-reference migration PASSED")
-
     except Exception:
         conn.rollback()
         raise
