@@ -27,7 +27,19 @@ jobs:
           pip install -r requirements.txt
           pip install pytest
 
-      - name: Run unit tests
+      - name: Repair 03D canonical entity schema
+        run: python repair_03d_entity_model.py
+
+      - name: Migrate legacy and duplicate-child references
+        run: python migrate_03d_entity_references.py
+
+      - name: Rebuild approved semantic relationships
+        run: python rebuild_semantic_relationships.py
+
+      - name: Regenerate intelligence from current normalized IATI data
+        run: python run_intelligence_pipeline.py
+
+      - name: Run unit and integration tests
         run: python -m pytest -q
 
       - name: Validate 03D canonical entity model
@@ -35,3 +47,9 @@ jobs:
 
       - name: Validate 03D canonical-root references
         run: python validate_03d_canonical_references.py
+
+      - name: Validate production relationships
+        run: python test_production_relationships.py
+
+      - name: Validate 03D regression continuity
+        run: python validate_03d_regression.py --old-ref HEAD^
