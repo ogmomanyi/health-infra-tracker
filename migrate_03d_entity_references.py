@@ -2,12 +2,13 @@
 """Safely migrate legacy organisation references into the canonical 03D model.
 
 The 03D repair introduced stable ``org_*`` entity IDs while older semantic,
-group, and opportunity tables may still contain ``ORG-*`` IDs.  This migration
-rewrites those references only when the legacy ID can be mapped unambiguously
-to one active canonical entity.
+group, and opportunity tables may still contain ``ORG-*`` IDs. This migration
+rewrites those references only when the source ID can be mapped unambiguously
+to one active canonical entity. Existing ``org_*`` duplicate children are also
+collapsed to their canonical parent before downstream references are persisted.
 
-Relationship evidence is never silently discarded.  Every source relationship
-is classified as MIGRATED, DUPLICATE, or UNRESOLVED in an audit table.  Any
+Relationship evidence is never silently discarded. Every source relationship
+is classified as MIGRATED, DUPLICATE, or UNRESOLVED in an audit table. Any
 unresolved relationship aborts the transaction so a partially migrated database
 cannot be committed.
 """
@@ -33,12 +34,44 @@ def columns(conn, table):
     return {row[1] for row in conn.execute(f'PRAGMA table_info("{table}")')}
 
 
-def build_legacy_map(conn):
-    """Map legacy entity IDs to exactly one active canonical entity.
+def build_canonical_map(conn):
+    """Build a map from every known entity ID to its canonical root."""
+    entity_ids = {
+        row[0]
+        for row in conn.execute("SELECT entity_id FROM organisation_entities")
+    }
+    parents = {
+        child: parent
+        for parent, child in conn.execute(
+            """
+            SELECT parent_entity_id, child_entity_id
+            FROM organisation_relationships
+            WHERE relationship_type = 'DUPLICATE_OF'
+            """
+        )
+    }
 
-    A legacy name that maps to zero or multiple active canonical entities is
-    deliberately left unresolved; guessing here would corrupt identity data.
-    """
+    def canonical_id(entity_id):
+        if entity_id not in entity_ids:
+            return None
+        current = entity_id
+        seen = set()
+        while current in parents:
+            if current in seen:
+                raise RuntimeError(
+                    f"Cycle detected in DUPLICATE_OF relationships at {current}"
+                )
+            seen.add(current)
+            current = parents[current]
+            if current not in entity_ids:
+                return None
+        return current
+
+    return {entity_id: canonical_id(entity_id) for entity_id in entity_ids}
+
+
+def build_legacy_map(conn, canonical_map):
+    """Map legacy entity IDs to exactly one active canonical entity."""
     if not table_exists(conn, LEGACY_ENTITIES):
         return {}, {}
 
@@ -48,9 +81,12 @@ def build_legacy_map(conn):
     ):
         if status not in (None, "ACTIVE"):
             continue
+        root_id = canonical_map.get(entity_id)
+        if not root_id:
+            continue
         key = normalize_name(name)
         if key:
-            canonical.setdefault(key, set()).add(entity_id)
+            canonical.setdefault(key, set()).add(root_id)
 
     mapping = {}
     unresolved = {}
@@ -67,7 +103,13 @@ def build_legacy_map(conn):
     return mapping, unresolved
 
 
-def migrate_entity_column(conn, table, column, mapping):
+def resolve_reference(entity_id, legacy_map, canonical_map):
+    """Resolve a reference through legacy mapping and DUPLICATE_OF roots."""
+    mapped = legacy_map.get(entity_id, entity_id)
+    return canonical_map.get(mapped, mapped)
+
+
+def migrate_entity_column(conn, table, column, legacy_map, canonical_map):
     if not table_exists(conn, table) or column not in columns(conn, table):
         return 0
 
@@ -77,7 +119,7 @@ def migrate_entity_column(conn, table, column, mapping):
     ).fetchall()
 
     for rowid, old_id in rows:
-        new_id = mapping.get(old_id)
+        new_id = resolve_reference(old_id, legacy_map, canonical_map)
         if not new_id or new_id == old_id:
             continue
         conn.execute(
@@ -89,7 +131,7 @@ def migrate_entity_column(conn, table, column, mapping):
     return changed
 
 
-def migrate_group_members(conn, mapping):
+def migrate_group_members(conn, legacy_map, canonical_map):
     table = "organisation_group_members"
     if not table_exists(conn, table):
         return 0
@@ -97,7 +139,7 @@ def migrate_group_members(conn, mapping):
     changed = 0
     rows = conn.execute("SELECT group_id, entity_id FROM organisation_group_members").fetchall()
     for group_id, old_id in rows:
-        new_id = mapping.get(old_id)
+        new_id = resolve_reference(old_id, legacy_map, canonical_map)
         if not new_id or new_id == old_id:
             continue
 
@@ -148,7 +190,7 @@ def deterministic_relationship_id(original_id, parent, child, rel_type, source, 
     return "rel-03d-" + hashlib.sha256(payload.encode("utf-8")).hexdigest()[:24]
 
 
-def rebuild_relationships(conn, mapping):
+def rebuild_relationships(conn, legacy_map, canonical_map):
     """Rebuild relationships without silently dropping any source row."""
     if not table_exists(conn, "organisation_relationships"):
         return {"migrated": 0, "duplicates": 0, "unresolved": 0}
@@ -171,8 +213,6 @@ def rebuild_relationships(conn, mapping):
             """
         ).fetchall()
 
-    # The old table remains available as source evidence.  The new table is
-    # constructed from the complete source set inside the same transaction.
     conn.execute("DROP TABLE IF EXISTS organisation_relationships_03d_backup")
     conn.execute(
         "ALTER TABLE organisation_relationships RENAME TO organisation_relationships_03d_backup"
@@ -197,8 +237,8 @@ def rebuild_relationships(conn, mapping):
     used_ids = set()
     stats = {"migrated": 0, "duplicates": 0, "unresolved": 0}
     for relationship_id, parent, child, rel_type, source, confidence, created_at in rows:
-        mapped_parent = mapping.get(parent, parent)
-        mapped_child = mapping.get(child, child)
+        mapped_parent = resolve_reference(parent, legacy_map, canonical_map)
+        mapped_child = resolve_reference(child, legacy_map, canonical_map)
         parent_exists = conn.execute(
             "SELECT 1 FROM organisation_entities WHERE entity_id=?",
             (mapped_parent,),
@@ -222,6 +262,23 @@ def rebuild_relationships(conn, mapping):
                     relationship_id, parent, child, rel_type, source, confidence, created_at,
                     mapped_parent, mapped_child,
                     "relationship endpoint does not resolve to an active canonical entity",
+                ),
+            )
+            continue
+
+        if mapped_parent == mapped_child and rel_type == 'DUPLICATE_OF':
+            stats["duplicates"] += 1
+            conn.execute(
+                f"""
+                INSERT INTO {AUDIT_TABLE}
+                (relationship_id, parent_entity_id, child_entity_id,
+                 relationship_type, source_system, confidence_score, created_at,
+                 mapped_parent_entity_id, mapped_child_entity_id, action, reason)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'DUPLICATE', ?)
+                """,
+                (
+                    relationship_id, parent, child, rel_type, source, confidence, created_at,
+                    mapped_parent, mapped_child, "relationship collapses to one canonical entity",
                 ),
             )
             continue
@@ -272,7 +329,7 @@ def rebuild_relationships(conn, mapping):
             (
                 relationship_id, parent, child, rel_type, source, confidence, created_at,
                 mapped_parent, mapped_child,
-                "legacy/current relationship rewritten into canonical namespace",
+                "relationship rewritten into canonical namespace",
             ),
         )
         stats["migrated"] += 1
@@ -315,7 +372,9 @@ def main():
         conn.execute("PRAGMA foreign_keys=OFF")
         conn.execute("BEGIN")
 
-        mapping, ambiguous = build_legacy_map(conn)
+        # Build the canonical root map from the pre-migration relationship graph.
+        canonical_map = build_canonical_map(conn)
+        mapping, ambiguous = build_legacy_map(conn, canonical_map)
         if ambiguous:
             raise RuntimeError(
                 "Ambiguous legacy entity mappings; refusing to guess: "
@@ -335,11 +394,19 @@ def main():
             "organisation_resolution_log",
             "organisation_manual_overrides",
         ):
-            migrated[table] = migrate_entity_column(conn, table, "organisation_entity_id", mapping)
-            migrated[f"{table}.entity_id"] = migrate_entity_column(conn, table, "entity_id", mapping)
+            migrated[table] = migrate_entity_column(
+                conn, table, "organisation_entity_id", mapping, canonical_map
+            )
+            migrated[f"{table}.entity_id"] = migrate_entity_column(
+                conn, table, "entity_id", mapping, canonical_map
+            )
 
-        migrated["organisation_group_members"] = migrate_group_members(conn, mapping)
-        migrated["organisation_relationships"] = rebuild_relationships(conn, mapping)
+        migrated["organisation_group_members"] = migrate_group_members(
+            conn, mapping, canonical_map
+        )
+        migrated["organisation_relationships"] = rebuild_relationships(
+            conn, mapping, canonical_map
+        )
 
         validate_no_legacy_references(conn)
         conn.commit()
