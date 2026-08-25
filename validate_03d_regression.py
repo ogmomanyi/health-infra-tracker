@@ -7,14 +7,14 @@ remain present in the current intelligence snapshot when the source no longer
 contains that organisation. Continuity is established by resolving every
 legacy-only name through current aliases to exactly one canonical entity.
 
-Current intelligence/target-account coverage is checked independently: every
-entity represented by the current intelligence CSV must have corresponding DB
-coverage. Legacy entities that are no longer represented in the current source
-are reported as retired-from-snapshot, not treated as a false regression.
+By default the validator compares the current working-tree snapshot with the
+previous Git commit (HEAD^). Explicit refs can be supplied when validating a
+known-good snapshot against a regenerated snapshot.
 """
 
 from __future__ import annotations
 
+import argparse
 import sqlite3
 import subprocess
 from io import StringIO
@@ -29,9 +29,9 @@ INTELLIGENCE_CSV = Path("data/organisation_intelligence.csv")
 TARGET_ACCOUNTS_CSV = Path("data/target_accounts.csv")
 
 
-def git_head_csv(path: Path) -> pd.DataFrame:
+def git_csv(path: Path, ref: str) -> pd.DataFrame:
     result = subprocess.run(
-        ["git", "show", f"HEAD:{path.as_posix()}"],
+        ["git", "show", f"{ref}:{path.as_posix()}"],
         capture_output=True,
         text=True,
         check=True,
@@ -110,7 +110,30 @@ def resolved_entities(
     return entities, ambiguous
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--old-ref",
+        default="HEAD^",
+        help="Git ref containing the previous intelligence snapshot (default: HEAD^)",
+    )
+    parser.add_argument(
+        "--new-ref",
+        default=None,
+        help="Git ref containing the new snapshot; omit to use the working tree",
+    )
+    return parser.parse_args()
+
+
+def load_snapshot(path: Path, ref: str | None) -> pd.DataFrame:
+    if ref:
+        return git_csv(path, ref)
+    return pd.read_csv(path)
+
+
 def main() -> None:
+    args = parse_args()
+
     if not DB.exists():
         raise SystemExit(f"Missing database: {DB}")
     if not INTELLIGENCE_CSV.exists():
@@ -118,9 +141,15 @@ def main() -> None:
     if not TARGET_ACCOUNTS_CSV.exists():
         raise SystemExit(f"Missing current target-account CSV: {TARGET_ACCOUNTS_CSV}")
 
-    old = git_head_csv(INTELLIGENCE_CSV)
-    current = pd.read_csv(INTELLIGENCE_CSV)
+    old = load_snapshot(INTELLIGENCE_CSV, args.old_ref)
+    current = load_snapshot(INTELLIGENCE_CSV, args.new_ref)
     current_targets = pd.read_csv(TARGET_ACCOUNTS_CSV)
+
+    required = {"organisation_name", "organisation_entity_id"}
+    for label, frame in (("old", old), ("current", current)):
+        missing = sorted(required - set(frame.columns))
+        if missing:
+            raise SystemExit(f"{label} snapshot missing required columns: {missing}")
 
     conn = sqlite3.connect(DB)
     alias_map = load_alias_map(conn)
@@ -195,6 +224,8 @@ def main() -> None:
     conn.close()
 
     print("=== 03D ORGANISATION REGRESSION ===")
+    print(f"OLD snapshot ref:                     {args.old_ref}")
+    print(f"CURRENT snapshot ref:                 {args.new_ref or 'WORKTREE'}")
     print(f"OLD intelligence rows:                 {len(old)}")
     print(f"CURRENT intelligence rows:             {len(current)}")
     print(f"OLD normalized names:                  {len(old_keys)}")
