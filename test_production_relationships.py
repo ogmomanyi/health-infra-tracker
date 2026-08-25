@@ -31,10 +31,7 @@ for parent_id, parent_name, child_id, child_name in relationships:
 
     status = "PASS" if resolved_parent == resolved_child == parent_id else "FAIL"
 
-    print(
-        f"{status} | "
-        f"{child_name} -> {parent_name}"
-    )
+    print(f"{status} | {child_name} -> {parent_name}")
 
     if status == "FAIL":
         failures.append(
@@ -58,3 +55,6 @@ else:
     print("All DUPLICATE_OF relationships resolve to their canonical parent.")
 
 conn.close()
+
+if failures:
+    raise SystemExit(1)
