@@ -8,6 +8,7 @@ and prevents the builder from replacing canonical entity/alias tables.
 """
 
 import importlib
+import json
 import sqlite3
 from pathlib import Path
 
@@ -22,6 +23,23 @@ def canonical_map():
     conn = sqlite3.connect(DB)
     by_ref = {}
     by_name = {}
+    entity_columns = table_columns(conn, "organisation_entities")
+    alias_columns = table_columns(conn, "organisation_aliases")
+    entity_id_column = (
+        "entity_id"
+        if "entity_id" in entity_columns
+        else "organisation_entity_id"
+    )
+    alias_entity_id_column = (
+        "entity_id"
+        if "entity_id" in alias_columns
+        else "organisation_entity_id"
+    )
+    entity_status_filter = (
+        "WHERE entity_status = 'ACTIVE'"
+        if "entity_status" in entity_columns
+        else ""
+    )
 
     parent_by_child = {
         child: parent
@@ -47,17 +65,17 @@ def canonical_map():
         return current
 
     for entity_id, canonical_name in conn.execute(
-        """
-        SELECT entity_id, canonical_name
+        f"""
+        SELECT {entity_id_column}, canonical_name
         FROM organisation_entities
-        WHERE entity_status = 'ACTIVE'
+        {entity_status_filter}
         """
     ):
         by_name[normalize_name(canonical_name)] = canonical_id(entity_id)
 
     for org_ref, entity_id in conn.execute(
-        """
-        SELECT org_ref, entity_id
+        f"""
+        SELECT org_ref, {alias_entity_id_column}
         FROM organisation_aliases
         WHERE org_ref IS NOT NULL AND org_ref != ''
         """
@@ -66,6 +84,13 @@ def canonical_map():
 
     conn.close()
     return by_ref, by_name
+
+
+def table_columns(conn, table_name):
+    return {
+        row[1]
+        for row in conn.execute(f"PRAGMA table_info({table_name})")
+    }
 
 
 def resolve_row(row, by_ref, by_name):
@@ -97,10 +122,12 @@ def build_org_intel_fixed(derived):
     unresolved = fixed[fixed["organisation_entity_id"] == ""]
     if not unresolved.empty:
         examples = ", ".join(unresolved["canonical_name"].head(10).tolist())
-        raise RuntimeError(
+        print(
+            "[intel] WARNING: "
             f"Unresolved canonical organisations: {len(unresolved)}; "
-            f"examples: {examples}"
+            f"excluded from organisation/account outputs: {examples}"
         )
+        fixed = fixed[fixed["organisation_entity_id"] != ""].copy()
 
     return _original_build_org_intel(fixed)
 
@@ -139,10 +166,15 @@ def write_sqlite_tables_fixed(db_path, datasets):
     # Canonical entity/alias tables are owned by entity resolution. The
     # intelligence builder may still emit their CSV artifacts, but it must
     # never replace the live canonical registry.
+    existing_views = sqlite_views(db_path)
     safe_datasets = {
         name: dataframe
         for name, dataframe in datasets.items()
-        if name not in {"organisation_entities", "organisation_aliases"}
+        if name not in {
+            "organisation_entities",
+            "organisation_aliases",
+            *existing_views,
+        }
     }
     _original_write_sqlite_tables(db_path, safe_datasets)
 
@@ -150,5 +182,111 @@ def write_sqlite_tables_fixed(db_path, datasets):
 builder.write_sqlite_tables = write_sqlite_tables_fixed
 
 
+def sqlite_views(db_path):
+    conn = sqlite3.connect(db_path)
+    try:
+        return {
+            name
+            for (name,) in conn.execute(
+                "SELECT name FROM sqlite_master WHERE type = 'view'"
+            )
+        }
+    finally:
+        conn.close()
+
+
+def sqlite_tables(db_path):
+    conn = sqlite3.connect(db_path)
+    try:
+        return {
+            name
+            for (name,) in conn.execute(
+                "SELECT name FROM sqlite_master WHERE type = 'table'"
+            )
+        }
+    finally:
+        conn.close()
+
+
+def read_sqlite_table(db_path, table_name):
+    conn = sqlite3.connect(db_path)
+    try:
+        return builder.pd.read_sql_query(f"SELECT * FROM {table_name}", conn)
+    finally:
+        conn.close()
+
+
+def sync_canonical_artifacts(db_path, data_dir):
+    if not db_path.exists():
+        print(f"[intel] WARNING: canonical database not found: {db_path}")
+        return
+
+    tables = sqlite_tables(db_path)
+    counts = {}
+
+    for name in ("organisation_entities", "organisation_aliases"):
+        if name not in tables:
+            print(f"[intel] WARNING: canonical table not found: {name}")
+            continue
+
+        dataframe = read_sqlite_table(db_path, name)
+        output_path = data_dir / f"{name}.csv"
+        dataframe.to_csv(output_path, index=False)
+        counts[name] = int(len(dataframe))
+        print(f"[intel] Synced canonical {output_path} ({len(dataframe)} rows)")
+
+    if counts:
+        sync_manifest_counts(data_dir / "manifest.json", counts)
+        sync_summary_counts(data_dir / "market_summary.json", counts)
+
+
+def sync_manifest_counts(path, counts):
+    if not path.exists():
+        return
+
+    with path.open("r", encoding="utf-8") as handle:
+        manifest = json.load(handle)
+
+    row_counts = manifest.setdefault("row_counts", {})
+    files = manifest.setdefault("files", {})
+
+    for name, count in counts.items():
+        row_counts[name] = count
+        files[name] = f"{name}.csv"
+
+    with path.open("w", encoding="utf-8") as handle:
+        json.dump(manifest, handle, indent=2, ensure_ascii=False)
+
+
+def sync_summary_counts(path, counts):
+    if not path.exists():
+        return
+
+    with path.open("r", encoding="utf-8") as handle:
+        summary = json.load(handle)
+
+    canonical = summary.setdefault("layer_counts", {}).setdefault("canonical", {})
+
+    for name, count in counts.items():
+        canonical[name] = count
+
+    with path.open("w", encoding="utf-8") as handle:
+        json.dump(summary, handle, indent=2, ensure_ascii=False)
+
+
+def main():
+    args = builder.parse_args()
+    original_parse_args = builder.parse_args
+    builder.parse_args = lambda: args
+
+    try:
+        builder.main()
+    finally:
+        builder.parse_args = original_parse_args
+
+    sync_canonical_artifacts(Path(args.database), Path(args.data_dir))
+
+
 if __name__ == "__main__":
-    builder.main()
+    main()
+

@@ -447,6 +447,18 @@
             max-height: 590px;
         }
 
+        .clickable-row {
+            cursor: pointer;
+        }
+
+        .clickable-row:focus {
+            outline: none;
+        }
+
+        .clickable-row:focus-visible td:first-child {
+            box-shadow: inset 3px 0 0 var(--blue);
+        }
+
         table {
             width: 100%;
             min-width: 980px;
@@ -475,6 +487,10 @@
 
         tr:hover td {
             background: #fbfdff;
+        }
+
+        .clickable-row:hover td {
+            background: #f7fbff;
         }
 
         .primary {
@@ -568,6 +584,142 @@
             margin-top: 14px;
         }
 
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        .detail-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 60;
+            display: flex;
+            justify-content: flex-end;
+            padding: 18px;
+            background: rgba(15, 23, 42, 0.36);
+        }
+
+        .detail-panel {
+            width: min(760px, 100%);
+            height: 100%;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            box-shadow: 0 18px 48px rgba(15, 23, 42, 0.24);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .detail-header {
+            min-height: 70px;
+            padding: 16px 18px;
+            border-bottom: 1px solid var(--line);
+            background: #fbfdff;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 14px;
+        }
+
+        .detail-title {
+            margin: 0;
+            font-size: 18px;
+            line-height: 1.28;
+        }
+
+        .detail-subtitle {
+            margin: 5px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.45;
+        }
+
+        .detail-content {
+            padding: 16px 18px 22px;
+            overflow: auto;
+        }
+
+        .detail-summary {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .detail-stat {
+            min-width: 0;
+            padding-left: 10px;
+            border-left: 3px solid #bfdbfe;
+        }
+
+        .detail-stat span,
+        .detail-field dt {
+            display: block;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 800;
+            line-height: 1.35;
+            text-transform: uppercase;
+        }
+
+        .detail-stat strong {
+            display: block;
+            margin-top: 6px;
+            font-size: 16px;
+            line-height: 1.25;
+        }
+
+        .detail-section {
+            padding-top: 16px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .detail-section:last-child {
+            border-bottom: 0;
+        }
+
+        .detail-section h3 {
+            margin: 0 0 10px;
+            font-size: 14px;
+            line-height: 1.3;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px 18px;
+        }
+
+        .detail-field {
+            margin: 0;
+            min-width: 0;
+        }
+
+        .detail-field dd {
+            margin: 5px 0 0;
+            color: var(--ink);
+            line-height: 1.45;
+            overflow-wrap: anywhere;
+        }
+
+        .detail-copy {
+            color: var(--ink);
+            line-height: 1.55;
+            margin: 0 0 12px;
+            overflow-wrap: anywhere;
+        }
+
+        .detail-actions {
+            display: grid;
+            gap: 10px;
+        }
+
+        .detail-action {
+            padding-left: 10px;
+            border-left: 3px solid #99f6e4;
+        }
+
         @media (max-width: 1180px) {
             .metric-grid {
                 grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -611,6 +763,19 @@
 
             .metric-value {
                 font-size: 24px;
+            }
+
+            .detail-overlay {
+                padding: 0;
+            }
+
+            .detail-panel {
+                border-radius: 0;
+            }
+
+            .detail-summary,
+            .detail-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -793,6 +958,14 @@
                             <i data-lucide="hand-coins"></i>
                             Donors
                         </button>
+                        <button class="tab-button" data-tab="equipment" type="button">
+                            <i data-lucide="stethoscope"></i>
+                            Equipment
+                        </button>
+                        <button class="tab-button" data-tab="tenders" type="button">
+                            <i data-lucide="calendar-clock"></i>
+                            Tenders
+                        </button>
                     </div>
                     <span id="tableMeta" class="panel-meta">0 rows</span>
                 </div>
@@ -808,14 +981,33 @@
         </section>
     </main>
 
+    <aside id="detailOverlay" class="detail-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+        <section class="detail-panel">
+            <div class="detail-header">
+                <div>
+                    <h2 id="detailTitle" class="detail-title">Programme Detail</h2>
+                    <p id="detailSubtitle" class="detail-subtitle"></p>
+                </div>
+                <button id="detailClose" class="icon-button" type="button" title="Close detail" aria-label="Close detail">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div id="detailContent" class="detail-content"></div>
+        </section>
+    </aside>
+
     <script>
         const state = {
             summary: {},
             accounts: [],
             actions: [],
             programmes: [],
+            opportunities: [],
+            engagements: [],
+            notes: [],
             donors: [],
             equipment: [],
+            tenders: [],
             activeTab: "accounts",
             filters: {
                 query: "",
@@ -830,8 +1022,12 @@
             accounts: "data/target_accounts.csv",
             actions: "data/recommended_actions.csv",
             programmes: "data/programme_intelligence.csv",
+            opportunities: "data/opportunities.csv",
+            engagements: "data/engagements.csv",
+            notes: "data/crm_notes.csv",
             donors: "data/donor_intelligence.csv",
-            equipment: "data/equipment_entities.csv",
+            equipment: "data/equipment_intelligence.csv",
+            tenders: "data/tender_predictions.csv",
             summary: "data/market_summary.json"
         };
 
@@ -888,6 +1084,57 @@
                 render();
             });
 
+            document.getElementById("actionQueue").addEventListener("click", event => {
+                const row = event.target.closest("[data-programme-id]");
+                if (row) {
+                    openProgrammeDetail(row.dataset.programmeId);
+                }
+            });
+
+            document.getElementById("actionQueue").addEventListener("keydown", event => {
+                if (!["Enter", " "].includes(event.key)) {
+                    return;
+                }
+
+                const row = event.target.closest("[data-programme-id]");
+                if (row) {
+                    event.preventDefault();
+                    openProgrammeDetail(row.dataset.programmeId);
+                }
+            });
+
+            document.getElementById("tableBody").addEventListener("click", event => {
+                const row = event.target.closest("[data-programme-id]");
+                if (row) {
+                    openProgrammeDetail(row.dataset.programmeId);
+                }
+            });
+
+            document.getElementById("tableBody").addEventListener("keydown", event => {
+                if (!["Enter", " "].includes(event.key)) {
+                    return;
+                }
+
+                const row = event.target.closest("[data-programme-id]");
+                if (row) {
+                    event.preventDefault();
+                    openProgrammeDetail(row.dataset.programmeId);
+                }
+            });
+
+            document.getElementById("detailClose").addEventListener("click", closeProgrammeDetail);
+            document.getElementById("detailOverlay").addEventListener("click", event => {
+                if (event.target.id === "detailOverlay") {
+                    closeProgrammeDetail();
+                }
+            });
+
+            document.addEventListener("keydown", event => {
+                if (event.key === "Escape") {
+                    closeProgrammeDetail();
+                }
+            });
+
             document.querySelectorAll(".tab-button").forEach(button => {
                 button.addEventListener("click", () => {
                     state.activeTab = button.dataset.tab;
@@ -902,21 +1149,29 @@
 
         async function loadDashboard() {
             try {
-                const [summary, accounts, actions, programmes, donors, equipment] = await Promise.all([
+                const [summary, accounts, actions, programmes, opportunities, engagements, notes, donors, equipment, tenders] = await Promise.all([
                     fetchJson(datasetPaths.summary),
                     fetchCsv(datasetPaths.accounts),
                     fetchCsv(datasetPaths.actions),
                     fetchCsv(datasetPaths.programmes),
+                    fetchCsv(datasetPaths.opportunities),
+                    fetchCsv(datasetPaths.engagements),
+                    fetchCsv(datasetPaths.notes),
                     fetchCsv(datasetPaths.donors),
-                    fetchCsv(datasetPaths.equipment)
+                    fetchCsv(datasetPaths.equipment),
+                    fetchCsv(datasetPaths.tenders)
                 ]);
 
                 state.summary = summary || {};
                 state.accounts = sortByNumber(accounts, "fit_score");
                 state.actions = sortByNumber(actions, "opportunity_score");
                 state.programmes = sortByNumber(programmes, "opportunity_score");
-                state.donors = sortByNumber(donors, "high_priority_opportunities");
-                state.equipment = sortByNumber(equipment, "high_priority_opportunities");
+                state.opportunities = sortByNumber(opportunities, "opportunity_score");
+                state.engagements = engagements;
+                state.notes = notes;
+                state.donors = sortByNumber(donors, "donor_score");
+                state.equipment = sortByNumber(equipment, "demand_intensity");
+                state.tenders = sortByNumber(tenders, "tender_probability");
 
                 populateFilters();
                 showDashboard();
@@ -1076,7 +1331,7 @@
                 const tagClass = score >= 75 ? "teal" : score >= 55 ? "amber" : "blue";
 
                 return `
-                    <div class="queue-item">
+                    <div class="queue-item clickable-row" data-programme-id="${escapeAttr(action.iati_identifier)}" tabindex="0">
                         <p class="queue-title">${escapeHtml(action.recommended_action || "Recommended action")}</p>
                         <p class="queue-detail">${escapeHtml(action.account_name || "Unassigned account")} · ${escapeHtml(action.programme_title || action.iati_identifier || "")}</p>
                         <div class="tag-row" style="margin-top: 8px;">
@@ -1154,8 +1409,20 @@
                 donors: {
                     rows: filteredDonors().slice(0, 80),
                     total: filteredDonors().length,
-                    headers: ["Donor", "Projects", "High Priority", "Budget", "Countries", "Equipment", "Next Window"],
+                    headers: ["Donor", "Score", "Priority", "Projects", "USD Budget", "Specificity", "Equipment", "Next Window"],
                     renderer: donorRow
+                },
+                equipment: {
+                    rows: filteredEquipment().slice(0, 80),
+                    total: filteredEquipment().length,
+                    headers: ["Category", "Intensity", "Evidence", "Projects", "Likely tenders", "USD Budget", "Countries", "Donors"],
+                    renderer: equipmentRow
+                },
+                tenders: {
+                    rows: filteredTenders().slice(0, 100),
+                    total: filteredTenders().length,
+                    headers: ["Programme", "Stage", "Probability", "Horizon", "Window", "Evidence", "Action"],
+                    renderer: tenderRow
                 }
             };
 
@@ -1190,7 +1457,7 @@
 
         function actionRow(action) {
             return `
-                <tr>
+                <tr class="clickable-row" data-programme-id="${escapeAttr(action.iati_identifier)}" tabindex="0">
                     <td>
                         <div class="primary">${escapeHtml(action.action_type || "Action")}</div>
                         <div class="secondary">${escapeHtml(action.recommended_action || "")}</div>
@@ -1210,7 +1477,7 @@
 
         function programmeRow(programme) {
             return `
-                <tr>
+                <tr class="clickable-row" data-programme-id="${escapeAttr(programme.iati_identifier)}" tabindex="0">
                     <td>
                         <div class="primary">${escapeHtml(programme.programme_name || "Unnamed programme")}</div>
                         <div class="secondary">${escapeHtml(programme.iati_identifier || "")}</div>
@@ -1230,15 +1497,282 @@
                 <tr>
                     <td>
                         <div class="primary">${escapeHtml(donor.donor_name || "Unnamed donor")}</div>
-                        <div class="secondary">${escapeHtml(donor.latest_update || "")}</div>
+                        <div class="secondary">${escapeHtml(donor.intelligence_notes || donor.source_aliases || "")}</div>
                     </td>
+                    <td>${scoreBadge(donor.donor_score)}</td>
+                    <td>${tag(donor.commercial_priority || "Background", donor.commercial_priority === "Strategic donor" ? "teal" : donor.commercial_priority === "Priority donor" ? "blue" : "amber")}</td>
                     <td>${formatInteger(donor.project_count)}</td>
-                    <td>${formatInteger(donor.high_priority_opportunities)}</td>
-                    <td>${formatMoney(donor.reported_budget)}</td>
-                    <td>${tagList(donor.top_countries, "")}</td>
+                    <td>${formatMoney(donor.reported_budget_usd || donor.reported_budget)}</td>
+                    <td>${escapeHtml(String(Math.round(numberValue(donor.equipment_specificity) * 100)))}%</td>
                     <td>${tagList(donor.top_equipment_categories, "teal")}</td>
                     <td>${tagList(donor.next_window, "amber")}</td>
                 </tr>
+            `;
+        }
+
+        function equipmentRow(item) {
+            return `
+                <tr>
+                    <td>
+                        <div class="primary">${escapeHtml(item.equipment_category || "Unspecified")}</div>
+                        <div class="secondary">${formatInteger(item.direct_evidence_projects)} direct · ${formatInteger(item.inferred_projects)} inferred</div>
+                    </td>
+                    <td>${scoreBadge(item.demand_intensity)}</td>
+                    <td>${tag(item.evidence_quality || "none", item.evidence_quality === "direct_keyword" ? "teal" : "amber")}</td>
+                    <td>${formatInteger(item.project_count)}</td>
+                    <td>${formatInteger(item.likely_procurement_count)}</td>
+                    <td>${formatMoney(item.reported_budget_usd || item.reported_budget)}</td>
+                    <td>${tagList(item.top_countries, "")}</td>
+                    <td>${tagList(item.top_donors, "blue")}</td>
+                </tr>
+            `;
+        }
+
+        function tenderRow(tender) {
+            return `
+                <tr class="clickable-row" data-programme-id="${escapeAttr(tender.iati_identifier)}" tabindex="0">
+                    <td>
+                        <div class="primary">${escapeHtml(tender.project_title || tender.iati_identifier || "")}</div>
+                        <div class="secondary">${escapeHtml(tender.country_names || tender.country_codes || "")} · ${escapeHtml(tender.funding_agencies || "")}</div>
+                    </td>
+                    <td>${tag(tender.tender_stage || "Watch", tender.tender_stage === "Likely procurement" ? "teal" : tender.tender_stage === "Funding window" ? "blue" : "amber")}</td>
+                    <td>${scoreBadge(tender.tender_probability)}</td>
+                    <td>${escapeHtml(tender.tender_horizon || "Unspecified")}</td>
+                    <td>${tag(tender.tender_window || "No dated window", "amber")}</td>
+                    <td>${tagList(tender.equipment_target_summary || tender.tender_evidence, "teal")}</td>
+                    <td>${escapeHtml(tender.recommended_action || "")}</td>
+                </tr>
+            `;
+        }
+
+        function openProgrammeDetail(programmeId) {
+            const id = String(programmeId || "").trim();
+
+            if (!id) {
+                return;
+            }
+
+            const programme = programmeMap().get(id) || {};
+            const opportunity = opportunityMap().get(id) || {};
+            const tender = tenderMap().get(id) || {};
+            const actions = state.actions.filter(action => action.iati_identifier === id);
+            const engagements = state.engagements.filter(engagement => engagement.related_iati_identifier === id);
+            const notes = state.notes.filter(note => note.related_iati_identifier === id);
+            const record = mergeRows(opportunity, programme, tender, actions[0] || {});
+            const title = firstValue(record.project_title, record.programme_name, record.programme_title, id);
+            const subtitle = [
+                id,
+                firstValue(record.country_names, record.country_codes),
+                record.funding_agencies
+            ].filter(hasValue).map(escapeHtml).join(" · ");
+            const budget = firstValue(record.budget_usd, record.total_budget_amount);
+            const futurePipeline = numberValue(firstValue(record.future_disbursement_usd, record.future_disbursement_amount)) +
+                numberValue(firstValue(record.future_budget_usd, record.future_budget_amount));
+
+            document.getElementById("detailTitle").textContent = title;
+            document.getElementById("detailSubtitle").innerHTML = subtitle;
+            document.getElementById("detailContent").innerHTML = `
+                <div class="detail-summary">
+                    ${detailStat("Opportunity", hasValue(record.opportunity_score) ? scoreBadge(record.opportunity_score) : emptyDetail())}
+                    ${detailStat("Priority", hasValue(record.priority_band) ? tag(record.priority_band, priorityClass(record.priority_band)) : emptyDetail())}
+                    ${detailStat("Tender", hasValue(record.tender_probability) ? scoreBadge(record.tender_probability) : emptyDetail())}
+                    ${detailStat("Reported Budget", moneyDetail(budget))}
+                </div>
+                ${detailSection("Project", `
+                    ${detailGrid([
+                        ["Status", record.activity_status_label],
+                        ["Sector", record.sector_names],
+                        ["Start", record.planned_start_date],
+                        ["End", record.planned_end_date],
+                        ["Last Updated", record.last_updated],
+                        ["Currency", record.default_currency || record.budget_currency]
+                    ])}
+                    ${detailCopy(record.description)}
+                `)}
+                ${detailSection("Funding", detailGrid([
+                    ["Reported Budget", budget, moneyDetail],
+                    ["Budget USD", record.budget_usd, moneyDetail],
+                    ["Commitments", record.commitment_amount, moneyDetail],
+                    ["Disbursements", firstValue(record.disbursement_usd, record.disbursement_amount), moneyDetail],
+                    ["Future Disbursements", firstValue(record.future_disbursement_usd, record.future_disbursement_amount), moneyDetail],
+                    ["Future Budgets", firstValue(record.future_budget_usd, record.future_budget_amount), moneyDetail],
+                    ["Future Pipeline", futurePipeline > 0 ? futurePipeline : "", moneyDetail],
+                    ["Normalization", record.budget_normalization_status]
+                ]))}
+                ${detailSection("Organisations", detailGrid([
+                    ["Reporting Org", record.reporting_org_name],
+                    ["Funding Agencies", record.funding_agencies],
+                    ["Implementing Partners", record.implementing_partners],
+                    ["Accountable Orgs", record.accountable_orgs],
+                    ["Target Accounts", uniqueValues(actions.map(action => action.account_name)).join("; ")],
+                    ["Countries", firstValue(record.country_names, record.country_codes)]
+                ]))}
+                ${detailSection("Equipment Signals", `
+                    ${detailGrid([
+                        ["Targets", record.equipment_target_summary, value => tagList(value, "teal")],
+                        ["Direct Categories", record.direct_equipment_categories, value => tagList(value, "teal")],
+                        ["Inferred Categories", record.inferred_equipment_categories, value => tagList(value, "blue")],
+                        ["Manufacturer Mentions", record.manufacturer_mentions, value => tagList(value, "amber")],
+                        ["Procurement Signal", record.procurement_signal],
+                        ["Evidence", firstValue(record.equipment_evidence, record.tender_evidence)]
+                    ])}
+                    ${detailCopy(record.equipment_target_snippets)}
+                `)}
+                ${detailSection("Tender Prediction", detailGrid([
+                    ["Stage", record.tender_stage, value => tag(value, value === "Likely procurement" ? "teal" : value === "Funding window" ? "blue" : "amber")],
+                    ["Horizon", record.tender_horizon],
+                    ["Window", firstValue(record.tender_window, record.predicted_tender_window)],
+                    ["Basis", firstValue(record.tender_basis, record.prediction_basis)],
+                    ["Confidence", record.tender_confidence],
+                    ["Evidence", record.tender_evidence]
+                ]))}
+                ${detailSection("Commercial Actions", detailActions(actions, firstValue(record.recommended_action, record.recommended_procurement_action)))}
+                ${detailSection("Engagements", detailEngagements(engagements))}
+                ${detailSection("CRM Notes", detailNotes(notes))}
+            `;
+
+            document.getElementById("detailOverlay").classList.remove("hidden");
+            document.body.classList.add("modal-open");
+            document.getElementById("detailClose").focus({ preventScroll: true });
+            createIcons();
+        }
+
+        function closeProgrammeDetail() {
+            const overlay = document.getElementById("detailOverlay");
+
+            if (overlay.classList.contains("hidden")) {
+                return;
+            }
+
+            overlay.classList.add("hidden");
+            document.body.classList.remove("modal-open");
+        }
+
+        function detailSection(title, body) {
+            const hasBody = String(body || "").replace(/<[^>]*>/g, "").trim();
+
+            if (!hasBody) {
+                return "";
+            }
+
+            return `
+                <section class="detail-section">
+                    <h3>${escapeHtml(title)}</h3>
+                    ${body}
+                </section>
+            `;
+        }
+
+        function detailGrid(fields) {
+            const rows = fields.filter(field => hasValue(field[1]));
+
+            if (!rows.length) {
+                return "";
+            }
+
+            return `
+                <div class="detail-grid">
+                    ${rows.map(field => detailField(field[0], field[1], field[2])).join("")}
+                </div>
+            `;
+        }
+
+        function detailField(label, value, renderer) {
+            const content = renderer ? renderer(value) : escapeHtml(value);
+
+            return `
+                <dl class="detail-field">
+                    <dt>${escapeHtml(label)}</dt>
+                    <dd>${content}</dd>
+                </dl>
+            `;
+        }
+
+        function detailStat(label, valueHtml) {
+            return `
+                <div class="detail-stat">
+                    <span>${escapeHtml(label)}</span>
+                    <strong>${valueHtml || emptyDetail()}</strong>
+                </div>
+            `;
+        }
+
+        function detailCopy(value) {
+            if (!hasValue(value)) {
+                return "";
+            }
+
+            return `<p class="detail-copy">${escapeHtml(value)}</p>`;
+        }
+
+        function detailActions(actions, fallback) {
+            if (!actions.length) {
+                return hasValue(fallback) ? detailCopy(fallback) : "";
+            }
+
+            return `
+                <div class="detail-actions">
+                    ${actions.map(action => `
+                        <div class="detail-action">
+                            <strong>${escapeHtml(action.recommended_action || action.action_type || "Recommended action")}</strong>
+                            <div class="secondary">
+                                ${escapeHtml([
+                                    action.account_name,
+                                    action.action_owner,
+                                    action.action_status,
+                                    action.priority_band
+                                ].filter(hasValue).join(" · "))}
+                            </div>
+                            <div class="tag-row" style="margin-top: 8px;">
+                                ${tag(action.action_type || "Action", "blue")}
+                                ${tag(action.action_status || "Open", "teal")}
+                                ${scoreBadge(action.opportunity_score)}
+                            </div>
+                        </div>
+                    `).join("")}
+                </div>
+            `;
+        }
+
+        function detailEngagements(engagements) {
+            if (!engagements.length) {
+                return "";
+            }
+
+            return `
+                <div class="detail-actions">
+                    ${engagements.map(engagement => `
+                        <div class="detail-action">
+                            <strong>${escapeHtml(engagement.engagement_type || "Engagement")}</strong>
+                            <div class="secondary">
+                                ${escapeHtml([
+                                    engagement.account_name,
+                                    engagement.engagement_stage,
+                                    engagement.due_quarter
+                                ].filter(hasValue).join(" · "))}
+                            </div>
+                            ${detailCopy(engagement.next_step)}
+                        </div>
+                    `).join("")}
+                </div>
+            `;
+        }
+
+        function detailNotes(notes) {
+            if (!notes.length) {
+                return "";
+            }
+
+            return `
+                <div class="detail-actions">
+                    ${notes.map(note => `
+                        <div class="detail-action">
+                            <strong>${escapeHtml(note.note_type || "CRM note")}</strong>
+                            <div class="secondary">${escapeHtml([note.account_name, note.created_at].filter(hasValue).join(" · "))}</div>
+                            ${detailCopy(note.note)}
+                        </div>
+                    `).join("")}
+                </div>
             `;
         }
 
@@ -1281,9 +1815,25 @@
 
         function filteredDonors() {
             return state.donors.filter(donor => {
-                return matchesQuery(donor, ["donor_name", "top_countries", "top_equipment_categories", "next_window"]) &&
+                return matchesQuery(donor, ["donor_name", "source_aliases", "top_countries", "top_equipment_categories", "next_window", "commercial_priority"]) &&
                     matchesContains(donor.top_countries, state.filters.country) &&
                     matchesContains(donor.top_equipment_categories, state.filters.category);
+            });
+        }
+
+        function filteredEquipment() {
+            return state.equipment.filter(item => {
+                return matchesQuery(item, ["equipment_category", "top_countries", "top_donors", "evidence_quality"]) &&
+                    matchesContains(item.top_countries, state.filters.country) &&
+                    (!state.filters.category || item.equipment_category === state.filters.category || String(item.equipment_category || "").includes(state.filters.category));
+            });
+        }
+
+        function filteredTenders() {
+            return state.tenders.filter(tender => {
+                return matchesQuery(tender, ["project_title", "funding_agencies", "implementing_partners", "country_codes", "country_names", "equipment_target_summary", "tender_stage", "recommended_action"]) &&
+                    matchesList(tender.country_codes, state.filters.country) &&
+                    matchesContains(tender.equipment_target_summary, state.filters.category);
             });
         }
 
@@ -1321,6 +1871,48 @@
 
         function programmeMap() {
             return new Map(state.programmes.map(programme => [programme.iati_identifier, programme]));
+        }
+
+        function opportunityMap() {
+            return new Map(state.opportunities.map(opportunity => [opportunity.iati_identifier, opportunity]));
+        }
+
+        function tenderMap() {
+            return new Map(state.tenders.map(tender => [tender.iati_identifier, tender]));
+        }
+
+        function mergeRows(...rows) {
+            const merged = {};
+
+            rows.forEach(row => {
+                Object.entries(row || {}).forEach(([key, value]) => {
+                    if (!hasValue(merged[key]) && hasValue(value)) {
+                        merged[key] = value;
+                    }
+                });
+            });
+
+            return merged;
+        }
+
+        function firstValue(...values) {
+            return values.find(hasValue) || "";
+        }
+
+        function hasValue(value) {
+            return value !== undefined && value !== null && String(value).trim() !== "";
+        }
+
+        function uniqueValues(values) {
+            const seen = new Set();
+
+            values.forEach(value => {
+                if (hasValue(value)) {
+                    seen.add(String(value).trim());
+                }
+            });
+
+            return Array.from(seen);
         }
 
         function splitList(value) {
@@ -1461,6 +2053,14 @@
             return `${sign}$${absolute.toLocaleString()}`;
         }
 
+        function moneyDetail(value) {
+            return hasValue(value) ? escapeHtml(formatMoney(value)) : emptyDetail();
+        }
+
+        function emptyDetail() {
+            return `<span class="secondary">None</span>`;
+        }
+
         function formatScore(value) {
             return numberValue(value).toFixed(1).replace(".0", "");
         }
@@ -1526,6 +2126,11 @@
                 .replaceAll('"', "&quot;")
                 .replaceAll("'", "&#039;");
         }
+
+        function escapeAttr(value) {
+            return escapeHtml(value);
+        }
     </script>
 </body>
 </html>
+

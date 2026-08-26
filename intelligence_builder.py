@@ -40,6 +40,16 @@ from typing import Dict, Iterable, List, Optional
 
 import pandas as pd
 
+from intelligence_enrichment import (
+    amount_to_usd,
+    canonical_donor_name,
+    donor_score,
+    extract_equipment_signals,
+    extract_manufacturers,
+    herfindahl,
+    tender_model,
+)
+
 
 COUNTRY_NAMES = {
     "KE": "Kenya",
@@ -72,48 +82,38 @@ PROCUREMENT_TERMS = [
     "health information system",
 ]
 
+PIPELINE_VERSION = "3.2-project-detail-intelligence"
+
 PLAN_PROGRESS = [
     {
         "id": "01",
-        "name": "Market Overview",
+        "name": "Data Foundation",
         "status": "ready",
-        "output": "Country, sector, status, and funding views",
+        "output": "IATI activities, budgets, transactions, countries, and organisations",
     },
     {
-        "id": "02B",
-        "name": "Procurement Intelligence",
+        "id": "02",
+        "name": "Intelligence Foundation",
         "status": "ready",
-        "output": "Equipment and infrastructure demand signals",
-    },
-    {
-        "id": "02C",
-        "name": "Opportunity Scoring",
-        "status": "ready",
-        "output": "Priority, confidence, and recommended actions",
-    },
-    {
-        "id": "02D",
-        "name": "Opportunity Intelligence UI",
-        "status": "ready",
-        "output": "Ranked opportunity workspace",
+        "output": "Market overview, procurement signals, opportunity identification, and scoring",
     },
     {
         "id": "03",
-        "name": "Donor / Organisation Intelligence",
-        "status": "launch_baseline",
-        "output": "Donor pipeline, countries, and equipment focus",
+        "name": "Entity + Relationship Intelligence",
+        "status": "ready",
+        "output": "Canonical organisations, aliases, duplicate relationships, and donor intelligence",
     },
     {
         "id": "04",
-        "name": "Equipment / Product Intelligence",
-        "status": "launch_baseline",
-        "output": "Category demand by country and donor",
+        "name": "Commercial Intelligence",
+        "status": "ready",
+        "output": "Target accounts, engagements, CRM notes, recommended actions, and project drill-downs",
     },
     {
         "id": "05",
-        "name": "Tender / Procurement Prediction",
-        "status": "launch_baseline",
-        "output": "Predicted tender windows from IATI signals",
+        "name": "Predictive / Product Intelligence",
+        "status": "ready",
+        "output": "Equipment/product demand intelligence, tender probability, horizon, and timing windows",
     },
 ]
 
@@ -165,6 +165,14 @@ PIPELINE_LAYERS = [
             "recommended_actions",
         ],
         "purpose": "Turn intelligence into sales and partnership workflows.",
+    },
+    {
+        "layer": "PREDICTIVE_PRODUCT",
+        "datasets": [
+            "equipment_intelligence",
+            "tender_predictions",
+        ],
+        "purpose": "Forecast equipment/product demand and likely procurement timing.",
     },
 ]
 
@@ -555,15 +563,25 @@ def score_opportunity(row: pd.Series, as_of: date) -> Dict[str, object]:
     score = 0.0
     signals = []
 
-    equipment = split_values(row.get("equipment_target_summary"))
-    budget = safe_float(row.get("total_budget_amount"))
-    future_disbursement = safe_float(row.get("future_disbursement_amount"))
-    future_budget = safe_float(row.get("future_budget_amount"))
+    equipment = split_values(row.get("direct_equipment_categories") or row.get("equipment_target_summary"))
+    evidence = str(row.get("equipment_evidence", "")).strip()
+    budget = safe_float(row.get("budget_usd")) or safe_float(row.get("total_budget_amount"))
+    future_disbursement = (
+        safe_float(row.get("future_disbursement_usd"))
+        or safe_float(row.get("future_disbursement_amount"))
+    )
+    future_budget = (
+        safe_float(row.get("future_budget_usd"))
+        or safe_float(row.get("future_budget_amount"))
+    )
     status_code = str(row.get("activity_status_code", "")).strip()
 
-    if equipment:
+    if evidence == "direct_keyword" or equipment:
         score += 28
         signals.append("equipment demand")
+    elif evidence == "sector_inferred":
+        score += 10
+        signals.append("sector-implied equipment demand")
     elif "12230" in str(row.get("sector_codes", "")):
         score += 10
         signals.append("health infrastructure sector")
@@ -690,6 +708,12 @@ def predicted_window(row: pd.Series, as_of: date) -> Dict[str, str]:
 
 
 def recommended_action(row: pd.Series) -> str:
+    stage = str(row.get("tender_stage", ""))
+    procurement_action = clean_text(row.get("recommended_procurement_action"))
+
+    if stage == "Likely procurement" and procurement_action:
+        return procurement_action
+
     score = safe_float(row.get("opportunity_score"))
     basis = str(row.get("prediction_basis", ""))
 
@@ -752,6 +776,68 @@ def build_opportunities(
 
         base[column] = base[column].apply(safe_float)
 
+    equipment_rows = base.apply(
+        lambda row: pd.Series(
+            extract_equipment_signals(
+                row.get("project_title"),
+                row.get("description"),
+                row.get("equipment_target_snippets"),
+                sector_codes=row.get("sector_codes"),
+                existing_categories=row.get("equipment_target_summary"),
+            )
+        ),
+        axis=1,
+    )
+    base = pd.concat(
+        [base.drop(columns=["equipment_target_summary", "equipment_target_snippets"], errors="ignore"), equipment_rows],
+        axis=1,
+    )
+    base["manufacturer_mentions"] = base.apply(
+        lambda row: extract_manufacturers(
+            row.get("project_title"),
+            row.get("description"),
+            row.get("equipment_target_snippets"),
+        ),
+        axis=1,
+    )
+    usd_budget = base.apply(
+        lambda row: pd.Series(
+            dict(zip(
+                ["budget_usd", "budget_normalization_status"],
+                amount_to_usd(row.get("total_budget_amount"), row.get("budget_currency") or row.get("default_currency")),
+            ))
+        ),
+        axis=1,
+    )
+    usd_future_disb = base.apply(
+        lambda row: pd.Series(
+            dict(zip(
+                ["future_disbursement_usd", "_future_disb_fx"],
+                amount_to_usd(row.get("future_disbursement_amount"), row.get("default_currency")),
+            ))
+        ),
+        axis=1,
+    )
+    usd_future_budget = base.apply(
+        lambda row: pd.Series(
+            dict(zip(
+                ["future_budget_usd", "_future_budget_fx"],
+                amount_to_usd(row.get("future_budget_amount"), row.get("budget_currency") or row.get("default_currency")),
+            ))
+        ),
+        axis=1,
+    )
+    usd_disbursed = base.apply(
+        lambda row: pd.Series(
+            dict(zip(
+                ["disbursement_usd", "_disb_fx"],
+                amount_to_usd(row.get("disbursement_amount"), row.get("default_currency")),
+            ))
+        ),
+        axis=1,
+    )
+    base = pd.concat([base, usd_budget, usd_future_disb, usd_future_budget, usd_disbursed], axis=1)
+
     score_rows = base.apply(
         lambda row: pd.Series(score_opportunity(row, as_of)),
         axis=1,
@@ -763,18 +849,9 @@ def build_opportunities(
     )
 
     output = pd.concat([base, score_rows, window_rows], axis=1)
-    output["recommended_action"] = output.apply(recommended_action, axis=1)
-
-    output["country_names"] = output["country_codes"].apply(
-        lambda value: "; ".join(
-            COUNTRY_NAMES.get(code, code)
-            for code in split_values(value)
-        )
-    )
-
     output["procurement_signal"] = output.apply(
         lambda row: "Yes"
-        if split_values(row.get("equipment_target_summary"))
+        if split_values(row.get("direct_equipment_categories"))
         or text_contains_procurement_signal(
             row.get("project_title"),
             row.get("description"),
@@ -782,6 +859,19 @@ def build_opportunities(
         )
         else "No",
         axis=1,
+    )
+    tender_rows = output.apply(
+        lambda row: pd.Series(tender_model(row.to_dict(), as_of)),
+        axis=1,
+    )
+    output = pd.concat([output, tender_rows], axis=1)
+    output["recommended_action"] = output.apply(recommended_action, axis=1)
+
+    output["country_names"] = output["country_codes"].apply(
+        lambda value: "; ".join(
+            COUNTRY_NAMES.get(code, code)
+            for code in split_values(value)
+        )
     )
 
     selected_columns = [
@@ -801,11 +891,16 @@ def build_opportunities(
         "default_currency",
         "total_budget_amount",
         "budget_currency",
+        "budget_usd",
+        "budget_normalization_status",
         "commitment_amount",
         "disbursement_amount",
+        "disbursement_usd",
         "expenditure_amount",
         "future_disbursement_amount",
+        "future_disbursement_usd",
         "future_budget_amount",
+        "future_budget_usd",
         "next_disbursement_date",
         "next_disbursement_quarter",
         "next_budget_date",
@@ -814,6 +909,10 @@ def build_opportunities(
         "sector_names",
         "equipment_target_summary",
         "equipment_target_snippets",
+        "equipment_evidence",
+        "direct_equipment_categories",
+        "inferred_equipment_categories",
+        "manufacturer_mentions",
         "procurement_signal",
         "opportunity_score",
         "priority_band",
@@ -821,6 +920,14 @@ def build_opportunities(
         "signal_summary",
         "predicted_tender_window",
         "prediction_basis",
+        "tender_probability",
+        "tender_stage",
+        "tender_horizon",
+        "tender_window",
+        "tender_basis",
+        "tender_confidence",
+        "tender_evidence",
+        "recommended_procurement_action",
         "recommended_action",
         "description",
     ]
@@ -843,16 +950,29 @@ def build_donor_intelligence(opportunities: pd.DataFrame) -> pd.DataFrame:
     columns = [
         "donor_intelligence_id",
         "donor_name",
+        "source_aliases",
         "project_count",
         "active_projects",
         "pipeline_projects",
         "reported_budget",
+        "reported_budget_usd",
+        "disbursement_usd",
+        "future_disbursement_usd",
+        "disbursement_ratio",
         "average_score",
         "high_priority_opportunities",
+        "likely_procurement_count",
         "top_countries",
+        "country_count",
+        "country_concentration",
+        "top_implementers",
         "top_equipment_categories",
+        "equipment_specificity",
         "next_window",
         "latest_update",
+        "donor_score",
+        "commercial_priority",
+        "intelligence_notes",
         "source_layer",
     ]
 
@@ -869,15 +989,22 @@ def build_donor_intelligence(opportunities: pd.DataFrame) -> pd.DataFrame:
 
         for donor in donors:
             rows.append({
-                "donor_name": donor,
+                "source_name": donor,
+                "donor_name": canonical_donor_name(donor),
                 "iati_identifier": row.get("iati_identifier"),
                 "country_codes": row.get("country_codes"),
-                "equipment_target_summary": row.get("equipment_target_summary"),
+                "implementing_partners": row.get("implementing_partners"),
+                "equipment_target_summary": row.get("direct_equipment_categories") or row.get("equipment_target_summary"),
+                "equipment_evidence": row.get("equipment_evidence"),
                 "activity_status_code": row.get("activity_status_code"),
                 "total_budget_amount": safe_float(row.get("total_budget_amount")),
+                "budget_usd": safe_float(row.get("budget_usd")),
+                "disbursement_usd": safe_float(row.get("disbursement_usd")),
+                "future_disbursement_usd": safe_float(row.get("future_disbursement_usd")),
                 "opportunity_score": safe_float(row.get("opportunity_score")),
                 "priority_band": row.get("priority_band"),
-                "predicted_tender_window": row.get("predicted_tender_window"),
+                "tender_stage": row.get("tender_stage"),
+                "tender_window": row.get("tender_window") or row.get("predicted_tender_window"),
                 "last_updated": row.get("last_updated"),
             })
 
@@ -895,24 +1022,81 @@ def build_donor_intelligence(opportunities: pd.DataFrame) -> pd.DataFrame:
             for value in group["equipment_target_summary"]
             for category in split_values(value)
         ]
+        implementers = [
+            partner
+            for value in group["implementing_partners"]
+            for partner in split_values(value)
+        ]
+        project_count = int(group["iati_identifier"].nunique())
+        high_priority = int(
+            group["priority_band"].isin([
+                "Strategic Priority",
+                "Qualified Lead",
+            ]).sum()
+        )
+        direct_equipment = int((group["equipment_evidence"] == "direct_keyword").sum())
+        budget_usd = round(group["budget_usd"].sum(), 2)
+        disbursed = round(group["disbursement_usd"].sum(), 2)
+        future_disb = round(group["future_disbursement_usd"].sum(), 2)
+        latest_update = group["last_updated"].max()
+        recency_days = 9999
+        latest_date = safe_date(latest_update)
+
+        if latest_date:
+            recency_days = abs((date.today() - latest_date).days)
+
+        dated_windows = [
+            window
+            for window in group["tender_window"].tolist()
+            if clean_text(window) and clean_text(window).lower() != "monitor"
+        ]
+        score, tier = donor_score({
+            "average_score": float(group["opportunity_score"].mean()),
+            "high_priority_share": high_priority / project_count if project_count else 0,
+            "high_priority_count": high_priority,
+            "equipment_specificity": direct_equipment / project_count if project_count else 0,
+            "reported_budget_usd": budget_usd,
+            "future_disbursement_usd": future_disb,
+            "active_share": float((group["activity_status_code"] == "2").mean()),
+            "recency_days": recency_days,
+            "country_count": len(set(countries)),
+        })
+        notes = []
+
+        if direct_equipment / project_count >= 0.25 if project_count else False:
+            notes.append("High equipment specificity")
+
+        if future_disb > 0:
+            notes.append("Has dated future disbursements")
+
+        if int((group["tender_stage"] == "Likely procurement").sum()) > 0:
+            notes.append("Contains likely procurement programmes")
 
         output.append({
             "donor_name": donor,
-            "project_count": int(group["iati_identifier"].nunique()),
+            "source_aliases": join_unique(group["source_name"]),
+            "project_count": project_count,
             "active_projects": int((group["activity_status_code"] == "2").sum()),
             "pipeline_projects": int((group["activity_status_code"] == "1").sum()),
             "reported_budget": round(group["total_budget_amount"].sum(), 2),
+            "reported_budget_usd": budget_usd,
+            "disbursement_usd": disbursed,
+            "future_disbursement_usd": future_disb,
+            "disbursement_ratio": round(disbursed / budget_usd, 3) if budget_usd else 0,
             "average_score": round(group["opportunity_score"].mean(), 1),
-            "high_priority_opportunities": int(
-                group["priority_band"].isin([
-                    "Strategic Priority",
-                    "Qualified Lead",
-                ]).sum()
-            ),
+            "high_priority_opportunities": high_priority,
+            "likely_procurement_count": int((group["tender_stage"] == "Likely procurement").sum()),
             "top_countries": format_top(countries),
+            "country_count": len(set(countries)),
+            "country_concentration": herfindahl(countries),
+            "top_implementers": format_top(implementers),
             "top_equipment_categories": format_top(equipment),
-            "next_window": format_top(group["predicted_tender_window"], limit=2),
-            "latest_update": group["last_updated"].max(),
+            "equipment_specificity": round(direct_equipment / project_count, 3) if project_count else 0,
+            "next_window": format_top(dated_windows, limit=2) or "No dated window",
+            "latest_update": latest_update,
+            "donor_score": score,
+            "commercial_priority": tier,
+            "intelligence_notes": "; ".join(notes) or "Baseline donor profile",
         })
 
     dataframe = pd.DataFrame(output)
@@ -924,7 +1108,7 @@ def build_donor_intelligence(opportunities: pd.DataFrame) -> pd.DataFrame:
     return (
         dataframe[columns]
         .sort_values(
-            by=["high_priority_opportunities", "reported_budget", "project_count"],
+            by=["donor_score", "high_priority_opportunities", "reported_budget_usd"],
             ascending=[False, False, False],
         )
         .reset_index(drop=True)
@@ -932,40 +1116,47 @@ def build_donor_intelligence(opportunities: pd.DataFrame) -> pd.DataFrame:
 
 
 def build_equipment_intelligence(opportunities: pd.DataFrame) -> pd.DataFrame:
+    columns = [
+        "equipment_category",
+        "evidence_quality",
+        "project_count",
+        "direct_evidence_projects",
+        "inferred_projects",
+        "active_projects",
+        "pipeline_projects",
+        "reported_budget",
+        "reported_budget_usd",
+        "future_disbursement_usd",
+        "average_score",
+        "high_priority_opportunities",
+        "likely_procurement_count",
+        "top_countries",
+        "top_donors",
+        "next_windows",
+        "demand_intensity",
+    ]
+
     if opportunities.empty:
-        return pd.DataFrame()
+        return pd.DataFrame(columns=columns)
 
     rows = []
 
     for _, row in opportunities.iterrows():
-        categories = split_values(row.get("equipment_target_summary"))
+        direct = split_values(row.get("direct_equipment_categories"))
+        inferred = [
+            category
+            for category in split_values(row.get("inferred_equipment_categories"))
+            if category not in direct
+        ]
 
-        for category in categories:
-            rows.append({
-                "equipment_category": category,
-                "iati_identifier": row.get("iati_identifier"),
-                "country_codes": row.get("country_codes"),
-                "funding_agencies": row.get("funding_agencies"),
-                "activity_status_code": row.get("activity_status_code"),
-                "total_budget_amount": safe_float(row.get("total_budget_amount")),
-                "opportunity_score": safe_float(row.get("opportunity_score")),
-                "priority_band": row.get("priority_band"),
-                "predicted_tender_window": row.get("predicted_tender_window"),
-            })
+        for category in direct:
+            rows.append(_equipment_row(row, category, "direct_keyword"))
+
+        for category in inferred:
+            rows.append(_equipment_row(row, category, "sector_inferred"))
 
     if not rows:
-        return pd.DataFrame(columns=[
-            "equipment_category",
-            "project_count",
-            "active_projects",
-            "pipeline_projects",
-            "reported_budget",
-            "average_score",
-            "high_priority_opportunities",
-            "top_countries",
-            "top_donors",
-            "next_windows",
-        ])
+        return pd.DataFrame(columns=columns)
 
     exploded = pd.DataFrame(rows)
     output = []
@@ -977,49 +1168,83 @@ def build_equipment_intelligence(opportunities: pd.DataFrame) -> pd.DataFrame:
             for country in split_values(value)
         ]
         donors = [
-            donor
+            canonical_donor_name(donor)
             for value in group["funding_agencies"]
             for donor in split_values(value)
+        ]
+        project_count = int(group["iati_identifier"].nunique())
+        direct_count = int((group["evidence_quality"] == "direct_keyword").sum())
+        high_priority = int(
+            group["priority_band"].isin([
+                "Strategic Priority",
+                "Qualified Lead",
+            ]).sum()
+        )
+        likely = int((group["tender_stage"] == "Likely procurement").sum())
+        intensity = round(
+            min(100, (direct_count * 2 + likely * 3 + high_priority) / max(project_count, 1) * 20),
+            1,
+        )
+        dated_windows = [
+            window
+            for window in group["tender_window"].tolist()
+            if clean_text(window) and clean_text(window).lower() != "monitor"
         ]
 
         output.append({
             "equipment_category": category,
-            "project_count": int(group["iati_identifier"].nunique()),
+            "evidence_quality": (
+                "direct_keyword"
+                if direct_count
+                else "sector_inferred"
+            ),
+            "project_count": project_count,
+            "direct_evidence_projects": direct_count,
+            "inferred_projects": int((group["evidence_quality"] == "sector_inferred").sum()),
             "active_projects": int((group["activity_status_code"] == "2").sum()),
             "pipeline_projects": int((group["activity_status_code"] == "1").sum()),
             "reported_budget": round(group["total_budget_amount"].sum(), 2),
+            "reported_budget_usd": round(group["budget_usd"].sum(), 2),
+            "future_disbursement_usd": round(group["future_disbursement_usd"].sum(), 2),
             "average_score": round(group["opportunity_score"].mean(), 1),
-            "high_priority_opportunities": int(
-                group["priority_band"].isin([
-                    "Strategic Priority",
-                    "Qualified Lead",
-                ]).sum()
-            ),
+            "high_priority_opportunities": high_priority,
+            "likely_procurement_count": likely,
             "top_countries": format_top(countries),
             "top_donors": format_top(donors),
-            "next_windows": format_top(group["predicted_tender_window"], limit=3),
+            "next_windows": format_top(dated_windows, limit=3) or "No dated window",
+            "demand_intensity": intensity,
         })
 
     return (
-        pd.DataFrame(output)
+        pd.DataFrame(output, columns=columns)
         .sort_values(
-            by=["high_priority_opportunities", "reported_budget", "project_count"],
+            by=["demand_intensity", "likely_procurement_count", "reported_budget_usd"],
             ascending=[False, False, False],
         )
         .reset_index(drop=True)
     )
 
 
+def _equipment_row(row: pd.Series, category: str, evidence: str) -> Dict[str, object]:
+    return {
+        "equipment_category": category,
+        "evidence_quality": evidence,
+        "iati_identifier": row.get("iati_identifier"),
+        "country_codes": row.get("country_codes"),
+        "funding_agencies": row.get("funding_agencies"),
+        "activity_status_code": row.get("activity_status_code"),
+        "total_budget_amount": safe_float(row.get("total_budget_amount")),
+        "budget_usd": safe_float(row.get("budget_usd")),
+        "future_disbursement_usd": safe_float(row.get("future_disbursement_usd")),
+        "opportunity_score": safe_float(row.get("opportunity_score")),
+        "priority_band": row.get("priority_band"),
+        "tender_stage": row.get("tender_stage"),
+        "tender_window": row.get("tender_window") or row.get("predicted_tender_window"),
+    }
+
+
 def build_tender_predictions(opportunities: pd.DataFrame) -> pd.DataFrame:
-    if opportunities.empty:
-        return pd.DataFrame()
-
-    filtered = opportunities[
-        (opportunities["procurement_signal"] == "Yes")
-        | (opportunities["opportunity_score"].apply(safe_float) >= 40)
-    ].copy()
-
-    selected = [
+    columns = [
         "iati_identifier",
         "project_title",
         "country_codes",
@@ -1027,22 +1252,51 @@ def build_tender_predictions(opportunities: pd.DataFrame) -> pd.DataFrame:
         "funding_agencies",
         "implementing_partners",
         "equipment_target_summary",
+        "equipment_evidence",
+        "tender_probability",
+        "tender_stage",
+        "tender_horizon",
+        "tender_window",
+        "tender_basis",
+        "tender_confidence",
+        "tender_evidence",
         "opportunity_score",
         "priority_band",
-        "confidence",
-        "future_disbursement_amount",
-        "future_budget_amount",
-        "predicted_tender_window",
-        "prediction_basis",
-        "signal_summary",
+        "future_disbursement_usd",
+        "future_budget_usd",
         "recommended_action",
     ]
 
+    if opportunities.empty:
+        return pd.DataFrame(columns=columns)
+
+    work = opportunities.copy()
+    work["tender_probability"] = work["tender_probability"].apply(safe_float)
+    closed = work["activity_status_code"].isin(["3", "4", "5"])
+    dated = work["tender_window"].fillna("").astype(str).str.strip().ne("")
+    direct = work["equipment_evidence"].eq("direct_keyword")
+    procurement = work["procurement_signal"].eq("Yes")
+
+    filtered = work[
+        (work["tender_probability"] >= 45)
+        & (~closed | dated)
+        & (direct | procurement | dated)
+        & work["tender_stage"].isin(["Likely procurement", "Funding window", "Demand signal"])
+    ].copy()
+    filtered["recommended_action"] = filtered.get(
+        "recommended_procurement_action",
+        filtered.get("recommended_action"),
+    )
+
+    for column in columns:
+        if column not in filtered.columns:
+            filtered[column] = ""
+
     return (
-        filtered[selected]
+        filtered[columns]
         .sort_values(
-            by=["opportunity_score", "confidence"],
-            ascending=[False, False],
+            by=["tender_probability", "tender_confidence", "opportunity_score"],
+            ascending=[False, False, False],
         )
         .reset_index(drop=True)
     )
@@ -1352,16 +1606,65 @@ def build_equipment_entities(opportunities: pd.DataFrame) -> pd.DataFrame:
     )
 
 
-def build_manufacturer_entities() -> pd.DataFrame:
-    return pd.DataFrame(columns=[
+def build_manufacturer_entities(opportunities: pd.DataFrame) -> pd.DataFrame:
+    columns = [
         "manufacturer_entity_id",
         "manufacturer_name",
         "manufacturer_aliases",
         "equipment_categories",
         "evidence_source",
         "activity_count",
+        "top_countries",
         "source_layer",
-    ])
+    ]
+
+    if opportunities.empty or "manufacturer_mentions" not in opportunities.columns:
+        return pd.DataFrame(columns=columns)
+
+    rows = []
+
+    for _, row in opportunities.iterrows():
+        for manufacturer in split_values(row.get("manufacturer_mentions")):
+            rows.append({
+                "manufacturer_name": manufacturer,
+                "iati_identifier": row.get("iati_identifier"),
+                "equipment_target_summary": row.get("equipment_target_summary"),
+                "country_codes": row.get("country_codes"),
+            })
+
+    if not rows:
+        return pd.DataFrame(columns=columns)
+
+    exploded = pd.DataFrame(rows)
+    output = []
+
+    for manufacturer, group in exploded.groupby("manufacturer_name"):
+        countries = [
+            country
+            for value in group["country_codes"]
+            for country in split_values(value)
+        ]
+        equipment = [
+            category
+            for value in group["equipment_target_summary"]
+            for category in split_values(value)
+        ]
+        output.append({
+            "manufacturer_entity_id": stable_id("mfr", manufacturer),
+            "manufacturer_name": manufacturer,
+            "manufacturer_aliases": manufacturer,
+            "equipment_categories": format_top(equipment),
+            "evidence_source": "IATI activity text mention",
+            "activity_count": int(group["iati_identifier"].nunique()),
+            "top_countries": format_top(countries),
+            "source_layer": "canonical",
+        })
+
+    return (
+        pd.DataFrame(output, columns=columns)
+        .sort_values(by=["activity_count", "manufacturer_name"], ascending=[False, True])
+        .reset_index(drop=True)
+    )
 
 
 def build_opportunity_scores(opportunities: pd.DataFrame) -> pd.DataFrame:
@@ -1421,6 +1724,9 @@ def build_programme_intelligence(opportunities: pd.DataFrame) -> pd.DataFrame:
         "priority_band",
         "confidence",
         "predicted_tender_window",
+        "tender_probability",
+        "tender_stage",
+        "tender_horizon",
         "recommended_action",
         "source_layer",
     ]
@@ -1445,6 +1751,9 @@ def build_programme_intelligence(opportunities: pd.DataFrame) -> pd.DataFrame:
         "priority_band",
         "confidence",
         "predicted_tender_window",
+        "tender_probability",
+        "tender_stage",
+        "tender_horizon",
         "recommended_action",
     ]:
         if column not in output.columns:
@@ -1902,12 +2211,6 @@ def write_sqlite_tables(
 
     try:
         for name, dataframe in datasets.items():
-            # opportunity_scores is owned by the SQL scoring layer as a VIEW.
-            # The Python builder still writes data/opportunity_scores.csv,
-            # but must not overwrite the SQLite view with a table.
-            if name == "opportunity_scores":
-                continue
-
             dataframe.to_sql(
                 name,
                 connection,
@@ -1918,7 +2221,7 @@ def write_sqlite_tables(
         metadata = pd.DataFrame([
             {
                 "key": "intelligence_pipeline_version",
-                "value": "3.0-layered-commercial",
+                "value": PIPELINE_VERSION,
             },
             {
                 "key": "intelligence_generated_at",
@@ -1961,7 +2264,7 @@ def build_market_summary(
         "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "as_of": as_of.isoformat(),
         "source_generated_at": manifest.get("generated_at", ""),
-        "pipeline_version": "3.0-layered-commercial",
+        "pipeline_version": PIPELINE_VERSION,
         "pipeline_layers": PIPELINE_LAYERS,
         "layer_counts": counts_by_layer,
         "currency_note": (
@@ -1991,6 +2294,12 @@ def build_market_summary(
             "donors": int(len(donors)),
             "equipment_categories": int(len(equipment)),
             "tender_predictions": int(len(predictions)),
+            "likely_procurement": int(
+                (opportunities.get("tender_stage", pd.Series(dtype=str)) == "Likely procurement").sum()
+            ) if "tender_stage" in opportunities.columns else 0,
+            "direct_equipment_projects": int(
+                (opportunities.get("equipment_evidence", pd.Series(dtype=str)) == "direct_keyword").sum()
+            ) if "equipment_evidence" in opportunities.columns else 0,
             "countries": int(len(country_counts)),
         },
         "top_countries": [
@@ -2031,7 +2340,7 @@ def update_manifest(
             row_counts[name] = int(len(dataframe))
             files[name] = f"{name}.csv"
 
-    manifest["pipeline_version"] = "3.0-layered-commercial"
+    manifest["pipeline_version"] = PIPELINE_VERSION
     manifest["intelligence_generated_at"] = datetime.now(timezone.utc).strftime(
         "%Y-%m-%dT%H:%M:%SZ"
     )
@@ -2084,7 +2393,7 @@ def main() -> None:
     )
     organisation_aliases = build_organisation_aliases(organisations)
     equipment_entities = build_equipment_entities(opportunities)
-    manufacturer_entities = build_manufacturer_entities()
+    manufacturer_entities = build_manufacturer_entities(opportunities)
 
     opportunity_scores = build_opportunity_scores(opportunities)
     organisation_intelligence = build_organisation_intelligence(
@@ -2180,3 +2489,5 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+
