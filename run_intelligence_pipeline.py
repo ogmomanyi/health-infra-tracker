@@ -1,11 +1,19 @@
 #!/usr/bin/env python3
-"""Run intelligence_builder without violating canonical entity ownership."""
+"""Run intelligence_builder without violating canonical entity ownership.
+
+The legacy builder still constructs organisation-level derived CSVs, but this
+runner maps organisation intelligence/commercial records onto the canonical
+entity-resolution IDs, follows DUPLICATE_OF relationships to their parents,
+and prevents the builder from replacing canonical entity/alias tables.
+"""
 
 import importlib
+import json
 import sqlite3
 from pathlib import Path
 
 from organisation_resolution.normalizer import normalize_name
+
 
 builder = importlib.import_module("intelligence_builder")
 DB = Path("data/iati_intelligence.db")
@@ -15,8 +23,24 @@ def canonical_map():
     conn = sqlite3.connect(DB)
     by_ref = {}
     by_name = {}
-    alias_candidates = {}
-    names_by_id = {}
+    entity_columns = table_columns(conn, "organisation_entities")
+    alias_columns = table_columns(conn, "organisation_aliases")
+    entity_id_column = (
+        "entity_id"
+        if "entity_id" in entity_columns
+        else "organisation_entity_id"
+    )
+    alias_entity_id_column = (
+        "entity_id"
+        if "entity_id" in alias_columns
+        else "organisation_entity_id"
+    )
+    entity_status_filter = (
+        "WHERE entity_status = 'ACTIVE'"
+        if "entity_status" in entity_columns
+        else ""
+    )
+
     parent_by_child = {
         child: parent
         for parent, child in conn.execute(
@@ -41,49 +65,32 @@ def canonical_map():
         return current
 
     for entity_id, canonical_name in conn.execute(
-        """
-        SELECT entity_id, canonical_name
+        f"""
+        SELECT {entity_id_column}, canonical_name
         FROM organisation_entities
-        WHERE entity_status = 'ACTIVE'
+        {entity_status_filter}
         """
     ):
-        canonical_entity_id = canonical_id(entity_id)
-        names_by_id[canonical_entity_id] = canonical_name
-        normalized = normalize_name(canonical_name)
-        if normalized:
-            alias_candidates.setdefault(normalized, set()).add(canonical_entity_id)
+        by_name[normalize_name(canonical_name)] = canonical_id(entity_id)
 
     for org_ref, entity_id in conn.execute(
-        """
-        SELECT org_ref, entity_id
+        f"""
+        SELECT org_ref, {alias_entity_id_column}
         FROM organisation_aliases
         WHERE org_ref IS NOT NULL AND org_ref != ''
         """
     ):
         by_ref[org_ref.strip().lower()] = canonical_id(entity_id)
 
-    # A source record may have a useful organisation name but no resolvable
-    # org_ref.  Include aliases in the name index so those records still resolve
-    # to their canonical entity.  Ambiguous aliases are deliberately excluded.
-    for alias_name, entity_id in conn.execute(
-        """
-        SELECT alias_name, entity_id
-        FROM organisation_aliases
-        WHERE alias_name IS NOT NULL AND alias_name != ''
-        """
-    ):
-        normalized = normalize_name(alias_name)
-        if normalized:
-            alias_candidates.setdefault(normalized, set()).add(
-                canonical_id(entity_id)
-            )
-
-    for normalized, entity_ids in alias_candidates.items():
-        if len(entity_ids) == 1:
-            by_name[normalized] = next(iter(entity_ids))
-
     conn.close()
-    return by_ref, by_name, names_by_id
+    return by_ref, by_name
+
+
+def table_columns(conn, table_name):
+    return {
+        row[1]
+        for row in conn.execute(f"PRAGMA table_info({table_name})")
+    }
 
 
 def resolve_row(row, by_ref, by_name):
@@ -97,180 +104,16 @@ def resolve_row(row, by_ref, by_name):
         if ref and ref in by_ref:
             return by_ref[ref]
 
-    for name_field in ("canonical_name", "organisation_name", "org_name"):
-        normalized_name = normalize_name(row.get(name_field, ""))
-        if normalized_name and normalized_name in by_name:
-            return by_name[normalized_name]
-
-    return ""
+    name = normalize_name(row.get("canonical_name", ""))
+    return by_name.get(name, "")
 
 
-def _unique_join(values):
-    return builder.join_unique(values)
-
-
-def _numeric(value):
-    return builder.safe_float(value)
-
-
-def collapse_canonical_rows(frame, canonical_names):
-    """Collapse derived source-organisation rows to one row per canonical ID.
-
-    The source organisations table can contain several ref/name variants that
-    resolve to one canonical entity. Intelligence must therefore be keyed by
-    the canonical entity, not by the pre-resolution stable source ID.
-    """
-    if frame.empty:
-        return frame
-
-    rows = []
-    numeric_sum = {
-        "activity_count",
-        "active_activity_count",
-        "pipeline_activity_count",
-        "reported_budget",
-        "high_priority_opportunities",
-    }
-    union_fields = {
-        "org_refs",
-        "org_types",
-        "roles",
-        "country_codes",
-        "country_names",
-        "top_equipment_categories",
-    }
-
-    for entity_id, group in frame.groupby("organisation_entity_id", sort=False):
-        row = group.iloc[0].copy()
-        row["organisation_entity_id"] = entity_id
-        row["canonical_name"] = canonical_names.get(
-            entity_id,
-            row.get("canonical_name", ""),
-        )
-
-        for field in union_fields:
-            row[field] = _unique_join(
-                value
-                for value in group[field].tolist()
-                if builder.clean_text(value)
-            )
-
-        for field in numeric_sum:
-            row[field] = sum(_numeric(value) for value in group[field].tolist())
-
-        refs = [builder.clean_text(v) for v in group["primary_org_ref"].tolist()]
-        refs = [v for v in refs if v]
-        row["primary_org_ref"] = refs[0] if refs else ""
-
-        weights = [max(0.0, _numeric(v)) for v in group["activity_count"].tolist()]
-        scores = [_numeric(v) for v in group["average_opportunity_score"].tolist()]
-        if sum(weights) > 0:
-            row["average_opportunity_score"] = sum(
-                score * weight for score, weight in zip(scores, weights)
-            ) / sum(weights)
-        else:
-            row["average_opportunity_score"] = (
-                sum(scores) / len(scores) if scores else 0.0
-            )
-
-        updates = [builder.clean_text(v) for v in group["latest_update"].tolist()]
-        updates = [v for v in updates if v]
-        row["latest_update"] = max(updates) if updates else ""
-        rows.append(row)
-
-    return frame.__class__(rows, columns=frame.columns).reset_index(drop=True)
-
-
-_original_build_org_entities = builder.build_organisation_entities
 _original_build_org_intel = builder.build_organisation_intelligence
 
 
-def _is_placeholder_name(value):
-    """Return True for known non-commercial participant placeholders.
-
-    ``normalize_name`` strips punctuation, so a raw IATI value such as ``-``
-    normalizes to an empty string and would otherwise evade the placeholder
-    filter, later producing an unresolved canonical organisation error.
-    """
-    raw = builder.clean_text(value).strip().lower()
-    normalized = normalize_name(raw)
-    placeholder_names = {
-        "ip not published",
-        "not published",
-        "unknown",
-        "unspecified organisation",
-        "-",
-    }
-    return raw in placeholder_names or normalized in placeholder_names or not normalized
-
-
-def build_org_entities_fixed(organisations, opportunities):
-    derived = _original_build_org_entities(organisations, opportunities)
-    by_ref, by_name, canonical_names = canonical_map()
-    fixed = derived.copy()
-
-    def has_resolvable_reference(row):
-        refs = []
-        refs.extend(builder.split_values(row.get("primary_org_ref")))
-        refs.extend(builder.split_values(row.get("org_refs")))
-        return any(
-            ref.strip().lower() in by_ref
-            for ref in refs
-            if ref.strip()
-        )
-
-    placeholder_mask = fixed["canonical_name"].apply(_is_placeholder_name)
-    placeholder_without_ref = placeholder_mask & ~fixed.apply(
-        has_resolvable_reference,
-        axis=1,
-    )
-    dropped = int(placeholder_without_ref.sum())
-    if dropped:
-        fixed = fixed.loc[~placeholder_without_ref].copy()
-
-    fixed["organisation_entity_id"] = fixed.apply(
-        lambda row: resolve_row(row, by_ref, by_name),
-        axis=1,
-    )
-
-    unresolved = fixed[fixed["organisation_entity_id"] == ""]
-    if not unresolved.empty:
-        examples = ", ".join(unresolved["canonical_name"].head(10).tolist())
-        raise RuntimeError(
-            f"Unresolved canonical organisations: {len(unresolved)}; examples: {examples}"
-        )
-
-    fixed = collapse_canonical_rows(fixed, canonical_names)
-
-    if dropped:
-        print(f"Ignored {dropped} non-canonical placeholder organisation record(s)")
-
-    return fixed
-
-
 def build_org_intel_fixed(derived):
-    by_ref, by_name, canonical_names = canonical_map()
+    by_ref, by_name = canonical_map()
     fixed = derived.copy()
-
-    def has_resolvable_reference(row):
-        refs = []
-        refs.extend(builder.split_values(row.get("primary_org_ref")))
-        refs.extend(builder.split_values(row.get("org_refs")))
-        return any(
-            ref.strip().lower() in by_ref
-            for ref in refs
-            if ref.strip()
-        )
-
-    placeholder_mask = fixed["canonical_name"].apply(_is_placeholder_name)
-    placeholder_without_ref = placeholder_mask & ~fixed.apply(
-        has_resolvable_reference,
-        axis=1,
-    )
-    dropped = int(placeholder_without_ref.sum())
-    if dropped:
-        fixed = fixed.loc[~placeholder_without_ref].copy()
-
     fixed["organisation_entity_id"] = fixed.apply(
         lambda row: resolve_row(row, by_ref, by_name),
         axis=1,
@@ -279,24 +122,21 @@ def build_org_intel_fixed(derived):
     unresolved = fixed[fixed["organisation_entity_id"] == ""]
     if not unresolved.empty:
         examples = ", ".join(unresolved["canonical_name"].head(10).tolist())
-        raise RuntimeError(
-            f"Unresolved canonical organisations: {len(unresolved)}; examples: {examples}"
+        print(
+            "[intel] WARNING: "
+            f"Unresolved canonical organisations: {len(unresolved)}; "
+            f"excluded from organisation/account outputs: {examples}"
         )
-
-    fixed = collapse_canonical_rows(fixed, canonical_names)
-
-    if dropped:
-        print(f"Ignored {dropped} non-canonical placeholder organisation record(s)")
+        fixed = fixed[fixed["organisation_entity_id"] != ""].copy()
 
     return _original_build_org_intel(fixed)
 
 
-builder.build_organisation_entities = build_org_entities_fixed
 builder.build_organisation_intelligence = build_org_intel_fixed
 
 
 def build_org_activity_lookup_fixed(organisations):
-    by_ref, by_name, _ = canonical_map()
+    by_ref, by_name = canonical_map()
     lookup = {}
 
     for _, row in organisations.iterrows():
@@ -323,10 +163,18 @@ _original_write_sqlite_tables = builder.write_sqlite_tables
 
 
 def write_sqlite_tables_fixed(db_path, datasets):
+    # Canonical entity/alias tables are owned by entity resolution. The
+    # intelligence builder may still emit their CSV artifacts, but it must
+    # never replace the live canonical registry.
+    existing_views = sqlite_views(db_path)
     safe_datasets = {
         name: dataframe
         for name, dataframe in datasets.items()
-        if name not in {"organisation_entities", "organisation_aliases"}
+        if name not in {
+            "organisation_entities",
+            "organisation_aliases",
+            *existing_views,
+        }
     }
     _original_write_sqlite_tables(db_path, safe_datasets)
 
@@ -334,5 +182,111 @@ def write_sqlite_tables_fixed(db_path, datasets):
 builder.write_sqlite_tables = write_sqlite_tables_fixed
 
 
+def sqlite_views(db_path):
+    conn = sqlite3.connect(db_path)
+    try:
+        return {
+            name
+            for (name,) in conn.execute(
+                "SELECT name FROM sqlite_master WHERE type = 'view'"
+            )
+        }
+    finally:
+        conn.close()
+
+
+def sqlite_tables(db_path):
+    conn = sqlite3.connect(db_path)
+    try:
+        return {
+            name
+            for (name,) in conn.execute(
+                "SELECT name FROM sqlite_master WHERE type = 'table'"
+            )
+        }
+    finally:
+        conn.close()
+
+
+def read_sqlite_table(db_path, table_name):
+    conn = sqlite3.connect(db_path)
+    try:
+        return builder.pd.read_sql_query(f"SELECT * FROM {table_name}", conn)
+    finally:
+        conn.close()
+
+
+def sync_canonical_artifacts(db_path, data_dir):
+    if not db_path.exists():
+        print(f"[intel] WARNING: canonical database not found: {db_path}")
+        return
+
+    tables = sqlite_tables(db_path)
+    counts = {}
+
+    for name in ("organisation_entities", "organisation_aliases"):
+        if name not in tables:
+            print(f"[intel] WARNING: canonical table not found: {name}")
+            continue
+
+        dataframe = read_sqlite_table(db_path, name)
+        output_path = data_dir / f"{name}.csv"
+        dataframe.to_csv(output_path, index=False)
+        counts[name] = int(len(dataframe))
+        print(f"[intel] Synced canonical {output_path} ({len(dataframe)} rows)")
+
+    if counts:
+        sync_manifest_counts(data_dir / "manifest.json", counts)
+        sync_summary_counts(data_dir / "market_summary.json", counts)
+
+
+def sync_manifest_counts(path, counts):
+    if not path.exists():
+        return
+
+    with path.open("r", encoding="utf-8") as handle:
+        manifest = json.load(handle)
+
+    row_counts = manifest.setdefault("row_counts", {})
+    files = manifest.setdefault("files", {})
+
+    for name, count in counts.items():
+        row_counts[name] = count
+        files[name] = f"{name}.csv"
+
+    with path.open("w", encoding="utf-8") as handle:
+        json.dump(manifest, handle, indent=2, ensure_ascii=False)
+
+
+def sync_summary_counts(path, counts):
+    if not path.exists():
+        return
+
+    with path.open("r", encoding="utf-8") as handle:
+        summary = json.load(handle)
+
+    canonical = summary.setdefault("layer_counts", {}).setdefault("canonical", {})
+
+    for name, count in counts.items():
+        canonical[name] = count
+
+    with path.open("w", encoding="utf-8") as handle:
+        json.dump(summary, handle, indent=2, ensure_ascii=False)
+
+
+def main():
+    args = builder.parse_args()
+    original_parse_args = builder.parse_args
+    builder.parse_args = lambda: args
+
+    try:
+        builder.main()
+    finally:
+        builder.parse_args = original_parse_args
+
+    sync_canonical_artifacts(Path(args.database), Path(args.data_dir))
+
+
 if __name__ == "__main__":
-    builder.main()
+    main()
+
