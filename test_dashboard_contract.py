@@ -63,7 +63,7 @@ class DashboardContractTests(unittest.TestCase):
         )
 
         for name in [
-            "activities",
+            "iati_health_projects",
             "organisation_entities",
             "opportunity_scores",
             "programme_intelligence",
