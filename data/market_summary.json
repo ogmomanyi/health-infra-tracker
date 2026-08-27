@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-27T08:59:42Z",
+  "generated_at": "2026-08-27T09:23:40Z",
   "as_of": "2026-08-27",
   "source_generated_at": "2026-08-26T06:59:21Z",
   "pipeline_version": "3.2-project-detail-intelligence",
@@ -71,7 +71,7 @@
     "canonical": {
       "organisation_entities": 2222,
       "organisation_aliases": 17146,
-      "equipment_entities": 15,
+      "equipment_entities": 9,
       "manufacturer_entities": 5
     },
     "intelligence": {
@@ -87,7 +87,7 @@
       "recommended_actions": 2691
     },
     "predictive_product": {
-      "equipment_intelligence": 15,
+      "equipment_intelligence": 9,
       "tender_predictions": 1481
     }
   },
@@ -102,7 +102,7 @@
     "procurement_signal_projects": 779,
     "high_priority_opportunities": 788,
     "donors": 511,
-    "equipment_categories": 15,
+    "equipment_categories": 9,
     "tender_predictions": 1481,
     "likely_procurement": 710,
     "direct_equipment_projects": 681,

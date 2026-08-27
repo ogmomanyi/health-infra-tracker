@@ -21,7 +21,7 @@
     "organisations": 17727,
     "organisation_entities": 2222,
     "organisation_aliases": 17146,
-    "equipment_entities": 15,
+    "equipment_entities": 9,
     "manufacturer_entities": 5,
     "opportunity_scores": 3271,
     "organisation_intelligence": 2380,
@@ -32,7 +32,7 @@
     "crm_notes": 2194,
     "recommended_actions": 2691,
     "opportunities": 3271,
-    "equipment_intelligence": 15,
+    "equipment_intelligence": 9,
     "tender_predictions": 1481
   },
   "files": {
@@ -58,7 +58,7 @@
     "equipment_intelligence": "equipment_intelligence.csv",
     "tender_predictions": "tender_predictions.csv"
   },
-  "intelligence_generated_at": "2026-08-27T08:59:42Z",
+  "intelligence_generated_at": "2026-08-27T09:23:40Z",
   "plan_progress": [
     {
       "id": "01",

@@ -100,6 +100,31 @@ def canonical_donor_name(name: object) -> str:
     return raw
 
 
+_EQUIPMENT_CATEGORY_ALIASES = {
+    "facility infrastructure": "Facility Infrastructure",
+    "facility / hospital infrastructure": "Facility Infrastructure",
+    "diagnostic equipment": "Diagnostic Equipment",
+    "laboratory equipment": "Laboratory Equipment",
+    "medical devices": "Medical Devices",
+    "medical devices & equipment": "Medical Devices",
+    "cold chain": "Cold Chain / Storage",
+    "cold chain / storage": "Cold Chain / Storage",
+    "health it / information systems": "IT / Health Information Systems",
+    "it / health information systems": "IT / Health Information Systems",
+    "vehicles / transport": "Vehicles / Transport",
+    "vehicles & transport": "Vehicles / Transport",
+    "blood bank equipment": "Blood Bank Equipment",
+    "ppe": "PPE",
+}
+
+def canonical_equipment_category(value: object) -> str:
+    raw = _text(value)
+    if not raw:
+        return ""
+    key = re.sub(r"\\s+", " ", raw.lower()).strip()
+    return _EQUIPMENT_CATEGORY_ALIASES.get(key, raw)
+
+
 _EQUIPMENT_PATTERNS = [
     ("Laboratory equipment", r"\b(laboratory|lab|analy[sz]er|centrifuge|microscope|incubator|autoclave)\b"),
     ("Diagnostic equipment", r"\b(diagnostic|diagnostics|diagnosis|testing|test kits?|assay|pcr|gene ?xpert)\b"),
@@ -132,21 +157,28 @@ def extract_equipment_signals(
             direct.append(category)
 
     for category in _tokens(existing_categories):
+        category = canonical_equipment_category(category)
         if category and category not in direct:
             # Existing extracted categories are evidence from the source layer.
             direct.append(category)
+
+    direct = list(dict.fromkeys(
+        canonical_equipment_category(category)
+        for category in direct
+        if canonical_equipment_category(category)
+    ))
 
     inferred: List[str] = []
     sectors = _text(sector_codes)
     if not direct:
         if "12220" in sectors or "12230" in sectors:
-            inferred.append("Facility / hospital infrastructure")
+            inferred.append("Facility Infrastructure")
         elif "122" in sectors:
-            inferred.append("Medical devices")
+            inferred.append("Medical Devices")
 
     evidence = "direct_keyword" if direct else ("sector_inferred" if inferred else "")
     categories = "; ".join(dict.fromkeys(direct))
-    inferred_text = "; ".join(dict.fromkeys(inferred))
+    inferred_text = "; ".join(dict.fromkeys(canonical_equipment_category(category) for category in inferred if canonical_equipment_category(category)))
     combined = categories or inferred_text
 
     return {
