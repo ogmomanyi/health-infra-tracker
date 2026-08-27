@@ -7,6 +7,7 @@ from organisation_resolution.normalizer import normalize_name
 DB = "data/iati_intelligence.db"
 LEGACY_ENTITIES = "organisation_entities_intelligence_legacy"
 AUDIT_TABLE = "organisation_relationship_migration_audit"
+GROUP_AUDIT_TABLE = "organisation_group_members_migration_audit"
 
 def table_exists(conn, name):
     return conn.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name=?", (name,)).fetchone() is not None
@@ -64,6 +65,83 @@ def ensure_audit(conn):
         relationship_type TEXT NOT NULL, source_system TEXT, confidence_score REAL,
         created_at TIMESTAMP, mapped_parent_entity_id TEXT, mapped_child_entity_id TEXT,
         action TEXT NOT NULL, reason TEXT, audited_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
+
+def ensure_group_audit(conn):
+    conn.execute(f'''CREATE TABLE IF NOT EXISTS {GROUP_AUDIT_TABLE} (
+        audit_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        group_id TEXT NOT NULL,
+        entity_id TEXT NOT NULL,
+        membership_type TEXT,
+        confidence_score REAL,
+        source_system TEXT,
+        created_at TIMESTAMP,
+        action TEXT NOT NULL,
+        reason TEXT NOT NULL,
+        audited_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
+
+def archive_orphan_group_members(conn, mapping, canonical_map):
+    table = 'organisation_group_members'
+    if not table_exists(conn, table) or 'entity_id' not in columns(conn, table):
+        return 0
+
+    ensure_group_audit(conn)
+    rows = conn.execute(
+        "SELECT group_id, entity_id, membership_type, confidence_score, source_system, created_at "
+        "FROM organisation_group_members WHERE entity_id LIKE 'ORG-%'"
+    ).fetchall()
+
+    archived = 0
+    for group_id, entity_id, membership_type, confidence, source_system, created_at in rows:
+        resolved = resolve(entity_id, mapping, canonical_map)
+        exists = conn.execute(
+            "SELECT 1 FROM organisation_entities WHERE entity_id=?",
+            (resolved,),
+        ).fetchone()
+
+        if exists and resolved != entity_id:
+            collision = conn.execute(
+                "SELECT 1 FROM organisation_group_members WHERE group_id=? AND entity_id=?",
+                (group_id, resolved),
+            ).fetchone()
+            if not collision:
+                conn.execute(
+                    "UPDATE organisation_group_members SET entity_id=? WHERE group_id=? AND entity_id=?",
+                    (resolved, group_id, entity_id),
+                )
+                action = 'MIGRATED'
+                reason = 'legacy ORG-* group membership resolved to canonical entity'
+            else:
+                conn.execute(
+                    "DELETE FROM organisation_group_members WHERE group_id=? AND entity_id=?",
+                    (group_id, entity_id),
+                )
+                action = 'DUPLICATE'
+                reason = 'legacy membership collapsed into existing canonical membership'
+        else:
+            conn.execute(
+                f'''INSERT INTO {GROUP_AUDIT_TABLE}
+                    (group_id, entity_id, membership_type, confidence_score, source_system, created_at, action, reason)
+                    VALUES (?, ?, ?, ?, ?, ?, 'ARCHIVED_LEGACY', ?)''',
+                (group_id, entity_id, membership_type, confidence, source_system, created_at,
+                 'orphaned historical ORG-* membership has no resolvable canonical entity'),
+            )
+            conn.execute(
+                "DELETE FROM organisation_group_members WHERE group_id=? AND entity_id=?",
+                (group_id, entity_id),
+            )
+            action = None
+            reason = None
+
+        archived += 1
+        if action:
+            conn.execute(
+                f'''INSERT INTO {GROUP_AUDIT_TABLE}
+                    (group_id, entity_id, membership_type, confidence_score, source_system, created_at, action, reason)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)''',
+                (group_id, entity_id, membership_type, confidence, source_system, created_at, action, reason),
+            )
+
+    return archived
 
 def rel_id(original,parent,child,typ,source,confidence):
     payload='|'.join(map(str,(original,parent,child,typ,source,confidence)))
@@ -139,7 +217,7 @@ def main():
         for table in ('organisation_intelligence','target_accounts','recommended_actions','programme_intelligence','donor_intelligence','equipment_entities','opportunity_organisation_resolution','organisation_resolution_log','organisation_manual_overrides'):
             changed[table]=migrate_column(conn,table,'organisation_entity_id',mapping,cmap)
             changed[table+'.entity_id']=migrate_column(conn,table,'entity_id',mapping,cmap)
-        changed['organisation_group_members']=migrate_column(conn,'organisation_group_members','entity_id',mapping,cmap)
+        changed['organisation_group_members']=archive_orphan_group_members(conn,mapping,cmap)
         changed['organisation_relationships']=rebuild_relationships(conn,mapping,cmap)
         validate_no_legacy(conn); conn.commit()
         for k,v in changed.items(): print(f'{k}: {v}')

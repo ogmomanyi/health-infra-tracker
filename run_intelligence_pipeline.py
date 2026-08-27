@@ -13,6 +13,10 @@ import sqlite3
 from pathlib import Path
 
 from organisation_resolution.normalizer import normalize_name
+from organisation_resolution.database_resolver import (
+    load_candidates,
+    resolve_source_record,
+)
 
 
 builder = importlib.import_module("intelligence_builder")
@@ -35,11 +39,7 @@ def canonical_map():
         if "entity_id" in alias_columns
         else "organisation_entity_id"
     )
-    entity_status_filter = (
-        "WHERE entity_status = 'ACTIVE'"
-        if "entity_status" in entity_columns
-        else ""
-    )
+    has_status = "entity_status" in entity_columns
 
     parent_by_child = {
         child: parent
@@ -64,23 +64,57 @@ def canonical_map():
             current = parent_by_child[current]
         return current
 
+    status_clause = "WHERE e.entity_status = 'ACTIVE'" if has_status else ""
+
     for entity_id, canonical_name in conn.execute(
         f"""
-        SELECT {entity_id_column}, canonical_name
-        FROM organisation_entities
-        {entity_status_filter}
+        SELECT e.{entity_id_column}, e.canonical_name
+        FROM organisation_entities e
+        {status_clause}
         """
     ):
-        by_name[normalize_name(canonical_name)] = canonical_id(entity_id)
+        normalized = normalize_name(canonical_name)
+        if normalized:
+            by_name.setdefault(normalized, set()).add(canonical_id(entity_id))
 
     for org_ref, entity_id in conn.execute(
         f"""
-        SELECT org_ref, {alias_entity_id_column}
-        FROM organisation_aliases
-        WHERE org_ref IS NOT NULL AND org_ref != ''
+        SELECT a.org_ref, a.{alias_entity_id_column}
+        FROM organisation_aliases a
+        JOIN organisation_entities e
+            ON e.{entity_id_column} = a.{alias_entity_id_column}
+        WHERE a.org_ref IS NOT NULL AND a.org_ref != ''
+        {"AND e.entity_status = 'ACTIVE'" if has_status else ""}
         """
     ):
-        by_ref[org_ref.strip().lower()] = canonical_id(entity_id)
+        by_ref.setdefault(org_ref.strip().lower(), set()).add(canonical_id(entity_id))
+
+    for alias_name, entity_id in conn.execute(
+        f"""
+        SELECT a.alias_name, a.{alias_entity_id_column}
+        FROM organisation_aliases a
+        JOIN organisation_entities e
+            ON e.{entity_id_column} = a.{alias_entity_id_column}
+        WHERE a.alias_name IS NOT NULL
+          AND TRIM(a.alias_name) != ''
+          {"AND e.entity_status = 'ACTIVE'" if has_status else ""}
+        """
+    ):
+        normalized = normalize_name(alias_name)
+        if normalized:
+            by_name.setdefault(normalized, set()).add(canonical_id(entity_id))
+
+    # Only expose unambiguous references to the legacy map.
+    by_ref = {
+        key: next(iter(values))
+        for key, values in by_ref.items()
+        if len(values) == 1
+    }
+    by_name = {
+        key: next(iter(values))
+        for key, values in by_name.items()
+        if len(values) == 1
+    }
 
     conn.close()
     return by_ref, by_name
@@ -121,7 +155,9 @@ def build_org_intel_fixed(derived):
 
     unresolved = fixed[fixed["organisation_entity_id"] == ""]
     if not unresolved.empty:
-        examples = ", ".join(unresolved["canonical_name"].head(10).tolist())
+        examples = ", ".join(
+            unresolved["canonical_name"].head(10).tolist()
+        )
         print(
             "[intel] WARNING: "
             f"Unresolved canonical organisations: {len(unresolved)}; "
@@ -163,9 +199,6 @@ _original_write_sqlite_tables = builder.write_sqlite_tables
 
 
 def write_sqlite_tables_fixed(db_path, datasets):
-    # Canonical entity/alias tables are owned by entity resolution. The
-    # intelligence builder may still emit their CSV artifacts, but it must
-    # never replace the live canonical registry.
     existing_views = sqlite_views(db_path)
     safe_datasets = {
         name: dataframe
@@ -289,4 +322,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

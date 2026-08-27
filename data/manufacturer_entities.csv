@@ -1,1 +1,6 @@
-manufacturer_entity_id,manufacturer_name,manufacturer_aliases,equipment_categories,evidence_source,activity_count,source_layer
+manufacturer_entity_id,manufacturer_name,manufacturer_aliases,equipment_categories,evidence_source,activity_count,top_countries,source_layer
+mfr_5f29c28d0eca,Roche,Roche,Facility / hospital infrastructure; Medical devices; Diagnostic Equipment; Diagnostic equipment,IATI activity text mention,40,CD; RW,canonical
+mfr_f401e06e735a,Hologic,Hologic,Medical devices; Facility / hospital infrastructure; Facility Infrastructure,IATI activity text mention,8,ET; KE; TZ; UG,canonical
+mfr_e3f284cae209,BD,BD,Diagnostic Equipment; Diagnostic equipment; Facility / hospital infrastructure; Facility Infrastructure,IATI activity text mention,7,UG; BF; CD; GH,canonical
+mfr_4bb6a06f82d3,GE HealthCare,GE HealthCare,,IATI activity text mention,2,UG; GB,canonical
+mfr_85a5a03ad99f,Philips,Philips,,IATI activity text mention,1,ET,canonical
