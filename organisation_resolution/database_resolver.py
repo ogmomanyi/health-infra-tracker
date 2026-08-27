@@ -54,10 +54,13 @@ def load_alias_candidates(conn):
     rows = conn.execute(
         """
         SELECT
-            alias_name,
-            entity_id
-        FROM organisation_aliases
-        ORDER BY alias_id
+             a.alias_name,
+             a.entity_id
+        FROM organisation_aliases a
+        JOIN organisation_entities e
+             ON e.entity_id = a.entity_id
+        WHERE e.entity_status = 'ACTIVE'
+        ORDER BY a.alias_id
         """
     ).fetchall()
 

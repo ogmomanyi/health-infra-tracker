@@ -212,6 +212,9 @@ def write_sqlite_tables_fixed(db_path, datasets):
     _original_write_sqlite_tables(db_path, safe_datasets)
 
 
+builder.write_sqlite_tables = write_sqlite_tables_fixed
+
+
 def sqlite_views(db_path):
     conn = sqlite3.connect(db_path)
     try:
