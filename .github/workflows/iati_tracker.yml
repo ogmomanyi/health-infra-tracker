@@ -29,6 +29,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install pytest
 
       - name: Ensure Data Directory Exists
         run: |
@@ -47,6 +48,33 @@ jobs:
             --rows 1000 \
             --max-pages 50 \
             --sleep 13
+
+      - name: Refresh canonical entity model
+        run: python repair_03d_entity_model.py
+
+      - name: Migrate stale entity references
+        run: python migrate_03d_entity_references.py
+
+      - name: Rebuild approved semantic relationships
+        run: python rebuild_semantic_relationships.py
+
+      - name: Rebuild intelligence and commercial outputs
+        run: python run_intelligence_pipeline.py
+
+      - name: Validate intelligence output contract
+        run: python -m pytest -q
+
+      - name: Validate 03D canonical entity model
+        run: python validate_03d_entity_model.py
+
+      - name: Validate canonical references
+        run: python validate_03d_canonical_references.py
+
+      - name: Validate production relationships
+        run: python test_production_relationships.py
+
+      - name: Validate regression continuity
+        run: python validate_03d_regression.py --old-ref HEAD^
 
       - name: Show Dataset Summary
         run: |
