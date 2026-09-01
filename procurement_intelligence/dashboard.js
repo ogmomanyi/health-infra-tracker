@@ -39,7 +39,6 @@
         procurementButton.setAttribute("data-procurement-tab", "true");
         procurementButton.textContent = "External Procurement";
         tabs.appendChild(procurementButton);
-        procurementButton.addEventListener("click", showProcurementTab);
     }
 
     function createContent() {
@@ -70,7 +69,7 @@
                 display: grid;
                 grid-template-columns: repeat(4, minmax(0, 1fr));
                 gap: 12px;
-                padding: 16px;
+                padding: 16px 0;
             }
             .procurement-metric {
                 min-height: 92px;
@@ -105,8 +104,8 @@
     }
 
     function showProcurementTab(event) {
-        event?.preventDefault();
-        event?.stopPropagation();
+        event.preventDefault();
+        event.stopImmediatePropagation();
 
         createContent();
         if (!procurementContent) return;
@@ -116,18 +115,14 @@
         procurementButton?.classList.add("active");
 
         document.querySelectorAll(".tab-button").forEach(button => {
-            if (button !== procurementButton) {
-                button.classList.remove("active");
-            }
+            if (button !== procurementButton) button.classList.remove("active");
         });
 
-        const tableWrap = document.querySelector(".table-wrap");
-        tableWrap?.classList.remove("hidden");
         renderProcurementTable();
     }
 
     function showStandardTab() {
-        if (!procurementContent || !procurementActive) return;
+        if (!procurementContent) return;
 
         procurementActive = false;
         procurementContent.classList.add("hidden");
@@ -265,11 +260,19 @@
         addTab();
         createContent();
 
-        /* Only hide procurement-specific content when returning to a standard tab.
-           The existing dashboard controller remains responsible for the table. */
-        document.querySelectorAll(".tab-button").forEach(button => {
-            if (button === procurementButton) return;
-            button.addEventListener("click", showStandardTab);
+        /* Capture only the procurement click, before the core dashboard's
+           tab handler sees it. Every existing tab remains untouched. */
+        document.addEventListener("click", event => {
+            const target = event.target.closest('[data-procurement-tab="true"]');
+            if (!target || target !== procurementButton) return;
+            showProcurementTab(event);
+        }, true);
+
+        /* After an existing tab's own handler runs, hide procurement content. */
+        document.addEventListener("click", event => {
+            const target = event.target.closest(".tab-button");
+            if (!target || target === procurementButton) return;
+            showStandardTab();
         });
 
         load();
