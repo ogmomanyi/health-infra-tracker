@@ -7,12 +7,12 @@ import argparse
 import csv
 from pathlib import Path
 
-from .clients.ungm import UNGMClient
 from .ingest import read_events, write_events
 from .matcher import match_event
 from .pipeline import persist_events
 from .schema import ProcurementEvent
 from .sources.ungm import normalize_notices
+from .sources.ungm_supplier import load_supplier_notices
 
 
 def load_projects(path: Path) -> list[dict]:
@@ -48,16 +48,21 @@ def main() -> None:
     parser.add_argument("--database", default="data/iati_intelligence.db")
     parser.add_argument(
         "--source",
-        choices=["fixture", "ungm"],
+        choices=["fixture", "supplier"],
         default="fixture",
-        help="Read notices from a local fixture or the authenticated UNGM Notice API.",
+        help="Read local fixture events or a supplier-controlled UNGM CSV/JSON feed.",
     )
-    parser.add_argument("--page-size", type=int, default=None)
+    parser.add_argument(
+        "--supplier-feed",
+        default=None,
+        help="Path to an authorized UNGM supplier export/alert feed (.csv or .json).",
+    )
     args = parser.parse_args()
 
-    if args.source == "ungm":
-        params = {"$top": args.page_size} if args.page_size else None
-        notices = UNGMClient().get_notices(params=params)
+    if args.source == "supplier":
+        if not args.supplier_feed:
+            parser.error("--supplier-feed is required when --source=supplier")
+        notices = load_supplier_notices(args.supplier_feed)
     else:
         source_events = list(read_events(Path(args.input)))
         notices = [event.to_dict() for event in source_events]
