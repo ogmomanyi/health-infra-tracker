@@ -1,0 +1,1 @@
+"""External procurement intelligence layer."""
