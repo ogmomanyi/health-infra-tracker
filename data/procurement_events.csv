@@ -1,0 +1,3 @@
+procurement_event_id,source,tender_reference,title,buyer,country,publication_date,closing_date,equipment_category,product_family,estimated_value,currency,matched_iati_identifier,match_confidence,match_status,procurement_stage,procurement_priority,recommended_action
+UNGM-DEMO-001,fixture,UNGM-DEMO-001,Supply of laboratory diagnostic equipment,WHO,Kenya,2026-08-20,2026-09-12,Diagnostic Equipment,Laboratory diagnostic equipment,250000,USD,DE-1-202506004-8326,92,CONFIRMED,Open,High,Engage buyer and validate procurement route
+UNGM-DEMO-002,fixture,UNGM-DEMO-002,Supply of cold chain equipment,UNICEF,Uganda,2026-08-22,2026-09-18,Cold Chain / Storage,Cold chain equipment,180000,USD,,0,UNMATCHED,Open,Medium,Monitor and identify implementing partner
