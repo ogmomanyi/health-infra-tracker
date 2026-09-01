@@ -7,6 +7,7 @@ import argparse
 import csv
 from pathlib import Path
 
+from .clients.ungm import UNGMClient
 from .ingest import read_events, write_events
 from .matcher import match_event
 from .pipeline import persist_events
@@ -45,12 +46,23 @@ def main() -> None:
     parser.add_argument("--output", default="data/procurement_events.csv")
     parser.add_argument("--projects", default="data/opportunities.csv")
     parser.add_argument("--database", default="data/iati_intelligence.db")
+    parser.add_argument(
+        "--source",
+        choices=["fixture", "ungm"],
+        default="fixture",
+        help="Read notices from a local fixture or the authenticated UNGM Notice API.",
+    )
+    parser.add_argument("--page-size", type=int, default=None)
     args = parser.parse_args()
 
-    source_events = list(read_events(Path(args.input)))
-    notices = [event.to_dict() for event in source_events]
-    projects = load_projects(Path(args.projects))
+    if args.source == "ungm":
+        params = {"$top": args.page_size} if args.page_size else None
+        notices = UNGMClient().get_notices(params=params)
+    else:
+        source_events = list(read_events(Path(args.input)))
+        notices = [event.to_dict() for event in source_events]
 
+    projects = load_projects(Path(args.projects))
     events = build_events(notices, projects)
     write_events(Path(args.output), events)
     persist_events(Path(args.database), events)
