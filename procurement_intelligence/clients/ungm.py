@@ -1,8 +1,8 @@
-"""Authenticated UNGM Notice API client.
+"""UNGM Notice API client with runtime-only OAuth credentials.
 
-Credentials and access tokens are supplied at runtime. Nothing secret is stored
-in the repository. The client follows UNGM's OData pagination using the
-``@odata.nextLink`` returned by the API.
+The client supports both a supplied access token and the OAuth 2.0 client
+credential flow. Secrets are read only from the local environment and are never
+persisted by this module.
 """
 
 from __future__ import annotations
@@ -21,19 +21,47 @@ class UNGMClient:
     def __init__(
         self,
         access_token: str | None = None,
+        client_id: str | None = None,
+        client_secret: str | None = None,
         base_url: str = PRODUCTION_API,
         timeout: int = 30,
     ):
         self.access_token = access_token or os.getenv("UNGM_ACCESS_TOKEN", "")
+        self.client_id = client_id or os.getenv("UNGM_CLIENT_ID", "")
+        self.client_secret = client_secret or os.getenv("UNGM_CLIENT_SECRET", "")
         self.base_url = base_url.rstrip("/") + "/"
         self.timeout = timeout
 
+    def _token_url(self) -> str:
+        return urljoin(self.base_url, "token")
+
+    def _obtain_client_token(self) -> str:
+        if not self.client_id or not self.client_secret:
+            raise RuntimeError(
+                "UNGM credentials are not set. Set UNGM_ACCESS_TOKEN, or set "
+                "UNGM_CLIENT_ID and UNGM_CLIENT_SECRET locally."
+            )
+
+        response = requests.post(
+            self._token_url(),
+            data={
+                "grant_type": "client_credentials",
+                "client_id": self.client_id,
+                "client_secret": self.client_secret,
+            },
+            headers={"Accept": "application/json"},
+            timeout=self.timeout,
+        )
+        response.raise_for_status()
+        payload = response.json()
+        token = payload.get("access_token")
+        if not token:
+            raise ValueError("UNGM token response did not contain access_token")
+        return token
+
     def _headers(self) -> dict[str, str]:
         if not self.access_token:
-            raise RuntimeError(
-                "UNGM_ACCESS_TOKEN is not set. Obtain an OAuth access token and "
-                "set it in the local environment before calling the Notice API."
-            )
+            self.access_token = self._obtain_client_token()
         return {
             "Accept": "application/json",
             "Authorization": f"bearer {self.access_token}",
