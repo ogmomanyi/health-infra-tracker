@@ -1,14 +1,30 @@
 """World Bank Procurement API adapter."""
 
 from __future__ import annotations
+
 from datetime import datetime
 from html import unescape
 import re
 from typing import Any
+
 import requests
+
 from ..ingest import stable_event_id
 
 DEFAULT_URL = "https://search.worldbank.org/api/v2/procnotices"
+
+
+CATEGORY_RULES = (
+    ("Laboratory Equipment", ("laboratory", "lab equipment", "analyzer", "analys", "centrifuge", "microscope", "spectrophotometer", "chemistry analyzer", "hematology", "haematology")),
+    ("Diagnostics", ("diagnostic", "diagnostics", "test kit", "reagent", "rapid test", "molecular", "pcr", "genexpert", "gene xpert")),
+    ("Medical Equipment", ("medical equipment", "medical device", "patient monitor", "ventilator", "ultrasound", "x-ray", "radiology", "operating theatre", "surgical equipment")),
+    ("Blood Banking", ("blood bank", "blood banking", "blood storage", "blood refrigerator", "blood component", "apheresis")),
+    ("Cold Chain", ("cold chain", "vaccine refrigerator", "vaccine carrier", "freezer", "refrigerator")),
+    ("Sterilization", ("sterilizer", "sterilisation", "sterilization", "autoclave", "disinfection", "decontamination")),
+    ("PPE", ("personal protective", "ppe", "surgical glove", "examination glove", "face mask", "respirator", "protective gown")),
+    ("Ophthalmology", ("ophthalm", "ophthalmic", "optical", "slit lamp", "tonometer", "fundus")),
+    ("Laboratory Consumables", ("laboratory consumable", "lab consumable", "consumables", "disposable", "pipette tip", "tube", "specimen collection")),
+)
 
 
 def _first(record: dict[str, Any], *keys: str) -> str:
@@ -38,7 +54,7 @@ def _records(payload: Any) -> list[dict[str, Any]]:
 def fetch_notices(*, url: str = DEFAULT_URL, country_codes: list[str] | None = None, rows: int = 500, timeout: int = 30) -> list[dict[str, Any]]:
     params: dict[str, Any] = {"format": "json", "rows": rows, "os": 0}
     if country_codes:
-        # The World Bank API filters this endpoint by country name, not ISO alpha-2 code.
+        # The World Bank API filters this endpoint by project country name, not ISO alpha-2 code.
         country_names = {
             "KE": "Kenya",
             "UG": "Uganda",
@@ -97,6 +113,14 @@ def _deadline_from_notice_text(record: dict[str, Any]) -> str:
     return ""
 
 
+def classify_equipment(title: str, notice_text: str = "", procurement_group: str = "") -> str:
+    text = " ".join(part for part in (title, notice_text) if part).lower()
+    for category, terms in CATEGORY_RULES:
+        if any(term in text for term in terms):
+            return category
+    return procurement_group or "Other"
+
+
 def normalize_notices(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
     normalized: dict[str, dict[str, Any]] = {}
     for record in records:
@@ -105,6 +129,8 @@ def normalize_notices(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
         if not reference and not title:
             continue
 
+        notice_text = _first(record, "notice_text", "description", "contract_description")
+        procurement_group = _first(record, "procurement_group_desc", "procurement_group", "sector", "category", "procurement_category")
         event_id = stable_event_id("World Bank", reference, title)
         normalized[event_id] = {
             "procurement_event_id": event_id,
@@ -116,7 +142,7 @@ def normalize_notices(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
             "country": _first(record, "project_ctry_name", "country_name", "country", "countryname"),
             "publication_date": _normalise_date(_first(record, "noticedate", "notice_date", "publication_date", "published_date", "date_published")),
             "closing_date": _normalise_date(_first(record, "submission_deadline_date", "deadline_date", "deadline", "closing_date", "submission_deadline", "bid_deadline")) or _deadline_from_notice_text(record),
-            "equipment_category": _first(record, "procurement_group_desc", "procurement_group", "sector", "category", "procurement_category"),
+            "equipment_category": classify_equipment(title, notice_text, procurement_group),
             "product_family": _first(record, "procurement_method_name", "procurement_method", "procurement_type", "contract_type", "commodity"),
             "estimated_value": _first(record, "estimated_value", "estimated_amount", "contract_value"),
             "currency": _first(record, "currency", "currency_code"),
