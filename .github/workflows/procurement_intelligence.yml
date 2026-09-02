@@ -67,6 +67,17 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Preserve generated outputs, fast-forward to the latest main, then commit
+          # the refresh on top so a long-running collection cannot lose intervening work.
+          cp data/procurement_events.csv /tmp/procurement_events.csv
+          cp data/iati_intelligence.db /tmp/iati_intelligence.db
+          cp index.html /tmp/index.html
+          git fetch origin main
+          git reset --hard origin/main
+          cp /tmp/procurement_events.csv data/procurement_events.csv
+          cp /tmp/iati_intelligence.db data/iati_intelligence.db
+          cp /tmp/index.html index.html
           git add data/procurement_events.csv data/iati_intelligence.db index.html
           git diff --cached --quiet || git commit -m "Automated external procurement refresh and dashboard integration"
           git push
