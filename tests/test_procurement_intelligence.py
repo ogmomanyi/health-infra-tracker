@@ -7,9 +7,9 @@ from procurement_intelligence.ingest import read_events, stable_event_id, write_
 from procurement_intelligence.matcher import match_event
 from procurement_intelligence.schema import ProcurementEvent
 from procurement_intelligence.sources.afdb import normalize_notice_records, parse_notice_page
-from procurement_intelligence.sources.rss import normalize_notices
+from procurement_intelligence.sources.rss import normalize_notices as normalize_rss_notices
 from procurement_intelligence.sources.undp import parse_notice_page as parse_undp_notice_page
-from procurement_intelligence.sources.world_bank import fetch_notices
+from procurement_intelligence.sources.world_bank import classify_equipment, fetch_notices, normalize_notices as normalize_world_bank_notices
 
 
 class ProcurementIntelligenceTests(unittest.TestCase):
@@ -24,17 +24,49 @@ class ProcurementIntelligenceTests(unittest.TestCase):
             loaded = list(read_events(path))
         self.assertEqual(loaded[0].title, event.title)
 
-    def test_world_bank_fetch_uses_public_json(self):
+    def test_world_bank_fetch_uses_country_name_filter(self):
         response = Mock()
         response.json.return_value = {"procnotices": [{"id": "WB-1", "title": "Laboratory equipment"}]}
         response.raise_for_status.return_value = None
         with patch("procurement_intelligence.sources.world_bank.requests.get", return_value=response) as get:
             records = fetch_notices(country_codes=["KE"])
         self.assertEqual(records[0]["id"], "WB-1")
-        self.assertEqual(get.call_args.kwargs["params"]["countrycode_exact"], "KE")
+        self.assertEqual(get.call_args.kwargs["params"]["project_ctry_name"], "Kenya")
+
+    def test_world_bank_live_schema_is_normalized(self):
+        records = normalize_world_bank_notices([{
+            "id": "OP00465854",
+            "bid_reference_no": "KE-KEMSA-512246-GO-RFB",
+            "bid_description": "Supply and Delivery of Examination Gloves and Surgical Gloves sterile",
+            "contact_organization": "Kenya Medical Supplies Authority",
+            "project_ctry_name": "Kenya",
+            "noticedate": "31-Aug-2026",
+            "submission_deadline_date": "2026-10-01T00:00:00Z",
+            "procurement_group": "GO",
+            "procurement_method_name": "Request for Bids",
+            "project_id": "P179698",
+            "notice_type": "Invitation for Bids",
+        }])
+        self.assertEqual(len(records), 1)
+        self.assertEqual(records[0]["tender_reference"], "KE-KEMSA-512246-GO-RFB")
+        self.assertEqual(records[0]["buyer"], "Kenya Medical Supplies Authority")
+        self.assertEqual(records[0]["country"], "Kenya")
+        self.assertEqual(records[0]["publication_date"], "2026-08-31")
+        self.assertEqual(records[0]["closing_date"], "2026-10-01")
+        self.assertEqual(records[0]["equipment_category"], "PPE")
+        self.assertEqual(records[0]["product_family"], "Request for Bids")
+        self.assertEqual(records[0]["project_reference"], "P179698")
+        self.assertEqual(records[0]["procurement_stage"], "Invitation for Bids")
+
+    def test_world_bank_equipment_categories(self):
+        self.assertEqual(classify_equipment("Supply of hematology analyzer"), "Laboratory Equipment")
+        self.assertEqual(classify_equipment("Procurement of PCR diagnostic test kits"), "Diagnostics")
+        self.assertEqual(classify_equipment("Supply of blood bank refrigerators"), "Blood Banking")
+        self.assertEqual(classify_equipment("Supply of surgical gloves"), "PPE")
+        self.assertEqual(classify_equipment("Supply of office furniture", procurement_group="GO"), "GO")
 
     def test_rss_records_are_normalized(self):
-        records = normalize_notices([{"title": "Supply of laboratory equipment", "tender_reference": "AFDB-1", "source_url": "https://example.test/1"}], source="AfDB")
+        records = normalize_rss_notices([{"title": "Supply of laboratory equipment", "tender_reference": "AFDB-1", "source_url": "https://example.test/1"}], source="AfDB")
         self.assertEqual(records[0]["source"], "AfDB")
         self.assertEqual(records[0]["tender_reference"], "AFDB-1")
 

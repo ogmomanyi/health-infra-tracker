@@ -1,10 +1,13 @@
 """Generic RSS procurement source adapter for official feeds."""
 
 from __future__ import annotations
+
 from typing import Any
 from urllib.parse import urljoin
 import xml.etree.ElementTree as ET
+
 import requests
+
 from ..ingest import stable_event_id
 
 
@@ -29,6 +32,7 @@ def fetch_feed(url: str, timeout: int = 30) -> list[dict[str, Any]]:
 
 
 def normalize_notices(records: list[dict[str, Any]], source: str = "Official RSS") -> list[dict[str, Any]]:
+    """Normalize generic RSS records while allowing callers to label the publisher."""
     normalized = {}
     for record in records:
         title = str(record.get("title") or record.get("description") or "").strip()
