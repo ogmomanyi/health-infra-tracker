@@ -23,6 +23,21 @@ def deduplicate_events(events):
     return list(unique.values())
 
 
+def merge_events(existing, fresh):
+    """Merge a newly collected source snapshot into retained event history.
+
+    Fresh records win on duplicate event IDs so corrected fields and latest
+    IATI matching are retained, while historical records that are no longer
+    present in a source listing are preserved for dashboard/history use.
+    """
+    merged = {}
+    for event in existing:
+        merged[event.procurement_event_id] = event
+    for event in fresh:
+        merged[event.procurement_event_id] = event
+    return list(merged.values())
+
+
 def persist_events(db_path: str | Path, events, table_name: str = "procurement_intelligence"):
     events = deduplicate_events(events)
     columns = ", ".join(f'"{field}" TEXT' for field in FIELDS)
