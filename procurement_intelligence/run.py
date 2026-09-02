@@ -7,7 +7,7 @@ import csv
 from pathlib import Path
 from .ingest import read_events, write_events
 from .matcher import match_event
-from .pipeline import persist_events
+from .pipeline import load_events, merge_events, persist_events
 from .schema import ProcurementEvent
 
 
@@ -84,7 +84,12 @@ def main() -> None:
     elif args.source == "fixture":
         notices = [event.to_dict() for event in read_events(Path(args.input))]
 
-    events = build_events(notices, load_projects(Path(args.projects)))
+    fresh_events = build_events(notices, load_projects(Path(args.projects)))
+    if args.source == "all":
+        events = merge_events(load_events(Path(args.output)), fresh_events)
+    else:
+        events = fresh_events
+
     write_events(Path(args.output), events)
     persist_events(Path(args.database), events)
     matched = sum(event.match_status in {"POSSIBLE", "CONFIRMED"} for event in events)
