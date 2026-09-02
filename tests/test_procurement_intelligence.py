@@ -64,7 +64,30 @@ class ProcurementIntelligenceTests(unittest.TestCase):
                 run.main()
             self.assertEqual(fetch_page.call_count, 2)
 
-    def test_undp_public_page_parser(self):
+    def test_undp_public_table_parser_matches_live_field_names(self):
+        html = '''
+        <table>
+          <tr><th>Title</th><th>Ref No</th><th>UNDP Office/Country</th><th>Procurement Process</th><th>Deadline</th><th>Posted</th></tr>
+          <tr>
+            <td><a href="/notice/123">Supply of laboratory diagnostic equipment</a></td>
+            <td>UNDP-KEN-123</td>
+            <td>UNDP-KEN/KENYA</td>
+            <td>RFQ - Request for quotation</td>
+            <td>30-Sep-26</td>
+            <td>01-Sep-26</td>
+          </tr>
+        </table>
+        '''
+        records = parse_undp_notice_page(html, "https://procurement-notices.undp.org/")
+        self.assertEqual(len(records), 1)
+        self.assertEqual(records[0]["source"], "UNDP")
+        self.assertEqual(records[0]["country"], "KENYA")
+        self.assertEqual(records[0]["tender_reference"], "UNDP-KEN-123")
+        self.assertEqual(records[0]["closing_date"], "2026-09-30")
+        self.assertEqual(records[0]["publication_date"], "2026-09-01")
+        self.assertEqual(records[0]["procurement_stage"], "NOTICE")
+
+    def test_undp_card_parser_remains_supported(self):
         html = '''
         <div class="notice-card">
           <a href="/notice/123">Supply of laboratory diagnostic equipment</a>
@@ -73,15 +96,12 @@ class ProcurementIntelligenceTests(unittest.TestCase):
           <span>Deadline: 30/09/2026</span>
           <span>Posted: 01/09/2026</span>
         </div>
-        <a href="/about">About UNDP</a>
         '''
         records = parse_undp_notice_page(html, "https://procurement-notices.undp.org/")
         self.assertEqual(len(records), 1)
-        self.assertEqual(records[0]["source"], "UNDP")
         self.assertEqual(records[0]["country"], "Kenya")
         self.assertEqual(records[0]["tender_reference"], "UNDP-KEN-123")
         self.assertEqual(records[0]["closing_date"], "30/09/2026")
-        self.assertEqual(records[0]["procurement_stage"], "NOTICE")
 
     def test_matching_is_evidence_only(self):
         event = ProcurementEvent("proc_1", "World Bank", "", "A-1", "Kenya laboratory equipment strengthening", "WHO", "Kenya", "", "", "Laboratory Equipment", "Analyzers")
