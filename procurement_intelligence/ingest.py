@@ -9,7 +9,8 @@ FIELDS = [
     "buyer", "country", "publication_date", "closing_date", "equipment_category",
     "product_family", "estimated_value", "currency", "matched_iati_identifier",
     "match_confidence", "match_status", "project_reference", "procurement_stage",
-    "procurement_priority",
+    "procurement_priority", "opportunity_status", "faram_relevance_score",
+    "faram_relevance_reason",
 ]
 
 
