@@ -1,7 +1,8 @@
 from pathlib import Path
 
 INDEX = Path("index.html")
-MARKER = 'data-tab="external-procurement"'
+TAB_MARKER = 'data-tab="external-procurement"'
+HANDLER_MARKER = 'window.location.href = "procurement_intelligence/dashboard.html"'
 
 TAB_HTML = '''                        <button class="tab-button" data-tab="external-procurement" type="button">
                             <i data-lucide="radio-tower"></i>
@@ -9,48 +10,33 @@ TAB_HTML = '''                        <button class="tab-button" data-tab="exter
                         </button>
 '''
 
-STATE_ADD = '            externalProcurement: [],\n'
-PATH_ADD = '            externalProcurement: "data/procurement_events.csv",\n'
-LOAD_ADD = '                    fetchCsv(datasetPaths.externalProcurement)\n'
+HANDLER = '''                    if (state.activeTab === "external-procurement") {
+                        window.location.href = "procurement_intelligence/dashboard.html";
+                        return;
+                    }
+'''
 
 
 def main():
     text = INDEX.read_text(encoding="utf-8")
     changed = False
 
-    if MARKER not in text:
+    if TAB_MARKER not in text:
         anchor = '                        <button class="tab-button" data-tab="tenders" type="button">'
         if anchor not in text:
             raise SystemExit("Could not find Tenders tab anchor")
         text = text.replace(anchor, TAB_HTML + anchor, 1)
         changed = True
 
-    if 'externalProcurement: [],' not in text:
-        anchor = '            tenders: [],\n'
+    if HANDLER_MARKER not in text:
+        anchor = '''                document.querySelectorAll(".tab-button").forEach(button => {
+                button.addEventListener("click", () => {
+                    state.activeTab = button.dataset.tab;
+'''
+        replacement = anchor + HANDLER
         if anchor not in text:
-            raise SystemExit("Could not find state tenders anchor")
-        text = text.replace(anchor, anchor + STATE_ADD, 1)
-        changed = True
-
-    if 'externalProcurement: "data/procurement_events.csv"' not in text:
-        anchor = '            tenders: "data/tender_predictions.csv",\n'
-        if anchor not in text:
-            raise SystemExit("Could not find dataset tenders anchor")
-        text = text.replace(anchor, anchor + PATH_ADD, 1)
-        changed = True
-
-    if 'fetchCsv(datasetPaths.externalProcurement)' not in text:
-        anchor = '                    fetchCsv(datasetPaths.tenders)\n'
-        if anchor not in text:
-            raise SystemExit("Could not find tenders load anchor")
-        text = text.replace(anchor, anchor + ',' + LOAD_ADD.strip() + '\n', 1)
-        changed = True
-
-    if 'state.externalProcurement = sortByDate' not in text:
-        anchor = '                state.tenders = sortByNumber(tenders, "tender_probability");\n'
-        if anchor not in text:
-            raise SystemExit("Could not find tenders state assignment")
-        text = text.replace(anchor, anchor + '                state.externalProcurement = externalProcurement;\n', 1)
+            raise SystemExit("Could not find tab click handler anchor")
+        text = text.replace(anchor, replacement, 1)
         changed = True
 
     INDEX.write_text(text, encoding="utf-8")
