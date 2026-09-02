@@ -23,6 +23,9 @@ class ProcurementEvent:
     project_reference: str = ""
     procurement_stage: str = ""
     procurement_priority: str = ""
+    opportunity_status: str = ""
+    faram_relevance_score: float = 0.0
+    faram_relevance_reason: str = ""
 
     def to_dict(self):
         return asdict(self)
