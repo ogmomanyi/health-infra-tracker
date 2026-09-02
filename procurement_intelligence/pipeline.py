@@ -38,6 +38,17 @@ def merge_events(existing, fresh):
     return list(merged.values())
 
 
+def _ensure_columns(conn: sqlite3.Connection, table_name: str) -> None:
+    """Create missing columns when an existing SQLite table predates new fields."""
+    existing = {
+        row[1]
+        for row in conn.execute(f'PRAGMA table_info("{table_name}")').fetchall()
+    }
+    for field in FIELDS:
+        if field not in existing:
+            conn.execute(f'ALTER TABLE "{table_name}" ADD COLUMN "{field}" TEXT')
+
+
 def persist_events(db_path: str | Path, events, table_name: str = "procurement_intelligence"):
     events = deduplicate_events(events)
     columns = ", ".join(f'"{field}" TEXT' for field in FIELDS)
@@ -45,6 +56,7 @@ def persist_events(db_path: str | Path, events, table_name: str = "procurement_i
     conn = sqlite3.connect(db_path)
     try:
         conn.execute(f'CREATE TABLE IF NOT EXISTS "{table_name}" ({columns})')
+        _ensure_columns(conn, table_name)
         conn.execute(f'DELETE FROM "{table_name}"')
         placeholders = ", ".join("?" for _ in FIELDS)
         rows = [tuple(event.to_dict().get(field, "") for field in FIELDS) for event in events]
