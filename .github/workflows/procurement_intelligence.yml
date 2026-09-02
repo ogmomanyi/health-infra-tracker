@@ -1,0 +1,61 @@
+name: External Procurement Intelligence
+
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Refresh World Bank procurement data
+        run: |
+          python -m procurement_intelligence.run \
+            --source world_bank \
+            --country KE \
+            --country UG \
+            --country RW \
+            --country ET \
+            --country SO \
+            --country SS \
+            --country CD
+
+      - name: Collect AfDB procurement feed when configured
+        env:
+          AFDB_PROCUREMENT_FEED_URL: ${{ vars.AFDB_PROCUREMENT_FEED_URL }}
+        run: |
+          if [ -n "$AFDB_PROCUREMENT_FEED_URL" ]; then
+            python -m procurement_intelligence.run \
+              --source rss \
+              --feed-url "$AFDB_PROCUREMENT_FEED_URL" \
+              --feed-name "AfDB"
+          else
+            echo "AFDB_PROCUREMENT_FEED_URL is not configured; World Bank refresh completed."
+          fi
+
+      - name: Commit refreshed procurement data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/procurement_events.csv data/iati_intelligence.db
+          git diff --cached --quiet || git commit -m "Automated external procurement intelligence refresh"
+          git push
