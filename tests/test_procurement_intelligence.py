@@ -1,10 +1,12 @@
 import tempfile
 import unittest
+from datetime import date
 from pathlib import Path
 from unittest.mock import Mock, patch
 
 from procurement_intelligence.ingest import read_events, stable_event_id, write_events
 from procurement_intelligence.matcher import match_event
+from procurement_intelligence.run import build_events, classify_opportunity_status, score_faram_relevance
 from procurement_intelligence.schema import ProcurementEvent
 from procurement_intelligence.sources.afdb import normalize_notice_records, parse_notice_page
 from procurement_intelligence.sources.rss import normalize_notices as normalize_rss_notices
@@ -148,6 +150,54 @@ class ProcurementIntelligenceTests(unittest.TestCase):
         projects = [{"iati_identifier": "P-3", "project_title": "Maternal health policy reform", "funding_agencies": "UNICEF", "country_names": "Kenya", "equipment_target_summary": "Laboratory Equipment"}]
         result = match_event(event, projects)
         self.assertEqual(result["match_status"], "UNMATCHED")
+
+    def test_active_opportunity_classification(self):
+        event = ProcurementEvent("p", "World Bank", "", "RFB-1", "Supply of hematology analyzers", "Buyer", "Kenya", "2026-09-01", "2026-10-01", "Laboratory Equipment", "Request for Bids", procurement_stage="Invitation for Bids")
+        self.assertEqual(classify_opportunity_status(event, date(2026, 9, 2)), "ACTIVE_OPPORTUNITY")
+        score, priority, reason = score_faram_relevance(event)
+        self.assertGreaterEqual(score, 70)
+        self.assertEqual(priority, "HIGH")
+        self.assertIn("active bid", reason.lower())
+
+    def test_award_is_history_not_active(self):
+        event = ProcurementEvent("p", "World Bank", "", "AWD-1", "Supply of laboratory equipment", "", "Kenya", "2026-08-01", "", "Laboratory Equipment", "Request for Bids", procurement_stage="Contract Award")
+        self.assertEqual(classify_opportunity_status(event, date(2026, 9, 2)), "AWARD_HISTORY")
+        score, _, _ = score_faram_relevance(event)
+        self.assertLess(score, 70)
+
+    def test_procurement_plan_and_closed_opportunity(self):
+        plan = ProcurementEvent("p", "World Bank", "", "PLAN-1", "Laboratory equipment procurement plan", "", "Uganda", "2026-09-01", "", "Laboratory Equipment", "", procurement_stage="Procurement Plan")
+        closed = ProcurementEvent("c", "World Bank", "", "RFB-2", "Supply of diagnostic equipment", "", "Rwanda", "2026-08-01", "2026-08-31", "Diagnostics", "Request for Bids", procurement_stage="Invitation for Bids")
+        self.assertEqual(classify_opportunity_status(plan, date(2026, 9, 2)), "PROCUREMENT_PLAN")
+        self.assertEqual(classify_opportunity_status(closed, date(2026, 9, 2)), "CLOSED_OPPORTUNITY")
+
+    def test_build_events_populates_enrichment_fields(self):
+        notice = {
+            "procurement_event_id": "p",
+            "source": "World Bank",
+            "source_url": "",
+            "tender_reference": "RFB-1",
+            "title": "Supply of PCR diagnostic equipment",
+            "buyer": "Buyer",
+            "country": "Kenya",
+            "publication_date": "2026-09-01",
+            "closing_date": "2026-10-01",
+            "equipment_category": "Diagnostics",
+            "product_family": "Request for Bids",
+            "estimated_value": "",
+            "currency": "",
+            "matched_iati_identifier": "",
+            "match_confidence": 0.0,
+            "match_status": "UNMATCHED",
+            "project_reference": "P-1",
+            "procurement_stage": "Invitation for Bids",
+            "procurement_priority": "",
+        }
+        event = build_events([notice], [])[0]
+        self.assertEqual(event.opportunity_status, "ACTIVE_OPPORTUNITY")
+        self.assertGreater(event.faram_relevance_score, 0)
+        self.assertTrue(event.faram_relevance_reason)
+        self.assertEqual(event.procurement_priority, "HIGH")
 
 
 if __name__ == "__main__":
