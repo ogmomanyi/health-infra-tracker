@@ -8,7 +8,8 @@ FIELDS = [
     "procurement_event_id", "source", "source_url", "tender_reference", "title",
     "buyer", "country", "publication_date", "closing_date", "equipment_category",
     "product_family", "estimated_value", "currency", "matched_iati_identifier",
-    "match_confidence", "match_status",
+    "match_confidence", "match_status", "project_reference", "procurement_stage",
+    "procurement_priority",
 ]
 
 
