@@ -27,29 +27,31 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Refresh World Bank procurement data
-        run: |
-          python -m procurement_intelligence.run \
-            --source world_bank \
-            --country KE \
-            --country UG \
-            --country RW \
-            --country ET \
-            --country SO \
-            --country SS \
-            --country CD
-
-      - name: Collect AfDB procurement feed when configured
+      - name: Refresh external procurement sources
         env:
           AFDB_PROCUREMENT_FEED_URL: ${{ vars.AFDB_PROCUREMENT_FEED_URL }}
         run: |
           if [ -n "$AFDB_PROCUREMENT_FEED_URL" ]; then
             python -m procurement_intelligence.run \
-              --source rss \
-              --feed-url "$AFDB_PROCUREMENT_FEED_URL" \
-              --feed-name "AfDB"
+              --source all \
+              --country KE \
+              --country UG \
+              --country RW \
+              --country ET \
+              --country SO \
+              --country SS \
+              --country CD \
+              --afdb-feed-url "$AFDB_PROCUREMENT_FEED_URL"
           else
-            echo "AFDB_PROCUREMENT_FEED_URL is not configured; World Bank refresh completed."
+            python -m procurement_intelligence.run \
+              --source all \
+              --country KE \
+              --country UG \
+              --country RW \
+              --country ET \
+              --country SO \
+              --country SS \
+              --country CD
           fi
 
       - name: Commit refreshed procurement data
