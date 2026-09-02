@@ -31,28 +31,28 @@ jobs:
         env:
           AFDB_PROCUREMENT_FEED_URL: ${{ vars.AFDB_PROCUREMENT_FEED_URL }}
         run: |
+          args=(
+            --source all
+            --country KE
+            --country UG
+            --country RW
+            --country ET
+            --country SO
+            --country SS
+            --country CD
+          )
+
           if [ -n "$AFDB_PROCUREMENT_FEED_URL" ]; then
-            python -m procurement_intelligence.run \
-              --source all \
-              --country KE \
-              --country UG \
-              --country RW \
-              --country ET \
-              --country SO \
-              --country SS \
-              --country CD \
-              --afdb-feed-url "$AFDB_PROCUREMENT_FEED_URL"
+            args+=(--afdb-feed-url "$AFDB_PROCUREMENT_FEED_URL")
           else
-            python -m procurement_intelligence.run \
-              --source all \
-              --country KE \
-              --country UG \
-              --country RW \
-              --country ET \
-              --country SO \
-              --country SS \
-              --country CD
+            # AfDB publishes public procurement notice pages alongside its RSS feeds.
+            # Keep these as an automated fallback when the repository variable is absent.
+            args+=(--afdb-page-url "https://www.afdb.org/en/documents/project-related-procurement/procurement-notices/specific-procurement-notices")
+            args+=(--afdb-page-url "https://www.afdb.org/en/documents/project-related-procurement/procurement-notices/general-procurement-notices")
+            args+=(--afdb-page-url "https://www.afdb.org/en/documents/project-related-procurement/procurement-notices/invitation-bids")
           fi
+
+          python -m procurement_intelligence.run "${args[@]}"
 
       - name: Commit refreshed procurement data
         run: |
