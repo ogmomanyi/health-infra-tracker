@@ -30,6 +30,7 @@ jobs:
       - name: Refresh external procurement sources
         env:
           AFDB_PROCUREMENT_FEED_URL: ${{ vars.AFDB_PROCUREMENT_FEED_URL }}
+          UNDP_PROCUREMENT_URL: ${{ vars.UNDP_PROCUREMENT_URL }}
         run: |
           args=(
             --source all
@@ -45,11 +46,13 @@ jobs:
           if [ -n "$AFDB_PROCUREMENT_FEED_URL" ]; then
             args+=(--afdb-feed-url "$AFDB_PROCUREMENT_FEED_URL")
           else
-            # AfDB publishes public procurement notice pages alongside its RSS feeds.
-            # Keep these as an automated fallback when the repository variable is absent.
             args+=(--afdb-page-url "https://www.afdb.org/en/documents/project-related-procurement/procurement-notices/specific-procurement-notices")
             args+=(--afdb-page-url "https://www.afdb.org/en/documents/project-related-procurement/procurement-notices/general-procurement-notices")
             args+=(--afdb-page-url "https://www.afdb.org/en/documents/project-related-procurement/procurement-notices/invitation-bids")
+          fi
+
+          if [ -n "$UNDP_PROCUREMENT_URL" ]; then
+            args+=(--undp-url "$UNDP_PROCUREMENT_URL")
           fi
 
           python -m procurement_intelligence.run "${args[@]}"
