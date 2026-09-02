@@ -101,7 +101,8 @@ class ProcurementIntelligenceTests(unittest.TestCase):
         self.assertEqual(len(records), 1)
         self.assertEqual(records[0]["country"], "Kenya")
         self.assertEqual(records[0]["tender_reference"], "UNDP-KEN-123")
-        self.assertEqual(records[0]["closing_date"], "30/09/2026")
+        self.assertEqual(records[0]["closing_date"], "2026-09-30")
+        self.assertEqual(records[0]["publication_date"], "2026-09-01")
 
     def test_matching_is_evidence_only(self):
         event = ProcurementEvent("proc_1", "World Bank", "", "A-1", "Kenya laboratory equipment strengthening", "WHO", "Kenya", "", "", "Laboratory Equipment", "Analyzers")
