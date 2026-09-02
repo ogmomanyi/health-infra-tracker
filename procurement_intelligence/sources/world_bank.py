@@ -1,9 +1,4 @@
-"""World Bank Procurement API adapter.
-
-The World Bank publishes procurement notices through its public Procurement API.
-This adapter retrieves JSON, normalizes the common notice fields, and leaves
-commercial matching to the shared procurement pipeline.
-"""
+"""World Bank Procurement API adapter."""
 
 from __future__ import annotations
 
@@ -40,32 +35,25 @@ def _records(payload: Any) -> list[dict[str, Any]]:
     return []
 
 
-def fetch_notices(
-    *,
-    url: str = DEFAULT_URL,
-    country_codes: list[str] | None = None,
-    rows: int = 500,
-    timeout: int = 30,
-) -> list[dict[str, Any]]:
+def fetch_notices(*, url: str = DEFAULT_URL, country_codes: list[str] | None = None, rows: int = 500, timeout: int = 30) -> list[dict[str, Any]]:
     """Fetch World Bank procurement notices without authentication."""
     params: dict[str, Any] = {"format": "json", "rows": rows}
     if country_codes:
         params["countrycode_exact"] = ";".join(code.upper() for code in country_codes)
-
     response = requests.get(url, params=params, timeout=timeout)
     response.raise_for_status()
     return _records(response.json())
 
 
 def normalize_notices(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """Normalize World Bank records into the shared procurement-event shape."""
+    """Normalize World Bank records into the shared ProcurementEvent shape."""
     normalized: dict[str, dict[str, Any]] = {}
     for record in records:
         reference = _first(record, "notice_id", "id", "procurement_number", "procurement_reference", "bid_no")
         title = _first(record, "notice_title", "title", "procurement_name", "description", "contract_description")
         if not reference and not title:
             continue
-        event_id = "proc_" + stable_event_id("World Bank", reference, title).removeprefix("proc_")
+        event_id = stable_event_id("World Bank", reference, title)
         normalized[event_id] = {
             "procurement_event_id": event_id,
             "source": "World Bank",
@@ -80,8 +68,6 @@ def normalize_notices(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
             "product_family": _first(record, "procurement_type", "contract_type", "commodity"),
             "estimated_value": record.get("estimated_value", record.get("contract_value", "")),
             "currency": _first(record, "currency", "currency_code"),
-            "project_reference": _first(record, "project_id", "projectid", "project_number"),
-            "procurement_stage": _first(record, "procurement_stage", "notice_type", "status"),
         }
     return list(normalized.values())
 
