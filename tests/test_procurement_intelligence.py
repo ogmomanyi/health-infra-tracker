@@ -63,6 +63,20 @@ class ProcurementIntelligenceTests(unittest.TestCase):
         result = match_event(event, projects)
         self.assertEqual(result["match_status"], "UNMATCHED")
 
+    @patch("procurement_intelligence.sources.afdb.fetch_page")
+    def test_afdb_multiple_pages_are_supported(self, fetch_page):
+        fetch_page.side_effect = [
+            '<a href="/notice/1">Supply of laboratory diagnostic equipment</a>',
+            '<a href="/notice/2">Invitation for bids for laboratory analyzers</a>',
+        ]
+        from unittest.mock import patch as run_patch
+        import sys
+        from procurement_intelligence import run
+        argv = ["run.py", "--source", "afdb", "--page-url", "https://www.afdb.org/notices/1", "--page-url", "https://www.afdb.org/notices/2"]
+        with run_patch.object(sys, "argv", argv), run_patch.object(run, "load_projects", return_value=[]), run_patch.object(run, "write_events"), run_patch.object(run, "persist_events"):
+            run.main()
+        self.assertEqual(fetch_page.call_count, 2)
+
 
 if __name__ == "__main__":
     unittest.main()
