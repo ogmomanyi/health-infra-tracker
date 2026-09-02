@@ -51,7 +51,13 @@ def main() -> None:
     notices = []
     if args.source in {"world_bank", "all"}:
         from .sources.world_bank import fetch_notices, normalize_notices
-        notices.extend(normalize_notices(fetch_notices(country_codes=args.countries)))
+        if args.countries:
+            # The World Bank endpoint does not reliably interpret repeated country names
+            # as an OR filter, so fetch each requested country independently and merge.
+            for country_code in args.countries:
+                notices.extend(normalize_notices(fetch_notices(country_codes=[country_code])))
+        else:
+            notices.extend(normalize_notices(fetch_notices()))
 
     if args.source == "rss":
         if not args.feed_url:
