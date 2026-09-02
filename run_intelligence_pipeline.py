@@ -27,18 +27,11 @@ def canonical_map():
     conn = sqlite3.connect(DB)
     by_ref = {}
     by_name = {}
+    alias_by_name = {}
     entity_columns = table_columns(conn, "organisation_entities")
     alias_columns = table_columns(conn, "organisation_aliases")
-    entity_id_column = (
-        "entity_id"
-        if "entity_id" in entity_columns
-        else "organisation_entity_id"
-    )
-    alias_entity_id_column = (
-        "entity_id"
-        if "entity_id" in alias_columns
-        else "organisation_entity_id"
-    )
+    entity_id_column = "entity_id" if "entity_id" in entity_columns else "organisation_entity_id"
+    alias_entity_id_column = "entity_id" if "entity_id" in alias_columns else "organisation_entity_id"
     has_status = "entity_status" in entity_columns
 
     parent_by_child = {
@@ -57,15 +50,15 @@ def canonical_map():
         current = entity_id
         while current in parent_by_child:
             if current in seen:
-                raise RuntimeError(
-                    f"Cycle detected in DUPLICATE_OF relationships at {current}"
-                )
+                raise RuntimeError(f"Cycle detected in DUPLICATE_OF relationships at {current}")
             seen.add(current)
             current = parent_by_child[current]
         return current
 
     status_clause = "WHERE e.entity_status = 'ACTIVE'" if has_status else ""
 
+    # Canonical names are authoritative. An alias shared by several entities
+    # must not make an otherwise exact canonical name ambiguous.
     for entity_id, canonical_name in conn.execute(
         f"""
         SELECT e.{entity_id_column}, e.canonical_name
@@ -102,32 +95,25 @@ def canonical_map():
     ):
         normalized = normalize_name(alias_name)
         if normalized:
-            by_name.setdefault(normalized, set()).add(canonical_id(entity_id))
+            alias_by_name.setdefault(normalized, set()).add(canonical_id(entity_id))
 
-    # Only expose unambiguous references to the legacy map.
-    by_ref = {
+    by_ref = {key: next(iter(values)) for key, values in by_ref.items() if len(values) == 1}
+    by_name = {key: next(iter(values)) for key, values in by_name.items() if len(values) == 1}
+    alias_by_name = {
         key: next(iter(values))
-        for key, values in by_ref.items()
-        if len(values) == 1
-    }
-    by_name = {
-        key: next(iter(values))
-        for key, values in by_name.items()
+        for key, values in alias_by_name.items()
         if len(values) == 1
     }
 
     conn.close()
-    return by_ref, by_name
+    return by_ref, by_name, alias_by_name
 
 
 def table_columns(conn, table_name):
-    return {
-        row[1]
-        for row in conn.execute(f"PRAGMA table_info({table_name})")
-    }
+    return {row[1] for row in conn.execute(f"PRAGMA table_info({table_name})")}
 
 
-def resolve_row(row, by_ref, by_name):
+def resolve_row(row, by_ref, by_name, alias_by_name):
     for ref in builder.split_values(row.get("primary_org_ref")):
         ref = ref.strip().lower()
         if ref and ref in by_ref:
@@ -139,25 +125,25 @@ def resolve_row(row, by_ref, by_name):
             return by_ref[ref]
 
     name = normalize_name(row.get("canonical_name", ""))
-    return by_name.get(name, "")
+    if name in by_name:
+        return by_name[name]
+    return alias_by_name.get(name, "")
 
 
 _original_build_org_intel = builder.build_organisation_intelligence
 
 
 def build_org_intel_fixed(derived):
-    by_ref, by_name = canonical_map()
+    by_ref, by_name, alias_by_name = canonical_map()
     fixed = derived.copy()
     fixed["organisation_entity_id"] = fixed.apply(
-        lambda row: resolve_row(row, by_ref, by_name),
+        lambda row: resolve_row(row, by_ref, by_name, alias_by_name),
         axis=1,
     )
 
     unresolved = fixed[fixed["organisation_entity_id"] == ""]
     if not unresolved.empty:
-        examples = ", ".join(
-            unresolved["canonical_name"].head(10).tolist()
-        )
+        examples = ", ".join(unresolved["canonical_name"].head(10).tolist())
         print(
             "[intel] WARNING: "
             f"Unresolved canonical organisations: {len(unresolved)}; "
@@ -172,7 +158,7 @@ builder.build_organisation_intelligence = build_org_intel_fixed
 
 
 def build_org_activity_lookup_fixed(organisations):
-    by_ref, by_name = canonical_map()
+    by_ref, by_name, alias_by_name = canonical_map()
     lookup = {}
 
     for _, row in organisations.iterrows():
@@ -182,7 +168,7 @@ def build_org_activity_lookup_fixed(organisations):
 
         ref = builder.clean_text(row.get("org_ref")).lower()
         name = normalize_name(row.get("org_name", ""))
-        entity_id = by_ref.get(ref) or by_name.get(name)
+        entity_id = by_ref.get(ref) or by_name.get(name) or alias_by_name.get(name)
 
         if entity_id:
             lookup.setdefault(entity_id, [])
@@ -218,12 +204,7 @@ builder.write_sqlite_tables = write_sqlite_tables_fixed
 def sqlite_views(db_path):
     conn = sqlite3.connect(db_path)
     try:
-        return {
-            name
-            for (name,) in conn.execute(
-                "SELECT name FROM sqlite_master WHERE type = 'view'"
-            )
-        }
+        return {name for (name,) in conn.execute("SELECT name FROM sqlite_master WHERE type = 'view'")}
     finally:
         conn.close()
 
@@ -231,12 +212,7 @@ def sqlite_views(db_path):
 def sqlite_tables(db_path):
     conn = sqlite3.connect(db_path)
     try:
-        return {
-            name
-            for (name,) in conn.execute(
-                "SELECT name FROM sqlite_master WHERE type = 'table'"
-            )
-        }
+        return {name for (name,) in conn.execute("SELECT name FROM sqlite_master WHERE type = 'table'")}
     finally:
         conn.close()
 
@@ -282,7 +258,6 @@ def sync_manifest_counts(path, counts):
 
     row_counts = manifest.setdefault("row_counts", {})
     files = manifest.setdefault("files", {})
-
     for name, count in counts.items():
         row_counts[name] = count
         files[name] = f"{name}.csv"
@@ -299,7 +274,6 @@ def sync_summary_counts(path, counts):
         summary = json.load(handle)
 
     canonical = summary.setdefault("layer_counts", {}).setdefault("canonical", {})
-
     for name, count in counts.items():
         canonical[name] = count
 
