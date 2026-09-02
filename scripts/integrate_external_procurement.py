@@ -29,7 +29,7 @@ def main():
         changed = True
 
     if HANDLER_MARKER not in text:
-        anchor = '''                document.querySelectorAll(".tab-button").forEach(button => {
+        anchor = '''            document.querySelectorAll(".tab-button").forEach(button => {
                 button.addEventListener("click", () => {
                     state.activeTab = button.dataset.tab;
 '''
