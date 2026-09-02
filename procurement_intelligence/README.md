@@ -1,51 +1,47 @@
 # External Procurement Intelligence
 
-## UNGM source policy
+Phase 2 is a multi-source procurement intelligence layer. UNGM is intentionally out of scope for now: it requires access that does not add enough value to justify making it a dependency for Faram.
 
-UNGM has confirmed that API access is restricted to UN staff. Faram's procurement pipeline therefore does **not** use UNGM API credentials, automated login, or an authenticated API client.
+## Source strategy
 
-The supplier-facing ingestion path accepts a CSV or JSON feed that Faram is authorized to obtain through UNGM's supplier-facing channels (for example, an alert/export workflow or a locally prepared notice feed).
-
-The ingestion boundary is:
+The pipeline separates source retrieval from normalization and commercial intelligence.
 
 ```text
-UNGM supplier-facing channel
+Official procurement sources
+        |
+        +--> World Bank Procurement API
+        +--> Development-bank RSS / feeds (e.g. AfDB)
+        +--> Future direct institutional sources (WHO, UNICEF, UNOPS, etc.)
         |
         v
-CSV / JSON feed supplied by Faram
+Normalized procurement events
         |
         v
-sources/ungm_supplier.py
+Evidence-only IATI matching
         |
         v
-sources/ungm.py normalization
+Faram opportunity scoring / product intelligence
         |
         v
-IATI matching
-        |
-        v
-procurement_events.csv + SQLite
+procurement_events.csv + SQLite + dashboard
 ```
 
-No UNGM credentials belong in this repository or in the procurement pipeline.
+### Current automated sources
 
-## Feed format
+**World Bank** uses the public Procurement API at `https://search.worldbank.org/api/procnotices` and requires no Faram credentials.
 
-CSV and JSON are accepted. The minimum useful fields are a title and/or tender reference. The normalizer also understands common aliases such as:
+**RSS** is a reusable adapter for official procurement feeds. The feed URL is configuration, so individual publishers do not require bespoke ingestion logic unless their feed format requires it.
 
-- `title` / `notice_title`
-- `tender_reference` / `reference` / `notice_reference` / `noticeId`
-- `buyer` / `agency` / `organization` / `organisation`
-- `country` / `country_name`
-- `publication_date` / `published`
-- `closing_date` / `deadline`
-- `source_url` / `url` / `notice_url`
-- `equipment_category` / `category`
-- `product_family` / `product` / `commodity`
+Example:
 
-Additional fields are preserved through the notice normalization boundary where they are useful to downstream adapters.
+```bash
+python -m procurement_intelligence.run --source world_bank --country KE --country UG --country RW
 
-## Run
+python -m procurement_intelligence.run \
+  --source rss \
+  --feed-url "<official-feed-url>" \
+  --feed-name "AfDB"
+```
 
 Fixture mode remains available for tests:
 
@@ -53,12 +49,22 @@ Fixture mode remains available for tests:
 python -m procurement_intelligence.run --source fixture
 ```
 
-Supplier feed mode:
+## Design principles
 
-```bash
-python -m procurement_intelligence.run \
-  --source supplier \
-  --supplier-feed path/to/ungm_export.csv
-```
+- Prefer official APIs, RSS feeds, open data and machine-readable sources.
+- Do not depend on UNGM credentials or authenticated UNGM access.
+- Keep source retrieval separate from normalization.
+- Give every notice a stable event ID for change detection and deduplication.
+- Match procurement notices to IATI projects only when there is textual/evidentiary support; country or equipment category alone is not sufficient.
+- Keep the architecture open so additional donor, development-bank, UN-agency and national procurement sources can be added without changing downstream intelligence.
 
-The pipeline then writes the normalized procurement dataset and updates the existing procurement intelligence database layer.
+## Planned source order
+
+1. World Bank procurement API
+2. AfDB official procurement feed / notices
+3. WHO direct procurement sources where available
+4. UNICEF direct procurement sources where available
+5. UNOPS procurement/eSourcing sources where machine-readable access is available
+6. UNDP and other UN-agency sources
+7. Global Fund and other major health-funder sources
+8. National procurement portals across Faram's target markets
