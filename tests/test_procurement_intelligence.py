@@ -6,6 +6,7 @@ from unittest.mock import Mock, patch
 from procurement_intelligence.ingest import read_events, stable_event_id, write_events
 from procurement_intelligence.matcher import match_event
 from procurement_intelligence.schema import ProcurementEvent
+from procurement_intelligence.sources.afdb import normalize_notice_records, parse_notice_page
 from procurement_intelligence.sources.rss import normalize_notices
 from procurement_intelligence.sources.world_bank import fetch_notices
 
@@ -35,6 +36,19 @@ class ProcurementIntelligenceTests(unittest.TestCase):
         records = normalize_notices([{"title": "Supply of laboratory equipment", "tender_reference": "AFDB-1", "source_url": "https://example.test/1"}], source="AfDB")
         self.assertEqual(records[0]["source"], "AfDB")
         self.assertEqual(records[0]["tender_reference"], "AFDB-1")
+
+    def test_afdb_records_are_normalized(self):
+        records = normalize_notice_records([{"title": "Supply of laboratory equipment", "reference": "AFDB-2", "country": "Kenya", "project_reference": "P-22"}])
+        self.assertEqual(records[0]["source"], "AfDB")
+        self.assertEqual(records[0]["project_reference"], "P-22")
+        self.assertEqual(records[0]["procurement_stage"], "")
+
+    def test_afdb_page_parser_is_conservative(self):
+        html = '''<html><body><a href="/notice/1">Supply of laboratory diagnostic equipment</a><a href="/about">About the Bank</a></body></html>'''
+        records = parse_notice_page(html, "https://www.afdb.org/notices", country="Kenya")
+        self.assertEqual(len(records), 1)
+        self.assertEqual(records[0]["country"], "Kenya")
+        self.assertEqual(records[0]["source_url"], "https://www.afdb.org/notice/1")
 
     def test_matching_is_evidence_only(self):
         event = ProcurementEvent("proc_1", "World Bank", "", "A-1", "Kenya laboratory equipment strengthening", "WHO", "Kenya", "", "", "Laboratory Equipment", "Analyzers")
