@@ -151,6 +151,10 @@ def build_events(notices, projects):
     return matched
 
 
+def _warn(source: str, exc: Exception) -> None:
+    print(f"WARNING: {source} procurement source failed: {exc}")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", default="data/procurement_events_input.csv")
@@ -168,21 +172,28 @@ def main() -> None:
     args = parser.parse_args()
 
     notices = []
+    source_successes = 0
+
     if args.source in {"world_bank", "all"}:
         from .sources.world_bank import fetch_notices, normalize_notices
-        if args.countries:
-            # The World Bank endpoint does not reliably interpret repeated country names
-            # as an OR filter, so fetch each requested country independently and merge.
-            for country_code in args.countries:
-                notices.extend(normalize_notices(fetch_notices(country_codes=[country_code])))
-        else:
-            notices.extend(normalize_notices(fetch_notices()))
+        try:
+            if args.countries:
+                for country_code in args.countries:
+                    notices.extend(normalize_notices(fetch_notices(country_codes=[country_code])))
+            else:
+                notices.extend(normalize_notices(fetch_notices()))
+            source_successes += 1
+        except Exception as exc:
+            if args.source == "world_bank":
+                raise
+            _warn("World Bank", exc)
 
     if args.source == "rss":
         if not args.feed_url:
             parser.error("--feed-url is required when --source=rss")
         from .sources.rss import fetch_feed, normalize_notices
         notices = normalize_notices(fetch_feed(args.feed_url), source=args.feed_name)
+        source_successes += 1
     elif args.source == "afdb":
         if args.feed_url:
             from .sources.rss import fetch_feed, normalize_notices
@@ -193,21 +204,42 @@ def main() -> None:
                 notices.extend(parse_notice_page(fetch_page(page_url), page_url))
         else:
             parser.error("--feed-url or --page-url is required when --source=afdb")
+        source_successes += 1
     elif args.source == "undp":
         from .sources.undp import fetch_page, parse_notice_page
         notices = parse_notice_page(fetch_page(args.undp_url), args.undp_url)
+        source_successes += 1
     elif args.source == "all":
         if args.afdb_feed_url:
             from .sources.rss import fetch_feed, normalize_notices
-            notices.extend(normalize_notices(fetch_feed(args.afdb_feed_url), source="AfDB"))
+            try:
+                notices.extend(normalize_notices(fetch_feed(args.afdb_feed_url), source="AfDB"))
+                source_successes += 1
+            except Exception as exc:
+                _warn("AfDB feed", exc)
         if args.afdb_page_urls:
             from .sources.afdb import fetch_page, parse_notice_page
+            afdb_page_success = False
             for page_url in args.afdb_page_urls:
-                notices.extend(parse_notice_page(fetch_page(page_url), page_url))
+                try:
+                    notices.extend(parse_notice_page(fetch_page(page_url), page_url))
+                    afdb_page_success = True
+                except Exception as exc:
+                    _warn(f"AfDB page {page_url}", exc)
+            if afdb_page_success:
+                source_successes += 1
         from .sources.undp import fetch_page, parse_notice_page
-        notices.extend(parse_notice_page(fetch_page(args.undp_url), args.undp_url))
+        try:
+            notices.extend(parse_notice_page(fetch_page(args.undp_url), args.undp_url))
+            source_successes += 1
+        except Exception as exc:
+            _warn("UNDP", exc)
     elif args.source == "fixture":
         notices = [event.to_dict() for event in read_events(Path(args.input))]
+        source_successes = 1
+
+    if not notices and args.source == "all" and source_successes == 0:
+        raise RuntimeError("All external procurement sources failed; refusing to overwrite the existing dataset.")
 
     fresh_events = build_events(notices, load_projects(Path(args.projects)))
     if args.source == "all":
