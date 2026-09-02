@@ -59,6 +59,7 @@ python -m procurement_intelligence.run --source fixture
 - Match procurement notices to IATI projects only where there is meaningful evidence.
 - Country and equipment category alone cannot create an IATI match.
 - Keep downstream Faram intelligence source-independent.
+- The dashboard module is intentionally separate from the core dashboard page so the procurement UI can evolve without coupling the ingestion pipeline to presentation code.
 
 ## Source roadmap
 
