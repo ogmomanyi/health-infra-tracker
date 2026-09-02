@@ -92,7 +92,11 @@ def main() -> None:
 
     fresh_events = build_events(notices, load_projects(Path(args.projects)))
     if args.source == "all":
-        events = merge_events(load_events(Path(args.output)), fresh_events)
+        existing_events = [
+            event for event in load_events(Path(args.output))
+            if not event.procurement_event_id.startswith("proc_demo_")
+        ]
+        events = merge_events(existing_events, fresh_events)
     else:
         events = fresh_events
 
