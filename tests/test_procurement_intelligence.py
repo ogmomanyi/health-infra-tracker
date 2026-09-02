@@ -7,9 +7,9 @@ from procurement_intelligence.ingest import read_events, stable_event_id, write_
 from procurement_intelligence.matcher import match_event
 from procurement_intelligence.schema import ProcurementEvent
 from procurement_intelligence.sources.afdb import normalize_notice_records, parse_notice_page
-from procurement_intelligence.sources.rss import normalize_notices
+from procurement_intelligence.sources.rss import normalize_notices as normalize_rss_notices
 from procurement_intelligence.sources.undp import parse_notice_page as parse_undp_notice_page
-from procurement_intelligence.sources.world_bank import classify_equipment, fetch_notices, normalize_notices
+from procurement_intelligence.sources.world_bank import classify_equipment, fetch_notices, normalize_notices as normalize_world_bank_notices
 
 
 class ProcurementIntelligenceTests(unittest.TestCase):
@@ -34,7 +34,7 @@ class ProcurementIntelligenceTests(unittest.TestCase):
         self.assertEqual(get.call_args.kwargs["params"]["project_ctry_name"], "Kenya")
 
     def test_world_bank_live_schema_is_normalized(self):
-        records = normalize_notices([{
+        records = normalize_world_bank_notices([{
             "id": "OP00465854",
             "bid_reference_no": "KE-KEMSA-512246-GO-RFB",
             "bid_description": "Supply and Delivery of Examination Gloves and Surgical Gloves sterile",
@@ -66,7 +66,7 @@ class ProcurementIntelligenceTests(unittest.TestCase):
         self.assertEqual(classify_equipment("Supply of office furniture", procurement_group="GO"), "GO")
 
     def test_rss_records_are_normalized(self):
-        records = normalize_notices([{"title": "Supply of laboratory equipment", "tender_reference": "AFDB-1", "source_url": "https://example.test/1"}], source="AfDB")
+        records = normalize_rss_notices([{"title": "Supply of laboratory equipment", "tender_reference": "AFDB-1", "source_url": "https://example.test/1"}], source="AfDB")
         self.assertEqual(records[0]["source"], "AfDB")
         self.assertEqual(records[0]["tender_reference"], "AFDB-1")
 
