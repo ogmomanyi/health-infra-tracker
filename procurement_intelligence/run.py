@@ -38,27 +38,37 @@ def main() -> None:
     parser.add_argument("--output", default="data/procurement_events.csv")
     parser.add_argument("--projects", default="data/opportunities.csv")
     parser.add_argument("--database", default="data/iati_intelligence.db")
-    parser.add_argument("--source", choices=["fixture", "world_bank", "rss", "afdb"], default="fixture")
+    parser.add_argument("--source", choices=["fixture", "world_bank", "rss", "afdb", "all"], default="fixture")
     parser.add_argument("--country", action="append", dest="countries", help="World Bank ISO country code; repeatable.")
-    parser.add_argument("--feed-url", help="Official RSS/Atom feed URL when --source=rss.")
+    parser.add_argument("--feed-url", help="Official RSS/Atom feed URL when --source=rss or --source=afdb.")
     parser.add_argument("--feed-name", default="Official RSS", help="Publisher name for an RSS source.")
     parser.add_argument("--page-url", help="Official AfDB procurement notice page when --source=afdb.")
+    parser.add_argument("--afdb-feed-url", help="Official AfDB RSS/Atom feed URL when --source=all.")
     args = parser.parse_args()
 
-    if args.source == "world_bank":
+    notices = []
+    if args.source in {"world_bank", "all"}:
         from .sources.world_bank import fetch_notices, normalize_notices
-        notices = normalize_notices(fetch_notices(country_codes=args.countries))
-    elif args.source == "rss":
+        notices.extend(normalize_notices(fetch_notices(country_codes=args.countries)))
+
+    if args.source == "rss":
         if not args.feed_url:
             parser.error("--feed-url is required when --source=rss")
         from .sources.rss import fetch_feed, normalize_notices
         notices = normalize_notices(fetch_feed(args.feed_url), source=args.feed_name)
     elif args.source == "afdb":
-        if not args.page_url:
-            parser.error("--page-url is required when --source=afdb")
-        from .sources.afdb import fetch_page, parse_notice_page
-        notices = parse_notice_page(fetch_page(args.page_url), args.page_url)
-    else:
+        if args.feed_url:
+            from .sources.rss import fetch_feed, normalize_notices
+            notices = normalize_notices(fetch_feed(args.feed_url), source="AfDB")
+        elif args.page_url:
+            from .sources.afdb import fetch_page, parse_notice_page
+            notices = parse_notice_page(fetch_page(args.page_url), args.page_url)
+        else:
+            parser.error("--feed-url or --page-url is required when --source=afdb")
+    elif args.source == "all" and args.afdb_feed_url:
+        from .sources.rss import fetch_feed, normalize_notices
+        notices.extend(normalize_notices(fetch_feed(args.afdb_feed_url), source="AfDB"))
+    elif args.source == "fixture":
         notices = [event.to_dict() for event in read_events(Path(args.input))]
 
     events = build_events(notices, load_projects(Path(args.projects)))
