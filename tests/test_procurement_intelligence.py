@@ -1,0 +1,54 @@
+import tempfile
+import unittest
+from pathlib import Path
+from unittest.mock import Mock, patch
+
+from procurement_intelligence.ingest import read_events, stable_event_id, write_events
+from procurement_intelligence.matcher import match_event
+from procurement_intelligence.schema import ProcurementEvent
+from procurement_intelligence.sources.rss import normalize_notices
+from procurement_intelligence.sources.world_bank import fetch_notices
+
+
+class ProcurementIntelligenceTests(unittest.TestCase):
+    def test_event_id_is_stable(self):
+        self.assertEqual(stable_event_id("World Bank", "A-1", "Lab equipment"), stable_event_id("World Bank", "A-1", "Lab equipment"))
+
+    def test_round_trip_csv(self):
+        event = ProcurementEvent("proc_1", "World Bank", "https://example.test", "A-1", "Lab equipment", "WHO", "Kenya", "2026-09-01", "2026-10-01", "Laboratory Equipment", "Analyzers")
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "events.csv"
+            write_events(path, [event])
+            loaded = list(read_events(path))
+        self.assertEqual(loaded[0].title, event.title)
+
+    def test_world_bank_fetch_uses_public_json(self):
+        response = Mock()
+        response.json.return_value = {"procnotices": [{"id": "WB-1", "title": "Laboratory equipment"}]}
+        response.raise_for_status.return_value = None
+        with patch("procurement_intelligence.sources.world_bank.requests.get", return_value=response) as get:
+            records = fetch_notices(country_codes=["KE"])
+        self.assertEqual(records[0]["id"], "WB-1")
+        self.assertEqual(get.call_args.kwargs["params"]["countrycode_exact"], "KE")
+
+    def test_rss_records_are_normalized(self):
+        records = normalize_notices([{"title": "Supply of laboratory equipment", "tender_reference": "AFDB-1", "source_url": "https://example.test/1"}], source="AfDB")
+        self.assertEqual(records[0]["source"], "AfDB")
+        self.assertEqual(records[0]["tender_reference"], "AFDB-1")
+
+    def test_matching_is_evidence_only(self):
+        event = ProcurementEvent("proc_1", "World Bank", "", "A-1", "Kenya laboratory equipment strengthening", "WHO", "Kenya", "", "", "Laboratory Equipment", "Analyzers")
+        projects = [{"iati_identifier": "P-1", "project_title": "Kenya laboratory equipment strengthening", "funding_agencies": "WHO", "country_names": "Kenya"}]
+        result = match_event(event, projects)
+        self.assertEqual(result["matched_iati_identifier"], "P-1")
+        self.assertIn(result["match_status"], {"POSSIBLE", "CONFIRMED"})
+
+    def test_country_and_equipment_alone_do_not_match(self):
+        event = ProcurementEvent("proc_3", "World Bank", "", "A-3", "Supply notice", "", "Kenya", "", "", "Laboratory Equipment", "Analyzers")
+        projects = [{"iati_identifier": "P-3", "project_title": "Maternal health policy reform", "funding_agencies": "UNICEF", "country_names": "Kenya", "equipment_target_summary": "Laboratory Equipment"}]
+        result = match_event(event, projects)
+        self.assertEqual(result["match_status"], "UNMATCHED")
+
+
+if __name__ == "__main__":
+    unittest.main()
