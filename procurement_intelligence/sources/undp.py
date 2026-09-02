@@ -118,9 +118,18 @@ def _record_from_card(title: str, source_url: str, text: str, page_url: str) -> 
             value = re.split(rf"\s+(?=(?:{stop_labels})\s*[:#-]?\s*)", value, maxsplit=1, flags=re.I)[0]
         return _clean(value)
 
-    reference = labelled(r"reference|ref\.?\s*(?:no\.?|number)?|procurement\s*(?:ref(?:erence)?|number)")
-    country = labelled(r"UNDP\s+Office/Country|country", r"Procurement\s+Process|Process|Deadline|Posted|Publication|Published")
-    closing = labelled(r"Deadline|closing\s+date|submission\s+deadline", r"Posted|Publication|Published")
+    reference = labelled(
+        r"reference|ref\.?\s*(?:no\.?|number)?|procurement\s*(?:ref(?:erence)?|number)",
+        r"UNDP\s+Office/Country|Country|Procurement\s+Process|Process|Deadline|Posted|Publication|Published",
+    )
+    country = labelled(
+        r"UNDP\s+Office/Country|country",
+        r"Procurement\s+Process|Process|Deadline|Posted|Publication|Published",
+    )
+    closing = labelled(
+        r"Deadline|closing\s+date|submission\s+deadline",
+        r"Posted|Publication|Published",
+    )
     posted = labelled(r"Posted|posting\s+date|publication\s+date|published")
     return _build_record(title, source_url, reference, country, closing, posted, page_url)
 
