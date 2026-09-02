@@ -38,13 +38,14 @@ def main() -> None:
     parser.add_argument("--output", default="data/procurement_events.csv")
     parser.add_argument("--projects", default="data/opportunities.csv")
     parser.add_argument("--database", default="data/iati_intelligence.db")
-    parser.add_argument("--source", choices=["fixture", "world_bank", "rss", "afdb", "all"], default="fixture")
+    parser.add_argument("--source", choices=["fixture", "world_bank", "rss", "afdb", "undp", "all"], default="fixture")
     parser.add_argument("--country", action="append", dest="countries", help="World Bank ISO country code; repeatable.")
     parser.add_argument("--feed-url", help="Official RSS/Atom feed URL when --source=rss or --source=afdb.")
     parser.add_argument("--feed-name", default="Official RSS", help="Publisher name for an RSS source.")
     parser.add_argument("--page-url", action="append", dest="page_urls", help="Official AfDB procurement notice page; repeatable when --source=afdb.")
     parser.add_argument("--afdb-feed-url", help="Official AfDB RSS/Atom feed URL when --source=all.")
     parser.add_argument("--afdb-page-url", action="append", dest="afdb_page_urls", help="Official AfDB procurement page when --source=all; repeatable.")
+    parser.add_argument("--undp-url", default="https://procurement-notices.undp.org/", help="Public UNDP procurement notice listing URL when --source=undp or --source=all.")
     args = parser.parse_args()
 
     notices = []
@@ -67,6 +68,9 @@ def main() -> None:
                 notices.extend(parse_notice_page(fetch_page(page_url), page_url))
         else:
             parser.error("--feed-url or --page-url is required when --source=afdb")
+    elif args.source == "undp":
+        from .sources.undp import fetch_page, parse_notice_page
+        notices = parse_notice_page(fetch_page(args.undp_url), args.undp_url)
     elif args.source == "all":
         if args.afdb_feed_url:
             from .sources.rss import fetch_feed, normalize_notices
@@ -75,6 +79,8 @@ def main() -> None:
             from .sources.afdb import fetch_page, parse_notice_page
             for page_url in args.afdb_page_urls:
                 notices.extend(parse_notice_page(fetch_page(page_url), page_url))
+        from .sources.undp import fetch_page, parse_notice_page
+        notices.extend(parse_notice_page(fetch_page(args.undp_url), args.undp_url))
     elif args.source == "fixture":
         notices = [event.to_dict() for event in read_events(Path(args.input))]
 
