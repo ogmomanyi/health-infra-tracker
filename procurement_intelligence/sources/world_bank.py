@@ -1,11 +1,14 @@
 """World Bank Procurement API adapter."""
 
 from __future__ import annotations
+from datetime import datetime
+from html import unescape
+import re
 from typing import Any
 import requests
 from ..ingest import stable_event_id
 
-DEFAULT_URL = "https://search.worldbank.org/api/procnotices"
+DEFAULT_URL = "https://search.worldbank.org/api/v2/procnotices"
 
 
 def _first(record: dict[str, Any], *keys: str) -> str:
@@ -33,40 +36,72 @@ def _records(payload: Any) -> list[dict[str, Any]]:
 
 
 def fetch_notices(*, url: str = DEFAULT_URL, country_codes: list[str] | None = None, rows: int = 500, timeout: int = 30) -> list[dict[str, Any]]:
-    params: dict[str, Any] = {"format": "json", "rows": rows}
+    params: dict[str, Any] = {"format": "json", "rows": rows, "os": 0}
     if country_codes:
-        params["countrycode_exact"] = ";".join(code.upper() for code in country_codes)
+        # The World Bank API filters this endpoint by country name, not ISO alpha-2 code.
+        country_names = {
+            "KE": "Kenya",
+            "UG": "Uganda",
+            "RW": "Rwanda",
+            "ET": "Ethiopia",
+            "SO": "Somalia",
+            "SS": "South Sudan",
+            "CD": "Congo, Democratic Republic of the",
+        }
+        names = [country_names.get(code.upper(), code) for code in country_codes]
+        params["project_ctry_name"] = ";".join(names)
     response = requests.get(url, params=params, timeout=timeout)
     response.raise_for_status()
     return _records(response.json())
 
 
-def _detail_url(reference: str) -> str:
-    if not reference:
+def _normalise_date(value: str) -> str:
+    value = (value or "").strip()
+    if not value:
         return ""
-    return f"https://search.worldbank.org/api/v2/procnotices?format=json&id={reference}"
+    if "T" in value and value.endswith("Z"):
+        try:
+            return datetime.fromisoformat(value.replace("Z", "+00:00")).date().isoformat()
+        except ValueError:
+            pass
+    for fmt in ("%d-%b-%Y", "%d-%B-%Y", "%Y-%m-%d"):
+        try:
+            return datetime.strptime(value, fmt).date().isoformat()
+        except ValueError:
+            continue
+    return value
+
+
+def _plain_text(html: str) -> str:
+    text = re.sub(r"<[^>]+>", " ", html or "")
+    return re.sub(r"\s+", " ", unescape(text)).strip()
+
+
+def _deadline_from_notice_text(record: dict[str, Any]) -> str:
+    text = _plain_text(_first(record, "notice_text"))
+    if not text:
+        return ""
+    patterns = (
+        r"(?:submission|bid|proposal|application)\s+deadline\s*[:\-]?\s*([A-Za-z0-9, /-]{8,40})",
+        r"deadline\s+(?:for\s+submission|for\s+submitting)\s*[:\-]?\s*([A-Za-z0-9, /-]{8,40})",
+    )
+    for pattern in patterns:
+        match = re.search(pattern, text, re.I)
+        if match:
+            candidate = match.group(1).strip(" .;,")
+            for fmt in ("%B %d, %Y", "%b %d, %Y", "%d-%b-%Y", "%d %B %Y", "%d %b %Y"):
+                try:
+                    return datetime.strptime(candidate, fmt).date().isoformat()
+                except ValueError:
+                    continue
+    return ""
 
 
 def normalize_notices(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
     normalized: dict[str, dict[str, Any]] = {}
     for record in records:
-        reference = _first(
-            record,
-            "notice_id",
-            "id",
-            "procurement_number",
-            "procurement_reference",
-            "bid_no",
-        )
-        title = _first(
-            record,
-            "bid_description",
-            "notice_title",
-            "title",
-            "procurement_name",
-            "description",
-            "contract_description",
-        )
+        reference = _first(record, "id", "notice_id")
+        title = _first(record, "bid_description", "notice_title", "title", "procurement_name", "description", "contract_description")
         if not reference and not title:
             continue
 
@@ -74,39 +109,15 @@ def normalize_notices(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
         normalized[event_id] = {
             "procurement_event_id": event_id,
             "source": "World Bank",
-            "source_url": _first(record, "url", "notice_url", "link", "procurement_url") or _detail_url(reference),
-            "tender_reference": _first(record, "bid_reference", "bid_no", "procurement_number", "procurement_reference", "notice_id", "id"),
+            "source_url": f"https://search.worldbank.org/api/v2/procnotices?format=json&id={reference}" if reference else "",
+            "tender_reference": _first(record, "bid_reference_no", "bid_reference", "bid_no", "procurement_number", "procurement_reference"),
             "title": title,
-            "buyer": _first(
-                record,
-                "contact_organization",
-                "contact_organization_name",
-                "borrower_name",
-                "borrower",
-                "buyer",
-                "agency",
-                "implementing_agency",
-                "organization",
-            ),
-            "country": _first(record, "country_name", "country", "countryname", "contact_country"),
-            "publication_date": _first(record, "notice_date", "publication_date", "published_date", "date_published"),
-            "closing_date": _first(record, "deadline_date", "deadline", "closing_date", "submission_deadline", "bid_deadline"),
-            "equipment_category": _first(
-                record,
-                "procurement_group_desc",
-                "procurement_group",
-                "procurement_category",
-                "sector",
-                "category",
-            ),
-            "product_family": _first(
-                record,
-                "procurement_method_name",
-                "procurement_method",
-                "procurement_type",
-                "contract_type",
-                "commodity",
-            ),
+            "buyer": _first(record, "contact_organization", "borrower_name", "borrower", "buyer", "agency", "implementing_agency", "organization"),
+            "country": _first(record, "project_ctry_name", "country_name", "country", "countryname"),
+            "publication_date": _normalise_date(_first(record, "noticedate", "notice_date", "publication_date", "published_date", "date_published")),
+            "closing_date": _normalise_date(_first(record, "submission_deadline_date", "deadline_date", "deadline", "closing_date", "submission_deadline", "bid_deadline")) or _deadline_from_notice_text(record),
+            "equipment_category": _first(record, "procurement_group_desc", "procurement_group", "sector", "category", "procurement_category"),
+            "product_family": _first(record, "procurement_method_name", "procurement_method", "procurement_type", "contract_type", "commodity"),
             "estimated_value": _first(record, "estimated_value", "estimated_amount", "contract_value"),
             "currency": _first(record, "currency", "currency_code"),
             "project_reference": _first(record, "project_id", "project_reference", "project_number"),
