@@ -1,6 +1,6 @@
 # Tender Prediction Validation
 
-The predictive layer estimates procurement timing from IATI activity evidence. The external procurement layer now provides an independent validation signal.
+The predictive layer estimates procurement timing from IATI activity evidence. The external procurement layer provides an independent validation signal.
 
 ## Flow
 
@@ -38,4 +38,13 @@ Output:
 
 - `data/tender_prediction_validation.csv`
 
-This is a validation dataset, not a replacement for the existing `tender_predictions.csv` model output.
+## Metrics to calculate once observations accumulate
+
+1. **External-evidence coverage** — share of predictions with any matched notice.
+2. **Confirmation rate** — share of predictions with a confirmed notice.
+3. **On-time validation rate** — share of confirmed, dated predictions validated within the tolerance.
+4. **Median timing error** — median absolute difference between predicted and observed dates.
+5. **Probability-band performance** — compare outcomes across prediction bands such as 50–69, 70–84 and 85–100.
+6. **Category/country performance** — identify equipment categories and countries where the model is systematically early, late or over-confident.
+
+Do not recalibrate tender probabilities until these measures expose a repeatable error pattern. The validation layer is intended to turn the current deterministic heuristic into an empirically calibratable model over time.
