@@ -105,8 +105,27 @@ Primary outputs:
 - `data/equipment_intelligence.csv`
 - `data/tender_predictions.csv`
 
+### Validation and commercial product matching
+
+Status: implemented, awaiting accumulated external observations for calibration.
+
+- Tender-window predictions are validated against externally observed procurement notices.
+- Confirmed IATI-to-notice matches provide validation evidence; possible matches remain signals only.
+- Procurement notices are matched to explicit product families using deterministic lexical evidence.
+- Explicitly named manufacturers are resolved to canonical manufacturer entities when available.
+- Manufacturer fit is never inferred merely from a product category.
+
+Primary outputs:
+
+- `data/tender_prediction_validation.csv`
+- `data/procurement_product_matches.csv`
+
+The tender model should not be recalibrated until enough observed notices exist to measure systematic timing and probability-band error.
+
 Next enhancement frontier:
 
-- Validate predicted tender windows against external tender portals.
-- Add richer product families and manufacturer matching once external procurement data is integrated.
+- Add richer product-family aliases and specification-level matching.
+- Link product families to Faram's actual principal/distributor catalogue and authorization status.
+- Validate manufacturer/product matches against awarded tenders and supplier information where publicly available.
 - Refresh the canonical organisation registry before each intelligence build rather than only preserving the current registry.
+- Add dashboard views for product family, manufacturer, validation performance, and competitor signals.
