@@ -414,6 +414,7 @@ opp_score_994d1bb974ac,XM-DAC-928-SO-2026-27-04.002.EM01.SOM02,70.7,Qualified Le
 opp_score_b5b9e2bb3314,DAC-1601-INV-042213,70.6,Qualified Lead,80,equipment demand; active implementation; future budget cycle; reported budget; near-term funding window,next planned disbursement,Q4 2026,Yes,intelligence
 opp_score_07791262a26c,DAC-1601-INV-042016,70.5,Qualified Lead,89,active implementation; future planned disbursement; future budget cycle; reported budget; near-term funding window; procurement language,next planned disbursement,Q4 2026,Yes,intelligence
 opp_score_ac0f5a98eff1,DAC-1601-INV-033629,70.5,Qualified Lead,80,equipment demand; active implementation; future budget cycle; reported budget; near-term funding window,next planned disbursement,Q4 2026,No,intelligence
+opp_score_3c829e40d9c2,GB-UKPRN-10004180-1002274,70.5,Qualified Lead,80,equipment demand; active implementation; future budget cycle; reported budget; near-term funding window,next budget period,Q1 2027,No,intelligence
 opp_score_fda6724989a1,41AAA-11295-054,70.4,Qualified Lead,80,equipment demand; active implementation; future budget cycle; reported budget; procurement language,next budget period,Q1 2029,Yes,intelligence
 opp_score_d53dd23f87ae,DAC-1601-INV-044514,70.3,Qualified Lead,80,equipment demand; active implementation; future budget cycle; reported budget; near-term funding window,next planned disbursement,Q4 2026,Yes,intelligence
 opp_score_32a7b0961b31,XM-DAC-928-TZ-2026-27-03.001.AF01.TZA01,70.3,Qualified Lead,80,equipment demand; active implementation; future budget cycle; reported budget; near-term funding window,next budget period,Q4 2026,No,intelligence
@@ -875,8 +876,8 @@ opp_score_2b77f01b2319,XM-OCHA-HPC6770-12719,58.0,Watchlist,71,equipment demand;
 opp_score_69b244d47b4f,GB-COH-2695347-10922,58.0,Watchlist,71,equipment demand; active implementation; reported budget; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_de95db7000a3,GB-GOV-1-301474-417,58.0,Watchlist,71,equipment demand; active implementation; reported budget; procurement language,active implementation period,Active through Q1 2028,Yes,intelligence
 opp_score_82ed3308532a,DAC-1601-INV-082265,58.0,Watchlist,71,equipment demand; active implementation; reported budget; near-term funding window,next planned disbursement,Q4 2026,No,intelligence
-opp_score_338d177158e2,XI-IATI-EC_INTPA-2025-PC-54719,58.0,Watchlist,71,equipment demand; active implementation; near-term funding window; procurement language,next budget period,Q4 2026,Yes,intelligence
 opp_score_6f57300a775d,XI-IATI-EC_INTPA-2024-PC-48745,58.0,Watchlist,71,equipment demand; active implementation; near-term funding window; procurement language,next budget period,Q4 2026,Yes,intelligence
+opp_score_338d177158e2,XI-IATI-EC_INTPA-2025-PC-54719,58.0,Watchlist,71,equipment demand; active implementation; near-term funding window; procurement language,next budget period,Q4 2026,Yes,intelligence
 opp_score_0fb0073b03b9,XI-IATI-EC_INTPA-2022-PC-20119,58.0,Watchlist,71,equipment demand; active implementation; near-term funding window; procurement language,next budget period,Q4 2026,Yes,intelligence
 opp_score_965f346d315d,XI-IATI-EC_INTPA-2022-PC-20034,58.0,Watchlist,71,equipment demand; active implementation; near-term funding window; procurement language,next budget period,Q4 2026,Yes,intelligence
 opp_score_9f8bbb41cbc4,XI-IATI-EC_INTPA-2023-PC-22174,58.0,Watchlist,71,equipment demand; active implementation; near-term funding window; procurement language,next budget period,Q4 2026,Yes,intelligence
@@ -1540,17 +1541,6 @@ opp_score_1e7ca032421d,GB-CHC-1099776-1A-SS,48.0,Watchlist,62,equipment demand; 
 opp_score_7a70458d3282,DE-1-202529188,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q4 2027,Yes,intelligence
 opp_score_c7821c336f34,XM-DAC-69-2-2020000183,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_094fc9a67c59,XM-OCHA-HPC6770-16477,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q1 2027,Yes,intelligence
-opp_score_eb04879134f6,FI-3-2014-2014140061,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
-opp_score_b21f2e80f5c9,FI-3-2015-2014140061,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
-opp_score_8cc95c8950e1,FI-3-2012-2007070349,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
-opp_score_84d27290966f,XI-IATI-EC_INTPA-2023-PC-23045,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
-opp_score_cda58bf1030d,XI-IATI-EC_INTPA-2019-PCC-408407,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
-opp_score_ed630758cf70,XI-IATI-EC_INTPA-2013-PCC-327248,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
-opp_score_3f3354cb8fbe,XI-IATI-EC_INTPA-2023-PC-27108,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
-opp_score_581941f506e5,CH-4-2023-2023001667,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
-opp_score_310e47b4f48f,CH-4-2022-2022002259,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
-opp_score_23c40e6943ed,CH-4-2022-2022002269,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
-opp_score_0cea3fd75cec,CH-4-2024-2024001287,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_8a27fe4feb04,CH-4-2010005731,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_4ac4560af760,CH-4-2025-2021009939,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_719607cc9a60,CH-4-2025-2021010021,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
@@ -1562,12 +1552,23 @@ opp_score_4d29305b473d,CH-4-2024-2021009939,48.0,Watchlist,62,equipment demand; 
 opp_score_868c15376d40,CH-4-2024-2021009941,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_2becef6a681a,CH-4-2023-2021009725,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_1822492f1687,CH-4-2024-2021009725,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
+opp_score_581941f506e5,CH-4-2023-2023001667,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
+opp_score_310e47b4f48f,CH-4-2022-2022002259,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
+opp_score_23c40e6943ed,CH-4-2022-2022002269,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
+opp_score_0cea3fd75cec,CH-4-2024-2024001287,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
+opp_score_eb04879134f6,FI-3-2014-2014140061,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
+opp_score_b21f2e80f5c9,FI-3-2015-2014140061,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
+opp_score_8cc95c8950e1,FI-3-2012-2007070349,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
+opp_score_84d27290966f,XI-IATI-EC_INTPA-2023-PC-23045,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
+opp_score_cda58bf1030d,XI-IATI-EC_INTPA-2019-PCC-408407,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
+opp_score_ed630758cf70,XI-IATI-EC_INTPA-2013-PCC-327248,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
+opp_score_3f3354cb8fbe,XI-IATI-EC_INTPA-2023-PC-27108,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_7868ef885eb5,DE-1-202506004-8399,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q1 2028,Yes,intelligence
-opp_score_95f8f06c2197,XM-DAC-6-4-013038-01-0,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
+opp_score_88542b35ac1e,DE-1-202506004-8289,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q3 2028,Yes,intelligence
 opp_score_c9116dda01ff,XM-DAC-69-2-2020000259,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_2ed849237bd9,XM-DAC-69-2-2020000152,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_a2fab0e9fc81,XM-DAC-701-2-2020010659,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
-opp_score_88542b35ac1e,DE-1-202506004-8289,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q3 2028,Yes,intelligence
+opp_score_95f8f06c2197,XM-DAC-6-4-013038-01-0,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_8c15c41ac504,XM-DAC-69-2-2017000330,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_91dc1ad9a9a8,XM-DAC-69-2-2017000331,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_2780a6fa087b,XM-DAC-69-2-2020000287,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
@@ -1580,28 +1581,22 @@ opp_score_676182bf6911,GB-GOV-1-300415,48.0,Watchlist,62,equipment demand; activ
 opp_score_d4d96826c0ed,FI-3-2022-2019000167,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_1efd8ac3996d,FI-3-2023-2023230142,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_17cf7e651dfc,XM-DAC-6-4-012596-03-2,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q1 2028,Yes,intelligence
-opp_score_f79439fd8e5c,BE-BCE_KBO-0418766123-prg2022-120-CD2022SIN335A104,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q3 2027,Yes,intelligence
 opp_score_83de99933bc4,BE-BCE_KBO-0418766123-prg2022-100-UG2022SIN360A101,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q3 2027,Yes,intelligence
+opp_score_f79439fd8e5c,BE-BCE_KBO-0418766123-prg2022-120-CD2022SIN335A104,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q3 2027,Yes,intelligence
 opp_score_e39a05defb8a,XM-DAC-6-4-012596-02-4,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_cd7da9b0c0eb,FI-3-2022-2018180163,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_37687084d05f,FI-3-2019-2016160064,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
-opp_score_96664b7cd6f0,XM-DAC-69-2-2018000108,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
-opp_score_e82f2fde6208,BE-BCE_KBO-0418766123-prg2022-109-ET2022SIN344A103,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q3 2027,Yes,intelligence
-opp_score_84a0f8a29236,BE-BCE_KBO-0418766123-prg2022-144-ET2023SIN382A102,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q3 2027,Yes,intelligence
 opp_score_992f52dc5870,CH-4-2016003215,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_8c53639ed8e7,CH-4-2016003216,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_37d19b695b61,CH-4-2016003217,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
+opp_score_96664b7cd6f0,XM-DAC-69-2-2018000108,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
+opp_score_fcd5ec10fe02,CH-4-2011004987,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_eee4f13d91ff,XM-DAC-69-2-2021000064,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_3254fcb94fb2,XM-DAC-69-2-2022000072,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_59cf51f3d212,XM-DAC-69-2-2018000115,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_44a5f7224b4e,XM-DAC-69-2-2015000175,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
-opp_score_fcd5ec10fe02,CH-4-2011004987,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
-opp_score_720194ba0ac7,IE-CHY-20041069-FacingAfrica,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
-opp_score_43ae31824ac7,IE-CHY-20041069-CheshireServicesEthiopia,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
-opp_score_7a7fd666dda6,XM-DAC-69-2-2010000016,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
-opp_score_c1adc414f61d,XM-DAC-69-2-2023000054,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
-opp_score_21a0c09e05b5,XM-DAC-69-2-2021000062,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
-opp_score_d22acb553ae7,XM-DAC-69-2-2022000078,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
+opp_score_e82f2fde6208,BE-BCE_KBO-0418766123-prg2022-109-ET2022SIN344A103,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q3 2027,Yes,intelligence
+opp_score_84a0f8a29236,BE-BCE_KBO-0418766123-prg2022-144-ET2023SIN382A102,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q3 2027,Yes,intelligence
 opp_score_6ef2992798ff,CH-4-2024-2023002037,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_46a499f98928,CH-4-2024-2023002038,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_999cfbf4beb1,CH-4-2024-2023002039,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
@@ -1629,7 +1624,13 @@ opp_score_681a6b4afa6f,CH-4-2024-2023007524,48.0,Watchlist,62,equipment demand; 
 opp_score_2dc09fd2d830,CH-4-2024-2023007525,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_2190e08b2717,CH-4-2024-2023007526,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_8c5e8863f4ed,CH-4-2024-2023007527,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
+opp_score_720194ba0ac7,IE-CHY-20041069-FacingAfrica,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
+opp_score_43ae31824ac7,IE-CHY-20041069-CheshireServicesEthiopia,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
+opp_score_7a7fd666dda6,XM-DAC-69-2-2010000016,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
+opp_score_c1adc414f61d,XM-DAC-69-2-2023000054,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_c5c0cde42cdc,GB-CHC-1099776-I1-UG,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
+opp_score_21a0c09e05b5,XM-DAC-69-2-2021000062,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
+opp_score_d22acb553ae7,XM-DAC-69-2-2022000078,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_3ac93d9d38b9,FI-3-2019-2016160084,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_b1aa6f87dd86,XM-DAC-69-1-2017000173,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_20263eda7fb5,XM-DAC-69-2-2011000051,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
@@ -1637,17 +1638,16 @@ opp_score_1622a42da613,XM-DAC-69-2-2021000051,48.0,Watchlist,62,equipment demand
 opp_score_6c00343e6c0e,XM-DAC-69-2-2019000167,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_01375f756e3b,XM-DAC-69-2-2013000090,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_f13d8d7b0439,DE-1-202530848,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q1 2029,Yes,intelligence
+opp_score_b2bc7a34ee2a,SE-0-SE-6-16785,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q2 2029,Yes,intelligence
 opp_score_c74d1361ca8d,FI-3-2019-2014140013,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_f17bddb2172f,FI-3-2017-2014140020,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_a67fcd304202,FI-3-2020-2014140013,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
-opp_score_b2bc7a34ee2a,SE-0-SE-6-16785,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q2 2029,Yes,intelligence
 opp_score_e322f3bb85d2,XM-DAC-69-2-2021000061,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_ead72605c43f,XM-DAC-69-2-2021000063,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_c70aef2d9f5f,XM-DAC-69-2-2022000057,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_72f1d9496e7b,XM-DAC-69-2-2022000066,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_054055889db6,FI-3-2022-2019000095,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_5db1d8b881a9,XM-DAC-6-4-012596-03-5,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q2 2029,Yes,intelligence
-opp_score_7f2c8fb0b0d7,SE-0-SE-6-14620,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q3 2026,Yes,intelligence
 opp_score_5af3033d6de8,FI-3-2014-2013130111,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_50566b3636fa,FI-3-2013-2012000139,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_230804479949,XM-DAC-69-2-2020000295,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
@@ -1668,11 +1668,12 @@ opp_score_5554002dd363,FI-3-2022-2014140918,48.0,Watchlist,62,equipment demand; 
 opp_score_afd67442a500,FI-3-2023-2023230538,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_bd53b7f629ee,BE-BCE_KBO-0418766123-prg2022-192-TZ2022TEA530A101,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q3 2027,Yes,intelligence
 opp_score_0f36608d7124,BE-BCE_KBO-0418766123-prg2022-263-TZ2024TEA571A105,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q3 2027,Yes,intelligence
+opp_score_98bc10a658f4,BE-BCE_KBO-0418766123-prg2022-142-CD2023SIN373A102,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q3 2027,Yes,intelligence
 opp_score_a396b7e1bcb1,FI-3-2022-2019000169,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_50b81c2d66c7,FI-3-2022-2019190139,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_339d55cadef4,FI-3-2022-2018180162,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_b7cbb43b533a,FI-3-2019-2010100022,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
-opp_score_98bc10a658f4,BE-BCE_KBO-0418766123-prg2022-142-CD2023SIN373A102,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q3 2027,Yes,intelligence
+opp_score_248a1d51ddfa,XI-IATI-EC_INTPA-2021-PCC-430243,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q1 2027,Yes,intelligence
 opp_score_3ba47dc0c6d0,XI-IATI-EC_INTPA-2022-PCC-436103,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q3 2026,Yes,intelligence
 opp_score_6e39e597d7c4,XI-IATI-EC_INTPA-2021-PCC-423150,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q4 2026,Yes,intelligence
 opp_score_2adc1a13438a,XI-IATI-EC_INTPA-2022-PCC-435886,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q3 2026,Yes,intelligence
@@ -1685,7 +1686,6 @@ opp_score_1aa5cf8c88bc,DE-1-202575405,48.0,Watchlist,62,equipment demand; active
 opp_score_21303928829b,DE-1-202630267,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q4 2029,Yes,intelligence
 opp_score_a59bc0de5c46,DE-1-202631505,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q2 2030,Yes,intelligence
 opp_score_affa725c08fc,DE-1-202673846,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q2 2029,Yes,intelligence
-opp_score_248a1d51ddfa,XI-IATI-EC_INTPA-2021-PCC-430243,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q1 2027,Yes,intelligence
 opp_score_5a0c9b170d31,SE-0-SE-29-2022-03031_1,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_441e94d6cd19,XM-DAC-69-2-2017000340,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_e8892ab6feb4,BE-BCE_KBO-0418766123-prg2022-125-ET2022SIN345A105,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q3 2027,Yes,intelligence
@@ -1694,13 +1694,13 @@ opp_score_a5073c2691fa,XM-DAC-69-2-2023000061,48.0,Watchlist,62,equipment demand
 opp_score_199078d5cfbd,NL-KVK-41150298-2037,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q4 2027,Yes,intelligence
 opp_score_98553e8666e4,BE-BCE_KBO-0418766123-prg2022-104-UG2022SIN361A102,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q3 2027,Yes,intelligence
 opp_score_0c36bdf9450a,DE-1-202530830,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q2 2027,Yes,intelligence
+opp_score_3a62f2f5516f,FI-3-2022-2019191451,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
+opp_score_3c19983f34e1,FI-3-2020-2019191451,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_a996e95c1836,XM-DAC-69-2-2020000137,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_9e16a52c102b,XI-IATI-EC_INTPA-2024-ACT-62591,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q4 2031,Yes,intelligence
 opp_score_b27568857306,GB-CHC-802353-AishaCharityAssociation,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_47b3a6096e3e,GB-CHC-802353-AtsedeandIndie,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_98568a9ea436,DE-1-202431807,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q2 2028,Yes,intelligence
-opp_score_3a62f2f5516f,FI-3-2022-2019191451,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
-opp_score_3c19983f34e1,FI-3-2020-2019191451,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_52d1d07cffab,XM-DAC-69-2-2020000269,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_96ef75e98beb,XM-DAC-69-2-2020000203,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_d61c56e058b4,XM-DAC-69-2-2022000018,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
@@ -1724,25 +1724,25 @@ opp_score_92abb81aee17,XM-DAC-6-4-012596-03-7,48.0,Watchlist,62,equipment demand
 opp_score_3debdb836dd4,XM-DAC-6-4-010605-02-2,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_4efc8f9fe463,SE-0-SE-29-2022-03705,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_68e2836915e9,SE-0-SE-29-2022-03218_2,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
+opp_score_fef61e1fd048,DE-1-202576148,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q4 2028,Yes,intelligence
 opp_score_245f89f17946,DE-1-202506004-8317,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q4 2026,Yes,intelligence
 opp_score_b5ddd531fbe3,DE-1-202506004-8342,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q4 2028,Yes,intelligence
 opp_score_cc209be2de57,XM-DAC-6-4-012596-03-1,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q1 2028,Yes,intelligence
-opp_score_fef61e1fd048,DE-1-202576148,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q4 2028,Yes,intelligence
 opp_score_8af5fb4ba879,SE-0-SE-29-2022-03218_1,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
-opp_score_3b711172d1bd,DE-1-202406007-8090,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q4 2026,Yes,intelligence
 opp_score_d06f3908d641,XM-DAC-69-2-2020000290,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
+opp_score_3b711172d1bd,DE-1-202406007-8090,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q4 2026,Yes,intelligence
 opp_score_45be51cbaf13,XM-DAC-6-4-011400-01-2,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_be1a70d58f93,SE-0-SE-6-16046,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q4 2026,Yes,intelligence
 opp_score_316094301ed3,XM-DAC-3-1-238837-29298,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_fb93c7aa1cff,XI-IATI-EC_INTPA-2023-ACT-61864,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q2 2029,Yes,intelligence
 opp_score_923809266718,DE-1-202448702-8159,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q4 2028,Yes,intelligence
 opp_score_0c2acc31c2af,DE-1-202406007-8015,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q1 2029,Yes,intelligence
-opp_score_2313bb82ca3f,XM-DAC-3-1-251700-30351,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_58f14660cb22,XM-DAC-3-1-195123-25182,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_b0693de414d4,XM-DAC-3-1-195123-25183,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
+opp_score_2313bb82ca3f,XM-DAC-3-1-251700-30351,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_1701b957e648,XM-DAC-3-1-286907-35426,48.0,Watchlist,62,equipment demand; active implementation; procurement language,no future dated funding signal,Monitor,Yes,intelligence
-opp_score_72639abb42f3,SE-0-SE-6-16290,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q3 2027,Yes,intelligence
 opp_score_b57eb91938c8,GB-GOV-1-300708,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q1 2027,Yes,intelligence
+opp_score_72639abb42f3,SE-0-SE-6-16290,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q3 2027,Yes,intelligence
 opp_score_70eebc2d50e3,SE-0-SE-6-11620,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q2 2027,Yes,intelligence
 opp_score_61268daefb55,SE-0-SE-6-14780,48.0,Watchlist,62,equipment demand; active implementation; procurement language,active implementation period,Active through Q2 2028,Yes,intelligence
 opp_score_da50976df7af,UG-NGB-1826-1716011,47.9,Watchlist,62,equipment demand; active implementation; reported budget,no future dated funding signal,Monitor,No,intelligence
@@ -1977,6 +1977,7 @@ opp_score_08061aa3afde,CH-4-2023-2023001255,40.0,Watchlist,53,equipment demand; 
 opp_score_209d056e434a,GB-CHC-802353-HHOJ,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_3acb463005f7,CH-4-2021-2020001134,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_8fd2e72410a6,CH-4-2020001134,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_97ada7802e87,US-EIN-13-5660870-DF187,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_1896dca11462,CH-4-2021-2020001133,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_7c89915015b1,CH-4-2020001133,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_9e2d55d9f555,CH-4-2023-1997001367,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
@@ -1984,7 +1985,6 @@ opp_score_1c2e862396fc,CH-4-2022-1997001361,40.0,Watchlist,53,equipment demand; 
 opp_score_620f51a7d42e,CH-4-2022-1997001367,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_b81a60b61f70,CH-4-2024-1997001367,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_bac7e60f7d25,CH-4-2024-1997001370,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_97ada7802e87,US-EIN-13-5660870-DF187,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_327365c60120,CH-4-2021-2008004839,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_ea52d3a7aea5,CH-4-2021-2008004875,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_adbadea63080,CH-4-2008004839,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
@@ -1999,9 +1999,9 @@ opp_score_f569e1d8ad11,CH-4-2022-2020010138,40.0,Watchlist,53,equipment demand; 
 opp_score_09562ff2d807,CH-4-2022-2020001363,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_735d439c75e9,CH-4-2021-2020001111,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_88fc9c0cb269,CH-4-2021-2020001226,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_c38e5faf4b30,CH-4-2017007770,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_d2c62603c6b0,CH-4-2008004836,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_e2168f54035f,CH-4-2008004803,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_c38e5faf4b30,CH-4-2017007770,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_7b449b34b130,CH-4-1998001354,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_832dba96a372,CH-4-2018009242,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_c4980e5c2a51,CH-4-2018010382,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
@@ -2037,13 +2037,6 @@ opp_score_9c5b9a7dab39,CH-4-2022-2008004912,40.0,Watchlist,53,equipment demand; 
 opp_score_1f6e802d54cf,CH-4-2022-2013006093,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_3b4ed2906ef3,CH-4-2013006092,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_7e9e4b00feec,CH-4-2013006093,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_924e8053cbdc,CH-4-2019000662,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_35c037d5a1e6,CH-4-2021-2010005886,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_dae071aa5390,CH-4-2010005886,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_6eef5f974e12,CH-4-2009003728,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_48b2bd4c8070,CH-4-1998001340,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_f3a681ca4a89,CH-4-2010005921,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_d5e92b83d2a9,CH-4-2022-2010005886,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_b317079145fe,CH-4-2024-2017008629,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_e34c3fb96c28,CH-4-2024-2017008631,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_1dffb3709167,CH-4-2024-2017008630,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
@@ -2062,6 +2055,13 @@ opp_score_8969dcbd5b4b,CH-4-2023-2017008335,40.0,Watchlist,53,equipment demand; 
 opp_score_2ad5679c41d4,CH-4-2024-2017008666,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_72927eea7322,CH-4-2024-2017008667,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_08192d9839a1,CH-4-2024-2017008668,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_924e8053cbdc,CH-4-2019000662,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_35c037d5a1e6,CH-4-2021-2010005886,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_dae071aa5390,CH-4-2010005886,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_6eef5f974e12,CH-4-2009003728,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_48b2bd4c8070,CH-4-1998001340,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_f3a681ca4a89,CH-4-2010005921,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_d5e92b83d2a9,CH-4-2022-2010005886,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_0d740e337cf2,CH-4-2008004810,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_5c8cbc1b5fa2,CH-4-2008004811,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_cffdb1b9a323,CH-4-2008004838,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
@@ -2073,13 +2073,13 @@ opp_score_a1fa41fa8cbd,CH-4-2021-2008004878,40.0,Watchlist,53,equipment demand; 
 opp_score_e96e45800809,CH-4-2008004876,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_fb3356c8d560,CH-4-2008004877,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_8862c681fb4b,CH-4-2008004878,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_ff845d807640,CH-4-2018000988,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_b90fab6a8638,CH-4-2018000989,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_4ae7ca587e28,CH-4-2018000990,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_1c574a24d7d0,CH-4-2008004807,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_b5374db5f39f,CH-4-2008004808,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_c98fe36aa291,CH-4-2008004835,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_9205da6779c4,CH-4-2008004802,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_ff845d807640,CH-4-2018000988,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_b90fab6a8638,CH-4-2018000989,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_4ae7ca587e28,CH-4-2018000990,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_f70069c1b106,CH-4-2018010655,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_d53fdc04dce8,CH-4-2002003348,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_3be94485ce09,CH-4-2022-2013006713,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
@@ -2118,9 +2118,9 @@ opp_score_cfc9df84c9c7,CH-4-2025-2025001754,40.0,Watchlist,53,equipment demand; 
 opp_score_aa62a140ac97,CH-4-2024-2024001177,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_c139020caf24,DE-1-202406007-7930,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q1 2028,No,intelligence
 opp_score_cea231e23cbb,XM-DAC-69-2-2017000307,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,Yes,intelligence
-opp_score_451fd9f75fed,GB-COH-1762840-GIH034--01,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_1ce56ebd7193,CH-4-2024-2013007008,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_897d3e579dde,CH-4-2023-2013007008,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_451fd9f75fed,GB-COH-1762840-GIH034--01,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_ea0d6d8627fa,XM-DAC-69-2-2017000233,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_207ef1543a21,CH-4-2021-2018010908,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_8e0a32a75c9c,CH-4-2022-2018010908,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
@@ -2146,30 +2146,27 @@ opp_score_c59ee40cfc47,GB-CHC-1099776-W1-SS,40.0,Watchlist,53,equipment demand; 
 opp_score_a21744f2e271,GB-CHC-1099776-V8-SS,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_02dc3e9994d4,GB-CHC-1099776-W2-SS,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_26d3dc6d0213,GB-CHC-1065972-DF183,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_1e0955f60fed,SE-0-SE-6-17106,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q3 2029,No,intelligence
 opp_score_968364eb2ab0,FI-3-2022-2019000164,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_490b7ce9d9d2,FI-3-2020-2018180153,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_83af7e7c271b,US-EIN-13-5660870-DF243,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_737364c9b0dd,GB-CHC-1065972-DF243,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_1e0955f60fed,SE-0-SE-6-17106,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q3 2029,No,intelligence
 opp_score_55667f672096,DE-1-202406007-7932,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q1 2027,No,intelligence
+opp_score_dc0b31d035d0,CH-4-2021-2008004911,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_7be4b36bbdea,CH-4-2022-2008004911,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_edb83c901a9c,CH-4-2023-2017008427,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_59f0faf7f438,CH-4-2017005731,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_de943c5bf7ff,CH-4-2017007468,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_564841acc7da,CH-4-2021-2017007468,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_401cca5099c8,CH-4-2022-2017008426,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_90bb2cb38ffa,CH-4-2022-2017008427,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_dc0b31d035d0,CH-4-2021-2008004911,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_7be4b36bbdea,CH-4-2022-2008004911,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_95953db32f64,XI-IATI-UNPF-00126650,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_c0308c6f1125,XI-IATI-UNPF-00127167,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_94f141985b6d,DE-1-202506004-8339,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q3 2029,No,intelligence
 opp_score_400e153d720e,CH-4-2025-2018011787,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q2 2030,No,intelligence
 opp_score_d19f5fe171af,CH-4-2025-2018011788,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q2 2030,No,intelligence
 opp_score_137f5d9800f0,CH-4-2025-2018011811,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q2 2030,No,intelligence
 opp_score_9721ca91aacf,CH-4-2025-2018011812,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q2 2030,No,intelligence
-opp_score_ab20673cc068,XM-DAC-701-2-2018010622,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_77f740257d37,GB-CHC-1099776-1W-UG,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2026,No,intelligence
-opp_score_37d4f79853b0,GB-CHC-1099776-3N-UG,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q3 2026,No,intelligence
+opp_score_95953db32f64,XI-IATI-UNPF-00126650,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_c0308c6f1125,XI-IATI-UNPF-00127167,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_b31674aea241,CH-4-2022-2020010119,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_333cb40bca9d,CH-4-2022-2020010120,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_bb6ed755dcd0,CH-4-2022-2020001265,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
@@ -2188,30 +2185,42 @@ opp_score_7fb6b6f0c7f8,CH-4-2020001264,40.0,Watchlist,53,equipment demand; activ
 opp_score_56f4d2854f99,CH-4-2020001265,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_3aa2622c8b58,CH-4-2024-2020010120,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_f7f1aaca6caf,CH-4-2024-2020011112,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_ab20673cc068,XM-DAC-701-2-2018010622,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_77f740257d37,GB-CHC-1099776-1W-UG,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2026,No,intelligence
+opp_score_37d4f79853b0,GB-CHC-1099776-3N-UG,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q3 2026,No,intelligence
+opp_score_d399c17fbfcc,CH-4-2021-2021002000,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_57d7651aeb72,CH-4-2021-2021001537,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_c83d82ce5304,CH-4-2020001772,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_df74bbf2d860,XM-DAC-69-2-2020000271,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_0ed6a3dd36d0,XM-DAC-69-18-2021000225,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_8a5ee426eead,CH-4-2022-2022002240,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_670fbea490e3,CH-4-2021-2021002009,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_76bfce58178f,CH-4-2014005312,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_2b29d536ca6e,CH-4-2014005622,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_acc8e896f263,CH-4-2021-2014005312,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_04cd65d955dd,XM-DAC-69-2-2021000068,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_43384c0ce37c,FI-3-2022-2022220547,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_a37c880887f1,FI-3-2020-2020201163,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_81521fbaad48,XM-DAC-6-4-012826-01-0,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2027,Yes,intelligence
 opp_score_b28ca1955664,FI-3-2021-2019190043,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_d399c17fbfcc,CH-4-2021-2021002000,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_df74bbf2d860,XM-DAC-69-2-2020000271,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_0ed6a3dd36d0,XM-DAC-69-18-2021000225,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_76bfce58178f,CH-4-2014005312,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_2b29d536ca6e,CH-4-2014005622,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_acc8e896f263,CH-4-2021-2014005312,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_815f99dcea93,XM-DAC-69-2-2022000060,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_b09a6c55edc6,FI-3-2018-2016160046,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_e4456d71668a,FI-3-2019-2017170275,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_db98b99adc6e,XM-DAC-2-10-3014473,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_8a5ee426eead,CH-4-2022-2022002240,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_670fbea490e3,CH-4-2021-2021002009,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_33b1e4f75422,CH-4-2021-2002003283,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_6371fe2615b1,CH-4-2002003283,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_31de39d01f47,DE-1-202406007-8138,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q3 2027,No,intelligence
 opp_score_1d69da473d6c,CH-4-2008004804,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_01c5662045d3,CH-4-2008004799,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_4e30c2669d2e,GB-CHC-1099776-2P-SS,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q2 2027,No,intelligence
+opp_score_91298ff5d55f,GB-CHC-1099776-2C-SS,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q2 2027,No,intelligence
+opp_score_2f13b34e7ada,GB-CHC-1099776-3H-SS,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q3 2027,No,intelligence
+opp_score_d17cbabe01ce,GB-CHC-1099776-O7-SS,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_e7f7600e80be,GB-CHC-1099776-Y8-SS,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_e3b9e5cf94f8,GB-CHC-1099776-2Q-SS,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2026,No,intelligence
+opp_score_4016c3bcf5d9,GB-CHC-1099776-2D-MM,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_88b649816e8a,GB-CHC-1099776-3J-SS,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_ccfa909a1827,GB-CHC-1099776-S3-SS,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_3c880369e256,XM-DAC-69-2-2011000044,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_b5c986b6d81a,FI-3-2014-2013130643,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_9aba02c77b4b,FI-3-2013-2013130643,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
@@ -2227,15 +2236,6 @@ opp_score_2ecd43f57b8c,FI-3-2020-2018181669,40.0,Watchlist,53,equipment demand; 
 opp_score_1674b0c57738,CH-4-2020002220,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_b8301c157d81,CH-4-2020002223,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_17c6af071f02,CH-4-2020002224,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_4e30c2669d2e,GB-CHC-1099776-2P-SS,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q2 2027,No,intelligence
-opp_score_91298ff5d55f,GB-CHC-1099776-2C-SS,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q2 2027,No,intelligence
-opp_score_2f13b34e7ada,GB-CHC-1099776-3H-SS,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q3 2027,No,intelligence
-opp_score_d17cbabe01ce,GB-CHC-1099776-O7-SS,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_e7f7600e80be,GB-CHC-1099776-Y8-SS,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_e3b9e5cf94f8,GB-CHC-1099776-2Q-SS,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2026,No,intelligence
-opp_score_4016c3bcf5d9,GB-CHC-1099776-2D-MM,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_88b649816e8a,GB-CHC-1099776-3J-SS,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_ccfa909a1827,GB-CHC-1099776-S3-SS,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_ac1d6be5f1d5,FI-3-2018-2013130117,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,Yes,intelligence
 opp_score_685b0640e6e4,FI-3-2014-2013130642,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_021d7e0e83e9,FI-3-2022-2015150859,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
@@ -2248,6 +2248,10 @@ opp_score_5d9cf9c6d394,FI-3-2015-2013130642,40.0,Watchlist,53,equipment demand; 
 opp_score_a0a4d937f923,FI-3-2015-2015150859,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_e667c522ea5f,FI-3-2020-2015150859,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_c48bdf6d9245,FI-3-2012-2009091062,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_52ceb0d8a31c,CH-4-2023-2018011583,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_7223eb460144,CH-4-2023-2018011585,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_004e5c598448,FI-3-2016-2014141080,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_ee81ec812478,BE-BCE_KBO-0418766123-prg2022-131-CD2023SIN375A101,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q3 2027,Yes,intelligence
 opp_score_23c14cafba8b,FI-3-2014-2006060173,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_364e875ad810,CH-4-2023-2023001736,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_7e28fa095510,FI-3-2021-2018180214,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
@@ -2258,10 +2262,6 @@ opp_score_bb0b38ce99fb,FI-3-2019-2017170092,40.0,Watchlist,53,equipment demand; 
 opp_score_ae2aaeb83a39,FI-3-2020-2020201168,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_55a439ff6217,FI-3-2013-2006060173,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_807ca7faf56c,FI-3-2012-2009091058,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_52ceb0d8a31c,CH-4-2023-2018011583,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_7223eb460144,CH-4-2023-2018011585,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_004e5c598448,FI-3-2016-2014141080,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_ee81ec812478,BE-BCE_KBO-0418766123-prg2022-131-CD2023SIN375A101,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q3 2027,Yes,intelligence
 opp_score_d31bc96085f0,XM-DAC-69-2-2016000056,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_48e0b14b6ec8,CH-4-2017005602,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_fb2f9c66929d,XM-DAC-69-2-2016000115,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
@@ -2275,9 +2275,6 @@ opp_score_7c6106ce67fc,XM-DAC-69-2-2015000189,40.0,Watchlist,53,equipment demand
 opp_score_b9ea4eeb3002,FI-3-2013-2006060506,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_306d4d259769,FI-3-2012-2006060506,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_61237a72cf6a,FI-3-2023-2023230145,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_7dea27133644,IE-CHY-20041069-IE-CHY-20041069-HOL,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,Yes,intelligence
-opp_score_386df064be86,XI-IATI-EC_INTPA-2020-ACT-D-42774-00,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_bc9769f21576,BE-BCE_KBO-0418766123-prg2022-178-UG2019TEA493A103,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q3 2027,No,intelligence
 opp_score_b9cd28d2ccbe,CH-4-2023-2023000556,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q1 2028,No,intelligence
 opp_score_67fae02366fd,CH-4-2023-2023000557,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q1 2028,No,intelligence
 opp_score_dcee0c4adff7,CH-4-2023-2023000558,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q1 2028,No,intelligence
@@ -2341,6 +2338,8 @@ opp_score_f294e58fd6a7,CH-4-2024-2022016943,40.0,Watchlist,53,equipment demand; 
 opp_score_00364aab20e0,CH-4-2024-2022016944,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_3e3cb6ad85f1,CH-4-2024-2024000230,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_4a83a7bc0c53,CH-4-2024-2024000231,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_7dea27133644,IE-CHY-20041069-IE-CHY-20041069-HOL,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,Yes,intelligence
+opp_score_386df064be86,XI-IATI-EC_INTPA-2020-ACT-D-42774-00,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_44e08e0ad92c,GB-CHC-1099776-3M-UG,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q3 2027,No,intelligence
 opp_score_7a9d5d76b9c8,GB-CHC-1099776-O2-UG,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_c26dc4509ccb,GB-CHC-1099776-X5-UG,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
@@ -2349,10 +2348,18 @@ opp_score_af9e9206f7ca,GB-CHC-1099776-2V-UG,40.0,Watchlist,53,equipment demand; 
 opp_score_b2ca4a7773f3,GB-CHC-1099776-1O-UG,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2026,No,intelligence
 opp_score_1bb413699de6,GB-CHC-1099776-S3-UG,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_b15e0cfbd9e1,GB-CHC-1099776-2F-UG,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_bc9769f21576,BE-BCE_KBO-0418766123-prg2022-178-UG2019TEA493A103,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q3 2027,No,intelligence
 opp_score_0be8b5e19f31,DE-1-202274140,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2026,No,intelligence
 opp_score_d45a2250db15,DE-1-202474419,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2028,No,intelligence
 opp_score_5ede3b91888d,DE-1-202475259,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2028,No,intelligence
 opp_score_766c255112f3,DE-1-202574168,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2029,Yes,intelligence
+opp_score_23293b3eb39b,FI-3-2022-2022220012,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_1dd5bf2dedc0,GB-CHC-1099776-O2-ET,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_71a8da7439a1,GB-CHC-1099776-3S-ET,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_5487b9367fd5,GB-CHC-1099776-1D-ET,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_95e014a8c172,GB-CHC-1099776-3C-ET,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q2 2028,No,intelligence
+opp_score_6237ae11df17,GB-CHC-1099776-2A-ET,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_48c7b56de2db,FI-3-2023-2023230056,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_7a60293eb89b,FI-3-2012-2009091063,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_8d3fc8104b2a,FI-3-2014-2014140020,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_044ee7a758fe,FI-3-2014-2013130639,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
@@ -2364,13 +2371,6 @@ opp_score_cf8bfcb8e095,GB-CHC-1099776-P2-ET,40.0,Watchlist,53,equipment demand; 
 opp_score_f1d9973b9c08,FI-3-2013-2013130639,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_c7ffa9252924,FI-3-2012-2011115109,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_355ed41149c9,FI-3-2015-2013130639,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_23293b3eb39b,FI-3-2022-2022220012,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_1dd5bf2dedc0,GB-CHC-1099776-O2-ET,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_71a8da7439a1,GB-CHC-1099776-3S-ET,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_5487b9367fd5,GB-CHC-1099776-1D-ET,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_95e014a8c172,GB-CHC-1099776-3C-ET,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q2 2028,No,intelligence
-opp_score_6237ae11df17,GB-CHC-1099776-2A-ET,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_48c7b56de2db,FI-3-2023-2023230056,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_c7a0ac7bc44c,GB-GOV-1-300857,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_db850da0954c,XM-DAC-69-2-2023000109,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_94b219c87087,FI-3-2014-2013130640,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
@@ -2378,13 +2378,13 @@ opp_score_245ea87aa385,FI-3-2018-2012120121,40.0,Watchlist,53,equipment demand; 
 opp_score_634ac92d3511,FI-3-2019-2012120121,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_2a1ba6b2e08f,FI-3-2015-2015150857,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_b07d65c19563,FI-3-2013-2013130640,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_7dcdfa640561,SE-0-SE-29-2022-03526_1,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_32c323d4d72d,CH-4-2024-2014006035,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_0e53d8bb154d,CH-4-2025-2014006035,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2026,No,intelligence
 opp_score_e5b972bbf90e,CH-4-2021-2014005798,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_9fa9e4527315,CH-4-2022-2014005798,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_83f4ecca9329,CH-4-2022-2014005906,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_7d2b95e54a3a,CH-4-2023-2014006035,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_7dcdfa640561,SE-0-SE-29-2022-03526_1,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_a2a1641d45a8,CH-4-2019002212,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_0096990d50ad,CH-4-2018001688,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_39a676a6d8a9,GB-CHC-1099776-1M-SS,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
@@ -2397,7 +2397,6 @@ opp_score_807d9bcbdc8f,FI-3-2023-2023230108,40.0,Watchlist,53,equipment demand; 
 opp_score_717ebab20773,FI-3-2021-2019190084,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_5efcdb30a12d,GB-CHC-1047501-BRCiS2-SHARP,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_1f24865324fc,47122-RWA,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2027,No,intelligence
-opp_score_46823d4d6992,XI-IATI-EC_INTPA-2020-ACT-D-42793-00,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_934491c2586d,XI-IATI-UNPF-00119537,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_d3067a492f98,XI-IATI-UNPF-119537,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_6a59098fafa3,US-EIN-US-EIN-13-2702768-Z3738,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
@@ -2406,6 +2405,7 @@ opp_score_af5fc7a39601,XM-DAC-69-2-2019000183,40.0,Watchlist,53,equipment demand
 opp_score_f78830124123,CH-4-2021-2002003382,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_09bbe2a187b5,CH-4-2021-2002003383,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_1b63a58ae403,BE-BCE_KBO-0264814354-RWA23004,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q3 2029,No,intelligence
+opp_score_46823d4d6992,XI-IATI-EC_INTPA-2020-ACT-D-42793-00,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_9bbab47e1e60,XI-IATI-EC_INTPA-2023-ACT-61806,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2030,No,intelligence
 opp_score_74cc51da4057,XM-DAC-69-2-2019000197,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_65e26a584675,FR-6-UG-1400,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
@@ -2422,15 +2422,17 @@ opp_score_f9490d99da8b,XM-DAC-69-2-2020000262,40.0,Watchlist,53,equipment demand
 opp_score_4a3d734588e5,XM-DAC-69-2-2020000225,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_10fb943fa162,ET-CSA-0638-sacethiopia-DAWURONutrition,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_97f825c8be74,ET-CSA-0976-ImprovedNutrition,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_750ad20a2666,GB-1-204477,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q2 2027,No,intelligence
-opp_score_af350afc6951,CH-4-2024-2024000371,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_9af1f400072a,SE-0-SE-29-2021-05727,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,Yes,intelligence
-opp_score_adca59b6188a,SE-0-SE-6-14600,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q2 2027,Yes,intelligence
 opp_score_bea7ab690a7e,XM-DAC-69-2-2017000328,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_e9174f793c39,47122-SSD,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2026,No,intelligence
 opp_score_daefdece5f18,GB-CHC-1099776-3L-SS,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q1 2028,No,intelligence
+opp_score_750ad20a2666,GB-1-204477,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q2 2027,No,intelligence
+opp_score_9af1f400072a,SE-0-SE-29-2021-05727,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,Yes,intelligence
+opp_score_af350afc6951,CH-4-2024-2024000371,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_d1fa31b5ea9a,KE-NCB-2180511703310709-ImprovedNutrition,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_f03846d69757,BE-BCE_KBO-0418766123-prg2022-176-KE2019TEA487A103,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q3 2027,No,intelligence
+opp_score_adca59b6188a,SE-0-SE-6-14600,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q2 2027,Yes,intelligence
+opp_score_e2502fe3866f,47122-SOM,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2028,No,intelligence
+opp_score_fecb3a2cddb1,CH-4-2020002124,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_f935073f9d19,XM-DAC-69-2-2017000326,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_6188745c389a,GB-CHC-1099776-I8-SS,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_683908ca34c8,GB-CHC-1099776-I7-SS,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
@@ -2440,22 +2442,20 @@ opp_score_a331047ad949,DE-1-202429413,40.0,Watchlist,53,equipment demand; active
 opp_score_dd4f8ad747a2,DE-1-202429470,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q2 2027,No,intelligence
 opp_score_a53aeb5a58c1,DE-1-202629020,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q1 2029,No,intelligence
 opp_score_271a07c5e0df,DE-1-202629426,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q2 2029,No,intelligence
-opp_score_e2502fe3866f,47122-SOM,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2028,No,intelligence
-opp_score_fecb3a2cddb1,CH-4-2020002124,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_b3617b771765,CH-4-2025-2024000338,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2027,No,intelligence
 opp_score_0b03cd546316,CH-4-2024-2024000338,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_5517cbbb67d4,47122-TZA,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2027,No,intelligence
 opp_score_e2da8a672d1f,GB-CHC-1099776-U3-TZ,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_f06136e807d3,CH-4-1997001356,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_6aa8aa50339b,BE-BCE_KBO-0264814354-COD23006,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2028,No,intelligence
-opp_score_fe94ba9beeb6,FI-3-2024-2024240394,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_87e510a21ee6,XI-IATI-UNPF-00112174,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2030,No,intelligence
-opp_score_237f1ac5cbfa,FI-3-2025-2025250341,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_2c46f6544e59,FI-3-2025-2025250343,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_826515c4ef61,CH-4-2018000969,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_4f023948711a,XM-DAC-701-2-2017010631,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_e85d15188886,47122-COD,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2027,No,intelligence
 opp_score_043b53743190,XM-DAC-2-10-5365,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2026,No,intelligence
+opp_score_fe94ba9beeb6,FI-3-2024-2024240394,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_87e510a21ee6,XI-IATI-UNPF-00112174,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2030,No,intelligence
+opp_score_237f1ac5cbfa,FI-3-2025-2025250341,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_2c46f6544e59,FI-3-2025-2025250343,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_6aa8aa50339b,BE-BCE_KBO-0264814354-COD23006,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2028,No,intelligence
 opp_score_6c0f7b782125,CH-4-2024-2024000366,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_7510492f2f4d,XI-IATI-UNPF-00079847,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_0b22eeaf0310,XI-IATI-UNPF-00129724,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
@@ -2499,6 +2499,10 @@ opp_score_753fb7817f85,GB-CHC-1099776-1V-UG,40.0,Watchlist,53,equipment demand; 
 opp_score_40d07c6bea18,GB-CHC-1099776-1Q-UG,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_465da18145d8,GB-CHC-1099776-O3-UG,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_442be6d31bc4,CH-4-2021-2021002200,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_692b953104df,XM-DAC-69-2-2017000327,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,Yes,intelligence
+opp_score_29896ca4b413,47122-KEN,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2028,No,intelligence
+opp_score_fb548d410d50,CH-4-2020002110,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_5574f2cf47d2,BE-BCE_KBO-0418766123-prg2022-98-KE2022SIN350A101,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q3 2027,Yes,intelligence
 opp_score_8d66ac05ce6c,XM-DAC-69-2-2021000067,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_5aba3a917f70,XM-DAC-69-2-2021000086,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_ba93658c75a8,FI-3-2012-2007070289,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
@@ -2508,10 +2512,6 @@ opp_score_05c2bf3c78b5,FI-3-2022-2019000041,40.0,Watchlist,53,equipment demand; 
 opp_score_0af290e91040,NL-KVK-41150298-2137,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_1a862bc1028e,DE-1-202432904,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q3 2028,No,intelligence
 opp_score_3b6848bf98f6,DE-1-202433878,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2027,No,intelligence
-opp_score_692b953104df,XM-DAC-69-2-2017000327,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,Yes,intelligence
-opp_score_29896ca4b413,47122-KEN,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2028,No,intelligence
-opp_score_fb548d410d50,CH-4-2020002110,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_5574f2cf47d2,BE-BCE_KBO-0418766123-prg2022-98-KE2022SIN350A101,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q3 2027,Yes,intelligence
 opp_score_0c0e5a3f664a,XM-DAC-3-1-286194-34778,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_b72b4d2140d5,CH-4-2025-2025000053,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q1 2027,No,intelligence
 opp_score_744080030c4e,CH-4-2025-2025000054,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q1 2027,No,intelligence
@@ -2542,9 +2542,6 @@ opp_score_593edf349ab3,XM-DAC-69-2-2014000264,40.0,Watchlist,53,equipment demand
 opp_score_ca805bcb6a79,XM-DAC-69-2-2014000224,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_090977f3b5f4,FI-3-2015-2014141122,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_bcfc78b1f4b1,DE-1-202533131,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2029,No,intelligence
-opp_score_9911468588bb,GB-CHC-802353-DIGNITY,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_6176b0622c5a,CH-4-2023-2023001745,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_b0c320541970,CH-4-2022-2022002364,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_8a59fb0944f9,CH-4-2024-2018011586,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_a28832870908,CH-4-2022-2018009285,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_4dfdbd92e078,CH-4-2023-2018011584,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
@@ -2553,11 +2550,12 @@ opp_score_9580f0676684,CH-4-2025-2018011584,40.0,Watchlist,53,equipment demand; 
 opp_score_4d811322e7c8,CH-4-2021-2018009285,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_7cf89ca4d5d3,CH-4-2018009285,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_530cd3003278,CH-4-2024-2018011584,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_6176b0622c5a,CH-4-2023-2023001745,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_b0c320541970,CH-4-2022-2022002364,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_9911468588bb,GB-CHC-802353-DIGNITY,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_97823f5396f1,CH-4-2024-2017008634,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_faddd13d7b24,CH-4-2024-2017008684,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_cc1de8e580f4,DE-1-202506004-8360,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q3 2027,No,intelligence
-opp_score_c76fe30b330d,CH-4-2025-2025001855,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2028,No,intelligence
-opp_score_9cbf30d447f8,GB-GOV-1-301474,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q1 2028,No,intelligence
 opp_score_5794f37d263c,CH-4-2022-2017008289,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_684b38dd65ad,CH-4-2022-2017008296,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_a59fefd9b6a9,CH-4-2017007406,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
@@ -2565,17 +2563,18 @@ opp_score_98da3e51b4ea,CH-4-2021-2017008028,40.0,Watchlist,53,equipment demand; 
 opp_score_eb296870144f,CH-4-2021-2017008038,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_a6f830b14c5d,CH-4-2017006951,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_aeecb3c636eb,GB-CHC-285908-222931,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_c76fe30b330d,CH-4-2025-2025001855,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2028,No,intelligence
+opp_score_9cbf30d447f8,GB-GOV-1-301474,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q1 2028,No,intelligence
 opp_score_603e6703ccde,DE-1-202401107-8133,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q3 2027,No,intelligence
-opp_score_cdc3d3577375,SE-0-SE-6-14601,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q2 2027,No,intelligence
 opp_score_dbf1b782a00b,CH-4-2022-2017008286,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_b3d563bcec67,CH-4-2022-2017008292,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_6111134d903c,CH-4-2021-2017008026,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_6982210b335f,CH-4-2021-2017008039,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_cf7caa4fddd9,SE-0-SE-6-16958,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2027,No,intelligence
 opp_score_8a145d24a5e3,SE-0-SE-29-2021-05155_1,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,Yes,intelligence
-opp_score_45c8f9c4e0b0,SE-0-SE-2-92545,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q2 2027,No,intelligence
 opp_score_a7bc1d182c54,SE-0-SE-6-14642,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2027,No,intelligence
-opp_score_53d210483ede,DE-1-202506004-8404,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q2 2028,No,intelligence
+opp_score_45c8f9c4e0b0,SE-0-SE-2-92545,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q2 2027,No,intelligence
+opp_score_cdc3d3577375,SE-0-SE-6-14601,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q2 2027,No,intelligence
 opp_score_92fe271f2aac,CH-4-2022-2020001100,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_672bb8f34962,CH-4-2014005568,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_6dc2faf79bcc,CH-4-2014005283,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
@@ -2590,7 +2589,7 @@ opp_score_0d3a6424226a,CH-4-2022-2021000907,40.0,Watchlist,53,equipment demand; 
 opp_score_fd0abb220290,CH-4-2022-2021009478,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_a84696206541,CH-4-2023-2021009798,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_aba82aa2c494,CH-4-2023-2021009478,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_33c5a9fd7a72,SE-0-SE-6-17762,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2028,Yes,intelligence
+opp_score_53d210483ede,DE-1-202506004-8404,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q2 2028,No,intelligence
 opp_score_bd74707eb6d9,XM-DAC-3-1-238837-31674,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_bd0bee198b11,CH-4-2022-2017008287,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_33f3544603bb,CH-4-2022-2017008297,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
@@ -2600,6 +2599,7 @@ opp_score_e1d2678f01b9,CH-4-2013006038,40.0,Watchlist,53,equipment demand; activ
 opp_score_0c893fdd631d,CH-4-2021-2017008029,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_69e379a5ef8f,XI-IATI-EC_INTPA-2021-ACT-61110,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q3 2029,No,intelligence
 opp_score_25fedee9ab1d,CH-4-2023-2017008300,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_33c5a9fd7a72,SE-0-SE-6-17762,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2028,Yes,intelligence
 opp_score_dc6889aa27f0,DE-1-202506004-8223,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q2 2028,Yes,intelligence
 opp_score_9ce0a83b2c90,DE-1-202418671,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q2 2028,No,intelligence
 opp_score_041e24eae7f4,DE-1-202506004-8302,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q3 2028,No,intelligence
@@ -2629,16 +2629,16 @@ opp_score_65d39102ab20,GB-GOV-1-301196,40.0,Watchlist,53,equipment demand; activ
 opp_score_f9b019ee88e5,GB-CHC-1065972-EI120,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_9e4be6c40491,GB-CHC-1065972-EI117,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_35d0a6f0ec8f,DE-1-202506004-8279,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2028,No,intelligence
-opp_score_a38895ab237e,DE-1-202406007-8054,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2026,No,intelligence
-opp_score_9daba8252864,DE-1-202406007-8120,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q1 2027,No,intelligence
 opp_score_a890110b4116,CH-4-2021-2019008137,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_2ca8dfe63d9e,CH-4-2019007784,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_a38895ab237e,DE-1-202406007-8054,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2026,No,intelligence
+opp_score_9daba8252864,DE-1-202406007-8120,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q1 2027,No,intelligence
 opp_score_e1b815419221,XM-DAC-6-4-011755-03-0,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_602e6c3aa820,DE-1-202506004-8277,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q2 2029,No,intelligence
 opp_score_1c1084cdb721,CH-4-2012006422,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_31403971ee18,CH-4-2021-2010005944,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_5310e512c028,CH-4-2010005944,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_8ee53a3fe787,CH-4-2019000604,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_602e6c3aa820,DE-1-202506004-8277,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q2 2029,No,intelligence
 opp_score_6761d52a7fb6,CH-4-2013006126,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_14d87fdafc94,CH-4-2016003362,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_394f644c99a8,CH-4-2016003307,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
@@ -2647,8 +2647,8 @@ opp_score_22c9bd985bf5,CH-4-2015005485,40.0,Watchlist,53,equipment demand; activ
 opp_score_65118cd24ac0,XI-IATI-EC_INTPA-2026-PC-54190,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q1 2028,No,intelligence
 opp_score_f22a5713c443,XI-IATI-EC_INTPA-2023-ACT-61713,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q2 2032,No,intelligence
 opp_score_673042262aa9,XM-DAC-41114-PROJECT-00107701,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_8faa834bf0ad,XM-DAC-41114-PROJECT-00051355,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_9e59bb68472f,GB-UKPRN-10007790-CovidCollective,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_8faa834bf0ad,XM-DAC-41114-PROJECT-00051355,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_325fc164aa07,DE-1-202406007-8039,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q3 2027,No,intelligence
 opp_score_f5c1af0904b0,CH-4-2024-2024000323,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_bc812bbea788,CH-4-2023-2023001658,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
@@ -2669,8 +2669,8 @@ opp_score_29bb2895d8f9,XM-DAC-3-1-286907-35609,40.0,Watchlist,53,equipment deman
 opp_score_f877451b296c,XM-DAC-3-1-286907-35610,40.0,Watchlist,53,equipment demand; active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_e063391c76f1,XI-IATI-EC_INTPA-2022-ACT-60733,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q3 2032,No,intelligence
 opp_score_ffd6258e3b84,SE-0-SE-6-14832,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q3 2026,No,intelligence
-opp_score_57493b365ad4,SE-0-SE-6-17724,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2029,No,intelligence
 opp_score_5bd0f440f7f3,SE-0-SE-6-14108,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q3 2031,No,intelligence
+opp_score_57493b365ad4,SE-0-SE-6-17724,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q4 2029,No,intelligence
 opp_score_04b1bb582915,GB-GOV-1-300237,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q3 2026,No,intelligence
 opp_score_fb721e964e0f,SE-0-SE-6-14653,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q2 2028,No,intelligence
 opp_score_cb4f00a58d2a,GB-GOV-1-400450,40.0,Watchlist,53,equipment demand; active implementation,active implementation period,Active through Q1 2030,Yes,intelligence
@@ -3025,9 +3025,6 @@ opp_score_bb099b813cf0,CH-4-2022-2010006091,12.0,Long Range,44,active implementa
 opp_score_79b31588866d,CH-4-2022-2010006092,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_fc233f656c77,FI-3-2013-2008080053,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_565ea4b6f63f,FI-3-2024-2024240302,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_d86f525fc838,XM-DAC-69-2-2016000007,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_dd8aad304b22,XM-DAC-69-2-2012000090,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_1dd9c9da1523,BE-BCE_KBO-0418766123-prg2022-52-GO2024ITP261B122,12.0,Long Range,44,active implementation,active implementation period,Active through Q3 2027,No,intelligence
 opp_score_67f5bb282621,CH-4-2023-2010006093,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_1569ce4cd628,CH-4-2023-2010006094,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_9ffa3d206a3c,CH-4-2023-2010006095,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
@@ -3046,24 +3043,27 @@ opp_score_eb156a7fad18,CH-4-2022-2010006093,12.0,Long Range,44,active implementa
 opp_score_fa2709f609a0,CH-4-2022-2010006094,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_5fa4b9c1ce96,CH-4-2022-2010006095,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_0d1d92289f0d,CH-4-2022-2010006096,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_d86f525fc838,XM-DAC-69-2-2016000007,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_dd8aad304b22,XM-DAC-69-2-2012000090,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_1dd9c9da1523,BE-BCE_KBO-0418766123-prg2022-52-GO2024ITP261B122,12.0,Long Range,44,active implementation,active implementation period,Active through Q3 2027,No,intelligence
 opp_score_2e4ffce555de,GB-CHC-802353-NAPAN,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_065b8b99bb94,BE-BCE_KBO-0418766123-prg2022-36-BE2022ITP244A102,12.0,Long Range,44,active implementation,active implementation period,Active through Q3 2027,No,intelligence
 opp_score_87e3024c7e30,XI-IATI-UNPF-00124994,12.0,Long Range,44,active implementation,active implementation period,Active through Q4 2030,No,intelligence
-opp_score_9949e06d2dfc,XM-DAC-6-4-012316-01-0,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_93ac1796af4d,XI-IATI-UNPF-130571,12.0,Long Range,44,active implementation,active implementation period,Active through Q4 2030,No,intelligence
+opp_score_9949e06d2dfc,XM-DAC-6-4-012316-01-0,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_df883b7986f5,CH-4-2019002116,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_f78b0a2756c1,CH-4-2020002108,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_4d945c058037,SE-0-SE-6-17379,12.0,Long Range,44,active implementation,active implementation period,Active through Q2 2029,No,intelligence
 opp_score_aea00b9ab797,XM-DAC-69-18-2014000185,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_db4dee53905b,BE-BCE_KBO-0418766123-prg2022-182-CD2022TEA505A101,12.0,Long Range,44,active implementation,active implementation period,Active through Q3 2027,No,intelligence
-opp_score_4d945c058037,SE-0-SE-6-17379,12.0,Long Range,44,active implementation,active implementation period,Active through Q2 2029,No,intelligence
+opp_score_2f82af8d6eac,GB-CHC-1171353-GB-CHC-1171353-T-1001477121,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_6b3690d26d37,BE-BCE_KBO-0264814354-COD22024,12.0,Long Range,44,active implementation,active implementation period,Active through Q1 2028,No,intelligence
 opp_score_dc783fac41f2,BE-BCE_KBO-0264814354-COD22003,12.0,Long Range,44,active implementation,active implementation period,Active through Q1 2028,No,intelligence
 opp_score_06f200367649,BE-BCE_KBO-0264814354-COD22009,12.0,Long Range,44,active implementation,active implementation period,Active through Q1 2028,No,intelligence
 opp_score_24b3499133ea,US-EIN-13-5660870-ES103,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_2f82af8d6eac,GB-CHC-1171353-GB-CHC-1171353-T-1001477121,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_a3452718413e,BE-BCE_KBO-0418766123-prg2022-130-CD2023SIN372A101,12.0,Long Range,44,active implementation,active implementation period,Active through Q3 2027,No,intelligence
 opp_score_cdd60fe7b6f0,FI-3-2024-2024240149,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_ad4e367d66ae,FI-3-2022-2022220072,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_a3452718413e,BE-BCE_KBO-0418766123-prg2022-130-CD2023SIN372A101,12.0,Long Range,44,active implementation,active implementation period,Active through Q3 2027,No,intelligence
 opp_score_41deb7030ac1,SE-0-SE-6-17816,12.0,Long Range,44,active implementation,active implementation period,Active through Q4 2029,No,intelligence
 opp_score_1d95c1195163,CH-4-2019002115,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_1df69b4d5057,FR-6-ET-1625,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
@@ -3072,10 +3072,10 @@ opp_score_3a8aeb2aebbf,CH-4-2020002106,12.0,Long Range,44,active implementation,
 opp_score_daf121a9e9ea,GB-CHC-802353-GB-CHC-802353-HOL,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_9c2e6d64e767,GB-CHC-802353-HospiceEthiopia,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_c06b67f0b75f,GB-CHC-802353-GB-CHC-802353-WOH,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_de01dbbc48d4,CH-4-2014005512,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_00f45d8831d4,XM-DAC-69-2-2016000040,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_72cfe18fde5d,FI-3-2025-2025250316,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_a6ca07ca490d,FI-3-2021-2019190087,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_de01dbbc48d4,CH-4-2014005512,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_7d6a4c233719,GB-CHC-802353-APIDO,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_0eda2ad42dc3,CH-4-2016003296,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_3a45f87378c9,XM-DAC-41114-PROJECT-01002943,12.0,Long Range,44,active implementation,active implementation period,Active through Q4 2026,No,intelligence
@@ -3090,8 +3090,8 @@ opp_score_eb35c6d8874b,XI-IATI-EC_INTPA-2022-PCC-434161,12.0,Long Range,44,activ
 opp_score_74b5a5c6a33b,CH-4-2022-2020001207,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_c393ac028787,CH-4-2021-2020001207,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_e315cad1a55d,CH-4-2020001207,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_254a7c44057e,GB-UKPRN-10007790-ACORDS,12.0,Long Range,44,active implementation,active implementation period,Active through Q2 2028,No,intelligence
 opp_score_6787caf127ed,XI-IATI-UNPF-00082489,12.0,Long Range,44,active implementation,active implementation period,Active through Q4 2030,No,intelligence
+opp_score_254a7c44057e,GB-UKPRN-10007790-ACORDS,12.0,Long Range,44,active implementation,active implementation period,Active through Q2 2028,No,intelligence
 opp_score_45d4b0972164,CH-4-2019002120,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_7da36fdb3611,CH-4-2018001607,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_f83dd9ef7e31,CH-4-2019002112,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
@@ -3152,6 +3152,7 @@ opp_score_3470d7ddb392,061660068-VOT2110001Invoice6forDeliverable6,12.0,Long Ran
 opp_score_509beb8454e4,061660068-VOT2110001Invoice5forDeliverable5,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_b61bbe63a65d,US-EIN-061660068-VOT2110001Invoice4forDeliverable4,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_493b8a1f176a,DE-1-202574457,12.0,Long Range,44,active implementation,active implementation period,Active through Q2 2028,No,intelligence
+opp_score_26d01d196026,GB-UKPRN-10007790-EQUIRESP,12.0,Long Range,44,active implementation,active implementation period,Active through Q3 2028,No,intelligence
 opp_score_f6dd88dd5b86,CH-4-2018001619,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_9769ce0ec9bc,XI-IATI-UNPF-00127140,12.0,Long Range,44,active implementation,active implementation period,Active through Q4 2030,No,intelligence
 opp_score_d634253d59cb,XI-IATI-UNPF-127140,12.0,Long Range,44,active implementation,active implementation period,Active through Q4 2030,No,intelligence
@@ -3159,7 +3160,6 @@ opp_score_00ba8db852d6,XI-IATI-EC_INTPA-2018-PCC-397670,12.0,Long Range,44,activ
 opp_score_0f6a1d95c48d,XI-IATI-EC_INTPA-2019-PCC-413782,12.0,Long Range,44,active implementation,active implementation period,Active through Q4 2027,No,intelligence
 opp_score_aab39a84a5b3,XI-IATI-EC_INTPA-2016-ACT-D-38386-00,12.0,Long Range,44,active implementation,active implementation period,Active through Q4 2029,No,intelligence
 opp_score_8a4806d00b80,CH-4-2020002105,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_26d01d196026,GB-UKPRN-10007790-EQUIRESP,12.0,Long Range,44,active implementation,active implementation period,Active through Q3 2028,No,intelligence
 opp_score_bf580ea476c0,NL-KVK-41150085-OKP-ICP-104408,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_53004b00f9a6,XM-DAC-701-2-2020003063,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_e4b227315cda,XI-IATI-UNPF-124994,12.0,Long Range,44,active implementation,active implementation period,Active through Q4 2030,No,intelligence
@@ -3255,6 +3255,10 @@ opp_score_0f7da112747d,GB-GOV-1-300858,12.0,Long Range,44,active implementation,
 opp_score_e42c194331f6,DE-1-202518108,12.0,Long Range,44,active implementation,active implementation period,Active through Q2 2029,No,intelligence
 opp_score_ea05b4e2557c,CH-4-2024-2024000325,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_27d80d6f8049,CH-4-2024-2024000326,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_892e52b235b9,XM-DAC-3-1-195123-25184,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_7f78897d3e47,XM-DAC-3-1-195123-25185,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_b7e406318589,XM-DAC-3-1-195123-25186,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
+opp_score_83012d2a0008,XM-DAC-3-1-195123-30886,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_9c0981d04bf9,XM-DAC-3-1-251700-30347,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_06659a8103eb,XM-DAC-3-1-251700-30348,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_22b9533a8731,XM-DAC-3-1-251700-30349,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
@@ -3264,16 +3268,12 @@ opp_score_33a26778ce82,XM-DAC-3-1-251700-30355,12.0,Long Range,44,active impleme
 opp_score_9520e0a06f18,XM-DAC-3-1-251700-35023,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_da5a84d76b09,XM-DAC-3-1-251700-35182,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_7cc0083ccc13,XM-DAC-3-1-251700-35232,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_892e52b235b9,XM-DAC-3-1-195123-25184,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_7f78897d3e47,XM-DAC-3-1-195123-25185,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_b7e406318589,XM-DAC-3-1-195123-25186,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
-opp_score_83012d2a0008,XM-DAC-3-1-195123-30886,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_24c9585b14f7,NL-KVK-41193594-HHH9140-UG,12.0,Long Range,44,active implementation,active implementation period,Active through Q4 2029,No,intelligence
 opp_score_d565b94f1258,NL-KVK-41193594-HHH9120-ETH,12.0,Long Range,44,active implementation,active implementation period,Active through Q4 2029,No,intelligence
 opp_score_a3aa48013218,NL-KVK-41193594-HHH9130-KEN,12.0,Long Range,44,active implementation,active implementation period,Active through Q4 2029,No,intelligence
 opp_score_f80c2bcf65c7,XI-IATI-EC_INTPA-2018-ACT-D-40410-00,12.0,Long Range,44,active implementation,active implementation period,Active through Q4 2027,No,intelligence
-opp_score_5b609f851ca8,SE-0-SE-6-14586,12.0,Long Range,44,active implementation,active implementation period,Active through Q4 2028,No,intelligence
 opp_score_af36042e4df8,SE-0-SE-6-16963,12.0,Long Range,44,active implementation,active implementation period,Active through Q2 2029,No,intelligence
+opp_score_5b609f851ca8,SE-0-SE-6-14586,12.0,Long Range,44,active implementation,active implementation period,Active through Q4 2028,No,intelligence
 opp_score_8176a00667f2,XM-DAC-3-1-289215-37325,12.0,Long Range,44,active implementation,no future dated funding signal,Monitor,No,intelligence
 opp_score_12d324f26ee8,XM-DAC-47059-P22-0005,12.0,Long Range,44,active implementation,active implementation period,Active through Q4 2026,No,intelligence
 opp_score_f07a8639e3c3,SE-0-SE-6-14809,12.0,Long Range,44,active implementation,active implementation period,Active through Q1 2027,No,intelligence

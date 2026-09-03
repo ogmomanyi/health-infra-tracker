@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-09-02T11:03:23Z",
-  "as_of": "2026-09-02",
-  "source_generated_at": "2026-09-02T11:03:06Z",
+  "generated_at": "2026-09-03T11:00:46Z",
+  "as_of": "2026-09-03",
+  "source_generated_at": "2026-09-03T11:00:35Z",
   "pipeline_version": "3.2-project-detail-intelligence",
   "pipeline_layers": [
     {
@@ -65,25 +65,25 @@
     "raw": {},
     "normalized": {
       "activities": 3280,
-      "transactions": 70898,
-      "organisations": 17757
+      "transactions": 70903,
+      "organisations": 17768
     },
     "canonical": {
-      "organisation_entities": 2234,
-      "organisation_aliases": 17208,
+      "organisation_entities": 2242,
+      "organisation_aliases": 17221,
       "equipment_entities": 9,
       "manufacturer_entities": 5
     },
     "intelligence": {
       "opportunity_scores": 3280,
-      "organisation_intelligence": 2435,
+      "organisation_intelligence": 2444,
       "programme_intelligence": 3280,
       "donor_intelligence": 513
     },
     "commercial": {
-      "target_accounts": 2435,
-      "engagements": 2245,
-      "crm_notes": 2245,
+      "target_accounts": 2444,
+      "engagements": 2254,
+      "crm_notes": 2254,
       "recommended_actions": 2696
     },
     "predictive_product": {
@@ -96,23 +96,23 @@
     "projects": 3280,
     "active_projects": 2970,
     "pipeline_projects": 309,
-    "reported_budget": 78265326204.05,
+    "reported_budget": 78268414846.93,
     "future_disbursement": 37164203386.66,
-    "future_budget": 43154097370.35,
-    "procurement_signal_projects": 783,
-    "high_priority_opportunities": 783,
+    "future_budget": 43157186013.23,
+    "procurement_signal_projects": 782,
+    "high_priority_opportunities": 784,
     "donors": 513,
     "equipment_categories": 9,
     "tender_predictions": 1480,
-    "likely_procurement": 713,
-    "direct_equipment_projects": 684,
+    "likely_procurement": 712,
+    "direct_equipment_projects": 683,
     "countries": 145
   },
   "top_countries": [
     {
       "country_code": "KE",
       "country_name": "Kenya",
-      "project_count": 648
+      "project_count": 649
     },
     {
       "country_code": "ET",
@@ -137,12 +137,12 @@
     {
       "country_code": "UG",
       "country_name": "Uganda",
-      "project_count": 376
+      "project_count": 377
     },
     {
       "country_code": "SS",
       "country_name": "South Sudan",
-      "project_count": 303
+      "project_count": 302
     },
     {
       "country_code": "RW",
