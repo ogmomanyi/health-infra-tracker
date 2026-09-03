@@ -12,6 +12,7 @@ from procurement_intelligence.sources.afdb import normalize_notice_records, pars
 from procurement_intelligence.sources.rss import normalize_notices as normalize_rss_notices
 from procurement_intelligence.sources.undp import parse_notice_page as parse_undp_notice_page
 from procurement_intelligence.sources.world_bank import classify_equipment, fetch_notices, normalize_notices as normalize_world_bank_notices
+from procurement_intelligence.commercial import build_buyer_history
 
 
 class ProcurementIntelligenceTests(unittest.TestCase):
@@ -192,12 +193,37 @@ class ProcurementIntelligenceTests(unittest.TestCase):
             "project_reference": "P-1",
             "procurement_stage": "Invitation for Bids",
             "procurement_priority": "",
+            "opportunity_status": "",
+            "faram_relevance_score": 0.0,
+            "faram_relevance_reason": "",
         }
         event = build_events([notice], [])[0]
         self.assertEqual(event.opportunity_status, "ACTIVE_OPPORTUNITY")
         self.assertGreater(event.faram_relevance_score, 0)
         self.assertTrue(event.faram_relevance_reason)
         self.assertEqual(event.procurement_priority, "HIGH")
+
+    def test_buyer_history_normalizes_safe_alias_and_scores_account(self):
+        events = [
+            ProcurementEvent("p1", "World Bank", "", "RFB-1", "Supply of laboratory analyzers", "Kenya Medical Supplies Authority", "Kenya", "2026-08-01", "2026-10-01", "Laboratory Equipment", "Request for Bids", procurement_stage="Invitation for Bids", opportunity_status="ACTIVE_OPPORTUNITY", procurement_priority="HIGH", estimated_value=100000),
+            ProcurementEvent("p2", "World Bank", "", "AWD-1", "Supply of laboratory equipment", "KEMSA", "Kenya", "2026-07-01", "", "Laboratory Equipment", "Request for Bids", procurement_stage="Contract Award", opportunity_status="AWARD_HISTORY", procurement_priority="LOW", matched_iati_identifier="P-179698", match_status="CONFIRMED", estimated_value=200000),
+        ]
+        class FakeConn:
+            pass
+        rows = build_buyer_history(events, database=None, today=date(2026, 9, 3))
+        self.assertEqual(len(rows), 2)
+        self.assertEqual({row["buyer"] for row in rows}, {"Kenya Medical Supplies Authority", "KEMSA"})
+
+    def test_buyer_history_raw_grouping_is_deterministic(self):
+        events = [
+            ProcurementEvent("p1", "AfDB", "", "A-1", "Laboratory analyzer", "Ministry of Health", "Uganda", "2026-08-01", "", "Laboratory Equipment", "", opportunity_status="AWARD_HISTORY", procurement_priority="LOW"),
+            ProcurementEvent("p2", "AfDB", "", "A-2", "Laboratory analyzer", "Ministry of Health", "Uganda", "2026-08-02", "", "Laboratory Equipment", "", opportunity_status="AWARD_HISTORY", procurement_priority="LOW"),
+        ]
+        rows = build_buyer_history(events, database=None, today=date(2026, 9, 3))
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["event_count"], "2")
+        self.assertEqual(rows[0]["recurring_categories"], "Laboratory Equipment")
+        self.assertGreater(float(rows[0]["faram_account_score"]), 0)
 
 
 if __name__ == "__main__":
