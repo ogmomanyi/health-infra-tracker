@@ -43,12 +43,40 @@ def test_exact_world_bank_project_reference_is_confirmed():
     }
 
 
-def test_country_and_equipment_evidence_can_surface_a_possible_match():
+def test_embedded_world_bank_project_reference_is_confirmed():
+    result = match_event(
+        event(project_reference="P179698"),
+        [{"iati_identifier": "XI-IATI-WBTF-P179698", "project_title": "Unrelated title"}],
+    )
+    assert result == {
+        "matched_iati_identifier": "XI-IATI-WBTF-P179698",
+        "match_confidence": 100.0,
+        "match_status": "CONFIRMED",
+    }
+
+
+def test_country_and_equipment_only_is_not_overstated():
     result = match_event(
         event(),
         [{
             "iati_identifier": "XM-DAC-001",
             "project_title": "Kenya laboratory diagnostics strengthening",
+            "country_names": "Kenya",
+            "equipment_target_summary": "Laboratory Equipment; Diagnostics",
+            "funding_agencies": "Ministry of Health",
+        }],
+    )
+    assert result["matched_iati_identifier"] == ""
+    assert result["match_status"] == "UNMATCHED"
+    assert result["match_confidence"] < 65.0
+
+
+def test_country_and_equipment_evidence_with_strong_title_can_surface_a_match():
+    result = match_event(
+        event(title="Kenya laboratory diagnostics equipment procurement"),
+        [{
+            "iati_identifier": "XM-DAC-001",
+            "project_title": "Kenya laboratory diagnostics equipment programme",
             "country_names": "Kenya",
             "equipment_target_summary": "Laboratory Equipment; Diagnostics",
             "funding_agencies": "Ministry of Health",
@@ -76,7 +104,7 @@ def test_tied_candidates_are_not_forced_into_a_match():
             "funding_agencies": "",
         },
     ]
-    result = match_event(event(), projects)
+    result = match_event(event(title="Kenya laboratory diagnostics programme"), projects)
     assert result["matched_iati_identifier"] == ""
     assert result["match_status"] == "UNMATCHED"
     assert result["match_confidence"] >= 65.0
