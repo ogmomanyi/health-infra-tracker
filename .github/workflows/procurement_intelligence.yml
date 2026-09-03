@@ -105,6 +105,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_faram_product_matching.py' -v
           python -m unittest discover -s tests -p 'test_historical_quote_intelligence.py' -v
           python -m unittest discover -s tests -p 'test_commercial_memory.py' -v
+          python -m unittest discover -s tests -p 'test_account_commercial_memory.py' -v
 
       - name: Commit refreshed procurement data
         run: |
