@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Iterable
 
 MEMORY_FIELDS = ["memory_id","evidence_id","event_date","supplier_company","supplier_email","manufacturer_name","product_family","product_name","model","category","evidence_type","country","customer_or_project","outcome","evidence_strength","representation_signal","source_email_id","notes"]
+_ENRICHMENT_FIELDS = ["evidence_id","event_date","country","customer_or_project","outcome_override","representation_signal_override","notes_override"]
 _WEIGHTS = {"quotation_and_tender_support":4,"tender_fit_and_pricing":4,"order_and_business_review":5,"quotation":3,"quotation_inquiry":3,"tender_compliance_and_quotation":4,"quotation_and_technical_support":3,"tender_support":3,"tender_bid_support":3,"market_evaluation_and_pricing":2,"partnership_and_tender_support":2,"project_inquiry":2,"procurement_inquiry":2,"request_for_pricing":2,"quotation_and_partnership":3,"quotation_follow_up":3,"tender_or_product_pricing":3}
 _EXPLICIT_OUTCOMES = {"order_and_business_review":"ORDERED","quotation":"QUOTED","quotation_inquiry":"INQUIRY","quotation_and_tender_support":"TENDER_SUPPORT","quotation_and_technical_support":"QUOTED","quotation_and_compliance":"QUOTED","tender_fit_and_pricing":"TENDER_SUPPORT","tender_compliance_and_quotation":"TENDER_SUPPORT","tender_support":"TENDER_SUPPORT","tender_bid_support":"TENDER_SUPPORT","partnership_and_tender_support":"TENDER_SUPPORT","tender_or_product_pricing":"QUOTED","request_for_pricing":"INQUIRY","quotation_follow_up":"QUOTED","quotation_and_partnership":"QUOTED"}
 
@@ -29,22 +30,56 @@ def _signal(row):
     if any(t in et for t in ("quotation","tender","rfq","request for pricing","procurement")): return "ACTIVE_COMMERCIAL"
     return "MARKET_EXPLORATION"
 def _strength(weight): return "HIGH" if weight >= 5 else "MEDIUM" if weight >= 2 else "LOW"
+
 def load_evidence(path: Path):
     if not path.exists(): return []
     with path.open(newline="",encoding="utf-8") as handle: return list(csv.DictReader(handle))
-def normalize_evidence(rows: Iterable[dict[str,str]]):
+
+def load_enrichment(path: Path):
+    if not path.exists(): return {}
+    with path.open(newline="",encoding="utf-8") as handle:
+        return {_text(r.get("evidence_id")): r for r in csv.DictReader(handle) if _text(r.get("evidence_id"))}
+
+def normalize_evidence(rows: Iterable[dict[str,str]], enrichment: dict[str,dict[str,str]] | None = None):
+    enrichment = enrichment or {}
     result=[]
-    for index,row in enumerate(rows,1):
+    for row in rows:
         evidence_id=_text(row.get("evidence_id"))
         if not evidence_id: continue
+        extra=enrichment.get(evidence_id,{})
         weight=_WEIGHTS.get(normalize(row.get("evidence_type")).replace(" ","_"),1)
-        result.append({"memory_id":f"FCM-{index:04d}","evidence_id":evidence_id,"event_date":_text(row.get("event_date")),"supplier_company":_supplier_company(_text(row.get("supplier_email"))),"supplier_email":_text(row.get("supplier_email")),"manufacturer_name":_text(row.get("manufacturer_name")),"product_family":_text(row.get("product_family")),"product_name":_text(row.get("product_name")),"model":_text(row.get("model")),"category":_text(row.get("category")),"evidence_type":_text(row.get("evidence_type")),"country":_text(row.get("country")),"customer_or_project":_text(row.get("customer_or_project")),"outcome":_outcome(row),"evidence_strength":_strength(weight),"representation_signal":_signal(row),"source_email_id":_text(row.get("source_email_id")),"notes":_text(row.get("notes"))})
+        outcome=_text(extra.get("outcome_override")) or _outcome(row)
+        signal=_text(extra.get("representation_signal_override")) or _signal(row)
+        notes=_text(row.get("notes"))
+        if _text(extra.get("notes_override")): notes=f"{notes} {_text(extra.get('notes_override'))}".strip()
+        result.append({
+            "memory_id":f"FCM-{evidence_id}",
+            "evidence_id":evidence_id,
+            "event_date":_text(extra.get("event_date")) or _text(row.get("event_date")),
+            "supplier_company":_supplier_company(_text(row.get("supplier_email"))),
+            "supplier_email":_text(row.get("supplier_email")),
+            "manufacturer_name":_text(row.get("manufacturer_name")),
+            "product_family":_text(row.get("product_family")),
+            "product_name":_text(row.get("product_name")),
+            "model":_text(row.get("model")),
+            "category":_text(row.get("category")),
+            "evidence_type":_text(row.get("evidence_type")),
+            "country":_text(extra.get("country")) or _text(row.get("country")),
+            "customer_or_project":_text(extra.get("customer_or_project")) or _text(row.get("customer_or_project")),
+            "outcome":outcome,
+            "evidence_strength":_strength(weight),
+            "representation_signal":signal,
+            "source_email_id":_text(row.get("source_email_id")),
+            "notes":notes,
+        })
     return result
-def write_memory(path: Path, rows):
-    normalized=normalize_evidence(rows); path.parent.mkdir(parents=True,exist_ok=True)
+
+def write_memory(path: Path, rows, enrichment=None):
+    normalized=normalize_evidence(rows,enrichment); path.parent.mkdir(parents=True,exist_ok=True)
     with path.open("w",newline="",encoding="utf-8") as handle:
         writer=csv.DictWriter(handle,fieldnames=MEMORY_FIELDS); writer.writeheader(); writer.writerows(normalized)
     return len(normalized)
+
 def build_summary(memory_rows, catalogue_rows=()):
     groups=defaultdict(list)
     for row in memory_rows:
@@ -62,13 +97,15 @@ def build_summary(memory_rows, catalogue_rows=()):
         strongest=max(items,key=lambda r:rank.get(_text(r.get("evidence_strength")),0),default={})
         summary.append({"manufacturer_name":manufacturer,"product_family":family,"product_name":product,"model":model,"supplier_count":str(len(suppliers)),"evidence_count":str(len(items)),"latest_event_date":max(dates).date().isoformat() if dates else "","strongest_evidence":_text(strongest.get("evidence_type")),"commercial_familiarity_score":str(min(10,sum(rank.get(_text(r.get("evidence_strength")),1) for r in items))),"current_catalogue_status":"CATALOGUE_MATCH" if (normalize(manufacturer),normalize(family)) in active_keys else "NOT_FOUND"})
     return sorted(summary,key=lambda r:(-int(r["commercial_familiarity_score"]),r["manufacturer_name"].lower(),r["product_family"].lower()))
+
 def write_summary(path: Path,memory_rows,catalogue_rows=()):
     fields=["manufacturer_name","product_family","product_name","model","supplier_count","evidence_count","latest_event_date","strongest_evidence","commercial_familiarity_score","current_catalogue_status"]; rows=build_summary(memory_rows,catalogue_rows); path.parent.mkdir(parents=True,exist_ok=True)
     with path.open("w",newline="",encoding="utf-8") as handle:
         writer=csv.DictWriter(handle,fieldnames=fields); writer.writeheader(); writer.writerows(rows)
     return len(rows)
+
 def main():
     import argparse
-    p=argparse.ArgumentParser(); p.add_argument("--evidence",default="data/faram_historical_quote_evidence.csv"); p.add_argument("--catalogue",default="data/faram_product_catalogue.csv"); p.add_argument("--output",default="data/faram_commercial_memory.csv"); p.add_argument("--summary",default="data/faram_commercial_memory_summary.csv"); a=p.parse_args()
-    evidence=load_evidence(Path(a.evidence)); catalogue=load_evidence(Path(a.catalogue)); count=write_memory(Path(a.output),evidence); memory=load_evidence(Path(a.output)); summary=write_summary(Path(a.summary),memory,catalogue); print(f"Faram commercial memory completed: {count} events; {summary} grouped records")
+    p=argparse.ArgumentParser(); p.add_argument("--evidence",default="data/faram_historical_quote_evidence.csv"); p.add_argument("--enrichment",default="data/faram_commercial_memory_enrichment.csv"); p.add_argument("--catalogue",default="data/faram_product_catalogue.csv"); p.add_argument("--output",default="data/faram_commercial_memory.csv"); p.add_argument("--summary",default="data/faram_commercial_memory_summary.csv"); a=p.parse_args()
+    evidence=load_evidence(Path(a.evidence)); enrichment=load_enrichment(Path(a.enrichment)); catalogue=load_evidence(Path(a.catalogue)); count=write_memory(Path(a.output),evidence,enrichment); memory=load_evidence(Path(a.output)); summary=write_summary(Path(a.summary),memory,catalogue); print(f"Faram commercial memory completed: {count} events; {summary} grouped records; {len(enrichment)} enrichment records")
 if __name__ == "__main__": main()
