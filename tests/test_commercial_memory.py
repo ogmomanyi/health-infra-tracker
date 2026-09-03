@@ -14,10 +14,36 @@ class CommercialMemoryTests(unittest.TestCase):
         }]
         result = normalize_evidence(rows)
         self.assertEqual(len(result), 1)
+        self.assertEqual(result[0]["memory_id"], "FCM-HQE-023")
         self.assertEqual(result[0]["supplier_company"], "Thermo Fisher Scientific")
         self.assertEqual(result[0]["outcome"], "ORDERED")
         self.assertEqual(result[0]["evidence_strength"], "HIGH")
         self.assertEqual(result[0]["representation_signal"], "TRANSACTIONAL")
+
+    def test_inquiry_outcomes_are_distinct_from_quotes(self):
+        rows = normalize_evidence([
+            {"evidence_id": "HQE-I1", "evidence_type": "quotation_inquiry"},
+            {"evidence_id": "HQE-I2", "evidence_type": "request_for_pricing"},
+            {"evidence_id": "HQE-Q1", "evidence_type": "quotation"},
+        ])
+        self.assertEqual(rows[0]["outcome"], "INQUIRY")
+        self.assertEqual(rows[1]["outcome"], "INQUIRY")
+        self.assertEqual(rows[2]["outcome"], "QUOTED")
+
+    def test_enrichment_overrides_missing_event_fields_without_mutating_source_row(self):
+        source = {"evidence_id": "HQE-016", "evidence_type": "tender_fit_and_pricing", "supplier_email": "viktoria.rumjantseva@moldev.com"}
+        enriched = normalize_evidence([source], {"HQE-016": {
+            "evidence_id": "HQE-016", "event_date": "2026-07-03", "country": "KE",
+            "customer_or_project": "Kenya laboratory tender", "outcome_override": "TENDER_SUPPORT",
+            "representation_signal_override": "ACTIVE_COMMERCIAL", "notes_override": "Verified from Outlook evidence",
+        }})
+        self.assertEqual(enriched[0]["memory_id"], "FCM-HQE-016")
+        self.assertEqual(enriched[0]["event_date"], "2026-07-03")
+        self.assertEqual(enriched[0]["country"], "KE")
+        self.assertEqual(enriched[0]["customer_or_project"], "Kenya laboratory tender")
+        self.assertEqual(enriched[0]["outcome"], "TENDER_SUPPORT")
+        self.assertEqual(enriched[0]["notes"], "Verified from Outlook evidence")
+        self.assertNotIn("event_date", source)
 
     def test_external_and_competitive_evidence_do_not_enter_summary(self):
         rows = normalize_evidence([
