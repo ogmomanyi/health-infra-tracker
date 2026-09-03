@@ -167,6 +167,7 @@ def main() -> None:
     parser.add_argument("--output", default="data/procurement_events.csv")
     parser.add_argument("--projects", default="data/opportunities.csv")
     parser.add_argument("--database", default="data/iati_intelligence.db")
+    parser.add_argument("--buyer-output", default="data/procurement_buyer_history.csv")
     parser.add_argument("--source", choices=["fixture", "world_bank", "rss", "afdb", "undp", "all"], default="fixture")
     parser.add_argument("--country", action="append", dest="countries", help="World Bank ISO country code; repeatable.")
     parser.add_argument("--feed-url", help="Official RSS/Atom feed URL when --source=rss or --source=afdb.")
@@ -261,9 +262,18 @@ def main() -> None:
 
     write_events(Path(args.output), events)
     persist_events(Path(args.database), events)
+
+    from .commercial import write_buyer_history
+    buyer_count = write_buyer_history(
+        Path(args.buyer_output),
+        events,
+        database=Path(args.database),
+    )
+
     matched = sum(event.match_status in {"POSSIBLE", "CONFIRMED"} for event in events)
     confirmed = sum(event.match_status == "CONFIRMED" for event in events)
     print(f"Procurement intelligence pipeline completed: {len(events)} events, {matched} matched, {confirmed} confirmed")
+    print(f"Buyer intelligence generated: {buyer_count} buyer accounts")
 
 
 if __name__ == "__main__":
