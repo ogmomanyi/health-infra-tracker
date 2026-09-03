@@ -85,6 +85,7 @@ jobs:
         run: |
           python -m procurement_intelligence.commercial_memory \
             --evidence data/faram_historical_quote_evidence.csv \
+            --enrichment data/faram_commercial_memory_enrichment.csv \
             --catalogue data/faram_product_catalogue.csv \
             --output data/faram_commercial_memory.csv \
             --summary data/faram_commercial_memory_summary.csv
