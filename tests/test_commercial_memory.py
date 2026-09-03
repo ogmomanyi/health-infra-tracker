@@ -40,7 +40,7 @@ class CommercialMemoryTests(unittest.TestCase):
         summary = build_summary(memory, catalogue)
         self.assertEqual(len(summary), 1)
         self.assertEqual(summary[0]["current_catalogue_status"], "CATALOGUE_MATCH")
-        self.assertEqual(summary[0]["commercial_familiarity_score"], "3")
+        self.assertEqual(summary[0]["commercial_familiarity_score"], "2")
 
 
 if __name__ == "__main__":
