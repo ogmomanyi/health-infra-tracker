@@ -14,8 +14,7 @@ _COUNTRY_ALIASES = {
 
 def _tokens(value):
     return {
-        token
-        for token in re.findall(r"[a-z0-9]+", (value or "").lower())
+        token for token in re.findall(r"[a-z0-9]+", (value or "").lower())
         if token not in _STOPWORDS
     }
 
@@ -68,14 +67,26 @@ def _project_text(project):
 def _buyer_text(project):
     return " ".join(str(project.get(field, "") or "") for field in (
         "funding_agencies", "implementing_agencies", "implementing_agency",
-        "organisations", "organisation_name", "buyer", "client",
+        "implementing_partners", "organisations", "organisation_name", "buyer", "client",
     ))
 
 
 def _exact_project_reference(event, project):
     reference = (getattr(event, "project_reference", "") or "").strip().lower()
+    if not reference:
+        return False
+
+    for field in ("project_reference", "project_id", "reference", "activity_ref", "external_project_id", "programme_reference"):
+        candidate = (project.get(field, "") or "").strip().lower()
+        if candidate == reference:
+            return True
+        if candidate and re.search(rf"(?:^|[-_/]){re.escape(reference)}(?:$|[-_/])", candidate):
+            return True
+
     identifier = (project.get("iati_identifier", "") or "").strip().lower()
-    return bool(reference and identifier and reference == identifier)
+    if identifier == reference:
+        return True
+    return bool(identifier and re.search(rf"(?:^|[-_/]){re.escape(reference)}(?:$|[-_/])", identifier))
 
 
 def match_event(event, projects, threshold=65.0):
@@ -86,7 +97,6 @@ def match_event(event, projects, threshold=65.0):
             if project.get("iati_identifier") == explicit_iati:
                 return {"matched_iati_identifier": explicit_iati, "match_confidence": 100.0, "match_status": "CONFIRMED"}
 
-    # World Bank and similar sources often expose the project ID directly.
     for project in projects:
         if _exact_project_reference(event, project):
             identifier = project.get("iati_identifier", "")
@@ -117,19 +127,10 @@ def match_event(event, projects, threshold=65.0):
             second = candidate
 
     if not best or best["score"] < threshold:
-        return {
-            "matched_iati_identifier": "",
-            "match_confidence": best["score"] if best else 0.0,
-            "match_status": "UNMATCHED",
-        }
+        return {"matched_iati_identifier": "", "match_confidence": best["score"] if best else 0.0, "match_status": "UNMATCHED"}
 
-    # Do not force a match where two IATI projects are effectively tied.
     if second and best["score"] - second["score"] < 5.0:
-        return {
-            "matched_iati_identifier": "",
-            "match_confidence": best["score"],
-            "match_status": "UNMATCHED",
-        }
+        return {"matched_iati_identifier": "", "match_confidence": best["score"], "match_status": "UNMATCHED"}
 
     return {
         "matched_iati_identifier": best["iati_identifier"],
