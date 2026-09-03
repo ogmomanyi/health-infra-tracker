@@ -17,10 +17,13 @@ from organisation_resolution.database_resolver import (
     load_candidates,
     resolve_source_record,
 )
+from procurement_intelligence.historical_quote_intelligence import load_evidence
+from procurement_intelligence.historical_scoring import apply_historical_familiarity
 
 
 builder = importlib.import_module("intelligence_builder")
 DB = Path("data/iati_intelligence.db")
+HISTORICAL_EVIDENCE = load_evidence(Path("data/faram_historical_quote_evidence.csv"))
 
 
 def canonical_map():
@@ -279,6 +282,17 @@ def sync_summary_counts(path, counts):
 
     with path.open("w", encoding="utf-8") as handle:
         json.dump(summary, handle, indent=2, ensure_ascii=False)
+
+
+_original_score_opportunity = builder.score_opportunity
+
+
+def score_opportunity_with_history(row, as_of):
+    base_result = _original_score_opportunity(row, as_of)
+    return apply_historical_familiarity(row, base_result, HISTORICAL_EVIDENCE)
+
+
+builder.score_opportunity = score_opportunity_with_history
 
 
 def main():
