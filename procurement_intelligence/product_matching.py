@@ -92,9 +92,8 @@ def match_product_family(text: str) -> tuple[str, str, str]:
     for family, patterns, category in PRODUCT_FAMILIES:
         matched = [pattern for pattern in patterns if _contains(text, pattern)]
         if matched:
-            # Prefer the longest explicit phrase, then the family's catalogue order.
             strongest = max(matched, key=len)
-            hits.append((len(strongest)), len(matched), family, category, strongest)
+            hits.append((len(strongest), len(matched), family, category, strongest))
 
     if not hits:
         return "", "", ""
@@ -173,15 +172,14 @@ def match_events(
         else:
             match_status = "UNMATCHED"
 
-        recommended_action = ""
         if family and explicit_manufacturers:
-            recommended_action = "Verify manufacturer authorization, tender compliance and Faram route-to-market." 
+            recommended_action = "Verify manufacturer authorization, tender compliance and Faram route-to-market."
         elif family:
-            recommended_action = "Identify compliant principal/manufacturer and validate tender specifications." 
+            recommended_action = "Identify compliant principal/manufacturer and validate tender specifications."
         elif explicit_manufacturers:
-            recommended_action = "Assess the named manufacturer's product fit and potential Faram representation route." 
+            recommended_action = "Assess the named manufacturer's product fit and potential Faram representation route."
         else:
-            recommended_action = "Retain as unclassified procurement demand; improve notice specification evidence." 
+            recommended_action = "Retain as unclassified procurement demand; improve notice specification evidence."
 
         results.append({
             "procurement_event_id": _text(event.get("procurement_event_id")),
