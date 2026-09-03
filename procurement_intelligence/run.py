@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run external procurement intelligence against IATI opportunities."""
+"""Run external procurement intelligence against normalized IATI activities."""
 
 from __future__ import annotations
 import argparse
@@ -10,6 +10,7 @@ from .ingest import read_events, write_events
 from .matcher import match_event
 from .pipeline import load_events, merge_events, persist_events
 from .schema import ProcurementEvent
+from .iati_candidates import load_iati_candidates
 
 FARAM_COUNTRIES = {"Kenya", "Uganda", "Rwanda", "Ethiopia", "Somalia", "South Sudan", "Congo, Democratic Republic of the"}
 ACTIVE_STAGES = (
@@ -29,11 +30,16 @@ FARAM_KEYWORDS = (
 )
 
 
-def load_projects(path: Path) -> list[dict]:
-    if not path.exists():
-        return []
-    with path.open(newline="", encoding="utf-8") as handle:
-        return list(csv.DictReader(handle))
+def load_projects(path: Path, database: Path | None = None) -> list[dict]:
+    """Load an explicit project CSV, falling back to normalized IATI activities."""
+    if path.exists():
+        with path.open(newline="", encoding="utf-8") as handle:
+            projects = list(csv.DictReader(handle))
+        if projects:
+            return projects
+    if database is not None:
+        return load_iati_candidates(database)
+    return []
 
 
 def _date(value: str) -> date | None:
@@ -241,7 +247,9 @@ def main() -> None:
     if not notices and args.source == "all" and source_successes == 0:
         raise RuntimeError("All external procurement sources failed; refusing to overwrite the existing dataset.")
 
-    fresh_events = build_events(notices, load_projects(Path(args.projects)))
+    projects = load_projects(Path(args.projects), Path(args.database))
+    print(f"IATI matching candidates loaded: {len(projects)}")
+    fresh_events = build_events(notices, projects)
     if args.source == "all":
         existing_events = [
             event for event in load_events(Path(args.output))
