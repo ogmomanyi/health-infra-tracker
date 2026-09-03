@@ -68,6 +68,13 @@ jobs:
             --manufacturer-entities data/manufacturer_entities.csv \
             --output data/procurement_product_matches.csv
 
+      - name: Match procurement demand against Faram catalogue
+        run: |
+          python -m procurement_intelligence.faram_product_matching \
+            --procurement-matches data/procurement_product_matches.csv \
+            --catalogue data/faram_product_catalogue.csv \
+            --output data/faram_product_matches.csv
+
       - name: Validate tender predictions
         run: |
           python -m procurement_intelligence.tender_validation \
@@ -80,6 +87,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_*procurement*.py' -v
           python -m unittest discover -s tests -p 'test_tender_validation.py' -v
           python -m unittest discover -s tests -p 'test_product_matching.py' -v
+          python -m unittest discover -s tests -p 'test_faram_product_matching.py' -v
 
       - name: Commit refreshed procurement data
         run: |
@@ -92,6 +100,7 @@ jobs:
           # small race between the last fetch and the push.
           cp data/procurement_events.csv /tmp/procurement_events.csv
           cp data/procurement_product_matches.csv /tmp/procurement_product_matches.csv
+          cp data/faram_product_matches.csv /tmp/faram_product_matches.csv
           cp data/tender_prediction_validation.csv /tmp/tender_prediction_validation.csv
           cp data/iati_intelligence.db /tmp/iati_intelligence.db
 
@@ -100,9 +109,10 @@ jobs:
             git reset --hard origin/main
             cp /tmp/procurement_events.csv data/procurement_events.csv
             cp /tmp/procurement_product_matches.csv data/procurement_product_matches.csv
+            cp /tmp/faram_product_matches.csv data/faram_product_matches.csv
             cp /tmp/tender_prediction_validation.csv data/tender_prediction_validation.csv
             cp /tmp/iati_intelligence.db data/iati_intelligence.db
-            git add data/procurement_events.csv data/procurement_product_matches.csv data/tender_prediction_validation.csv data/iati_intelligence.db
+            git add data/procurement_events.csv data/procurement_product_matches.csv data/faram_product_matches.csv data/tender_prediction_validation.csv data/iati_intelligence.db
 
             if git diff --cached --quiet; then
               echo "No procurement data changes to commit."
