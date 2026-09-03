@@ -8,6 +8,10 @@ on:
     - cron: "17 */6 * * *"
   workflow_dispatch:
 
+concurrency:
+  group: external-procurement-refresh
+  cancel-in-progress: false
+
 permissions:
   contents: write
 
@@ -70,14 +74,16 @@ jobs:
           # stays at the newest main revision. Retry the final push to close the
           # small race between the last fetch and the push.
           cp data/procurement_events.csv /tmp/procurement_events.csv
+          cp data/procurement_buyer_history.csv /tmp/procurement_buyer_history.csv
           cp data/iati_intelligence.db /tmp/iati_intelligence.db
 
           for attempt in 1 2 3 4 5; do
             git fetch origin main
             git reset --hard origin/main
             cp /tmp/procurement_events.csv data/procurement_events.csv
+            cp /tmp/procurement_buyer_history.csv data/procurement_buyer_history.csv
             cp /tmp/iati_intelligence.db data/iati_intelligence.db
-            git add data/procurement_events.csv data/iati_intelligence.db
+            git add data/procurement_events.csv data/procurement_buyer_history.csv data/iati_intelligence.db
 
             if git diff --cached --quiet; then
               echo "No procurement data changes to commit."
