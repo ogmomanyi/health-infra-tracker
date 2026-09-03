@@ -70,9 +70,6 @@ def load_evidence(path: Path) -> list[dict[str, str]]:
 def build_summary(rows: Iterable[dict[str, str]]) -> list[dict[str, str]]:
     groups: dict[tuple[str, str, str, str], list[dict[str, str]]] = defaultdict(list)
     for row in rows:
-        # External procurement requests are demand evidence, not historical
-        # Faram quotation evidence. Keep them available in the raw evidence file
-        # but exclude them from the familiarity summary.
         if _text(row.get("evidence_id")) == "HQE-005":
             continue
         key = (
@@ -87,7 +84,13 @@ def build_summary(rows: Iterable[dict[str, str]]) -> list[dict[str, str]]:
     for (family, product, manufacturer, model), items in groups.items():
         suppliers = {normalize(item.get("supplier_email")) for item in items if _text(item.get("supplier_email"))}
         weight = sum(_EVIDENCE_WEIGHTS.get(normalize(item.get("evidence_type")), 1) for item in items)
-        strength = "HIGH" if weight >= 7 or len(items) >= 3 else "MEDIUM" if weight >= 3 else "LOW"
+        strength = (
+            "HIGH"
+            if weight >= 7 or len(items) >= 3 or (len(items) >= 2 and len(suppliers) >= 2)
+            else "MEDIUM"
+            if weight >= 3
+            else "LOW"
+        )
         summary.append({
             "product_family": family,
             "product_name": product,
@@ -120,12 +123,7 @@ def familiarity_match(
     manufacturer_mentions: object,
     evidence_rows: Iterable[dict[str, str]],
 ) -> dict[str, object]:
-    """Score explicit overlap between an opportunity and historical Faram evidence.
-
-    Scores are intentionally small and additive. No match is inferred from a
-    manufacturer/category relationship unless the relevant term is explicitly
-    present in the opportunity text.
-    """
+    """Score explicit overlap between an opportunity and historical Faram evidence."""
     opportunity_text = f"{_text(project_title)} {_text(description)} {_text(manufacturer_mentions)}"
     opportunity_family = normalize(product_family)
     candidates: list[tuple[int, dict[str, str], list[str]]] = []
@@ -165,9 +163,8 @@ def familiarity_match(
             "historical_evidence_ids": "",
         }
 
-    # Repeated records strengthen confidence, but the overall contribution is capped.
     candidates.sort(key=lambda item: item[0], reverse=True)
-    best_score, best_row, best_evidence = candidates[0]
+    best_score, _, best_evidence = candidates[0]
     repeat_bonus = min(3, max(0, len(candidates) - 1))
     familiarity = min(10.0, float(best_score + repeat_bonus))
 
@@ -207,12 +204,10 @@ def enrich_opportunity(row: dict[str, object], evidence_rows: Iterable[dict[str,
 
 def main() -> None:
     import argparse
-
     parser = argparse.ArgumentParser(description="Summarize historical Faram quotation evidence.")
     parser.add_argument("--evidence", default="data/faram_historical_quote_evidence.csv")
     parser.add_argument("--output", default="data/faram_historical_quote_summary.csv")
     args = parser.parse_args()
-
     rows = load_evidence(Path(args.evidence))
     count = write_summary(Path(args.output), rows)
     print(f"Historical quote summary completed: {count} grouped records")
