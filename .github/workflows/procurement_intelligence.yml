@@ -68,6 +68,9 @@ jobs:
       - name: Build commercial action queue
         run: python -m procurement_intelligence.commercial_action_queue --priority data/commercial_account_priority.csv --output data/commercial_action_queue.csv
 
+      - name: Build commercial opportunity workspace
+        run: python -m procurement_intelligence.commercial_opportunity_workspace --actions data/commercial_action_queue.csv --events data/procurement_events.csv --output data/commercial_opportunity_workspace.csv
+
       - name: Validate tender predictions
         run: python -m procurement_intelligence.tender_validation --predictions data/tender_predictions.csv --events data/procurement_events.csv --output data/tender_prediction_validation.csv
 
@@ -83,6 +86,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_buyer_intelligence.py' -v
           python -m unittest discover -s tests -p 'test_commercial_account_priority.py' -v
           python -m unittest discover -s tests -p 'test_commercial_action_queue.py' -v
+          python -m unittest discover -s tests -p 'test_commercial_opportunity_workspace.py' -v
 
       - name: Commit refreshed procurement data
         run: |
@@ -98,6 +102,7 @@ jobs:
           cp data/faram_account_commercial_memory.csv /tmp/faram_account_commercial_memory.csv
           cp data/commercial_account_priority.csv /tmp/commercial_account_priority.csv
           cp data/commercial_action_queue.csv /tmp/commercial_action_queue.csv
+          cp data/commercial_opportunity_workspace.csv /tmp/commercial_opportunity_workspace.csv
           cp data/tender_prediction_validation.csv /tmp/tender_prediction_validation.csv
           cp data/iati_intelligence.db /tmp/iati_intelligence.db
           for attempt in 1 2 3 4 5; do
@@ -113,9 +118,10 @@ jobs:
             cp /tmp/faram_account_commercial_memory.csv data/faram_account_commercial_memory.csv
             cp /tmp/commercial_account_priority.csv data/commercial_account_priority.csv
             cp /tmp/commercial_action_queue.csv data/commercial_action_queue.csv
+            cp /tmp/commercial_opportunity_workspace.csv data/commercial_opportunity_workspace.csv
             cp /tmp/tender_prediction_validation.csv data/tender_prediction_validation.csv
             cp /tmp/iati_intelligence.db data/iati_intelligence.db
-            git add data/procurement_events.csv data/procurement_buyer_history.csv data/procurement_product_matches.csv data/faram_product_matches.csv data/faram_historical_quote_summary.csv data/faram_commercial_memory.csv data/faram_commercial_memory_summary.csv data/faram_account_commercial_memory.csv data/commercial_account_priority.csv data/commercial_action_queue.csv data/tender_prediction_validation.csv data/iati_intelligence.db
+            git add data/procurement_events.csv data/procurement_buyer_history.csv data/procurement_product_matches.csv data/faram_product_matches.csv data/faram_historical_quote_summary.csv data/faram_commercial_memory.csv data/faram_commercial_memory_summary.csv data/faram_account_commercial_memory.csv data/commercial_account_priority.csv data/commercial_action_queue.csv data/commercial_opportunity_workspace.csv data/tender_prediction_validation.csv data/iati_intelligence.db
             if git diff --cached --quiet; then echo "No procurement data changes to commit."; exit 0; fi
             git commit -m "Automated external procurement refresh"
             if git push origin HEAD:main; then echo "Procurement refresh pushed successfully on attempt $attempt."; exit 0; fi
