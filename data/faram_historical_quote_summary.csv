@@ -1,0 +1,28 @@
+product_family,product_name,manufacturer_name,model,historical_quote_count,supplier_count,evidence_strength,source_evidence_ids,historical_status
+Analyzer,ESCHWEILER Combi Line 2 Analyzer,ESCHWEILER,Combi Line 2 Analyzer,1,1,LOW,HQE-008,HISTORICAL_COMMERCIAL_EVIDENCE
+Autoclave / Sterilizer,Autoclaves,Midmark / Newmed,,1,1,LOW,HQE-002,HISTORICAL_COMMERCIAL_EVIDENCE
+Autoclave / Sterilizer,Gas Plasma Sterilizer,SHINVA,,1,1,LOW,HQE-003,HISTORICAL_COMMERCIAL_EVIDENCE
+Autoclave / Sterilizer,Table Flash Autoclave,,,1,1,LOW,HQE-014,HISTORICAL_COMMERCIAL_EVIDENCE
+Biological / Laboratory Diagnostics,Lab equipment quotation portfolio,BioPanda,,1,1,LOW,HQE-022,HISTORICAL_COMMERCIAL_EVIDENCE
+Centrifuge,Centrifuge,Tharmac,,1,1,LOW,HQE-004,HISTORICAL_COMMERCIAL_EVIDENCE
+Cytation Multimode Reader,Cytation multimode reader,Agilent / BioTek,Cytation,1,1,LOW,HQE-019,HISTORICAL_COMMERCIAL_EVIDENCE
+Cytology,Automated Liquid-Based Cytology System,HealthSky,HealthSky SCT Express 3600A,1,1,LOW,HQE-006,HISTORICAL_COMMERCIAL_EVIDENCE
+Diagnostic Consumables,Disposable Graduated Transfer Pipettes,Honod Medical,,1,1,LOW,HQE-028,HISTORICAL_COMMERCIAL_EVIDENCE
+Diagnostic Consumables,Flip-Top Sample Vials,Shengfeng Pack,,1,1,LOW,HQE-010,HISTORICAL_COMMERCIAL_EVIDENCE
+Diagnostic Consumables,Flip-Top Sample Vials,MF Lab,,1,1,LOW,HQE-011,HISTORICAL_COMMERCIAL_EVIDENCE
+Diagnostic Manufacturing Equipment,ZQ800 Rapid Test Strip Cutter,Recare,ZQ800,1,1,LOW,HQE-012,HISTORICAL_COMMERCIAL_EVIDENCE
+Digital Pathology,Digital Pathology & Cytology Equipment,3DHISTECH,,1,1,LOW,HQE-001,HISTORICAL_COMMERCIAL_EVIDENCE
+Hematology Analyzer,Hemoglobin Pro Analyzer,YiCare Medical,Hemoglobin Pro,1,1,MEDIUM,HQE-025,HISTORICAL_COMMERCIAL_EVIDENCE
+Hematology Analyzer,HemoScreen Analyzer,PixCell,HemoScreen Analyzer,1,1,LOW,HQE-007,HISTORICAL_COMMERCIAL_EVIDENCE
+Isolation / Infection Control,Negative Pressure Isolation System,BLU-MED Response Systems,,1,1,LOW,HQE-013,HISTORICAL_COMMERCIAL_EVIDENCE
+Laboratory Oven / Incubator,Memmert laboratory ovens,Memmert,IN75 and related WTB configuration,1,1,MEDIUM,HQE-020,HISTORICAL_COMMERCIAL_EVIDENCE
+Life Science / Laboratory Equipment,Thermo Fisher scientific equipment and consumables,Thermo Fisher Scientific,,1,1,LOW,HQE-023,HISTORICAL_COMMERCIAL_EVIDENCE
+Microscope,FT-IR Microscope,HTDS,FT-IR,1,1,LOW,HQE-015,HISTORICAL_COMMERCIAL_EVIDENCE
+Multimode Microplate Reader,AlphaScreen assay capability,Molecular Devices,AlphaScreen,1,1,LOW,HQE-018,HISTORICAL_COMMERCIAL_EVIDENCE
+Multimode Microplate Reader,SpectraMax i3x,Molecular Devices,i3x,1,1,LOW,HQE-016,HISTORICAL_COMMERCIAL_EVIDENCE
+Multimode Microplate Reader,SpectraMax iD5E,Molecular Devices,iD5E,1,1,LOW,HQE-017,HISTORICAL_COMMERCIAL_EVIDENCE
+Personal Protective Equipment,Ansell protective products,Ansell,,1,0,LOW,HQE-024,HISTORICAL_COMMERCIAL_EVIDENCE
+Personal Protective Equipment,PPE Coveralls,Medtecs,,1,1,LOW,HQE-027,HISTORICAL_COMMERCIAL_EVIDENCE
+Sepsis Diagnostics,Sepsis diagnostic solution,Inflammatix,,1,1,LOW,HQE-026,HISTORICAL_COMMERCIAL_EVIDENCE
+Sickle Cell Diagnostic Test,HemoTypeSC Test Kits,,HemoTypeSC,1,1,LOW,HQE-021,HISTORICAL_COMMERCIAL_EVIDENCE
+Ultrasound System,Portable / Handheld Ultrasound POCUS,,POCUS,1,1,LOW,HQE-009,HISTORICAL_COMMERCIAL_EVIDENCE

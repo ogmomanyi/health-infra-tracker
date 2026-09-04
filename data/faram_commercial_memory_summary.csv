@@ -1,0 +1,27 @@
+manufacturer_name,product_family,product_name,model,supplier_count,evidence_count,latest_event_date,strongest_evidence,commercial_familiarity_score,current_catalogue_status
+Thermo Fisher Scientific,Life Science / Laboratory Equipment,Thermo Fisher scientific equipment and consumables,,1,1,,order_and_business_review,3,NOT_FOUND
+,Autoclave / Sterilizer,Table Flash Autoclave,,1,1,,tender_support,2,NOT_FOUND
+,Sickle Cell Diagnostic Test,HemoTypeSC Test Kits,HemoTypeSC,1,1,,procurement_inquiry,2,NOT_FOUND
+,Ultrasound System,Portable / Handheld Ultrasound POCUS,POCUS,1,1,,tender_bid_support,2,NOT_FOUND
+3DHISTECH,Digital Pathology,Digital Pathology & Cytology Equipment,,1,1,,quotation_inquiry,2,NOT_FOUND
+Ansell,Personal Protective Equipment,Ansell protective products,,0,1,,partnership_and_tender_support,2,NOT_FOUND
+BioPanda,Biological / Laboratory Diagnostics,Lab equipment quotation portfolio,,1,1,,quotation_and_partnership,2,NOT_FOUND
+BLU-MED Response Systems,Isolation / Infection Control,Negative Pressure Isolation System,,1,1,,project_inquiry,2,NOT_FOUND
+ESCHWEILER,Analyzer,ESCHWEILER Combi Line 2 Analyzer,Combi Line 2 Analyzer,1,1,,tender_support,2,NOT_FOUND
+HealthSky,Cytology,Automated Liquid-Based Cytology System,HealthSky SCT Express 3600A,1,1,,tender_compliance_and_quotation,2,NOT_FOUND
+Honod Medical,Diagnostic Consumables,Disposable Graduated Transfer Pipettes,,1,1,2026-07-03,quotation_inquiry,2,NOT_FOUND
+Inflammatix,Sepsis Diagnostics,Sepsis diagnostic solution,,1,1,,project_inquiry,2,NOT_FOUND
+Medtecs,Personal Protective Equipment,PPE Coveralls,,1,1,,quotation_inquiry,2,NOT_FOUND
+Memmert,Laboratory Oven / Incubator,Memmert laboratory ovens,IN75 and related WTB configuration,1,1,,quotation,2,NOT_FOUND
+MF Lab,Diagnostic Consumables,Flip-Top Sample Vials,,1,1,,quotation_follow_up,2,NOT_FOUND
+Midmark / Newmed,Autoclave / Sterilizer,Autoclaves,,1,1,,quotation_and_tender_support,2,NOT_FOUND
+Molecular Devices,Multimode Microplate Reader,SpectraMax i3x,i3x,1,1,,tender_fit_and_pricing,2,NOT_FOUND
+Molecular Devices,Multimode Microplate Reader,SpectraMax iD5E,iD5E,1,1,,tender_fit_and_pricing,2,NOT_FOUND
+Molecular Devices,Multimode Microplate Reader,AlphaScreen assay capability,AlphaScreen,1,1,,tender_fit_and_pricing,2,NOT_FOUND
+PixCell,Hematology Analyzer,HemoScreen Analyzer,HemoScreen Analyzer,1,1,,market_evaluation_and_pricing,2,NOT_FOUND
+Recare,Diagnostic Manufacturing Equipment,ZQ800 Rapid Test Strip Cutter,ZQ800,1,1,,tender_or_product_pricing,2,NOT_FOUND
+Shengfeng Pack,Diagnostic Consumables,Flip-Top Sample Vials,,1,1,,request_for_pricing,2,NOT_FOUND
+SHINVA,Autoclave / Sterilizer,Gas Plasma Sterilizer,,1,1,,tender_support,2,NOT_FOUND
+Tharmac,Centrifuge,Centrifuge,,1,1,,quotation_and_technical_support,2,NOT_FOUND
+YiCare Medical,Hematology Analyzer,Hemoglobin Pro Analyzer,Hemoglobin Pro,1,1,,quotation,2,NOT_FOUND
+HTDS,Microscope,FT-IR Microscope,FT-IR,1,1,,quotation_and_compliance,1,NOT_FOUND
