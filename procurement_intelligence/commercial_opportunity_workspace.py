@@ -88,17 +88,16 @@ def event_index(events: list[dict[str, str]]) -> dict[str, dict[str, str]]:
 
 def activity(row: dict[str, str], has_event: bool) -> str:
     category = text(row.get("action_category"))
-    if has_event:
-        return {
-            "QUALIFY_AND_BID": "Qualify tender and confirm bid/no-bid",
-            "RESOLVE_PRODUCT_OR_TERRITORY_FIT": "Resolve product and territory fit",
-            "BID_PREPARATION": "Prepare bid and confirm requirements",
-            "ACCOUNT_DEVELOPMENT": "Engage account and map procurement stakeholders",
-        }.get(category, "Review procurement opportunity")
-    return {
-        "PIPELINE_DEVELOPMENT": "Develop account pipeline and map procurement stakeholders",
+    activities = {
+        "QUALIFY_AND_BID": "Qualify tender and confirm bid/no-bid",
+        "RESOLVE_PRODUCT_OR_TERRITORY_FIT": "Resolve product and territory fit",
+        "BID_PREPARATION": "Prepare bid and confirm requirements",
         "ACCOUNT_DEVELOPMENT": "Engage account and map procurement stakeholders",
-    }.get(category, text(row.get("recommended_action")) or "Review account action")
+        "PIPELINE_DEVELOPMENT": "Develop account pipeline and map procurement stakeholders",
+    }
+    if category in activities:
+        return activities[category]
+    return ("Review procurement opportunity" if has_event else text(row.get("recommended_action")) or "Review account action")
 
 
 def build_opportunity_workspace(
@@ -114,9 +113,6 @@ def build_opportunity_workspace(
     for action in actions:
         event_ids = split_ids(action.get("procurement_event_ids"))
         matched_events = [by_id[event_id] for event_id in event_ids if event_id in by_id]
-
-        # If the queue references events that are not present in the current
-        # snapshot, retain one account-level work item rather than inventing data.
         rows = matched_events or [None]
         for event in rows:
             event_id = text(event.get("procurement_event_id")) if event else ""
