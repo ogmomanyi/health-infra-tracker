@@ -85,7 +85,7 @@ def _warn(source: str, exc: Exception) -> None: print(f"WARNING: {source} procur
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input", default="data/procurement_events_input.csv"); parser.add_argument("--output", default="data/procurement_events.csv"); parser.add_argument("--projects", default="data/opportunities.csv"); parser.add_argument("--database", default="data/iati_intelligence.db"); parser.add_argument("--buyer-output", default="data/procurement_buyer_history.csv")
+    parser.add_argument("--input", default="data/procurement_events_input.csv"); parser.add_argument("--output", default="data/procurement_events.csv"); parser.add_argument("--projects", default="data/opportunities.csv"); parser.add_argument("--database", default="data/iati_intelligence.db"); parser.add_argument("--buyer-output", default="data/procurement_buyer_history.csv"); parser.add_argument("--supplier-output", default="data/procurement_supplier_history.csv")
     parser.add_argument("--source", choices=["fixture", "world_bank", "rss", "afdb", "undp", "all"], default="fixture"); parser.add_argument("--country", action="append", dest="countries"); parser.add_argument("--feed-url"); parser.add_argument("--feed-name", default="Official RSS"); parser.add_argument("--page-url", action="append", dest="page_urls"); parser.add_argument("--afdb-feed-url"); parser.add_argument("--afdb-page-url", action="append", dest="afdb_page_urls"); parser.add_argument("--undp-url", default="https://procurement-notices.undp.org/")
     args = parser.parse_args(); notices = []; source_successes = 0
     if args.source in {"world_bank", "all"}:
@@ -133,8 +133,11 @@ def main() -> None:
     write_events(Path(args.output), events); persist_events(Path(args.database), events)
     from .commercial import write_buyer_history
     buyer_count = write_buyer_history(Path(args.buyer_output), events, database=Path(args.database))
+    from .supplier_intelligence import write_supplier_history
+    supplier_count = write_supplier_history(Path(args.supplier_output), events)
     matched = sum(e.match_status in {"POSSIBLE", "CONFIRMED"} for e in events); confirmed = sum(e.match_status == "CONFIRMED" for e in events)
     print(f"Procurement intelligence pipeline completed: {len(events)} events, {matched} matched, {confirmed} confirmed")
     print(f"Buyer intelligence generated: {buyer_count} buyer accounts")
+    print(f"Supplier intelligence generated: {supplier_count} explicit supplier accounts")
 
 if __name__ == "__main__": main()
