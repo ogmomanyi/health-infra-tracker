@@ -189,6 +189,20 @@ _original_write_sqlite_tables = builder.write_sqlite_tables
 
 def write_sqlite_tables_fixed(db_path, datasets):
     existing_views = sqlite_views(db_path)
+    generated_view_collisions = {
+        name for name in datasets if name in existing_views
+    }
+
+    if generated_view_collisions:
+        connection = sqlite3.connect(db_path)
+        try:
+            for name in sorted(generated_view_collisions):
+                connection.execute(f'DROP VIEW IF EXISTS "{name}"')
+            connection.commit()
+        finally:
+            connection.close()
+        existing_views -= generated_view_collisions
+
     safe_datasets = {
         name: dataframe
         for name, dataframe in datasets.items()
