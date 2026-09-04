@@ -23,20 +23,33 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+
       - name: Refresh external procurement sources
         env:
           AFDB_PROCUREMENT_FEED_URL: ${{ vars.AFDB_PROCUREMENT_FEED_URL }}
           UNDP_PROCUREMENT_URL: ${{ vars.UNDP_PROCUREMENT_URL }}
         run: |
-          args=(--source all --country KE --country UG --country RW --country ET --country SO --country SS --country CD)
+          args=(
+            --source all
+            --country KE
+            --country UG
+            --country RW
+            --country ET
+            --country SO
+            --country SS
+            --country CD
+          )
+
           if [ -n "$AFDB_PROCUREMENT_FEED_URL" ]; then
             args+=(--afdb-feed-url "$AFDB_PROCUREMENT_FEED_URL")
           else
@@ -44,26 +57,65 @@ jobs:
             args+=(--afdb-page-url "https://www.afdb.org/en/documents/project-related-procurement/procurement-notices/general-procurement-notices")
             args+=(--afdb-page-url "https://www.afdb.org/en/documents/project-related-procurement/procurement-notices/invitation-bids")
           fi
-          if [ -n "$UNDP_PROCUREMENT_URL" ]; then args+=(--undp-url "$UNDP_PROCUREMENT_URL"); fi
+
+          if [ -n "$UNDP_PROCUREMENT_URL" ]; then
+            args+=(--undp-url "$UNDP_PROCUREMENT_URL")
+          fi
+
           python -m procurement_intelligence.run "${args[@]}"
+
+      - name: Build buyer demand intelligence
+        run: |
+          python -m procurement_intelligence.buyer_intelligence \
+            --events data/procurement_events.csv \
+            --database data/iati_intelligence.db \
+            --output data/procurement_buyer_history.csv
+
       - name: Match procurement products and manufacturers
         run: |
-          python -m procurement_intelligence.product_matching --events data/procurement_events.csv --equipment-entities data/equipment_entities.csv --manufacturer-entities data/manufacturer_entities.csv --output data/procurement_product_matches.csv
+          python -m procurement_intelligence.product_matching \
+            --events data/procurement_events.csv \
+            --equipment-entities data/equipment_entities.csv \
+            --manufacturer-entities data/manufacturer_entities.csv \
+            --output data/procurement_product_matches.csv
+
       - name: Match procurement demand against Faram catalogue
         run: |
-          python -m procurement_intelligence.faram_product_matching --procurement-matches data/procurement_product_matches.csv --catalogue data/faram_product_catalogue.csv --output data/faram_product_matches.csv
+          python -m procurement_intelligence.faram_product_matching \
+            --procurement-matches data/procurement_product_matches.csv \
+            --catalogue data/faram_product_catalogue.csv \
+            --output data/faram_product_matches.csv
+
       - name: Build historical Faram quote intelligence
         run: |
-          python -m procurement_intelligence.historical_quote_intelligence --evidence data/faram_historical_quote_evidence.csv --output data/faram_historical_quote_summary.csv
+          python -m procurement_intelligence.historical_quote_intelligence \
+            --evidence data/faram_historical_quote_evidence.csv \
+            --output data/faram_historical_quote_summary.csv
+
       - name: Build Faram commercial memory
         run: |
-          python -m procurement_intelligence.commercial_memory --evidence data/faram_historical_quote_evidence.csv --enrichment data/faram_commercial_memory_enrichment.csv --catalogue data/faram_product_catalogue.csv --output data/faram_commercial_memory.csv --summary data/faram_commercial_memory_summary.csv
+          python -m procurement_intelligence.commercial_memory \
+            --evidence data/faram_historical_quote_evidence.csv \
+            --enrichment data/faram_commercial_memory_enrichment.csv \
+            --catalogue data/faram_product_catalogue.csv \
+            --output data/faram_commercial_memory.csv \
+            --summary data/faram_commercial_memory_summary.csv
+
       - name: Build account commercial memory
         run: |
-          python -m procurement_intelligence.account_commercial_memory --accounts data/target_accounts.csv --evidence data/faram_historical_quote_evidence.csv --catalogue data/faram_product_catalogue.csv --output data/faram_account_commercial_memory.csv
+          python -m procurement_intelligence.account_commercial_memory \
+            --accounts data/target_accounts.csv \
+            --evidence data/faram_historical_quote_evidence.csv \
+            --catalogue data/faram_product_catalogue.csv \
+            --output data/faram_account_commercial_memory.csv
+
       - name: Validate tender predictions
         run: |
-          python -m procurement_intelligence.tender_validation --predictions data/tender_predictions.csv --events data/procurement_events.csv --output data/tender_prediction_validation.csv
+          python -m procurement_intelligence.tender_validation \
+            --predictions data/tender_predictions.csv \
+            --events data/procurement_events.csv \
+            --output data/tender_prediction_validation.csv
+
       - name: Run procurement regression tests
         run: |
           python -m unittest discover -s tests -p 'test_*procurement*.py' -v
@@ -73,11 +125,19 @@ jobs:
           python -m unittest discover -s tests -p 'test_historical_quote_intelligence.py' -v
           python -m unittest discover -s tests -p 'test_commercial_memory.py' -v
           python -m unittest discover -s tests -p 'test_account_commercial_memory.py' -v
+          python -m unittest discover -s tests -p 'test_buyer_intelligence.py' -v
+
       - name: Commit refreshed procurement data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # The collection can take a long time, so main may move while it runs.
+          # Only generated procurement outputs are carried forward; application code
+          # stays at the newest main revision. Retry the final push to close the
+          # small race between the last fetch and the push.
           cp data/procurement_events.csv /tmp/procurement_events.csv
+          cp data/procurement_buyer_history.csv /tmp/procurement_buyer_history.csv
           cp data/procurement_product_matches.csv /tmp/procurement_product_matches.csv
           cp data/faram_product_matches.csv /tmp/faram_product_matches.csv
           cp data/faram_historical_quote_summary.csv /tmp/faram_historical_quote_summary.csv
@@ -85,12 +145,13 @@ jobs:
           cp data/faram_commercial_memory_summary.csv /tmp/faram_commercial_memory_summary.csv
           cp data/faram_account_commercial_memory.csv /tmp/faram_account_commercial_memory.csv
           cp data/tender_prediction_validation.csv /tmp/tender_prediction_validation.csv
-          cp data/procurement_buyer_history.csv /tmp/procurement_buyer_history.csv
           cp data/iati_intelligence.db /tmp/iati_intelligence.db
+
           for attempt in 1 2 3 4 5; do
             git fetch origin main
             git reset --hard origin/main
             cp /tmp/procurement_events.csv data/procurement_events.csv
+            cp /tmp/procurement_buyer_history.csv data/procurement_buyer_history.csv
             cp /tmp/procurement_product_matches.csv data/procurement_product_matches.csv
             cp /tmp/faram_product_matches.csv data/faram_product_matches.csv
             cp /tmp/faram_historical_quote_summary.csv data/faram_historical_quote_summary.csv
@@ -98,13 +159,23 @@ jobs:
             cp /tmp/faram_commercial_memory_summary.csv data/faram_commercial_memory_summary.csv
             cp /tmp/faram_account_commercial_memory.csv data/faram_account_commercial_memory.csv
             cp /tmp/tender_prediction_validation.csv data/tender_prediction_validation.csv
-            cp /tmp/procurement_buyer_history.csv data/procurement_buyer_history.csv
             cp /tmp/iati_intelligence.db data/iati_intelligence.db
-            git add data/procurement_events.csv data/procurement_product_matches.csv data/faram_product_matches.csv data/faram_historical_quote_summary.csv data/faram_commercial_memory.csv data/faram_commercial_memory_summary.csv data/faram_account_commercial_memory.csv data/tender_prediction_validation.csv data/procurement_buyer_history.csv data/iati_intelligence.db
-            if git diff --cached --quiet; then echo "No procurement data changes to commit."; exit 0; fi
+            git add data/procurement_events.csv data/procurement_buyer_history.csv data/procurement_product_matches.csv data/faram_product_matches.csv data/faram_historical_quote_summary.csv data/faram_commercial_memory.csv data/faram_commercial_memory_summary.csv data/faram_account_commercial_memory.csv data/tender_prediction_validation.csv data/iati_intelligence.db
+
+            if git diff --cached --quiet; then
+              echo "No procurement data changes to commit."
+              exit 0
+            fi
+
             git commit -m "Automated external procurement refresh"
-            if git push origin HEAD:main; then echo "Procurement refresh pushed successfully on attempt $attempt."; exit 0; fi
+
+            if git push origin HEAD:main; then
+              echo "Procurement refresh pushed successfully on attempt $attempt."
+              exit 0
+            fi
+
             echo "Push raced with a new main commit; retrying (attempt $attempt)."
           done
+
           echo "Unable to push procurement refresh after 5 attempts."
           exit 1
