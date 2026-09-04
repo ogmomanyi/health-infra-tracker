@@ -10,7 +10,8 @@ FIELDS = [
     "product_family", "estimated_value", "currency", "matched_iati_identifier",
     "match_confidence", "match_status", "project_reference", "procurement_stage",
     "procurement_priority", "opportunity_status", "faram_relevance_score",
-    "faram_relevance_reason",
+    "faram_relevance_reason", "supplier_name", "supplier_country", "award_value",
+    "award_currency", "supplier_evidence_status",
 ]
 
 
