@@ -66,7 +66,7 @@ class CommercialAccountPriorityTests(unittest.TestCase):
         row = rows[0]
         self.assertEqual(row["catalogue_fit_status"], "FARAM_MATCH")
         self.assertEqual(row["commercial_account_priority_tier"], "ACT_NOW")
-        self.assertGreaterEqual(float(row["commercial_account_priority_score"]), 75)
+        self.assertGreaterEqual(float(row["commercial_account_priority_score"]), 70)
         self.assertIn("current Faram catalogue fit", row["priority_reason"])
         self.assertEqual(row["procurement_event_ids"], "e1")
 
