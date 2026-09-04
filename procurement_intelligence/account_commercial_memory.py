@@ -48,8 +48,11 @@ def _family_rows(account: dict[str, str], evidence_rows: Iterable[dict[str, str]
     for family in families:
         for evidence in evidence_rows:
             result = familiarity_match(
-                {"product_family": family},
-                evidence,
+                "",
+                "",
+                family,
+                "",
+                [evidence],
             )
             if result.get("historical_familiarity_score", 0) > 0:
                 matched.append((family, evidence, float(result["historical_familiarity_score"])))
