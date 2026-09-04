@@ -26,6 +26,11 @@ class ProcurementEvent:
     opportunity_status: str = ""
     faram_relevance_score: float = 0.0
     faram_relevance_reason: str = ""
+    supplier_name: str = ""
+    supplier_country: str = ""
+    award_value: Optional[float] = None
+    award_currency: str = ""
+    supplier_evidence_status: str = "NONE"
 
     def to_dict(self):
         return asdict(self)
