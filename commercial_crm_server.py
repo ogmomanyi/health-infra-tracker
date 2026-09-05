@@ -5,13 +5,13 @@ from __future__ import annotations
 import argparse
 import json
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 
 from procurement_intelligence import commercial_crm
 
 
 class CRMHandler(BaseHTTPRequestHandler):
-    db_path = commercial_crm.DEFAULT_DB_PATH
+    db_path = commercial_crm.DB_DEFAULT
 
     def _json(self, status: int, payload: object) -> None:
         body = json.dumps(payload, default=str).encode("utf-8")
@@ -51,19 +51,16 @@ class CRMHandler(BaseHTTPRequestHandler):
             if parts == ["api", "health"]:
                 return self._json(200, {"ok": True})
             if parts == ["api", "opportunities"]:
-                query = urlparse(self.path).query
-                from urllib.parse import parse_qs
-                params = parse_qs(query)
+                params = parse_qs(urlparse(self.path).query)
                 status = params.get("status", [None])[0]
                 owner = params.get("owner", [None])[0]
-                return self._json(200, commercial_crm.list_opportunities(status=status, owner=owner, db_path=self.db_path))
+                return self._json(200, commercial_crm.list_opportunities(db_path=self.db_path, status=status, owner=owner))
             if len(parts) == 3 and parts[:2] == ["api", "opportunities"]:
-                opportunity_id = parts[2]
-                item = commercial_crm.get_opportunity(opportunity_id, db_path=self.db_path)
+                item = commercial_crm.get_opportunity(parts[2], db_path=self.db_path)
                 if item is None:
                     return self._json(404, {"error": "opportunity not found"})
                 return self._json(200, item)
-            if len(parts) == 4 and parts[0:2] == ["api", "opportunities"] and parts[3] in {"activities", "audit"}:
+            if len(parts) == 4 and parts[:2] == ["api", "opportunities"] and parts[3] in {"activities", "audit"}:
                 opportunity_id = parts[2]
                 if commercial_crm.get_opportunity(opportunity_id, db_path=self.db_path) is None:
                     return self._json(404, {"error": "opportunity not found"})
@@ -101,14 +98,14 @@ class CRMHandler(BaseHTTPRequestHandler):
             if len(parts) != 4 or parts[:2] != ["api", "opportunities"] or parts[3] != "activities":
                 return self._json(404, {"error": "not found"})
             payload = self._read_json()
-            activity = commercial_crm.add_activity(
+            activity_id = commercial_crm.add_activity(
                 parts[2], db_path=self.db_path, actor=self._actor(payload),
                 activity_type=payload.get("activity_type", "NOTE"),
                 subject=payload.get("subject", ""), notes=payload.get("notes", ""),
                 activity_date=payload.get("activity_date"), due_date=payload.get("due_date"),
                 owner=payload.get("owner"),
             )
-            return self._json(201, activity)
+            return self._json(201, {"activity_id": activity_id})
         except KeyError as exc:
             return self._json(404, {"error": str(exc)})
         except (ValueError, TypeError, json.JSONDecodeError) as exc:
@@ -124,7 +121,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8765)
-    parser.add_argument("--db", default=commercial_crm.DEFAULT_DB_PATH)
+    parser.add_argument("--db", default=str(commercial_crm.DB_DEFAULT))
     args = parser.parse_args()
     commercial_crm.initialize(args.db)
     CRMHandler.db_path = args.db
