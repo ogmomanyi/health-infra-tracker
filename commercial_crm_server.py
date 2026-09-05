@@ -5,9 +5,13 @@ from __future__ import annotations
 import argparse
 import json
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
 from procurement_intelligence import commercial_crm
+
+ROOT = Path(__file__).resolve().parent
+EXECUTION_HTML = ROOT / "procurement_intelligence" / "execution.html"
 
 
 class CRMHandler(BaseHTTPRequestHandler):
@@ -38,6 +42,14 @@ class CRMHandler(BaseHTTPRequestHandler):
     def _route(self):
         return [part for part in urlparse(self.path).path.split("/") if part]
 
+    def _serve_execution(self) -> None:
+        body = EXECUTION_HTML.read_bytes()
+        self.send_response(200)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
     def do_OPTIONS(self):
         self.send_response(204)
         self.send_header("Access-Control-Allow-Origin", "*")
@@ -48,6 +60,8 @@ class CRMHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         try:
             parts = self._route()
+            if self.path.split("?", 1)[0] in {"/", "/execution", "/execution.html"}:
+                return self._serve_execution()
             if parts == ["api", "health"]:
                 return self._json(200, {"ok": True})
             if parts == ["api", "opportunities"]:
