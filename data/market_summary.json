@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-09-04T11:02:01Z",
-  "as_of": "2026-09-04",
-  "source_generated_at": "2026-09-04T11:01:36Z",
+  "generated_at": "2026-09-05T10:24:34Z",
+  "as_of": "2026-09-05",
+  "source_generated_at": "2026-09-05T10:23:58Z",
   "pipeline_version": "3.2-project-detail-intelligence",
   "pipeline_layers": [
     {
@@ -64,27 +64,27 @@
   "layer_counts": {
     "raw": {},
     "normalized": {
-      "activities": 3277,
-      "transactions": 70902,
-      "organisations": 17758
+      "activities": 3278,
+      "transactions": 70962,
+      "organisations": 17771
     },
     "canonical": {
-      "organisation_entities": 2242,
-      "organisation_aliases": 17221,
+      "organisation_entities": 2247,
+      "organisation_aliases": 17233,
       "equipment_entities": 9,
       "manufacturer_entities": 5
     },
     "intelligence": {
-      "opportunity_scores": 3277,
-      "organisation_intelligence": 2442,
-      "programme_intelligence": 3277,
-      "donor_intelligence": 513
+      "opportunity_scores": 3278,
+      "organisation_intelligence": 2450,
+      "programme_intelligence": 3278,
+      "donor_intelligence": 514
     },
     "commercial": {
-      "target_accounts": 2442,
-      "engagements": 2252,
-      "crm_notes": 2252,
-      "recommended_actions": 2694
+      "target_accounts": 2450,
+      "engagements": 2260,
+      "crm_notes": 2260,
+      "recommended_actions": 2695
     },
     "predictive_product": {
       "equipment_intelligence": 9,
@@ -93,15 +93,15 @@
   },
   "currency_note": "Amounts are source-reported nominal values and are not converted across currencies.",
   "metrics": {
-    "projects": 3277,
-    "active_projects": 2967,
+    "projects": 3278,
+    "active_projects": 2968,
     "pipeline_projects": 309,
-    "reported_budget": 78262087246.93,
+    "reported_budget": 78262098628.93,
     "future_disbursement": 37163607175.66,
-    "future_budget": 43157255513.23,
+    "future_budget": 43157266895.23,
     "procurement_signal_projects": 781,
     "high_priority_opportunities": 782,
-    "donors": 513,
+    "donors": 514,
     "equipment_categories": 9,
     "tender_predictions": 1478,
     "likely_procurement": 711,
@@ -142,7 +142,7 @@
     {
       "country_code": "SS",
       "country_name": "South Sudan",
-      "project_count": 302
+      "project_count": 303
     },
     {
       "country_code": "RW",
