@@ -41,6 +41,9 @@ jobs:
       - name: Regenerate intelligence from current normalized IATI data
         run: python run_intelligence_pipeline.py
 
+      - name: Sync commercial CRM context
+        run: python sync_commercial_crm.py
+
       - name: Run unit and integration tests
         run: python -m pytest -q
 
