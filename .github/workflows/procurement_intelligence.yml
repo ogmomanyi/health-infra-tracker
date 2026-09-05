@@ -94,6 +94,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           cp data/procurement_events.csv /tmp/procurement_events.csv
           cp data/procurement_buyer_history.csv /tmp/procurement_buyer_history.csv
+          cp data/procurement_supplier_history.csv /tmp/procurement_supplier_history.csv
           cp data/procurement_product_matches.csv /tmp/procurement_product_matches.csv
           cp data/faram_product_matches.csv /tmp/faram_product_matches.csv
           cp data/faram_historical_quote_summary.csv /tmp/faram_historical_quote_summary.csv
@@ -110,6 +111,7 @@ jobs:
             git reset --hard origin/main
             cp /tmp/procurement_events.csv data/procurement_events.csv
             cp /tmp/procurement_buyer_history.csv data/procurement_buyer_history.csv
+            cp /tmp/procurement_supplier_history.csv data/procurement_supplier_history.csv
             cp /tmp/procurement_product_matches.csv data/procurement_product_matches.csv
             cp /tmp/faram_product_matches.csv data/faram_product_matches.csv
             cp /tmp/faram_historical_quote_summary.csv data/faram_historical_quote_summary.csv
@@ -121,7 +123,7 @@ jobs:
             cp /tmp/commercial_opportunity_workspace.csv data/commercial_opportunity_workspace.csv
             cp /tmp/tender_prediction_validation.csv data/tender_prediction_validation.csv
             cp /tmp/iati_intelligence.db data/iati_intelligence.db
-            git add data/procurement_events.csv data/procurement_buyer_history.csv data/procurement_product_matches.csv data/faram_product_matches.csv data/faram_historical_quote_summary.csv data/faram_commercial_memory.csv data/faram_commercial_memory_summary.csv data/faram_account_commercial_memory.csv data/commercial_account_priority.csv data/commercial_action_queue.csv data/commercial_opportunity_workspace.csv data/tender_prediction_validation.csv data/iati_intelligence.db
+            git add data/procurement_events.csv data/procurement_buyer_history.csv data/procurement_supplier_history.csv data/procurement_product_matches.csv data/faram_product_matches.csv data/faram_historical_quote_summary.csv data/faram_commercial_memory.csv data/faram_commercial_memory_summary.csv data/faram_account_commercial_memory.csv data/commercial_account_priority.csv data/commercial_action_queue.csv data/commercial_opportunity_workspace.csv data/tender_prediction_validation.csv data/iati_intelligence.db
             if git diff --cached --quiet; then echo "No procurement data changes to commit."; exit 0; fi
             git commit -m "Automated external procurement refresh"
             if git push origin HEAD:main; then echo "Procurement refresh pushed successfully on attempt $attempt."; exit 0; fi
