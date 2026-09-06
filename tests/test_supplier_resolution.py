@@ -1,7 +1,14 @@
 import sqlite3
 import unittest
 
-from procurement_intelligence.supplier_resolution import load_supplier_candidates, resolve_supplier, supplier_key
+from procurement_intelligence.supplier_resolution import (
+    ensure_supplier_registry,
+    load_supplier_candidates,
+    resolve_supplier,
+    seed_explicit_suppliers,
+    supplier_entity_id,
+    supplier_key,
+)
 
 
 class SupplierResolutionTests(unittest.TestCase):
@@ -38,6 +45,9 @@ class SupplierResolutionTests(unittest.TestCase):
     def test_normalization_is_deterministic(self):
         self.assertEqual(supplier_key("ÉGIS Kenya, Ltd."), "egis kenya ltd")
 
+    def test_entity_id_is_deterministic(self):
+        self.assertEqual(supplier_entity_id("egis kenya ltd"), supplier_entity_id("egis kenya ltd"))
+
     def test_canonical_exact_match(self):
         result = resolve_supplier("EGIS Kenya Limited", "Kenya", load_supplier_candidates(self.conn))
         self.assertEqual(result.entity_id, "SUP-001")
@@ -64,6 +74,20 @@ class SupplierResolutionTests(unittest.TestCase):
         result = resolve_supplier("GLOBAL MEDICAL", candidates=load_supplier_candidates(self.conn))
         self.assertIsNone(result.entity_id)
         self.assertEqual(result.match_method, "UNRESOLVED")
+
+    def test_registry_seeding_is_idempotent_and_non_fuzzy(self):
+        conn = sqlite3.connect(":memory:")
+        try:
+            ensure_supplier_registry(conn)
+            first = seed_explicit_suppliers(conn, [("Acme Medical Ltd", "Kenya"), ("ACME MEDICAL LTD", "Kenya")])
+            second = seed_explicit_suppliers(conn, [("Acme Medical Ltd", "Kenya")])
+            self.assertEqual(first, 1)
+            self.assertEqual(second, 0)
+            rows = conn.execute("SELECT entity_id, canonical_name FROM supplier_entities").fetchall()
+            self.assertEqual(len(rows), 1)
+            self.assertEqual(rows[0][0], supplier_entity_id("acme medical ltd"))
+        finally:
+            conn.close()
 
 
 if __name__ == "__main__":
