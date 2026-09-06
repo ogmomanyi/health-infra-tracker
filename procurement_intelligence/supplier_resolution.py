@@ -7,6 +7,7 @@ review. Raw awardee names remain available for auditability.
 
 from __future__ import annotations
 
+import hashlib
 import re
 import sqlite3
 from collections import defaultdict
@@ -29,8 +30,76 @@ class SupplierResolution:
 def supplier_key(name: str) -> str:
     """Normalize a supplier name for deterministic comparison."""
     value = normalize_name(name)
-    # Legal suffixes are useful evidence when present, so they are retained.
     return re.sub(r"\s+", " ", value).strip()
+
+
+def supplier_entity_id(normalized_name: str) -> str:
+    """Return a stable identifier for a normalized supplier name."""
+    digest = hashlib.sha1(normalized_name.encode("utf-8")).hexdigest()[:16]
+    return f"SUP-{digest}"
+
+
+def ensure_supplier_registry(conn: sqlite3.Connection) -> None:
+    """Ensure the supplier registry tables exist without destroying data."""
+    conn.executescript(
+        """
+        CREATE TABLE IF NOT EXISTS supplier_entities (
+            entity_id TEXT PRIMARY KEY,
+            canonical_name TEXT NOT NULL UNIQUE,
+            supplier_type TEXT,
+            country TEXT,
+            entity_status TEXT DEFAULT 'ACTIVE',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE INDEX IF NOT EXISTS idx_supplier_entity_status
+        ON supplier_entities(entity_status);
+        CREATE INDEX IF NOT EXISTS idx_supplier_entity_country
+        ON supplier_entities(country);
+        CREATE TABLE IF NOT EXISTS supplier_aliases (
+            alias_id TEXT PRIMARY KEY,
+            entity_id TEXT NOT NULL,
+            alias_name TEXT NOT NULL,
+            supplier_country TEXT,
+            source_system TEXT NOT NULL DEFAULT 'PROCUREMENT',
+            is_primary_alias INTEGER DEFAULT 0,
+            match_method TEXT NOT NULL,
+            confidence_score REAL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (entity_id) REFERENCES supplier_entities(entity_id)
+        );
+        CREATE INDEX IF NOT EXISTS idx_supplier_alias_entity
+        ON supplier_aliases(entity_id);
+        CREATE INDEX IF NOT EXISTS idx_supplier_alias_name
+        ON supplier_aliases(alias_name);
+        """
+    )
+
+
+def seed_explicit_suppliers(conn: sqlite3.Connection, supplier_names: Iterable[tuple[str, str]]) -> int:
+    """Register previously unseen explicit awardees without merging variants."""
+    inserted = 0
+    for raw_name, country in supplier_names:
+        normalized = supplier_key(raw_name)
+        if not normalized:
+            continue
+        entity_id = supplier_entity_id(normalized)
+        try:
+            cursor = conn.execute(
+                """
+                INSERT OR IGNORE INTO supplier_entities
+                    (entity_id, canonical_name, supplier_type, country)
+                VALUES (?, ?, 'COMPANY', ?)
+                """,
+                (entity_id, raw_name.strip(), country.strip()),
+            )
+            inserted += cursor.rowcount
+        except sqlite3.IntegrityError:
+            # A different existing canonical record owns this exact display name.
+            # Do not overwrite or merge it automatically.
+            continue
+    conn.commit()
+    return inserted
 
 
 def load_supplier_candidates(conn: sqlite3.Connection) -> list[dict[str, str]]:
