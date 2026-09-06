@@ -12,6 +12,7 @@ EXECUTION_HTML = ROOT / "procurement_intelligence" / "execution.html"
 MY_WORK_HTML = ROOT / "procurement_intelligence" / "my_work.html"
 ACCOUNT_HTML = ROOT / "procurement_intelligence" / "account.html"
 MANAGEMENT_HTML = ROOT / "procurement_intelligence" / "management.html"
+OPPORTUNITY_HTML = ROOT / "procurement_intelligence" / "opportunity.html"
 class CRMHandler(BaseHTTPRequestHandler):
     db_path = commercial_crm.DB_DEFAULT
     def _json(self,status,payload):
@@ -25,6 +26,7 @@ class CRMHandler(BaseHTTPRequestHandler):
     def _actor(self,payload=None): return str((payload or {}).get("actor") or self.headers.get("X-CRM-Actor") or "local-user")
     def _route(self): return [p for p in urlparse(self.path).path.split("/") if p]
     def _serve(self,path):
+        if not path.is_file(): return self._json(404,{"error":"page not found"})
         body=path.read_bytes(); self.send_response(200); self.send_header("Content-Type","text/html; charset=utf-8"); self.send_header("Content-Length",str(len(body))); self.end_headers(); self.wfile.write(body)
     def do_OPTIONS(self):
         self.send_response(204); self.send_header("Access-Control-Allow-Origin","*"); self.send_header("Access-Control-Allow-Methods","GET, POST, PATCH, OPTIONS"); self.send_header("Access-Control-Allow-Headers","Content-Type, X-CRM-Actor"); self.end_headers()
@@ -35,6 +37,7 @@ class CRMHandler(BaseHTTPRequestHandler):
             if path in {"/my-work","/my-work.html"}: return self._serve(MY_WORK_HTML)
             if path in {"/accounts","/accounts.html"}: return self._serve(ACCOUNT_HTML)
             if path in {"/management","/management.html"}: return self._serve(MANAGEMENT_HTML)
+            if path in {"/opportunity","/opportunity.html"}: return self._serve(OPPORTUNITY_HTML)
             if parts==["api","health"]: return self._json(200,{"ok":True})
             if parts==["api","work"]: return self._json(200,commercial_work.list_work(db_path=self.db_path,owner=params.get("owner",[None])[0],today=params.get("today",[None])[0]))
             if parts==["api","accounts"]: return self._json(200,{"accounts":account_work.list_accounts(db_path=self.db_path,today=params.get("today",[None])[0])})
