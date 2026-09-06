@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-09-05T10:24:34Z",
-  "as_of": "2026-09-05",
-  "source_generated_at": "2026-09-05T10:23:58Z",
+  "generated_at": "2026-09-06T10:43:01Z",
+  "as_of": "2026-09-06",
+  "source_generated_at": "2026-09-06T10:42:28Z",
   "pipeline_version": "3.2-project-detail-intelligence",
   "pipeline_layers": [
     {
@@ -96,9 +96,9 @@
     "projects": 3278,
     "active_projects": 2968,
     "pipeline_projects": 309,
-    "reported_budget": 78262098628.93,
+    "reported_budget": 78262077801.93,
     "future_disbursement": 37163607175.66,
-    "future_budget": 43157266895.23,
+    "future_budget": 43157246068.23,
     "procurement_signal_projects": 781,
     "high_priority_opportunities": 782,
     "donors": 514,
