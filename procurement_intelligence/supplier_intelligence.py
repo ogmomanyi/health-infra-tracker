@@ -27,33 +27,39 @@ def _number(value) -> float:
 def build_supplier_history(events: list[ProcurementEvent]) -> list[dict[str, str]]:
     """Aggregate explicit awards by canonical supplier entity where resolved.
 
-    Unresolved suppliers remain grouped by their raw name and country so no
-    evidence is lost while unresolved records remain visibly distinct.
+    Resolved awards are grouped by entity ID and country, so approved aliases
+    collapse into one supplier record. Unresolved suppliers remain grouped by
+    raw name and country so no evidence is lost or silently merged.
     """
     groups: dict[tuple[str, str, str], dict] = {}
     for event in events:
         if event.supplier_evidence_status != "EXPLICIT" or not event.supplier_name.strip():
             continue
+        country = event.supplier_country.strip()
         entity_id = event.supplier_entity_id.strip()
-        key = (entity_id, event.supplier_country.strip(), event.supplier_name.strip()) if entity_id else ("", event.supplier_country.strip(), event.supplier_name.strip())
+        key = (entity_id, country, "") if entity_id else ("", country, event.supplier_name.strip())
         group = groups.setdefault(key, {
             "entity_id": entity_id,
             "supplier": event.supplier_canonical_name.strip() or event.supplier_name.strip(),
-            "supplier_country": event.supplier_country.strip(),
-            "match_status": event.supplier_match_status or "UNRESOLVED",
+            "supplier_country": country,
+            "match_status": event.supplier_match_status or ("CANONICAL_EXACT" if entity_id else "UNRESOLVED"),
             "match_confidence": event.supplier_match_confidence,
             "events": [], "buyers": set(), "countries": set(), "categories": set(),
             "projects": set(), "dates": [], "currencies": set(), "values": defaultdict(float),
         })
         group["events"].append(event)
+        if event.supplier_canonical_name.strip():
+            group["supplier"] = event.supplier_canonical_name.strip()
         if event.buyer: group["buyers"].add(event.buyer.strip())
         if event.country: group["countries"].add(event.country.strip())
         if event.equipment_category: group["categories"].add(event.equipment_category.strip())
         if event.project_reference: group["projects"].add(event.project_reference.strip())
         if event.publication_date: group["dates"].append(event.publication_date)
+        group["match_confidence"] = max(float(group["match_confidence"] or 0), float(event.supplier_match_confidence or 0))
         currency = (event.award_currency or event.currency or "").strip()
-        if currency: group["currencies"].add(currency)
-        if currency: group["values"][currency] += _number(event.award_value)
+        if currency:
+            group["currencies"].add(currency)
+            group["values"][currency] += _number(event.award_value)
 
     rows = []
     for group in groups.values():
