@@ -41,12 +41,14 @@ class SupplierResolutionTests(unittest.TestCase):
     def test_canonical_exact_match(self):
         result = resolve_supplier("EGIS Kenya Limited", "Kenya", load_supplier_candidates(self.conn))
         self.assertEqual(result.entity_id, "SUP-001")
+        self.assertEqual(result.canonical_name, "EGIS Kenya Limited")
         self.assertEqual(result.match_method, "CANONICAL_EXACT")
         self.assertEqual(result.confidence_score, 1.0)
 
     def test_alias_exact_match(self):
         result = resolve_supplier("EGIS KENYA", "Kenya", load_supplier_candidates(self.conn))
         self.assertEqual(result.entity_id, "SUP-001")
+        self.assertEqual(result.canonical_name, "EGIS Kenya Limited")
         self.assertEqual(result.match_method, "ALIAS_EXACT")
 
     def test_unknown_supplier_is_not_fuzzy_matched(self):
