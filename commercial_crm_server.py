@@ -1,26 +1,21 @@
 #!/usr/bin/env python3
 """Small stdlib-only HTTP server for the persistent commercial CRM state."""
 from __future__ import annotations
-import argparse
-import json
+import argparse, json
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
-from procurement_intelligence import account_work, commercial_crm, commercial_work, management_work
-ROOT = Path(__file__).resolve().parent
-EXECUTION_HTML = ROOT / "procurement_intelligence" / "execution.html"
-MY_WORK_HTML = ROOT / "procurement_intelligence" / "my_work.html"
-ACCOUNT_HTML = ROOT / "procurement_intelligence" / "account.html"
-MANAGEMENT_HTML = ROOT / "procurement_intelligence" / "management.html"
-OPPORTUNITY_HTML = ROOT / "procurement_intelligence" / "opportunity.html"
+from procurement_intelligence import account_work, commercial_crm, commercial_work, execution_completeness, management_work
+ROOT=Path(__file__).resolve().parent
+EXECUTION_HTML=ROOT/"procurement_intelligence"/"execution.html"; MY_WORK_HTML=ROOT/"procurement_intelligence"/"my_work.html"; ACCOUNT_HTML=ROOT/"procurement_intelligence"/"account.html"; MANAGEMENT_HTML=ROOT/"procurement_intelligence"/"management.html"; OPPORTUNITY_HTML=ROOT/"procurement_intelligence"/"opportunity.html"
 class CRMHandler(BaseHTTPRequestHandler):
-    db_path = commercial_crm.DB_DEFAULT
+    db_path=commercial_crm.DB_DEFAULT
     def _json(self,status,payload):
-        body=json.dumps(payload,default=str).encode("utf-8"); self.send_response(status); self.send_header("Content-Type","application/json; charset=utf-8"); self.send_header("Content-Length",str(len(body))); self.send_header("Access-Control-Allow-Origin","*"); self.end_headers(); self.wfile.write(body)
+        body=json.dumps(payload,default=str).encode(); self.send_response(status); self.send_header("Content-Type","application/json; charset=utf-8"); self.send_header("Content-Length",str(len(body))); self.send_header("Access-Control-Allow-Origin","*"); self.end_headers(); self.wfile.write(body)
     def _read_json(self):
         length=int(self.headers.get("Content-Length","0"));
         if length>1_000_000: raise ValueError("request body too large")
-        data=json.loads((self.rfile.read(length) if length else b"{}").decode("utf-8"));
+        data=json.loads((self.rfile.read(length) if length else b"{}").decode());
         if not isinstance(data,dict): raise ValueError("JSON body must be an object")
         return data
     def _actor(self,payload=None): return str((payload or {}).get("actor") or self.headers.get("X-CRM-Actor") or "local-user")
@@ -45,10 +40,12 @@ class CRMHandler(BaseHTTPRequestHandler):
             if parts==["api","opportunities"]: return self._json(200,commercial_crm.list_opportunities(db_path=self.db_path,status=params.get("status",[None])[0],owner=params.get("owner",[None])[0]))
             if len(parts)==3 and parts[:2]==["api","opportunities"]:
                 item=commercial_crm.get_opportunity(parts[2],db_path=self.db_path); return self._json(200,item) if item else self._json(404,{"error":"opportunity not found"})
-            if len(parts)==4 and parts[:2]==["api","opportunities"] and parts[3] in {"activities","audit"}:
+            if len(parts)==4 and parts[:2]==["api","opportunities"]:
                 oid=parts[2]
                 if commercial_crm.get_opportunity(oid,db_path=self.db_path) is None: return self._json(404,{"error":"opportunity not found"})
-                data=commercial_crm.list_activities(oid,db_path=self.db_path) if parts[3]=="activities" else commercial_crm.list_audit_log(oid,db_path=self.db_path); return self._json(200,data)
+                if parts[3]=="activities": return self._json(200,commercial_crm.list_activities(oid,db_path=self.db_path))
+                if parts[3]=="audit": return self._json(200,commercial_crm.list_audit_log(oid,db_path=self.db_path))
+                if parts[3]=="execution": return self._json(200,execution_completeness.snapshot(oid,db_path=self.db_path))
             return self._json(404,{"error":"not found"})
         except Exception as exc: return self._json(400,{"error":str(exc)})
     def do_PATCH(self):
@@ -61,15 +58,26 @@ class CRMHandler(BaseHTTPRequestHandler):
         except Exception as exc: return self._json(500,{"error":str(exc)})
     def do_POST(self):
         try:
-            parts=self._route()
-            if len(parts)!=4 or parts[:2]!=["api","opportunities"] or parts[3]!="activities": return self._json(404,{"error":"not found"})
-            p=self._read_json(); aid=commercial_crm.add_activity(parts[2],db_path=self.db_path,actor=self._actor(p),activity_type=p.get("activity_type","NOTE"),subject=p.get("subject",""),notes=p.get("notes",""),activity_date=p.get("activity_date"),due_date=p.get("due_date"),owner=p.get("owner")); return self._json(201,{"activity_id":aid})
+            parts=self._route(); p=self._read_json()
+            if len(parts)==4 and parts[:2]==["api","opportunities"] and parts[3]=="activities":
+                aid=commercial_crm.add_activity(parts[2],db_path=self.db_path,actor=self._actor(p),activity_type=p.get("activity_type","NOTE"),subject=p.get("subject",""),notes=p.get("notes",""),activity_date=p.get("activity_date"),due_date=p.get("due_date"),owner=p.get("owner")); return self._json(201,{"activity_id":aid})
+            if len(parts)==4 and parts[:2]==["api","opportunities"] and parts[3]=="contacts":
+                return self._json(201,{"contact_id":execution_completeness.upsert_contact(parts[2],p,db_path=self.db_path)})
+            if len(parts)==4 and parts[:2]==["api","opportunities"] and parts[3]=="bid-decision":
+                return self._json(200,execution_completeness.set_bid_decision(parts[2],str(p.get("decision") or "PENDING"),decided_by=p.get("decided_by") or self._actor(p),rationale=p.get("rationale"),db_path=self.db_path))
+            if len(parts)==4 and parts[:2]==["api","opportunities"] and parts[3]=="responses":
+                return self._json(201,{"response_id":execution_completeness.add_response(parts[2],p,db_path=self.db_path)})
+            if len(parts)==4 and parts[:2]==["api","opportunities"] and parts[3]=="evidence":
+                return self._json(201,{"evidence_id":execution_completeness.add_evidence(parts[2],p,db_path=self.db_path)})
+            if len(parts)==4 and parts[:2]==["api","opportunities"] and parts[3]=="outcome":
+                return self._json(200,execution_completeness.record_outcome(parts[2],p,db_path=self.db_path))
+            return self._json(404,{"error":"not found"})
         except KeyError as exc: return self._json(404,{"error":str(exc)})
         except (ValueError,TypeError,json.JSONDecodeError) as exc: return self._json(400,{"error":str(exc)})
         except Exception as exc: return self._json(500,{"error":str(exc)})
     def log_message(self,fmt,*args): return
 def main():
-    parser=argparse.ArgumentParser(description=__doc__); parser.add_argument("--host",default="127.0.0.1"); parser.add_argument("--port",type=int,default=8765); parser.add_argument("--db",default=str(commercial_crm.DB_DEFAULT)); args=parser.parse_args(); commercial_crm.initialize(args.db); CRMHandler.db_path=args.db; server=ThreadingHTTPServer((args.host,args.port),CRMHandler); print(f"Commercial CRM API listening on http://{args.host}:{args.port}")
+    parser=argparse.ArgumentParser(description=__doc__); parser.add_argument("--host",default="127.0.0.1"); parser.add_argument("--port",type=int,default=8765); parser.add_argument("--db",default=str(commercial_crm.DB_DEFAULT)); args=parser.parse_args(); commercial_crm.initialize(args.db); execution_completeness.initialize(args.db); CRMHandler.db_path=args.db; server=ThreadingHTTPServer((args.host,args.port),CRMHandler); print(f"Commercial CRM API listening on http://{args.host}:{args.port}")
     try: server.serve_forever()
     except KeyboardInterrupt: pass
     finally: server.server_close()
