@@ -6,11 +6,12 @@ import json
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
-from procurement_intelligence import commercial_crm, commercial_work, account_work
+from procurement_intelligence import account_work, commercial_crm, commercial_work, management_work
 ROOT = Path(__file__).resolve().parent
 EXECUTION_HTML = ROOT / "procurement_intelligence" / "execution.html"
 MY_WORK_HTML = ROOT / "procurement_intelligence" / "my_work.html"
 ACCOUNT_HTML = ROOT / "procurement_intelligence" / "account.html"
+MANAGEMENT_HTML = ROOT / "procurement_intelligence" / "management.html"
 class CRMHandler(BaseHTTPRequestHandler):
     db_path = commercial_crm.DB_DEFAULT
     def _json(self,status,payload):
@@ -29,17 +30,16 @@ class CRMHandler(BaseHTTPRequestHandler):
         self.send_response(204); self.send_header("Access-Control-Allow-Origin","*"); self.send_header("Access-Control-Allow-Methods","GET, POST, PATCH, OPTIONS"); self.send_header("Access-Control-Allow-Headers","Content-Type, X-CRM-Actor"); self.end_headers()
     def do_GET(self):
         try:
-            parts=self._route(); path=urlparse(self.path).path
+            parts=self._route(); path=urlparse(self.path).path; params=parse_qs(urlparse(self.path).query)
             if path in {"/","/execution","/execution.html"}: return self._serve(EXECUTION_HTML)
             if path in {"/my-work","/my-work.html"}: return self._serve(MY_WORK_HTML)
             if path in {"/accounts","/accounts.html"}: return self._serve(ACCOUNT_HTML)
+            if path in {"/management","/management.html"}: return self._serve(MANAGEMENT_HTML)
             if parts==["api","health"]: return self._json(200,{"ok":True})
-            if parts==["api","work"]:
-                p=parse_qs(urlparse(self.path).query); return self._json(200,commercial_work.list_work(db_path=self.db_path,owner=p.get("owner",[None])[0],today=p.get("today",[None])[0]))
-            if parts==["api","accounts"]:
-                p=parse_qs(urlparse(self.path).query); return self._json(200,{"accounts":account_work.list_accounts(db_path=self.db_path,today=p.get("today",[None])[0])})
-            if parts==["api","opportunities"]:
-                p=parse_qs(urlparse(self.path).query); return self._json(200,commercial_crm.list_opportunities(db_path=self.db_path,status=p.get("status",[None])[0],owner=p.get("owner",[None])[0]))
+            if parts==["api","work"]: return self._json(200,commercial_work.list_work(db_path=self.db_path,owner=params.get("owner",[None])[0],today=params.get("today",[None])[0]))
+            if parts==["api","accounts"]: return self._json(200,{"accounts":account_work.list_accounts(db_path=self.db_path,today=params.get("today",[None])[0])})
+            if parts==["api","management"]: return self._json(200,management_work.management_summary(db_path=self.db_path,today=params.get("today",[None])[0],closing_window_days=int(params.get("closing_window_days",[7])[0])))
+            if parts==["api","opportunities"]: return self._json(200,commercial_crm.list_opportunities(db_path=self.db_path,status=params.get("status",[None])[0],owner=params.get("owner",[None])[0]))
             if len(parts)==3 and parts[:2]==["api","opportunities"]:
                 item=commercial_crm.get_opportunity(parts[2],db_path=self.db_path); return self._json(200,item) if item else self._json(404,{"error":"opportunity not found"})
             if len(parts)==4 and parts[:2]==["api","opportunities"] and parts[3] in {"activities","audit"}:
