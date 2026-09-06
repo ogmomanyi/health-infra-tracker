@@ -5,6 +5,19 @@ from procurement_intelligence.supplier_intelligence import build_supplier_histor
 
 
 class SupplierIntelligenceTests(unittest.TestCase):
+    def test_resolved_variants_share_one_canonical_supplier(self):
+        events = [
+            ProcurementEvent("1", "World Bank", "", "A", "Lab", "Buyer A", "Kenya", "2026-01-01", "", "Laboratory Equipment", "RFB", supplier_name="EGIS KENYA", supplier_country="Kenya", award_value=100, award_currency="USD", supplier_evidence_status="EXPLICIT", supplier_entity_id="SUP-001", supplier_canonical_name="EGIS Kenya Limited", supplier_match_status="ALIAS_EXACT", supplier_match_confidence=1.0),
+            ProcurementEvent("2", "World Bank", "", "B", "Diagnostics", "Buyer B", "Kenya", "2026-02-01", "", "Diagnostics", "RFB", supplier_name="EGIS Kenya Limited", supplier_country="Kenya", award_value=200, award_currency="USD", supplier_evidence_status="EXPLICIT", supplier_entity_id="SUP-001", supplier_canonical_name="EGIS Kenya Limited", supplier_match_status="CANONICAL_EXACT", supplier_match_confidence=1.0),
+        ]
+        rows = build_supplier_history(events)
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["supplier_entity_id"], "SUP-001")
+        self.assertEqual(rows[0]["supplier"], "EGIS Kenya Limited")
+        self.assertEqual(rows[0]["award_count"], "2")
+        self.assertEqual(rows[0]["competitive_position"], "REPEAT_SUPPLIER")
+        self.assertEqual(rows[0]["award_value_total"], "300.00")
+
     def test_repeat_supplier_is_ranked(self):
         events = [
             ProcurementEvent("1", "World Bank", "", "A", "Lab", "Buyer A", "Kenya", "2026-01-01", "", "Laboratory Equipment", "RFB", supplier_name="Acme", supplier_country="Kenya", award_value=100, award_currency="USD", supplier_evidence_status="EXPLICIT", opportunity_status="AWARD_HISTORY", faram_relevance_score=80, procurement_priority="HIGH"),
