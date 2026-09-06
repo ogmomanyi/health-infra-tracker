@@ -35,6 +35,9 @@ class ProcurementEvent:
     supplier_canonical_name: str = ""
     supplier_match_status: str = "UNRESOLVED"
     supplier_match_confidence: float = 0.0
+    manufacturer_name: str = ""
+    brand_name: str = ""
+    manufacturer_evidence_status: str = "NONE"
 
     def to_dict(self):
         return asdict(self)
