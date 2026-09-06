@@ -61,6 +61,7 @@ def load_supplier_candidates(conn: sqlite3.Connection) -> list[dict[str, str]]:
             aliases[normalized].add(entity_id)
 
     existing = {(row["entity_id"], row["normalized_name"]) for row in candidates}
+    canonical_by_entity = {row["entity_id"]: row["canonical_name"] for row in candidates}
     for normalized, entity_ids in aliases.items():
         if len(entity_ids) != 1:
             continue
@@ -69,7 +70,7 @@ def load_supplier_candidates(conn: sqlite3.Connection) -> list[dict[str, str]]:
         if key not in existing:
             candidates.append({
                 "entity_id": entity_id,
-                "canonical_name": normalized,
+                "canonical_name": canonical_by_entity[entity_id],
                 "normalized_name": normalized,
             })
     return candidates
