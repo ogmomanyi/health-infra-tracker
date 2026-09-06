@@ -9,9 +9,11 @@ from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
 from procurement_intelligence import commercial_crm
+from procurement_intelligence import commercial_work
 
 ROOT = Path(__file__).resolve().parent
 EXECUTION_HTML = ROOT / "procurement_intelligence" / "execution.html"
+MY_WORK_HTML = ROOT / "procurement_intelligence" / "my_work.html"
 
 
 class CRMHandler(BaseHTTPRequestHandler):
@@ -42,8 +44,8 @@ class CRMHandler(BaseHTTPRequestHandler):
     def _route(self):
         return [part for part in urlparse(self.path).path.split("/") if part]
 
-    def _serve_execution(self) -> None:
-        body = EXECUTION_HTML.read_bytes()
+    def _serve(self, path: Path) -> None:
+        body = path.read_bytes()
         self.send_response(200)
         self.send_header("Content-Type", "text/html; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
@@ -60,15 +62,33 @@ class CRMHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         try:
             parts = self._route()
-            if self.path.split("?", 1)[0] in {"/", "/execution", "/execution.html"}:
-                return self._serve_execution()
+            path = urlparse(self.path).path
+            if path in {"/", "/execution", "/execution.html"}:
+                return self._serve(EXECUTION_HTML)
+            if path in {"/my-work", "/my-work.html"}:
+                return self._serve(MY_WORK_HTML)
             if parts == ["api", "health"]:
                 return self._json(200, {"ok": True})
+            if parts == ["api", "work"]:
+                params = parse_qs(urlparse(self.path).query)
+                return self._json(
+                    200,
+                    commercial_work.list_work(
+                        db_path=self.db_path,
+                        owner=params.get("owner", [None])[0],
+                        today=params.get("today", [None])[0],
+                    ),
+                )
             if parts == ["api", "opportunities"]:
                 params = parse_qs(urlparse(self.path).query)
                 status = params.get("status", [None])[0]
                 owner = params.get("owner", [None])[0]
-                return self._json(200, commercial_crm.list_opportunities(db_path=self.db_path, status=status, owner=owner))
+                return self._json(
+                    200,
+                    commercial_crm.list_opportunities(
+                        db_path=self.db_path, status=status, owner=owner
+                    ),
+                )
             if len(parts) == 3 and parts[:2] == ["api", "opportunities"]:
                 item = commercial_crm.get_opportunity(parts[2], db_path=self.db_path)
                 if item is None:
