@@ -60,17 +60,18 @@ def extract_specifications(text: str) -> list[Specification]:
     if not text:
         return []
     results: list[Specification] = []
+    units = r"ml|l|uL|µL|μL|tests/hour|tests/hr|t/h|nm"
     pattern = re.compile(
-        r"(?:^|[;\n|])\s*([A-Za-z][A-Za-z0-9 /_-]{1,50})\s*[:=]\s*"
-        r"([0-9]+(?:[.,][0-9]+)?|[A-Za-z0-9][A-Za-z0-9 .+/%-]{0,60}?)"
-        r"(?:\s*(ml|l|uL|µL|μL|tests/hour|tests/hr|t/h|nm))?\s*(?=$|[;\n|])",
+        rf"(?:^|[;\n|])\s*([A-Za-z][A-Za-z0-9 /_-]{{1,50}})\s*[:=]\s*"
+        rf"(?:(?P<num>[0-9]+(?:[.,][0-9]+)?)\s*(?P<num_unit>{units})|"
+        rf"(?P<text>[A-Za-z0-9][A-Za-z0-9 .+/%-]{{0,60}}?))\s*(?=$|[;\n|])",
         re.I,
     )
     seen: set[tuple[str, str, str]] = set()
     for match in pattern.finditer(text):
         name = _clean(match.group(1)).casefold()
-        raw_value = _clean(match.group(2))
-        raw_unit = _clean(match.group(3) or "")
+        raw_value = _clean(match.group("num") or match.group("text") or "")
+        raw_unit = _clean(match.group("num_unit") or "")
         value, unit = _normalize_value(raw_value, raw_unit)
         key = (name, str(value), unit)
         if key not in seen:
