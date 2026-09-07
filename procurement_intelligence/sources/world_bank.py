@@ -10,6 +10,7 @@ from typing import Any
 import requests
 
 from ..ingest import stable_event_id
+from ..manufacturer_extraction import extract_explicit_manufacturer_brand
 
 DEFAULT_URL = "https://search.worldbank.org/api/v2/procnotices"
 
@@ -149,6 +150,7 @@ def normalize_notices(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
         procurement_group = _first(record, "procurement_group_desc", "procurement_group", "sector", "category", "procurement_category")
         stage = _first(record, "notice_type", "procurement_stage", "stage")
         supplier, supplier_country, award_value, award_currency, evidence = _extract_award_evidence(record, notice_text, stage)
+        manufacturer, brand, manufacturer_evidence = extract_explicit_manufacturer_brand(record, notice_text)
         event_id = stable_event_id("World Bank", reference, title)
         normalized[event_id] = {
             "procurement_event_id": event_id,
@@ -172,5 +174,8 @@ def normalize_notices(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
             "award_value": award_value,
             "award_currency": award_currency,
             "supplier_evidence_status": evidence,
+            "manufacturer_name": manufacturer,
+            "brand_name": brand,
+            "manufacturer_evidence_status": manufacturer_evidence,
         }
     return list(normalized.values())
