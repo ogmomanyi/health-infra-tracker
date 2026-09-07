@@ -68,6 +68,39 @@ def score_faram_relevance(event: ProcurementEvent) -> tuple[float, str, str]:
     return score, priority, reason
 
 
+def resolve_supplier_entities(events: list[ProcurementEvent], database: Path) -> list[ProcurementEvent]:
+    """Attach deterministic supplier entity IDs to explicit award records."""
+    import sqlite3
+    from .supplier_resolution import ensure_supplier_registry, load_supplier_candidates, resolve_supplier, seed_explicit_suppliers
+
+    conn = sqlite3.connect(database)
+    try:
+        ensure_supplier_registry(conn)
+        explicit = [
+            (event.supplier_name, event.supplier_country)
+            for event in events
+            if event.supplier_evidence_status == "EXPLICIT" and event.supplier_name.strip()
+        ]
+        seed_explicit_suppliers(conn, explicit)
+        candidates = load_supplier_candidates(conn)
+        resolved = []
+        for event in events:
+            if event.supplier_evidence_status != "EXPLICIT" or not event.supplier_name.strip():
+                resolved.append(event)
+                continue
+            result = resolve_supplier(event.supplier_name, event.supplier_country, candidates)
+            resolved.append(ProcurementEvent(**{
+                **event.to_dict(),
+                "supplier_entity_id": result.entity_id or "",
+                "supplier_canonical_name": result.canonical_name or "",
+                "supplier_match_status": result.match_method,
+                "supplier_match_confidence": result.confidence_score,
+            }))
+        return resolved
+    finally:
+        conn.close()
+
+
 def build_events(notices, projects):
     matched = []
     fields = ProcurementEvent.__dataclass_fields__
@@ -128,7 +161,7 @@ def main() -> None:
     elif args.source == "fixture": notices = [event.to_dict() for event in read_events(Path(args.input))]; source_successes = 1
     if not notices and args.source == "all" and source_successes == 0: raise RuntimeError("All external procurement sources failed; refusing to overwrite the existing dataset.")
     projects = load_projects(Path(args.projects), Path(args.database)); print(f"IATI matching candidates loaded: {len(projects)}")
-    fresh_events = build_events(notices, projects)
+    fresh_events = resolve_supplier_entities(build_events(notices, projects), Path(args.database))
     events = merge_events([e for e in load_events(Path(args.output)) if not e.procurement_event_id.startswith("proc_demo_")], fresh_events) if args.source == "all" else fresh_events
     write_events(Path(args.output), events); persist_events(Path(args.database), events)
     from .commercial import write_buyer_history
@@ -136,8 +169,9 @@ def main() -> None:
     from .supplier_intelligence import write_supplier_history
     supplier_count = write_supplier_history(Path(args.supplier_output), events)
     matched = sum(e.match_status in {"POSSIBLE", "CONFIRMED"} for e in events); confirmed = sum(e.match_status == "CONFIRMED" for e in events)
+    resolved_suppliers = sum(bool(e.supplier_entity_id) for e in events)
     print(f"Procurement intelligence pipeline completed: {len(events)} events, {matched} matched, {confirmed} confirmed")
     print(f"Buyer intelligence generated: {buyer_count} buyer accounts")
-    print(f"Supplier intelligence generated: {supplier_count} explicit supplier accounts")
+    print(f"Supplier intelligence generated: {supplier_count} explicit supplier accounts; {resolved_suppliers} awards entity-resolved")
 
 if __name__ == "__main__": main()

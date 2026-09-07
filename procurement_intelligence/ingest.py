@@ -11,7 +11,8 @@ FIELDS = [
     "match_confidence", "match_status", "project_reference", "procurement_stage",
     "procurement_priority", "opportunity_status", "faram_relevance_score",
     "faram_relevance_reason", "supplier_name", "supplier_country", "award_value",
-    "award_currency", "supplier_evidence_status",
+    "award_currency", "supplier_evidence_status", "supplier_entity_id",
+    "supplier_canonical_name", "supplier_match_status", "supplier_match_confidence",
 ]
 
 

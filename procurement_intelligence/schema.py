@@ -31,6 +31,10 @@ class ProcurementEvent:
     award_value: Optional[float] = None
     award_currency: str = ""
     supplier_evidence_status: str = "NONE"
+    supplier_entity_id: str = ""
+    supplier_canonical_name: str = ""
+    supplier_match_status: str = "UNRESOLVED"
+    supplier_match_confidence: float = 0.0
 
     def to_dict(self):
         return asdict(self)
