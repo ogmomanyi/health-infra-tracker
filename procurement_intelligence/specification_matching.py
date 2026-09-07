@@ -19,15 +19,10 @@ class Specification:
 
 
 _UNIT_FACTORS = {
-    "ml": ("ml", 1.0),
-    "l": ("ml", 1000.0),
-    "ul": ("ml", 0.001),
-    "µl": ("ml", 0.001),
-    "μl": ("ml", 0.001),
-    "tests/hour": ("tests/hour", 1.0),
-    "tests/hr": ("tests/hour", 1.0),
-    "t/h": ("tests/hour", 1.0),
-    "nm": ("nm", 1.0),
+    "ml": ("ml", 1.0), "l": ("ml", 1000.0), "ul": ("ml", 0.001),
+    "µl": ("ml", 0.001), "μl": ("ml", 0.001),
+    "tests/hour": ("tests/hour", 1.0), "tests/hr": ("tests/hour", 1.0),
+    "t/h": ("tests/hour", 1.0), "nm": ("nm", 1.0),
 }
 
 
@@ -67,7 +62,7 @@ def extract_specifications(text: str) -> list[Specification]:
     results: list[Specification] = []
     pattern = re.compile(
         r"(?:^|[;\n|])\s*([A-Za-z][A-Za-z0-9 /_-]{1,50})\s*[:=]\s*"
-        r"([A-Za-z0-9][A-Za-z0-9 .+/%-]{0,60})"
+        r"([0-9]+(?:[.,][0-9]+)?|[A-Za-z0-9][A-Za-z0-9 .+/%-]{0,60}?)"
         r"(?:\s*(ml|l|uL|µL|μL|tests/hour|tests/hr|t/h|nm))?\s*(?=$|[;\n|])",
         re.I,
     )
@@ -85,23 +80,11 @@ def extract_specifications(text: str) -> list[Specification]:
 
 
 def specifications_map(specifications: Iterable[Specification]) -> dict[str, Specification]:
-    return {
-        normalized.name: normalized
-        for normalized in (_normalize_specification(item) for item in specifications)
-    }
+    return {normalized.name: normalized for normalized in (_normalize_specification(item) for item in specifications)}
 
 
-def compare_specifications(
-    requirements: Iterable[Specification],
-    product_specs: Iterable[Specification],
-) -> dict[str, object]:
-    """Compare requirements against explicit product specs.
-
-    Numeric requirements are treated as minimums when the requirement name
-    indicates capacity, throughput, speed or similar capability. Other numeric
-    values and text values require exact normalized agreement. Missing product
-    evidence is reported separately rather than treated as a failure.
-    """
+def compare_specifications(requirements: Iterable[Specification], product_specs: Iterable[Specification]) -> dict[str, object]:
+    """Compare requirements against explicit product specs."""
     normalized_requirements = [_normalize_specification(item) for item in requirements]
     product = specifications_map(product_specs)
     rows: list[dict[str, object]] = []
@@ -117,15 +100,7 @@ def compare_specifications(
                 status = "PASS" if (candidate.value >= requirement.value if minimum else candidate.value == requirement.value) else "FAIL"
         else:
             status = "PASS" if str(candidate.value).casefold() == str(requirement.value).casefold() and requirement.unit == candidate.unit else "FAIL"
-        rows.append({
-            "requirement": requirement.name,
-            "required_value": requirement.value,
-            "required_unit": requirement.unit,
-            "product_value": candidate.value if candidate else "",
-            "product_unit": candidate.unit if candidate else "",
-            "status": status,
-        })
-
+        rows.append({"requirement": requirement.name, "required_value": requirement.value, "required_unit": requirement.unit, "product_value": candidate.value if candidate else "", "product_unit": candidate.unit if candidate else "", "status": status})
     total = len(rows)
     passed = sum(row["status"] == "PASS" for row in rows)
     unknown = sum(row["status"] == "UNKNOWN" for row in rows)
