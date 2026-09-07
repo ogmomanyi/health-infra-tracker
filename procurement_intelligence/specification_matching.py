@@ -55,6 +55,11 @@ def _normalize_value(value: str, unit: str) -> tuple[float | str, str]:
     return _clean(value).casefold(), normalized_unit
 
 
+def _normalize_specification(specification: Specification) -> Specification:
+    value, unit = _normalize_value(str(specification.value), specification.unit)
+    return Specification(_clean(specification.name).casefold(), value, unit)
+
+
 def extract_specifications(text: str) -> list[Specification]:
     """Extract explicitly labelled ``spec: value [unit]`` requirements."""
     if not text:
@@ -62,7 +67,7 @@ def extract_specifications(text: str) -> list[Specification]:
     results: list[Specification] = []
     pattern = re.compile(
         r"(?:^|[;\n|])\s*([A-Za-z][A-Za-z0-9 /_-]{1,50})\s*[:=]\s*"
-        r"([0-9]+(?:[.,][0-9]+)?|[A-Za-z0-9][A-Za-z0-9 .+/%-]{0,60})"
+        r"([A-Za-z0-9][A-Za-z0-9 .+/%-]{0,60})"
         r"(?:\s*(ml|l|uL|µL|μL|tests/hour|tests/hr|t/h|nm))?\s*(?=$|[;\n|])",
         re.I,
     )
@@ -80,7 +85,10 @@ def extract_specifications(text: str) -> list[Specification]:
 
 
 def specifications_map(specifications: Iterable[Specification]) -> dict[str, Specification]:
-    return {item.name.casefold(): item for item in specifications}
+    return {
+        normalized.name: normalized
+        for normalized in (_normalize_specification(item) for item in specifications)
+    }
 
 
 def compare_specifications(
@@ -94,17 +102,18 @@ def compare_specifications(
     values and text values require exact normalized agreement. Missing product
     evidence is reported separately rather than treated as a failure.
     """
+    normalized_requirements = [_normalize_specification(item) for item in requirements]
     product = specifications_map(product_specs)
     rows: list[dict[str, object]] = []
-    for requirement in requirements:
-        candidate = product.get(requirement.name.casefold())
+    for requirement in normalized_requirements:
+        candidate = product.get(requirement.name)
         if candidate is None:
             status = "UNKNOWN"
         elif isinstance(requirement.value, (int, float)) and isinstance(candidate.value, (int, float)):
             if requirement.unit != candidate.unit:
                 status = "UNKNOWN"
             else:
-                minimum = any(token in requirement.name.casefold() for token in ("throughput", "capacity", "speed", "tests", "samples"))
+                minimum = any(token in requirement.name for token in ("throughput", "capacity", "speed", "tests", "samples"))
                 status = "PASS" if (candidate.value >= requirement.value if minimum else candidate.value == requirement.value) else "FAIL"
         else:
             status = "PASS" if str(candidate.value).casefold() == str(requirement.value).casefold() and requirement.unit == candidate.unit else "FAIL"
