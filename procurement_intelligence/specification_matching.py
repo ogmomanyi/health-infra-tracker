@@ -62,7 +62,7 @@ def extract_specifications(text: str) -> list[Specification]:
     results: list[Specification] = []
     pattern = re.compile(
         r"(?:^|[;\n|])\s*([A-Za-z][A-Za-z0-9 /_-]{1,50})\s*[:=]\s*"
-        r"([0-9]+(?:[.,][0-9]+)?|[A-Za-z][A-Za-z0-9 .+/%-]{0,60})"
+        r"([0-9]+(?:[.,][0-9]+)?|[A-Za-z0-9][A-Za-z0-9 .+/%-]{0,60})"
         r"(?:\s*(ml|l|uL|µL|μL|tests/hour|tests/hr|t/h|nm))?\s*(?=$|[;\n|])",
         re.I,
     )
