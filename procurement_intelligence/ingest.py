@@ -13,6 +13,7 @@ FIELDS = [
     "faram_relevance_reason", "supplier_name", "supplier_country", "award_value",
     "award_currency", "supplier_evidence_status", "supplier_entity_id",
     "supplier_canonical_name", "supplier_match_status", "supplier_match_confidence",
+    "manufacturer_name", "brand_name", "manufacturer_evidence_status",
 ]
 
 
