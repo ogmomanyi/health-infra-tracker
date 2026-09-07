@@ -21,22 +21,17 @@ def load_projects(path: Path, database: Path | None = None) -> list[dict]:
     if path.exists():
         with path.open(newline="", encoding="utf-8") as handle:
             projects = list(csv.DictReader(handle))
-        if projects:
-            return projects
+        if projects: return projects
     return load_iati_candidates(database) if database is not None else []
 
 
 def _date(value: str) -> date | None:
-    try:
-        return date.fromisoformat((value or "").strip())
-    except (TypeError, ValueError):
-        return None
+    try: return date.fromisoformat((value or "").strip())
+    except (TypeError, ValueError): return None
 
 
 def classify_opportunity_status(event: ProcurementEvent, today: date | None = None) -> str:
-    today = today or date.today()
-    stage = (event.procurement_stage or "").strip().lower()
-    combined = f"{stage} {(event.title or '').strip().lower()}"
+    today = today or date.today(); stage = (event.procurement_stage or "").strip().lower(); combined = f"{stage} {(event.title or '').strip().lower()}"
     if "contract award" in combined or "award notice" in combined or stage == "award": return "AWARD_HISTORY"
     if "procurement plan" in combined or "potential procurement" in combined: return "PROCUREMENT_PLAN"
     if "general procurement notice" in combined or "general procurement" in combined or "gpn" in stage: return "UPCOMING_GPN"
@@ -48,8 +43,7 @@ def classify_opportunity_status(event: ProcurementEvent, today: date | None = No
 
 
 def score_faram_relevance(event: ProcurementEvent) -> tuple[float, str, str]:
-    text = " ".join((event.title, event.equipment_category, event.product_family, event.procurement_stage)).lower()
-    score = 0.0; reasons: list[str] = []
+    text = " ".join((event.title, event.equipment_category, event.product_family, event.procurement_stage)).lower(); score = 0.0; reasons: list[str] = []
     categories = {"Laboratory Equipment", "Diagnostics", "Medical Equipment", "Blood Banking", "Cold Chain", "Sterilization", "PPE", "Ophthalmology", "Laboratory Consumables"}
     if event.equipment_category in categories: score += 35; reasons.append(event.equipment_category.lower())
     if event.country.strip().lower() in {c.lower() for c in FARAM_COUNTRIES}: score += 15; reasons.append(event.country.strip())
@@ -62,8 +56,7 @@ def score_faram_relevance(event: ProcurementEvent) -> tuple[float, str, str]:
     elif status == "AWARD_HISTORY": score += 5; reasons.append("award/history")
     if event.match_status == "CONFIRMED": score += 10; reasons.append("confirmed IATI project link")
     elif event.match_status == "POSSIBLE": score += 5; reasons.append("possible IATI project link")
-    score = min(100.0, round(score, 1))
-    priority = "HIGH" if score >= 70 else "MEDIUM" if score >= 45 else "LOW" if score > 0 else "MONITOR"
+    score = min(100.0, round(score, 1)); priority = "HIGH" if score >= 70 else "MEDIUM" if score >= 45 else "LOW" if score > 0 else "MONITOR"
     reason = "; ".join(reasons).capitalize() + "." if reasons else "No strong Faram product or market fit identified by the heuristic."
     return score, priority, reason
 
@@ -72,41 +65,23 @@ def resolve_supplier_entities(events: list[ProcurementEvent], database: Path) ->
     """Attach deterministic supplier entity IDs to explicit award records."""
     import sqlite3
     from .supplier_resolution import ensure_supplier_registry, load_supplier_candidates, resolve_supplier, seed_explicit_suppliers
-
     conn = sqlite3.connect(database)
     try:
         ensure_supplier_registry(conn)
-        explicit = [
-            (event.supplier_name, event.supplier_country)
-            for event in events
-            if event.supplier_evidence_status == "EXPLICIT" and event.supplier_name.strip()
-        ]
-        seed_explicit_suppliers(conn, explicit)
-        candidates = load_supplier_candidates(conn)
-        resolved = []
+        explicit = [(event.supplier_name, event.supplier_country) for event in events if event.supplier_evidence_status == "EXPLICIT" and event.supplier_name.strip()]
+        seed_explicit_suppliers(conn, explicit); candidates = load_supplier_candidates(conn); resolved = []
         for event in events:
-            if event.supplier_evidence_status != "EXPLICIT" or not event.supplier_name.strip():
-                resolved.append(event)
-                continue
+            if event.supplier_evidence_status != "EXPLICIT" or not event.supplier_name.strip(): resolved.append(event); continue
             result = resolve_supplier(event.supplier_name, event.supplier_country, candidates)
-            resolved.append(ProcurementEvent(**{
-                **event.to_dict(),
-                "supplier_entity_id": result.entity_id or "",
-                "supplier_canonical_name": result.canonical_name or "",
-                "supplier_match_status": result.match_method,
-                "supplier_match_confidence": result.confidence_score,
-            }))
+            resolved.append(ProcurementEvent(**{**event.to_dict(), "supplier_entity_id": result.entity_id or "", "supplier_canonical_name": result.canonical_name or "", "supplier_match_status": result.match_method, "supplier_match_confidence": result.confidence_score}))
         return resolved
-    finally:
-        conn.close()
+    finally: conn.close()
 
 
 def build_events(notices, projects):
-    matched = []
-    fields = ProcurementEvent.__dataclass_fields__
+    matched = []; fields = ProcurementEvent.__dataclass_fields__
     for notice in notices:
-        event = ProcurementEvent(**{field: notice.get(field, "") for field in fields})
-        result = match_event(event, projects)
+        event = ProcurementEvent(**{field: notice.get(field, "") for field in fields}); result = match_event(event, projects)
         enriched = ProcurementEvent(**{**event.to_dict(), "matched_iati_identifier": result["matched_iati_identifier"], "match_confidence": result["match_confidence"], "match_status": result["match_status"]})
         status = classify_opportunity_status(enriched); score, priority, reason = score_faram_relevance(enriched)
         matched.append(ProcurementEvent(**{**enriched.to_dict(), "opportunity_status": status, "faram_relevance_score": score, "faram_relevance_reason": reason, "procurement_priority": priority}))
@@ -117,8 +92,7 @@ def _warn(source: str, exc: Exception) -> None: print(f"WARNING: {source} procur
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--input", default="data/procurement_events_input.csv"); parser.add_argument("--output", default="data/procurement_events.csv"); parser.add_argument("--projects", default="data/opportunities.csv"); parser.add_argument("--database", default="data/iati_intelligence.db"); parser.add_argument("--buyer-output", default="data/procurement_buyer_history.csv"); parser.add_argument("--supplier-output", default="data/procurement_supplier_history.csv")
+    parser = argparse.ArgumentParser(); parser.add_argument("--input", default="data/procurement_events_input.csv"); parser.add_argument("--output", default="data/procurement_events.csv"); parser.add_argument("--projects", default="data/opportunities.csv"); parser.add_argument("--database", default="data/iati_intelligence.db"); parser.add_argument("--buyer-output", default="data/procurement_buyer_history.csv"); parser.add_argument("--supplier-output", default="data/procurement_supplier_history.csv"); parser.add_argument("--manufacturer-output", default="data/procurement_manufacturer_history.csv"); parser.add_argument("--faram-catalogue", default="data/faram_product_catalogue.csv")
     parser.add_argument("--source", choices=["fixture", "world_bank", "rss", "afdb", "undp", "all"], default="fixture"); parser.add_argument("--country", action="append", dest="countries"); parser.add_argument("--feed-url"); parser.add_argument("--feed-name", default="Official RSS"); parser.add_argument("--page-url", action="append", dest="page_urls"); parser.add_argument("--afdb-feed-url"); parser.add_argument("--afdb-page-url", action="append", dest="afdb_page_urls"); parser.add_argument("--undp-url", default="https://procurement-notices.undp.org/")
     args = parser.parse_args(); notices = []; source_successes = 0
     if args.source in {"world_bank", "all"}:
@@ -168,10 +142,12 @@ def main() -> None:
     buyer_count = write_buyer_history(Path(args.buyer_output), events, database=Path(args.database))
     from .supplier_intelligence import write_supplier_history
     supplier_count = write_supplier_history(Path(args.supplier_output), events)
-    matched = sum(e.match_status in {"POSSIBLE", "CONFIRMED"} for e in events); confirmed = sum(e.match_status == "CONFIRMED" for e in events)
-    resolved_suppliers = sum(bool(e.supplier_entity_id) for e in events)
+    from .manufacturer_intelligence import write_manufacturer_history
+    manufacturer_count = write_manufacturer_history(Path(args.manufacturer_output), events, catalogue_path=Path(args.faram_catalogue))
+    matched = sum(e.match_status in {"POSSIBLE", "CONFIRMED"} for e in events); confirmed = sum(e.match_status == "CONFIRMED" for e in events); resolved_suppliers = sum(bool(e.supplier_entity_id) for e in events)
     print(f"Procurement intelligence pipeline completed: {len(events)} events, {matched} matched, {confirmed} confirmed")
     print(f"Buyer intelligence generated: {buyer_count} buyer accounts")
     print(f"Supplier intelligence generated: {supplier_count} explicit supplier accounts; {resolved_suppliers} awards entity-resolved")
+    print(f"Manufacturer intelligence generated: {manufacturer_count} explicitly evidenced manufacturer/brand accounts")
 
 if __name__ == "__main__": main()
