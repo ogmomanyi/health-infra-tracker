@@ -1,6 +1,6 @@
 {
   "pipeline_version": "3.2-project-detail-intelligence",
-  "generated_at": "2026-09-06T10:42:28Z",
+  "generated_at": "2026-09-07T12:10:30Z",
   "countries": [
     "KE",
     "UG",
@@ -58,7 +58,7 @@
     "equipment_intelligence": "equipment_intelligence.csv",
     "tender_predictions": "tender_predictions.csv"
   },
-  "intelligence_generated_at": "2026-09-06T10:43:01Z",
+  "intelligence_generated_at": "2026-09-07T12:10:50Z",
   "plan_progress": [
     {
       "id": "01",

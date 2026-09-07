@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-09-06T10:43:01Z",
-  "as_of": "2026-09-06",
-  "source_generated_at": "2026-09-06T10:42:28Z",
+  "generated_at": "2026-09-07T12:10:50Z",
+  "as_of": "2026-09-07",
+  "source_generated_at": "2026-09-07T12:10:30Z",
   "pipeline_version": "3.2-project-detail-intelligence",
   "pipeline_layers": [
     {
@@ -96,9 +96,9 @@
     "projects": 3278,
     "active_projects": 2968,
     "pipeline_projects": 309,
-    "reported_budget": 78262077801.93,
+    "reported_budget": 78262078808.93,
     "future_disbursement": 37163607175.66,
-    "future_budget": 43157246068.23,
+    "future_budget": 43157247075.23,
     "procurement_signal_projects": 781,
     "high_priority_opportunities": 782,
     "donors": 514,
@@ -122,12 +122,12 @@
     {
       "country_code": "CD",
       "country_name": "Democratic Republic of the Congo",
-      "project_count": 601
+      "project_count": 599
     },
     {
       "country_code": "TZ",
       "country_name": "Tanzania",
-      "project_count": 524
+      "project_count": 526
     },
     {
       "country_code": "SO",
