@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-09-07T12:10:50Z",
-  "as_of": "2026-09-07",
-  "source_generated_at": "2026-09-07T12:10:30Z",
+  "generated_at": "2026-09-08T11:02:04Z",
+  "as_of": "2026-09-08",
+  "source_generated_at": "2026-09-08T11:01:31Z",
   "pipeline_version": "3.2-project-detail-intelligence",
   "pipeline_layers": [
     {
@@ -64,9 +64,9 @@
   "layer_counts": {
     "raw": {},
     "normalized": {
-      "activities": 3278,
+      "activities": 3273,
       "transactions": 70962,
-      "organisations": 17771
+      "organisations": 17765
     },
     "canonical": {
       "organisation_entities": 2247,
@@ -75,49 +75,49 @@
       "manufacturer_entities": 5
     },
     "intelligence": {
-      "opportunity_scores": 3278,
+      "opportunity_scores": 3273,
       "organisation_intelligence": 2450,
-      "programme_intelligence": 3278,
+      "programme_intelligence": 3273,
       "donor_intelligence": 514
     },
     "commercial": {
       "target_accounts": 2450,
       "engagements": 2260,
       "crm_notes": 2260,
-      "recommended_actions": 2695
+      "recommended_actions": 2692
     },
     "predictive_product": {
       "equipment_intelligence": 9,
-      "tender_predictions": 1478
+      "tender_predictions": 1475
     }
   },
   "currency_note": "Amounts are source-reported nominal values and are not converted across currencies.",
   "metrics": {
-    "projects": 3278,
-    "active_projects": 2968,
+    "projects": 3273,
+    "active_projects": 2963,
     "pipeline_projects": 309,
     "reported_budget": 78262078808.93,
     "future_disbursement": 37163607175.66,
     "future_budget": 43157247075.23,
-    "procurement_signal_projects": 781,
+    "procurement_signal_projects": 778,
     "high_priority_opportunities": 782,
     "donors": 514,
     "equipment_categories": 9,
-    "tender_predictions": 1478,
-    "likely_procurement": 711,
-    "direct_equipment_projects": 682,
+    "tender_predictions": 1475,
+    "likely_procurement": 709,
+    "direct_equipment_projects": 680,
     "countries": 145
   },
   "top_countries": [
     {
       "country_code": "KE",
       "country_name": "Kenya",
-      "project_count": 647
+      "project_count": 645
     },
     {
       "country_code": "ET",
       "country_name": "Ethiopia",
-      "project_count": 603
+      "project_count": 602
     },
     {
       "country_code": "CD",
@@ -127,7 +127,7 @@
     {
       "country_code": "TZ",
       "country_name": "Tanzania",
-      "project_count": 526
+      "project_count": 521
     },
     {
       "country_code": "SO",
@@ -137,7 +137,7 @@
     {
       "country_code": "UG",
       "country_name": "Uganda",
-      "project_count": 376
+      "project_count": 374
     },
     {
       "country_code": "SS",
