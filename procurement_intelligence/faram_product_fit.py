@@ -11,8 +11,7 @@ from pathlib import Path
 from typing import Iterable
 
 from .faram_specification_matching import assess_candidates
-from .procurement_specifications import specifications_by_event
-from .specification_matching import Specification, compare_specifications
+from .procurement_intelligence.procurement_specifications import specifications_by_event
 
 OUTPUT_FIELDS = [
     "procurement_event_id", "tender_reference", "faram_product_id", "product_name",
@@ -40,9 +39,11 @@ def _requirements_text(rows: Iterable[dict[str, str]]) -> str:
 def build_product_fit(
     candidate_rows: Iterable[dict[str, str]],
     requirement_rows: Iterable[dict[str, str]],
+    faram_specification_rows: Iterable[dict[str, str]],
 ) -> list[dict[str, object]]:
-    """Attach verified tender technical-fit results to catalogue candidates."""
+    """Attach verified tender technical-fit results to existing Faram candidates."""
     requirements = specifications_by_event(list(requirement_rows), verified_only=True)
+    faram_specs = list(faram_specification_rows)
     grouped_candidates: dict[str, list[dict[str, str]]] = {}
     for candidate in candidate_rows:
         event_id = _text(candidate.get("procurement_event_id"))
@@ -52,15 +53,14 @@ def build_product_fit(
     for event_id, candidates in grouped_candidates.items():
         event_requirements = requirements.get(event_id, [])
         requirement_text = _requirements_text(event_requirements)
-        assessed = assess_candidates(requirement_text, candidates, []) if requirement_text else [
-            {**candidate, "technical_status": "UNKNOWN", "technical_score": 0.0,
-             "technical_passed": 0, "technical_unknown": 0, "technical_failed": 0}
-            for candidate in candidates
-        ]
-        # assess_candidates expects Faram specification rows. Re-run against the
-        # candidates' available specification evidence is intentionally avoided here;
-        # this function is the event-level composition boundary. Callers should use
-        # assess_candidates with the controlled Faram registry when building results.
+        if requirement_text:
+            assessed = assess_candidates(requirement_text, candidates, faram_specs)
+        else:
+            assessed = [
+                {**candidate, "technical_status": "UNKNOWN", "technical_score": 0.0,
+                 "technical_passed": 0, "technical_unknown": 0, "technical_failed": 0}
+                for candidate in candidates
+            ]
         for row in assessed:
             status = _text(row.get("technical_status"))
             if status == "PASS":
