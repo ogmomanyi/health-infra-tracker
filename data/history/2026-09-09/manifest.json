@@ -1,0 +1,12 @@
+{
+  "snapshot_date": "2026-09-09",
+  "created_at": "2026-09-09T11:06:34Z",
+  "row_counts": {
+    "iati_health_projects": 3279,
+    "transactions": 70971,
+    "budgets": 13649,
+    "planned_disbursements": 4654,
+    "activity_countries": 5748,
+    "organisations": 17775
+  }
+}

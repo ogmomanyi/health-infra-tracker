@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-09-08T11:02:04Z",
-  "as_of": "2026-09-08",
-  "source_generated_at": "2026-09-08T11:01:31Z",
+  "generated_at": "2026-09-09T11:07:07Z",
+  "as_of": "2026-09-09",
+  "source_generated_at": "2026-09-09T11:06:34Z",
   "pipeline_version": "3.2-project-detail-intelligence",
   "pipeline_layers": [
     {
@@ -64,60 +64,60 @@
   "layer_counts": {
     "raw": {},
     "normalized": {
-      "activities": 3273,
-      "transactions": 70962,
-      "organisations": 17765
+      "activities": 3279,
+      "transactions": 70971,
+      "organisations": 17775
     },
     "canonical": {
       "organisation_entities": 2247,
-      "organisation_aliases": 17233,
+      "organisation_aliases": 17237,
       "equipment_entities": 9,
       "manufacturer_entities": 5
     },
     "intelligence": {
-      "opportunity_scores": 3273,
+      "opportunity_scores": 3279,
       "organisation_intelligence": 2450,
-      "programme_intelligence": 3273,
-      "donor_intelligence": 514
+      "programme_intelligence": 3279,
+      "donor_intelligence": 515
     },
     "commercial": {
       "target_accounts": 2450,
       "engagements": 2260,
       "crm_notes": 2260,
-      "recommended_actions": 2692
+      "recommended_actions": 2695
     },
     "predictive_product": {
       "equipment_intelligence": 9,
-      "tender_predictions": 1475
+      "tender_predictions": 1479
     }
   },
   "currency_note": "Amounts are source-reported nominal values and are not converted across currencies.",
   "metrics": {
-    "projects": 3273,
-    "active_projects": 2963,
+    "projects": 3279,
+    "active_projects": 2969,
     "pipeline_projects": 309,
-    "reported_budget": 78262078808.93,
+    "reported_budget": 78262293409.93,
     "future_disbursement": 37163607175.66,
-    "future_budget": 43157247075.23,
-    "procurement_signal_projects": 778,
-    "high_priority_opportunities": 782,
-    "donors": 514,
+    "future_budget": 43157388136.09,
+    "procurement_signal_projects": 781,
+    "high_priority_opportunities": 783,
+    "donors": 515,
     "equipment_categories": 9,
-    "tender_predictions": 1475,
-    "likely_procurement": 709,
-    "direct_equipment_projects": 680,
+    "tender_predictions": 1479,
+    "likely_procurement": 711,
+    "direct_equipment_projects": 682,
     "countries": 145
   },
   "top_countries": [
     {
       "country_code": "KE",
       "country_name": "Kenya",
-      "project_count": 645
+      "project_count": 649
     },
     {
       "country_code": "ET",
       "country_name": "Ethiopia",
-      "project_count": 602
+      "project_count": 604
     },
     {
       "country_code": "CD",
@@ -127,17 +127,17 @@
     {
       "country_code": "TZ",
       "country_name": "Tanzania",
-      "project_count": 521
+      "project_count": 527
     },
     {
       "country_code": "SO",
       "country_name": "Somalia",
-      "project_count": 387
+      "project_count": 386
     },
     {
       "country_code": "UG",
       "country_name": "Uganda",
-      "project_count": 374
+      "project_count": 376
     },
     {
       "country_code": "SS",
