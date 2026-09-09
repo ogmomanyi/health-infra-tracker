@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Iterable
 
 from .faram_specification_matching import assess_candidates
-from .procurement_intelligence.procurement_specifications import specifications_by_event
+from .procurement_specifications import specifications_by_event
 
 OUTPUT_FIELDS = [
     "procurement_event_id", "tender_reference", "faram_product_id", "product_name",
