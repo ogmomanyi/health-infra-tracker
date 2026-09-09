@@ -55,3 +55,11 @@ The eventual commercial match should answer:
 `Tender -> product family -> Faram product candidate(s) -> principal -> territory fit -> specification evidence -> technical status -> confidence -> recommended action`
 
 This allows procurement intelligence to support actual tender pursuit without confusing market demand with Faram's contractual product rights or undocumented technical capability.
+
+## Specification matching layer
+
+`procurement_intelligence/faram_specification_matching.py` composes the controlled catalogue candidate set with the deterministic specification matcher. It extracts only explicitly labelled tender requirements and compares them with `VERIFIED` Faram specification evidence.
+
+Technical outcomes are `PASS`, `REVIEW`, `FAIL` or `UNKNOWN`. A `PASS` requires every extracted requirement to have verified evidence and pass the deterministic comparison. `REVIEW` indicates incomplete/unknown evidence and is not a technical pass. `FAIL` indicates explicit non-compliance. `UNKNOWN` means no explicitly labelled requirements were extracted.
+
+The assessment adds technical fields to an existing candidate without changing catalogue match status, match confidence, canonical commercial account priority score or tier.
