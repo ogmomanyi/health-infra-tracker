@@ -53,6 +53,9 @@ jobs:
       - name: Match procurement demand against Faram catalogue
         run: python -m procurement_intelligence.faram_product_matching --procurement-matches data/procurement_product_matches.csv --catalogue data/faram_product_catalogue.csv --output data/faram_product_matches.csv
 
+      - name: Build Faram opportunity product fit
+        run: python -m procurement_intelligence.faram_opportunity_product_fit --faram-matches data/faram_product_matches.csv --specifications data/faram_product_specifications.csv --output data/faram_opportunity_product_fit.csv
+
       - name: Build historical Faram quote intelligence
         run: python -m procurement_intelligence.historical_quote_intelligence --evidence data/faram_historical_quote_evidence.csv --output data/faram_historical_quote_summary.csv
 
@@ -80,6 +83,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_tender_validation.py' -v
           python -m unittest discover -s tests -p 'test_product_matching.py' -v
           python -m unittest discover -s tests -p 'test_faram_product_matching.py' -v
+          python -m unittest discover -s tests -p 'test_faram_opportunity_product_fit.py' -v
           python -m unittest discover -s tests -p 'test_historical_quote_intelligence.py' -v
           python -m unittest discover -s tests -p 'test_commercial_memory.py' -v
           python -m unittest discover -s tests -p 'test_account_commercial_memory.py' -v
@@ -97,6 +101,7 @@ jobs:
           cp data/procurement_supplier_history.csv /tmp/procurement_supplier_history.csv
           cp data/procurement_product_matches.csv /tmp/procurement_product_matches.csv
           cp data/faram_product_matches.csv /tmp/faram_product_matches.csv
+          cp data/faram_opportunity_product_fit.csv /tmp/faram_opportunity_product_fit.csv
           cp data/faram_historical_quote_summary.csv /tmp/faram_historical_quote_summary.csv
           cp data/faram_commercial_memory.csv /tmp/faram_commercial_memory.csv
           cp data/faram_commercial_memory_summary.csv /tmp/faram_commercial_memory_summary.csv
@@ -114,6 +119,7 @@ jobs:
             cp /tmp/procurement_supplier_history.csv data/procurement_supplier_history.csv
             cp /tmp/procurement_product_matches.csv data/procurement_product_matches.csv
             cp /tmp/faram_product_matches.csv data/faram_product_matches.csv
+            cp /tmp/faram_opportunity_product_fit.csv data/faram_opportunity_product_fit.csv
             cp /tmp/faram_historical_quote_summary.csv data/faram_historical_quote_summary.csv
             cp /tmp/faram_commercial_memory.csv data/faram_commercial_memory.csv
             cp /tmp/faram_commercial_memory_summary.csv data/faram_commercial_memory_summary.csv
@@ -123,7 +129,7 @@ jobs:
             cp /tmp/commercial_opportunity_workspace.csv data/commercial_opportunity_workspace.csv
             cp /tmp/tender_prediction_validation.csv data/tender_prediction_validation.csv
             cp /tmp/iati_intelligence.db data/iati_intelligence.db
-            git add data/procurement_events.csv data/procurement_buyer_history.csv data/procurement_supplier_history.csv data/procurement_product_matches.csv data/faram_product_matches.csv data/faram_historical_quote_summary.csv data/faram_commercial_memory.csv data/faram_commercial_memory_summary.csv data/faram_account_commercial_memory.csv data/commercial_account_priority.csv data/commercial_action_queue.csv data/commercial_opportunity_workspace.csv data/tender_prediction_validation.csv data/iati_intelligence.db
+            git add data/procurement_events.csv data/procurement_buyer_history.csv data/procurement_supplier_history.csv data/procurement_product_matches.csv data/faram_product_matches.csv data/faram_opportunity_product_fit.csv data/faram_historical_quote_summary.csv data/faram_commercial_memory.csv data/faram_commercial_memory_summary.csv data/faram_account_commercial_memory.csv data/commercial_account_priority.csv data/commercial_action_queue.csv data/commercial_opportunity_workspace.csv data/tender_prediction_validation.csv data/iati_intelligence.db
             if git diff --cached --quiet; then echo "No procurement data changes to commit."; exit 0; fi
             git commit -m "Automated external procurement refresh"
             if git push origin HEAD:main; then echo "Procurement refresh pushed successfully on attempt $attempt."; exit 0; fi
