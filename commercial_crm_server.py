@@ -8,7 +8,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
-from procurement_intelligence import account_work, commercial_crm, commercial_work, execution_completeness, management_work
+from procurement_intelligence import account_work, commercial_crm, commercial_work, execution_completeness, management_work, opportunity_technical_fit
 
 ROOT = Path(__file__).resolve().parent
 EXECUTION_HTML = ROOT / "procurement_intelligence" / "execution.html"
@@ -16,6 +16,7 @@ MY_WORK_HTML = ROOT / "procurement_intelligence" / "my_work.html"
 ACCOUNT_HTML = ROOT / "procurement_intelligence" / "account.html"
 MANAGEMENT_HTML = ROOT / "procurement_intelligence" / "management.html"
 OPPORTUNITY_HTML = ROOT / "procurement_intelligence" / "opportunity.html"
+OPPORTUNITY_TECHNICAL_FIT_JS = ROOT / "procurement_intelligence" / "opportunity_technical_fit.js"
 
 
 class CRMHandler(BaseHTTPRequestHandler):
@@ -55,6 +56,17 @@ class CRMHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def _serve_js(self, path):
+        if not path.is_file():
+            return self._json(404, {"error": "asset not found"})
+        body = path.read_bytes()
+        self.send_response(200)
+        self.send_header("Content-Type", "application/javascript; charset=utf-8")
+        self.send_header("Cache-Control", "no-cache")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
     def do_OPTIONS(self):
         self.send_response(204)
         self.send_header("Access-Control-Allow-Origin", "*")
@@ -77,6 +89,8 @@ class CRMHandler(BaseHTTPRequestHandler):
                 return self._serve(MANAGEMENT_HTML)
             if path in {"/opportunity", "/opportunity.html"}:
                 return self._serve(OPPORTUNITY_HTML)
+            if path == "/opportunity-technical-fit.js":
+                return self._serve_js(OPPORTUNITY_TECHNICAL_FIT_JS)
             if parts == ["api", "health"]:
                 return self._json(200, {"ok": True})
             if parts == ["api", "work"]:
@@ -87,6 +101,10 @@ class CRMHandler(BaseHTTPRequestHandler):
                 return self._json(200, management_work.management_summary(db_path=self.db_path, today=params.get("today", [None])[0], closing_window_days=int(params.get("closing_window_days", [7])[0])) )
             if parts == ["api", "opportunities"]:
                 return self._json(200, commercial_crm.list_opportunities(db_path=self.db_path, status=params.get("status", [None])[0], owner=params.get("owner", [None])[0]))
+            if len(parts) == 4 and parts[:3] == ["api", "opportunities", parts[2]] and parts[3] == "technical-fit":
+                if commercial_crm.get_opportunity(parts[2], db_path=self.db_path) is None:
+                    return self._json(404, {"error": "opportunity not found"})
+                return self._json(200, {"technical_fit": opportunity_technical_fit.for_event(parts[2].replace("OPP-", ""))})
             if len(parts) == 3 and parts[:2] == ["api", "opportunities"]:
                 item = commercial_crm.get_opportunity(parts[2], db_path=self.db_path)
                 return self._json(200, item) if item else self._json(404, {"error": "opportunity not found"})
