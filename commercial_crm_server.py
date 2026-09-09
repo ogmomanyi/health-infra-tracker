@@ -50,6 +50,8 @@ class CRMHandler(BaseHTTPRequestHandler):
         if not path.is_file():
             return self._json(404, {"error": "page not found"})
         body = path.read_bytes()
+        if path == OPPORTUNITY_HTML:
+            body = body.replace(b"</body>", b'<script src="/opportunity-technical-fit.js"></script></body>')
         self.send_response(200)
         self.send_header("Content-Type", "text/html; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
@@ -101,10 +103,12 @@ class CRMHandler(BaseHTTPRequestHandler):
                 return self._json(200, management_work.management_summary(db_path=self.db_path, today=params.get("today", [None])[0], closing_window_days=int(params.get("closing_window_days", [7])[0])) )
             if parts == ["api", "opportunities"]:
                 return self._json(200, commercial_crm.list_opportunities(db_path=self.db_path, status=params.get("status", [None])[0], owner=params.get("owner", [None])[0]))
-            if len(parts) == 4 and parts[:3] == ["api", "opportunities", parts[2]] and parts[3] == "technical-fit":
-                if commercial_crm.get_opportunity(parts[2], db_path=self.db_path) is None:
+            if len(parts) == 4 and parts[:2] == ["api", "opportunities"] and parts[3] == "technical-fit":
+                item = commercial_crm.get_opportunity(parts[2], db_path=self.db_path)
+                if item is None:
                     return self._json(404, {"error": "opportunity not found"})
-                return self._json(200, {"technical_fit": opportunity_technical_fit.for_event(parts[2].replace("OPP-", ""))})
+                event_id = item.get("procurement_event_id") or ""
+                return self._json(200, {"technical_fit": opportunity_technical_fit.for_event(event_id)})
             if len(parts) == 3 and parts[:2] == ["api", "opportunities"]:
                 item = commercial_crm.get_opportunity(parts[2], db_path=self.db_path)
                 return self._json(200, item) if item else self._json(404, {"error": "opportunity not found"})
