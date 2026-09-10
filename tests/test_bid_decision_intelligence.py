@@ -40,6 +40,16 @@ def test_unknown_technical_evidence_is_not_treated_as_failure():
     assert result["technical"]["unknown"] == 1
 
 
+def test_mixed_pass_and_fail_candidates_require_review():
+    result = build_guidance(opportunity(), [
+        {"technical_status": "PASS", "territory_fit": "YES"},
+        {"technical_status": "FAIL", "territory_fit": "YES"},
+    ])
+    assert result["guidance"] == "HOLD_FOR_TECHNICAL_REVIEW"
+    assert result["technical"]["pass"] == 1
+    assert result["technical"]["fail"] == 1
+
+
 def test_existing_human_decision_is_preserved():
     result = build_guidance(opportunity(), [{"technical_status": "PASS"}], {"bid_decision": {"decision": "BID"}})
     assert result["guidance"] == "PROCEED_TO_BID_REVIEW"
