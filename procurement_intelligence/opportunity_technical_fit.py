@@ -7,16 +7,19 @@ from pathlib import Path
 DEFAULT_PATH = Path("data/faram_product_fit.csv")
 
 
-def load_product_fit(path: Path | str = DEFAULT_PATH) -> list[dict[str, str]]:
-    path = Path(path)
+def load_product_fit(path: Path | str | None = None) -> list[dict[str, str]]:
+    path = Path(path) if path is not None else Path(DEFAULT_PATH)
     if not path.exists():
         return []
     with path.open("r", encoding="utf-8-sig", newline="") as handle:
         return list(csv.DictReader(handle))
 
 
-def for_event(event_id: object, path: Path | str = DEFAULT_PATH) -> list[dict[str, str]]:
+def for_event(event_id: object, path: Path | str | None = None) -> list[dict[str, str]]:
     target = str(event_id or "").strip()
     if not target:
         return []
-    return [row for row in load_product_fit(path) if str(row.get("procurement_event_id") or "").strip() == target]
+    return [
+        row for row in load_product_fit(path)
+        if str(row.get("procurement_event_id") or "").strip() == target
+    ]
