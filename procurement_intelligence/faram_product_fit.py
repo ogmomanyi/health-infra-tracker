@@ -6,11 +6,15 @@ Faram specification evidence. It does not recalculate commercial priority.
 
 from __future__ import annotations
 
+import argparse
 import csv
 from pathlib import Path
 from typing import Iterable
 
+from .faram_product_matching import _load_rows
+from .faram_product_specifications import load_specifications
 from .faram_specification_matching import assess_candidates
+from .procurement_specifications import load_specifications as load_procurement_specifications
 from .procurement_specifications import specifications_by_event
 
 OUTPUT_FIELDS = [
@@ -96,3 +100,23 @@ def write_product_fit(path: Path, rows: list[dict[str, object]]) -> None:
         writer = csv.DictWriter(handle, fieldnames=OUTPUT_FIELDS)
         writer.writeheader()
         writer.writerows(rows)
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Build tender-level Faram product technical-fit intelligence.")
+    parser.add_argument("--candidates", default="data/faram_product_matches.csv")
+    parser.add_argument("--requirements", default="data/procurement_specification_evidence.csv")
+    parser.add_argument("--faram-specifications", default="data/faram_product_specifications.csv")
+    parser.add_argument("--output", default="data/faram_product_fit.csv")
+    args = parser.parse_args()
+
+    candidates = _load_rows(Path(args.candidates))
+    requirements = load_procurement_specifications(Path(args.requirements))
+    faram_specs = load_specifications(Path(args.faram_specifications))
+    rows = build_product_fit(candidates, requirements, faram_specs)
+    write_product_fit(Path(args.output), rows)
+    print(f"Faram tender product-fit intelligence completed: {len(rows)} candidates")
+
+
+if __name__ == "__main__":
+    main()
