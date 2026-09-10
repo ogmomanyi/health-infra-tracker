@@ -20,8 +20,8 @@ from .procurement_specifications import specifications_by_event
 OUTPUT_FIELDS = [
     "procurement_event_id", "tender_reference", "faram_product_id", "product_name",
     "manufacturer_name", "match_status", "match_confidence", "territory_fit",
-    "technical_status", "technical_score", "technical_passed", "technical_unknown",
-    "technical_failed", "technical_action",
+    "technical_status", "technical_evidence_status", "technical_score", "technical_passed",
+    "technical_unknown", "technical_failed", "technical_action",
 ]
 
 
@@ -46,7 +46,9 @@ def build_product_fit(
     faram_specification_rows: Iterable[dict[str, str]],
 ) -> list[dict[str, object]]:
     """Attach verified tender technical-fit results to existing Faram candidates."""
-    requirements = specifications_by_event(list(requirement_rows), verified_only=True)
+    requirement_rows = list(requirement_rows)
+    all_requirements = specifications_by_event(requirement_rows, verified_only=False)
+    verified_requirements = specifications_by_event(requirement_rows, verified_only=True)
     faram_specs = list(faram_specification_rows)
     grouped_candidates: dict[str, list[dict[str, str]]] = {}
     for candidate in candidate_rows:
@@ -55,7 +57,16 @@ def build_product_fit(
 
     output: list[dict[str, object]] = []
     for event_id, candidates in grouped_candidates.items():
-        event_requirements = requirements.get(event_id, [])
+        event_requirements = verified_requirements.get(event_id, [])
+        total_requirement_count = len(all_requirements.get(event_id, []))
+        verified_requirement_count = len(event_requirements)
+        if total_requirement_count == 0:
+            evidence_status = "MISSING"
+        elif verified_requirement_count < total_requirement_count:
+            evidence_status = "PARTIAL"
+        else:
+            evidence_status = "COMPLETE"
+
         requirement_text = _requirements_text(event_requirements)
         if requirement_text:
             assessed = assess_candidates(requirement_text, candidates, faram_specs)
@@ -85,6 +96,7 @@ def build_product_fit(
                 "match_confidence": row.get("match_confidence", ""),
                 "territory_fit": _text(row.get("territory_fit")),
                 "technical_status": status,
+                "technical_evidence_status": evidence_status,
                 "technical_score": row.get("technical_score", 0.0),
                 "technical_passed": row.get("technical_passed", 0),
                 "technical_unknown": row.get("technical_unknown", 0),
