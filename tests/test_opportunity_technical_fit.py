@@ -12,8 +12,11 @@ from commercial_crm_server import CRMHandler
 from procurement_intelligence import commercial_crm, opportunity_technical_fit
 
 
-def _server(db_path: Path):
-    handler = type("TestCRMHandler", (CRMHandler,), {"db_path": db_path})
+def _server(db_path: Path, technical_fit_path: Path | None = None):
+    attrs = {"db_path": db_path}
+    if technical_fit_path is not None:
+        attrs["technical_fit_path"] = technical_fit_path
+    handler = type("TestCRMHandler", (CRMHandler,), attrs)
     server = ThreadingHTTPServer(("127.0.0.1", 0), handler)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
@@ -65,16 +68,14 @@ def test_technical_fit_api_returns_generated_rows_for_opportunity():
         fit_path = root / "faram_product_fit.csv"
         _write_fit(fit_path)
         _seed(db_path)
-        server, thread = _server(db_path)
+        server, thread = _server(db_path, fit_path)
         try:
             status, payload = _get(server, "/api/opportunities/OPP-EV-1/technical-fit")
             assert status == 200
             assert payload["technical_fit"][0]["technical_status"] == "PASS"
             assert payload["technical_fit"][0]["technical_passed"] == "8"
         finally:
-            server.shutdown()
-            server.server_close()
-            thread.join(timeout=2)
+            server.shutdown(); server.server_close(); thread.join(timeout=2)
 
 
 def test_technical_fit_api_is_empty_for_account_level_opportunity():
@@ -91,9 +92,7 @@ def test_technical_fit_api_is_empty_for_account_level_opportunity():
             assert status == 200
             assert payload["technical_fit"] == []
         finally:
-            server.shutdown()
-            server.server_close()
-            thread.join(timeout=2)
+            server.shutdown(); server.server_close(); thread.join(timeout=2)
 
 
 def test_technical_fit_api_preserves_canonical_priority_context():
@@ -107,6 +106,4 @@ def test_technical_fit_api_preserves_canonical_priority_context():
             assert item["commercial_account_priority_score"] == 88.0
             assert item["commercial_account_priority_tier"] == "ACT_NOW"
         finally:
-            server.shutdown()
-            server.server_close()
-            thread.join(timeout=2)
+            server.shutdown(); server.server_close(); thread.join(timeout=2)
