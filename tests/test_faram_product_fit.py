@@ -26,10 +26,10 @@ FARAM_SPECS = [
 ]
 
 
-def requirement(status="VERIFIED", value="80"):
+def requirement(status="VERIFIED", value="80", name="throughput"):
     return {
         "procurement_event_id": "EV-1",
-        "specification_name": "throughput",
+        "specification_name": name,
         "specification_value": value,
         "specification_unit": "tests/hour",
         "source": "tender",
@@ -41,6 +41,7 @@ def requirement(status="VERIFIED", value="80"):
 def test_product_fit_passes_verified_requirement():
     rows = build_product_fit([CANDIDATE], [requirement()], FARAM_SPECS)
     assert rows[0]["technical_status"] == "PASS"
+    assert rows[0]["technical_evidence_status"] == "COMPLETE"
     assert rows[0]["technical_passed"] == 1
     assert rows[0]["technical_unknown"] == 0
     assert rows[0]["technical_failed"] == 0
@@ -50,6 +51,7 @@ def test_product_fit_passes_verified_requirement():
 def test_product_fit_is_unknown_without_tender_evidence():
     rows = build_product_fit([CANDIDATE], [], FARAM_SPECS)
     assert rows[0]["technical_status"] == "UNKNOWN"
+    assert rows[0]["technical_evidence_status"] == "MISSING"
     assert rows[0]["technical_score"] == 0.0
 
 
@@ -59,7 +61,17 @@ def test_product_fit_fails_explicitly_incompatible_requirement():
     assert rows[0]["technical_failed"] == 1
 
 
-def test_unverified_tender_requirement_is_not_matchable():
+def test_unverified_tender_requirement_is_not_matchable_but_is_recorded_as_partial_evidence():
     rows = build_product_fit([CANDIDATE], [requirement(status="UNVERIFIED")], FARAM_SPECS)
     assert rows[0]["technical_status"] == "UNKNOWN"
+    assert rows[0]["technical_evidence_status"] == "PARTIAL"
     assert rows[0]["technical_unknown"] == 0
+
+
+def test_mixed_verified_and_unverified_requirements_are_partial():
+    rows = build_product_fit([CANDIDATE], [
+        requirement(),
+        requirement(status="UNVERIFIED", name="sample_volume", value="5"),
+    ], FARAM_SPECS)
+    assert rows[0]["technical_evidence_status"] == "PARTIAL"
+    assert rows[0]["technical_status"] == "PASS"
