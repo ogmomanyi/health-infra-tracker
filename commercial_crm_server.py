@@ -8,7 +8,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
-from procurement_intelligence import account_work, commercial_crm, commercial_work, execution_completeness, management_work, opportunity_technical_fit
+from procurement_intelligence import account_work, bid_decision_intelligence, commercial_crm, commercial_work, execution_completeness, management_work, opportunity_technical_fit
 
 ROOT = Path(__file__).resolve().parent
 EXECUTION_HTML = ROOT / "procurement_intelligence" / "execution.html"
@@ -110,6 +110,14 @@ class CRMHandler(BaseHTTPRequestHandler):
                     return self._json(404, {"error": "opportunity not found"})
                 event_id = item.get("procurement_event_id") or ""
                 return self._json(200, {"technical_fit": opportunity_technical_fit.for_event(event_id, path=self.technical_fit_path)})
+            if len(parts) == 4 and parts[:2] == ["api", "opportunities"] and parts[3] == "decision-guidance":
+                item = commercial_crm.get_opportunity(parts[2], db_path=self.db_path)
+                if item is None:
+                    return self._json(404, {"error": "opportunity not found"})
+                event_id = item.get("procurement_event_id") or ""
+                technical_fit = opportunity_technical_fit.for_event(event_id, path=self.technical_fit_path)
+                execution = execution_completeness.snapshot(parts[2], db_path=self.db_path)
+                return self._json(200, bid_decision_intelligence.build_guidance(item, technical_fit, execution))
             if len(parts) == 3 and parts[:2] == ["api", "opportunities"]:
                 item = commercial_crm.get_opportunity(parts[2], db_path=self.db_path)
                 return self._json(200, item) if item else self._json(404, {"error": "opportunity not found"})
