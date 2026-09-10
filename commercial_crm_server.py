@@ -8,7 +8,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
-from procurement_intelligence import account_work, commercial_crm, commercial_work, execution_completeness, management_work, opportunity_technical_fit
+from procurement_intelligence import account_work, bid_decision_intelligence, commercial_crm, commercial_work, execution_completeness, management_work, opportunity_technical_fit
 
 ROOT = Path(__file__).resolve().parent
 EXECUTION_HTML = ROOT / "procurement_intelligence" / "execution.html"
@@ -17,6 +17,7 @@ ACCOUNT_HTML = ROOT / "procurement_intelligence" / "account.html"
 MANAGEMENT_HTML = ROOT / "procurement_intelligence" / "management.html"
 OPPORTUNITY_HTML = ROOT / "procurement_intelligence" / "opportunity.html"
 OPPORTUNITY_TECHNICAL_FIT_JS = ROOT / "procurement_intelligence" / "opportunity_technical_fit.js"
+BID_DECISION_GUIDANCE_JS = ROOT / "procurement_intelligence" / "bid_decision_guidance.js"
 
 
 class CRMHandler(BaseHTTPRequestHandler):
@@ -52,7 +53,7 @@ class CRMHandler(BaseHTTPRequestHandler):
             return self._json(404, {"error": "page not found"})
         body = path.read_bytes()
         if path == OPPORTUNITY_HTML:
-            body = body.replace(b"</body>", b'<script src="/opportunity-technical-fit.js"></script></body>')
+            body = body.replace(b"</body>", b'<script src="/opportunity-technical-fit.js"></script><script src="/bid_decision_guidance.js"></script></body>')
         self.send_response(200)
         self.send_header("Content-Type", "text/html; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
@@ -94,6 +95,8 @@ class CRMHandler(BaseHTTPRequestHandler):
                 return self._serve(OPPORTUNITY_HTML)
             if path == "/opportunity-technical-fit.js":
                 return self._serve_js(OPPORTUNITY_TECHNICAL_FIT_JS)
+            if path == "/bid_decision_guidance.js":
+                return self._serve_js(BID_DECISION_GUIDANCE_JS)
             if parts == ["api", "health"]:
                 return self._json(200, {"ok": True})
             if parts == ["api", "work"]:
@@ -110,6 +113,14 @@ class CRMHandler(BaseHTTPRequestHandler):
                     return self._json(404, {"error": "opportunity not found"})
                 event_id = item.get("procurement_event_id") or ""
                 return self._json(200, {"technical_fit": opportunity_technical_fit.for_event(event_id, path=self.technical_fit_path)})
+            if len(parts) == 4 and parts[:2] == ["api", "opportunities"] and parts[3] == "decision-guidance":
+                item = commercial_crm.get_opportunity(parts[2], db_path=self.db_path)
+                if item is None:
+                    return self._json(404, {"error": "opportunity not found"})
+                event_id = item.get("procurement_event_id") or ""
+                technical_fit = opportunity_technical_fit.for_event(event_id, path=self.technical_fit_path)
+                execution = execution_completeness.snapshot(parts[2], db_path=self.db_path)
+                return self._json(200, bid_decision_intelligence.build_guidance(item, technical_fit, execution))
             if len(parts) == 3 and parts[:2] == ["api", "opportunities"]:
                 item = commercial_crm.get_opportunity(parts[2], db_path=self.db_path)
                 return self._json(200, item) if item else self._json(404, {"error": "opportunity not found"})
