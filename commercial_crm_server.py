@@ -17,6 +17,7 @@ ACCOUNT_HTML = ROOT / "procurement_intelligence" / "account.html"
 MANAGEMENT_HTML = ROOT / "procurement_intelligence" / "management.html"
 OPPORTUNITY_HTML = ROOT / "procurement_intelligence" / "opportunity.html"
 OPPORTUNITY_TECHNICAL_FIT_JS = ROOT / "procurement_intelligence" / "opportunity_technical_fit.js"
+BID_DECISION_GUIDANCE_JS = ROOT / "procurement_intelligence" / "bid_decision_guidance.js"
 
 
 class CRMHandler(BaseHTTPRequestHandler):
@@ -52,7 +53,7 @@ class CRMHandler(BaseHTTPRequestHandler):
             return self._json(404, {"error": "page not found"})
         body = path.read_bytes()
         if path == OPPORTUNITY_HTML:
-            body = body.replace(b"</body>", b'<script src="/opportunity-technical-fit.js"></script></body>')
+            body = body.replace(b"</body>", b'<script src="/opportunity-technical-fit.js"></script><script src="/bid_decision_guidance.js"></script></body>')
         self.send_response(200)
         self.send_header("Content-Type", "text/html; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
@@ -94,6 +95,8 @@ class CRMHandler(BaseHTTPRequestHandler):
                 return self._serve(OPPORTUNITY_HTML)
             if path == "/opportunity-technical-fit.js":
                 return self._serve_js(OPPORTUNITY_TECHNICAL_FIT_JS)
+            if path == "/bid_decision_guidance.js":
+                return self._serve_js(BID_DECISION_GUIDANCE_JS)
             if parts == ["api", "health"]:
                 return self._json(200, {"ok": True})
             if parts == ["api", "work"]:
