@@ -33,16 +33,26 @@ def _closing_days(value: object) -> int | None:
 
 
 def _technical_summary(rows: list[dict[str, object]]) -> dict[str, object]:
-    statuses = {_text(row.get("technical_status")).upper() or "UNKNOWN" for row in rows}
-    if not rows:
+    statuses = [_text(row.get("technical_status")).upper() or "UNKNOWN" for row in rows]
+    if not statuses:
         return {"status": "UNKNOWN", "candidate_count": 0, "pass": 0, "review": 0, "fail": 0, "unknown": 0}
+    failed = statuses.count("FAIL")
+    reviewed = statuses.count("REVIEW")
+    unknown = statuses.count("UNKNOWN")
+    passed = statuses.count("PASS")
+    if failed == len(statuses):
+        status = "FAIL"
+    elif reviewed or unknown or failed:
+        status = "REVIEW"
+    else:
+        status = "PASS"
     return {
-        "status": "FAIL" if "FAIL" in statuses else "REVIEW" if "REVIEW" in statuses else "PASS" if "PASS" in statuses else "UNKNOWN",
+        "status": status,
         "candidate_count": len(rows),
-        "pass": sum(_text(r.get("technical_status")).upper() == "PASS" for r in rows),
-        "review": sum(_text(r.get("technical_status")).upper() == "REVIEW" for r in rows),
-        "fail": sum(_text(r.get("technical_status")).upper() == "FAIL" for r in rows),
-        "unknown": sum(_text(r.get("technical_status")).upper() == "UNKNOWN" for r in rows),
+        "pass": passed,
+        "review": reviewed,
+        "fail": failed,
+        "unknown": unknown,
     }
 
 
@@ -59,10 +69,10 @@ def build_guidance(opportunity: dict[str, object], technical_fit: list[dict[str,
     reasons: list[str] = []
     if technical["status"] == "FAIL":
         posture = "DO_NOT_BID_TECHNICAL_FAILURE"
-        reasons.append("At least one matched Faram candidate has a verified technical failure.")
-    elif technical["status"] in {"REVIEW", "UNKNOWN"}:
+        reasons.append("All matched Faram candidates have a verified technical failure.")
+    elif technical["status"] == "REVIEW":
         posture = "HOLD_FOR_TECHNICAL_REVIEW"
-        reasons.append("Verified technical evidence is incomplete or requires review before bid/no-bid.")
+        reasons.append("Technical evidence is incomplete, mixed, or requires review before bid/no-bid.")
     elif territory_fit == "NO":
         posture = "HOLD_FOR_TERRITORY_REVIEW"
         reasons.append("Available Faram candidate evidence does not support territory fit.")
