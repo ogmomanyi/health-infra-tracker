@@ -51,6 +51,9 @@ class DashboardContractTests(unittest.TestCase):
             "data/programme_intelligence.csv",
             "data/opportunities.csv",
             "data/opportunity_organisation_resolution.csv",
+            "data/organisation_entities.csv",
+            "data/organisation_aliases.csv",
+            "data/organisation_intelligence.csv",
             "data/engagements.csv",
             "data/crm_notes.csv",
             "data/donor_intelligence.csv",
@@ -61,7 +64,15 @@ class DashboardContractTests(unittest.TestCase):
             self.assertIn(path, html)
 
         self.assertIn("openProgrammeDetail", html)
+        self.assertIn("openAccountDetail", html)
+        self.assertIn("openEntityDetail", html)
+        self.assertIn("openGroupDetail", html)
+        self.assertIn("renderPipelineHealth", html)
+        self.assertIn("pipelineHealth", html)
         self.assertIn("detailOverlay", html)
+        self.assertIn("data-account-id", html)
+        self.assertIn("data-entity-id", html)
+        self.assertIn("data-group-id", html)
         self.assertIn("data-programme-id", html)
 
     def test_manifest_declares_layered_pipeline(self):

@@ -359,6 +359,53 @@
             white-space: nowrap;
         }
 
+        .health-panel {
+            margin-bottom: 16px;
+        }
+
+        .health-grid {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+        }
+
+        .health-step {
+            min-width: 0;
+            padding: 13px 14px;
+            border-right: 1px solid var(--line);
+        }
+
+        .health-step:last-child {
+            border-right: 0;
+        }
+
+        .health-title {
+            margin: 0 0 8px;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 800;
+            line-height: 1.35;
+            text-transform: uppercase;
+        }
+
+        .health-counts {
+            display: grid;
+            gap: 5px;
+        }
+
+        .health-count {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.35;
+        }
+
+        .health-count strong {
+            color: var(--ink);
+            font-size: 12px;
+        }
+
         .chart-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -720,6 +767,23 @@
             border-left: 3px solid #99f6e4;
         }
 
+        .detail-link {
+            width: 100%;
+            appearance: none;
+            border: 0;
+            background: transparent;
+            color: inherit;
+            text-align: left;
+            padding: 0 0 0 10px;
+            border-left: 3px solid #99f6e4;
+        }
+
+        .detail-link:hover,
+        .detail-link:focus-visible {
+            border-left-color: var(--blue);
+            outline: none;
+        }
+
         @media (max-width: 1180px) {
             .metric-grid {
                 grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -731,6 +795,14 @@
 
             .workspace-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .health-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
+            .health-step:nth-child(3n) {
+                border-right: 0;
             }
         }
 
@@ -748,8 +820,19 @@
 
             .metric-grid,
             .control-band,
-            .chart-grid {
+            .chart-grid,
+            .health-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .health-step,
+            .health-step:nth-child(3n) {
+                border-right: 0;
+                border-bottom: 1px solid var(--line);
+            }
+
+            .health-step:last-child {
+                border-bottom: 0;
             }
 
             .chart-cell {
@@ -908,6 +991,14 @@
                 </button>
             </section>
 
+            <section class="panel health-panel" aria-label="Pipeline health">
+                <div class="panel-header">
+                    <h2 class="panel-title">Pipeline Health</h2>
+                    <span id="healthMeta" class="panel-meta">0 unresolved</span>
+                </div>
+                <div id="pipelineHealth" class="health-grid"></div>
+            </section>
+
             <section class="workspace-grid">
                 <article class="panel">
                     <div class="panel-header">
@@ -1004,6 +1095,9 @@
             programmes: [],
             opportunities: [],
             relationships: [],
+            entities: [],
+            aliases: [],
+            orgIntelligence: [],
             engagements: [],
             notes: [],
             donors: [],
@@ -1025,6 +1119,9 @@
             programmes: "data/programme_intelligence.csv",
             opportunities: "data/opportunities.csv",
             relationships: "data/opportunity_organisation_resolution.csv",
+            entities: "data/organisation_entities.csv",
+            aliases: "data/organisation_aliases.csv",
+            orgIntelligence: "data/organisation_intelligence.csv",
             engagements: "data/engagements.csv",
             notes: "data/crm_notes.csv",
             donors: "data/donor_intelligence.csv",
@@ -1106,6 +1203,12 @@
             });
 
             document.getElementById("tableBody").addEventListener("click", event => {
+                const accountRow = event.target.closest("[data-account-id]");
+                if (accountRow) {
+                    openAccountDetail(accountRow.dataset.accountId);
+                    return;
+                }
+
                 const intelligenceRow = event.target.closest("[data-intelligence-kind]");
                 if (intelligenceRow) {
                     openIntelligenceDetail(
@@ -1126,6 +1229,13 @@
                     return;
                 }
 
+                const accountRow = event.target.closest("[data-account-id]");
+                if (accountRow) {
+                    event.preventDefault();
+                    openAccountDetail(accountRow.dataset.accountId);
+                    return;
+                }
+
                 const intelligenceRow = event.target.closest("[data-intelligence-kind]");
                 if (intelligenceRow) {
                     event.preventDefault();
@@ -1140,6 +1250,23 @@
                 if (row) {
                     event.preventDefault();
                     openProgrammeDetail(row.dataset.programmeId);
+                }
+            });
+
+            document.getElementById("detailContent").addEventListener("click", event => {
+                handleDetailNavigation(event.target.closest("[data-account-id], [data-programme-id], [data-entity-id], [data-group-id]"));
+            });
+
+            document.getElementById("detailContent").addEventListener("keydown", event => {
+                if (!["Enter", " "].includes(event.key)) {
+                    return;
+                }
+
+                const target = event.target.closest("[data-account-id], [data-programme-id], [data-entity-id], [data-group-id]");
+
+                if (target) {
+                    event.preventDefault();
+                    handleDetailNavigation(target);
                 }
             });
 
@@ -1170,13 +1297,16 @@
 
         async function loadDashboard() {
             try {
-                const [summary, accounts, actions, programmes, opportunities, relationships, engagements, notes, donors, equipment, tenders] = await Promise.all([
+                const [summary, accounts, actions, programmes, opportunities, relationships, entities, aliases, orgIntelligence, engagements, notes, donors, equipment, tenders] = await Promise.all([
                     fetchJson(datasetPaths.summary),
                     fetchCsv(datasetPaths.accounts),
                     fetchCsv(datasetPaths.actions),
                     fetchCsv(datasetPaths.programmes),
                     fetchCsv(datasetPaths.opportunities),
                     fetchCsv(datasetPaths.relationships),
+                    fetchCsv(datasetPaths.entities),
+                    fetchCsv(datasetPaths.aliases),
+                    fetchCsv(datasetPaths.orgIntelligence),
                     fetchCsv(datasetPaths.engagements),
                     fetchCsv(datasetPaths.notes),
                     fetchCsv(datasetPaths.donors),
@@ -1190,6 +1320,9 @@
                 state.programmes = sortByNumber(programmes, "opportunity_score");
                 state.opportunities = sortByNumber(opportunities, "opportunity_score");
                 state.relationships = relationships;
+                state.entities = entities;
+                state.aliases = aliases;
+                state.orgIntelligence = orgIntelligence;
                 state.engagements = engagements;
                 state.notes = notes;
                 state.donors = sortByNumber(donors, "donor_score");
@@ -1303,6 +1436,7 @@
         function render() {
             renderHeader();
             renderMetrics();
+            renderPipelineHealth();
             renderQueue();
             renderCharts();
             renderTable();
@@ -1337,6 +1471,49 @@
             document.getElementById("metricHighPriority").textContent = formatInteger(highPriority);
             document.getElementById("metricDonors").textContent = formatInteger(visibleDonors.length);
             document.getElementById("metricCountries").textContent = `${formatInteger(uniqueCountries(visibleProgrammes).size)} countries`;
+        }
+
+        function renderPipelineHealth() {
+            const container = document.getElementById("pipelineHealth");
+            const layers = state.summary.pipeline_layers || [];
+            const counts = datasetCounts();
+            const entities = entityMap();
+            const unresolved = state.relationships.filter(row => row.resolution_level === "UNRESOLVED").length;
+            const brokenEntityRefs = state.relationships.filter(row => hasValue(row.entity_id) && !entities.has(row.entity_id)).length;
+
+            document.getElementById("healthMeta").textContent =
+                `${formatInteger(unresolved)} unresolved · ${formatInteger(brokenEntityRefs)} broken refs`;
+
+            if (!layers.length) {
+                container.innerHTML = `<div class="empty-state">No pipeline metadata available.</div>`;
+                return;
+            }
+
+            container.innerHTML = layers.map(layer => {
+                const datasets = layer.datasets || [];
+                const ready = datasets.every(name => numberValue(counts[name]) > 0);
+                const layerClass = ready ? "teal" : "amber";
+                const preview = datasets.slice(0, 4).map(name => `
+                    <div class="health-count">
+                        <span>${escapeHtml(datasetLabel(name))}</span>
+                        <strong>${formatInteger(counts[name])}</strong>
+                    </div>
+                `).join("");
+                const remainder = datasets.length > 4
+                    ? `<div class="health-count"><span>More datasets</span><strong>${formatInteger(datasets.length - 4)}</strong></div>`
+                    : "";
+
+                return `
+                    <div class="health-step">
+                        <p class="health-title">${escapeHtml(layer.layer || "Layer")}</p>
+                        <div style="margin-bottom: 9px;">${tag(ready ? "Ready" : "Review", layerClass)}</div>
+                        <div class="health-counts">
+                            ${preview}
+                            ${remainder}
+                        </div>
+                    </div>
+                `;
+            }).join("");
         }
 
         function renderQueue() {
@@ -1462,16 +1639,11 @@
         }
 
         function accountRow(account) {
-            const programmeId = accountProgrammeId(account);
-            const rowAttrs = programmeId
-                ? ` class="clickable-row" data-programme-id="${escapeAttr(programmeId)}" tabindex="0"`
-                : "";
-
             return `
-                <tr${rowAttrs}>
+                <tr class="clickable-row" data-account-id="${escapeAttr(account.target_account_id)}" tabindex="0">
                     <td>
                         <div class="primary">${escapeHtml(account.account_name || "Unnamed account")}</div>
-                        <div class="secondary">${escapeHtml(account.target_account_id || "")}</div>
+                        <div class="secondary">${escapeHtml(account.organisation_entity_id || account.target_account_id || "")}</div>
                     </td>
                     <td>${tag(account.account_type || "Organisation", "blue")}</td>
                     <td>${tag(account.priority_tier || "Monitor", tierClass(account.priority_tier))}</td>
@@ -1583,6 +1755,187 @@
                     <td>${escapeHtml(tender.recommended_action || "")}</td>
                 </tr>
             `;
+        }
+
+        function handleDetailNavigation(target) {
+            if (!target) {
+                return;
+            }
+
+            if (target.dataset.accountId) {
+                openAccountDetail(target.dataset.accountId);
+                return;
+            }
+
+            if (target.dataset.programmeId) {
+                openProgrammeDetail(target.dataset.programmeId);
+                return;
+            }
+
+            if (target.dataset.entityId) {
+                openEntityDetail(target.dataset.entityId);
+                return;
+            }
+
+            if (target.dataset.groupId) {
+                openGroupDetail(target.dataset.groupId);
+            }
+        }
+
+        function openAccountDetail(accountId) {
+            const account = accountMap().get(String(accountId || "")) || {};
+
+            if (!account.target_account_id) {
+                return;
+            }
+
+            const entityId = firstValue(account.organisation_entity_id);
+            const entity = entityMap().get(entityId) || {};
+            const intelligence = organisationIntelligenceMap().get(entityId) || {};
+            const actions = state.actions.filter(action => action.target_account_id === account.target_account_id);
+            const engagements = state.engagements.filter(engagement => engagement.target_account_id === account.target_account_id);
+            const notes = state.notes.filter(note => note.target_account_id === account.target_account_id);
+            const relationships = entityId
+                ? state.relationships.filter(relationship => relationship.entity_id === entityId)
+                : [];
+            const aliases = entityAliases(entityId);
+            const programmes = relatedProgrammes([
+                ...actions.map(action => action.iati_identifier),
+                ...engagements.map(engagement => engagement.related_iati_identifier),
+                ...notes.map(note => note.related_iati_identifier),
+                ...relationships.map(relationship => relationship.opportunity_id)
+            ]);
+
+            document.getElementById("detailTitle").textContent =
+                account.account_name || intelligence.organisation_name || entity.canonical_name || "Target Account";
+            document.getElementById("detailSubtitle").textContent = [
+                account.priority_tier,
+                account.account_type,
+                entityId
+            ].filter(hasValue).join(" · ");
+
+            document.getElementById("detailContent").innerHTML = `
+                <div class="detail-summary">
+                    ${detailStat("Fit", scoreBadge(account.fit_score || intelligence.average_opportunity_score))}
+                    ${detailStat("Tier", tag(account.priority_tier || "Monitor", tierClass(account.priority_tier)))}
+                    ${detailStat("Programmes", formatInteger(programmes.length))}
+                    ${detailStat("Open Actions", formatInteger(actions.length))}
+                </div>
+
+                ${detailSection("Account Profile", detailGrid([
+                    ["Account Type", firstValue(account.account_type, intelligence.account_type)],
+                    ["CRM Stage", account.crm_stage],
+                    ["Countries", firstValue(account.country_names, account.country_codes, intelligence.country_names), value => tagList(value, "")],
+                    ["Top Needs", firstValue(account.top_needs, intelligence.top_equipment_categories), value => tagList(value, "teal")],
+                    ["Reported Budget", firstValue(account.reported_budget, intelligence.reported_budget), moneyDetail],
+                    ["Commercial Relevance", intelligence.commercial_relevance]
+                ]))}
+
+                ${detailSection("Canonical Entity", detailGrid([
+                    ["Entity ID", entityId],
+                    ["Canonical Name", entity.canonical_name],
+                    ["Entity Status", entity.entity_status],
+                    ["Roles", firstValue(entity.roles, intelligence.roles), value => tagList(value, "blue")],
+                    ["Activities", firstValue(intelligence.activity_count, entity.activity_count)],
+                    ["High Priority", firstValue(account.high_priority_opportunities, intelligence.high_priority_opportunities)]
+                ]))}
+
+                ${detailSection("Source Aliases", detailAliases(aliases))}
+                ${detailSection("Related Programmes", detailProgrammes(programmes))}
+                ${detailSection("Recommended Actions", detailActions(actions, account.recommended_action))}
+                ${detailSection("Engagements", detailEngagements(engagements))}
+                ${detailSection("CRM Notes", detailNotes(notes))}
+                ${detailSection("Relationship Audit", detailRelationshipSummary(relationships))}
+            `;
+
+            showIntelligenceDetail();
+        }
+
+        function openEntityDetail(entityId) {
+            const id = String(entityId || "").trim();
+            const entity = entityMap().get(id);
+
+            if (!entity) {
+                return;
+            }
+
+            const aliases = entityAliases(id);
+            const accounts = state.accounts.filter(account => account.organisation_entity_id === id);
+            const intelligence = organisationIntelligenceMap().get(id) || {};
+            const relationships = state.relationships.filter(relationship => relationship.entity_id === id);
+            const programmes = relatedProgrammes(relationships.map(relationship => relationship.opportunity_id));
+
+            document.getElementById("detailTitle").textContent =
+                entity.canonical_name || accounts[0]?.account_name || "Canonical Organisation";
+            document.getElementById("detailSubtitle").textContent = [
+                id,
+                firstValue(entity.organisation_type, intelligence.account_type),
+                entity.entity_status
+            ].filter(hasValue).join(" · ");
+
+            document.getElementById("detailContent").innerHTML = `
+                <div class="detail-summary">
+                    ${detailStat("Accounts", formatInteger(accounts.length))}
+                    ${detailStat("Programmes", formatInteger(programmes.length))}
+                    ${detailStat("Aliases", formatInteger(aliases.length))}
+                    ${detailStat("Mentions", formatInteger(relationships.length))}
+                </div>
+
+                ${detailSection("Canonical Profile", detailGrid([
+                    ["Entity ID", id],
+                    ["Canonical Name", entity.canonical_name],
+                    ["Organisation Type", firstValue(entity.organisation_type, intelligence.account_type)],
+                    ["Status", entity.entity_status],
+                    ["Roles", firstValue(entity.roles, intelligence.roles), value => tagList(value, "blue")],
+                    ["Updated", firstValue(entity.updated_at, entity.latest_update, intelligence.latest_update)]
+                ]))}
+
+                ${detailSection("Commercial Accounts", detailAccounts(accounts))}
+                ${detailSection("Source Aliases", detailAliases(aliases))}
+                ${detailSection("Related Programmes", detailProgrammes(programmes))}
+                ${detailSection("Relationship Mentions", detailRelationships(relationships))}
+            `;
+
+            showIntelligenceDetail();
+        }
+
+        function openGroupDetail(groupId) {
+            const id = String(groupId || "").trim();
+
+            if (!id) {
+                return;
+            }
+
+            const relationships = state.relationships.filter(relationship => relationship.group_id === id);
+            const programmes = relatedProgrammes(relationships.map(relationship => relationship.opportunity_id));
+            const organisationNames = uniqueValues(relationships.map(relationship => relationship.organisation_name));
+            const roles = uniqueValues(relationships.map(relationship => relationship.organisation_role));
+
+            document.getElementById("detailTitle").textContent = `Organisation Group ${id}`;
+            document.getElementById("detailSubtitle").textContent =
+                `${formatInteger(organisationNames.length)} names · ${formatInteger(programmes.length)} programmes`;
+
+            document.getElementById("detailContent").innerHTML = `
+                <div class="detail-summary">
+                    ${detailStat("Programmes", formatInteger(programmes.length))}
+                    ${detailStat("Names", formatInteger(organisationNames.length))}
+                    ${detailStat("Mentions", formatInteger(relationships.length))}
+                    ${detailStat("Roles", formatInteger(roles.length))}
+                </div>
+
+                ${detailSection("Group Profile", detailGrid([
+                    ["Group ID", id],
+                    ["Roles", roles.join("; "), value => tagList(value, "blue")],
+                    ["Resolution", "Group-level canonical match"],
+                    ["Average Confidence", averageConfidence(relationships)]
+                ]))}
+
+                ${detailSection("Organisation Names", detailCopy(organisationNames.slice(0, 30).join("\n")))}
+                ${detailSection("Related Programmes", detailProgrammes(programmes))}
+                ${detailSection("Relationship Mentions", detailRelationships(relationships))}
+            `;
+
+            showIntelligenceDetail();
         }
 
         function openProgrammeDetail(programmeId) {
@@ -1937,6 +2290,79 @@
             `;
         }
 
+        function detailProgrammes(programmes) {
+            if (!programmes.length) {
+                return "";
+            }
+
+            return `
+                <div class="detail-actions">
+                    ${programmes.slice(0, 15).map(programme => `
+                        <button type="button" class="detail-link" data-programme-id="${escapeAttr(programme.iati_identifier)}">
+                            <strong>${escapeHtml(programme.programme_name || programme.project_title || programme.iati_identifier)}</strong>
+                            <div class="secondary">
+                                ${escapeHtml([
+                                    programme.country_names || programme.country_codes,
+                                    programme.funding_agencies,
+                                    programme.priority_band
+                                ].filter(hasValue).join(" · "))}
+                            </div>
+                            <div class="tag-row" style="margin-top: 8px;">
+                                ${scoreBadge(programme.opportunity_score)}
+                                ${tag(programme.tender_stage || "Watch", programme.tender_stage === "Likely procurement" ? "teal" : "amber")}
+                            </div>
+                        </button>
+                    `).join("")}
+                    ${programmes.length > 15 ? `<div class="secondary">${formatInteger(programmes.length - 15)} more programmes</div>` : ""}
+                </div>
+            `;
+        }
+
+        function detailAccounts(accounts) {
+            if (!accounts.length) {
+                return "";
+            }
+
+            return `
+                <div class="detail-actions">
+                    ${accounts.map(account => `
+                        <button type="button" class="detail-link" data-account-id="${escapeAttr(account.target_account_id)}">
+                            <strong>${escapeHtml(account.account_name || "Target account")}</strong>
+                            <div class="secondary">${escapeHtml([account.account_type, account.priority_tier, account.crm_stage].filter(hasValue).join(" · "))}</div>
+                            <div class="tag-row" style="margin-top: 8px;">
+                                ${scoreBadge(account.fit_score)}
+                                ${tag(account.priority_tier || "Monitor", tierClass(account.priority_tier))}
+                            </div>
+                        </button>
+                    `).join("")}
+                </div>
+            `;
+        }
+
+        function detailAliases(aliases) {
+            if (!aliases.length) {
+                return "";
+            }
+
+            return `
+                <div class="detail-actions">
+                    ${aliases.slice(0, 16).map(alias => `
+                        <div class="detail-action">
+                            <strong>${escapeHtml(alias.alias_name || alias.alias || alias.organisation_key || "Alias")}</strong>
+                            <div class="secondary">
+                                ${escapeHtml([
+                                    alias.org_ref ? `Ref ${alias.org_ref}` : "",
+                                    alias.match_method,
+                                    alias.source_system
+                                ].filter(hasValue).join(" · "))}
+                            </div>
+                        </div>
+                    `).join("")}
+                    ${aliases.length > 16 ? `<div class="secondary">${formatInteger(aliases.length - 16)} more aliases</div>` : ""}
+                </div>
+            `;
+        }
+
         function detailEngagements(engagements) {
             if (!engagements.length) {
                 return "";
@@ -1969,7 +2395,7 @@
             return `
                 <div class="detail-actions">
                     ${relationships.slice(0, 12).map(relationship => `
-                        <div class="detail-action">
+                        <button type="button" class="detail-link" ${relationship.entity_id ? `data-entity-id="${escapeAttr(relationship.entity_id)}"` : relationship.group_id ? `data-group-id="${escapeAttr(relationship.group_id)}"` : ""}>
                             <strong>${escapeHtml(relationship.organisation_name || "Organisation")}</strong>
                             <div class="secondary">
                                 ${escapeHtml([
@@ -1982,9 +2408,30 @@
                                 ${tag(relationship.resolution_level || "UNRESOLVED", relationship.resolution_level === "ENTITY" ? "teal" : relationship.resolution_level === "GROUP" ? "blue" : "amber")}
                                 ${tag(`${Math.round(numberValue(relationship.confidence_score) * 100)}%`, "")}
                             </div>
-                        </div>
+                        </button>
                     `).join("")}
                     ${relationships.length > 12 ? `<div class="secondary">${formatInteger(relationships.length - 12)} more relationships</div>` : ""}
+                </div>
+            `;
+        }
+
+        function detailRelationshipSummary(relationships) {
+            if (!relationships.length) {
+                return "";
+            }
+
+            const levels = groupCount(relationships, "resolution_level", ["ENTITY", "GROUP", "NON_ENTITY", "UNRESOLVED"]);
+            const roles = groupCount(relationships, "organisation_role", ["FUNDING", "IMPLEMENTING", "ACCOUNTABLE", "REPORTING"]);
+
+            return `
+                ${detailGrid([
+                    ["Relationship Mentions", relationships.length],
+                    ["Entity Matches", levels.find(item => item.label === "ENTITY")?.count || 0],
+                    ["Group Matches", levels.find(item => item.label === "GROUP")?.count || 0],
+                    ["Unresolved", levels.find(item => item.label === "UNRESOLVED")?.count || 0]
+                ])}
+                <div class="tag-row" style="margin-top: 10px;">
+                    ${roles.slice(0, 6).map(item => tag(`${item.label}: ${formatInteger(item.count)}`, "blue")).join("")}
                 </div>
             `;
         }
@@ -2100,6 +2547,20 @@
             return new Map(state.accounts.map(account => [account.target_account_id, account]));
         }
 
+        function entityMap() {
+            return new Map(state.entities.map(entity => [
+                firstValue(entity.entity_id, entity.organisation_entity_id),
+                entity
+            ]).filter(([entityId]) => hasValue(entityId)));
+        }
+
+        function organisationIntelligenceMap() {
+            return new Map(state.orgIntelligence.map(row => [
+                row.organisation_entity_id,
+                row
+            ]).filter(([entityId]) => hasValue(entityId)));
+        }
+
         function programmeMap() {
             return new Map(state.programmes.map(programme => [programme.iati_identifier, programme]));
         }
@@ -2110,6 +2571,78 @@
 
         function tenderMap() {
             return new Map(state.tenders.map(tender => [tender.iati_identifier, tender]));
+        }
+
+        function entityAliases(entityId) {
+            return state.aliases.filter(alias => {
+                return firstValue(alias.entity_id, alias.organisation_entity_id) === entityId;
+            });
+        }
+
+        function relatedProgrammes(ids) {
+            const map = programmeMap();
+            const seen = new Set();
+            const programmes = [];
+
+            ids.forEach(value => {
+                const id = String(value || "").trim();
+
+                if (!id || seen.has(id)) {
+                    return;
+                }
+
+                const programme = map.get(id);
+
+                if (programme) {
+                    seen.add(id);
+                    programmes.push(programme);
+                }
+            });
+
+            return sortByNumber(programmes, "opportunity_score");
+        }
+
+        function averageConfidence(rows) {
+            if (!rows.length) {
+                return "";
+            }
+
+            const total = rows.reduce((sum, row) => sum + numberValue(row.confidence_score), 0);
+            return `${Math.round((total / rows.length) * 100)}%`;
+        }
+
+        function datasetCounts() {
+            const output = {};
+            const layerCounts = state.summary.layer_counts || {};
+
+            Object.values(layerCounts).forEach(group => {
+                Object.assign(output, group || {});
+            });
+
+            Object.assign(output, state.summary.row_counts || {});
+            Object.assign(output, {
+                target_accounts: state.accounts.length,
+                recommended_actions: state.actions.length,
+                programme_intelligence: state.programmes.length,
+                opportunities: state.opportunities.length,
+                opportunity_organisation_resolution: state.relationships.length,
+                organisation_entities: state.entities.length,
+                organisation_aliases: state.aliases.length,
+                organisation_intelligence: state.orgIntelligence.length,
+                engagements: state.engagements.length,
+                crm_notes: state.notes.length,
+                donor_intelligence: state.donors.length,
+                equipment_intelligence: state.equipment.length,
+                tender_predictions: state.tenders.length
+            });
+
+            return output;
+        }
+
+        function datasetLabel(name) {
+            return String(name || "")
+                .replace(/^iati_/, "raw_")
+                .replaceAll("_", " ");
         }
 
         function mergeRows(...rows) {
