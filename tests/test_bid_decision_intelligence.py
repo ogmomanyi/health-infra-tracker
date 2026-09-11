@@ -60,3 +60,36 @@ def test_expired_tender_adds_urgency_reason_without_changing_posture():
     result = build_guidance(opportunity(closing_date="2020-01-01"), [{"technical_status": "PASS"}])
     assert result["guidance"] == "PROCEED_TO_BID_REVIEW"
     assert any("closing date has passed" in reason for reason in result["reasons"])
+
+
+def test_explicit_channel_constraint_holds_bid_for_authorized_route():
+    constraints = [{
+        "constraint_id": "CC-001",
+        "manufacturer_name": "DiaSys",
+        "country": "Kenya",
+        "channel_status": "APPOINTED_DISTRIBUTOR_IDENTIFIED",
+        "channel_holder": "Keton Consulting Limited",
+        "recommended_action": "DO_NOT_POSITION_AS_DIRECT_DISTRIBUTOR",
+    }]
+    result = build_guidance(
+        opportunity(country="Kenya"),
+        [{"technical_status": "PASS", "territory_fit": "YES", "manufacturer_name": "DiaSys"}],
+        {"bid_decision": {"decision": "PENDING"}},
+        constraints,
+    )
+    assert result["guidance"] == "HOLD_FOR_CHANNEL_ROUTE"
+    assert result["guidance_label"] == "CHANNEL ROUTE REQUIRED"
+    assert result["channel_constraint_status"] == "MATCHED"
+    assert result["channel_constraints"][0]["channel_holder"] == "Keton Consulting Limited"
+    assert result["human_bid_decision"] == "PENDING"
+    assert result["canonical_priority_is_unchanged"] is True
+
+
+def test_technical_failure_takes_precedence_over_channel_constraint():
+    result = build_guidance(
+        opportunity(country="Kenya"),
+        [{"technical_status": "FAIL", "territory_fit": "YES", "manufacturer_name": "DiaSys"}],
+        None,
+        [{"manufacturer_name": "DiaSys", "country": "Kenya", "channel_holder": "Keton Consulting Limited"}],
+    )
+    assert result["guidance"] == "DO_NOT_BID_TECHNICAL_FAILURE"
