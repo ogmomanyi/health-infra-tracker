@@ -56,9 +56,15 @@ def _technical_summary(rows: list[dict[str, object]]) -> dict[str, object]:
     }
 
 
-def build_guidance(opportunity: dict[str, object], technical_fit: list[dict[str, object]], execution: dict[str, object] | None = None) -> dict[str, object]:
+def build_guidance(
+    opportunity: dict[str, object],
+    technical_fit: list[dict[str, object]],
+    execution: dict[str, object] | None = None,
+    channel_constraints: list[dict[str, object]] | None = None,
+) -> dict[str, object]:
     """Return evidence-based posture without changing CRM state."""
     technical = _technical_summary(technical_fit)
+    constraints = channel_constraints or []
     catalogue_status = _text(opportunity.get("catalogue_fit_status")).upper() or "UNKNOWN"
     territory_values = {_text(r.get("territory_fit")).upper() for r in technical_fit if _text(r.get("territory_fit"))}
     territory_fit = "YES" if "YES" in territory_values else "NO" if territory_values and territory_values == {"NO"} else "UNKNOWN"
@@ -76,6 +82,13 @@ def build_guidance(opportunity: dict[str, object], technical_fit: list[dict[str,
     elif territory_fit == "NO":
         posture = "HOLD_FOR_TERRITORY_REVIEW"
         reasons.append("Available Faram candidate evidence does not support territory fit.")
+    elif constraints:
+        posture = "HOLD_FOR_CHANNEL_ROUTE"
+        holders = sorted({_text(row.get("channel_holder")) for row in constraints if _text(row.get("channel_holder"))})
+        manufacturers = sorted({_text(row.get("manufacturer_name")) for row in constraints if _text(row.get("manufacturer_name"))})
+        route = f" via {', '.join(holders)}" if holders else ""
+        subject = ", ".join(manufacturers) if manufacturers else "A matched manufacturer"
+        reasons.append(f"{subject} has an explicit channel constraint for this country{route}; confirm an authorized commercial route before bid/no-bid.")
     elif catalogue_status in {"NO_MATCH", "FAIL"}:
         posture = "HOLD_FOR_CATALOGUE_REVIEW"
         reasons.append("The catalogue match does not currently support a compliant product route.")
@@ -103,6 +116,7 @@ def build_guidance(opportunity: dict[str, object], technical_fit: list[dict[str,
             "HOLD_FOR_TECHNICAL_REVIEW": "TECHNICAL REVIEW REQUIRED",
             "DO_NOT_BID_TECHNICAL_FAILURE": "DO NOT BID — TECHNICAL FAILURE",
             "HOLD_FOR_TERRITORY_REVIEW": "TERRITORY REVIEW REQUIRED",
+            "HOLD_FOR_CHANNEL_ROUTE": "CHANNEL ROUTE REQUIRED",
             "HOLD_FOR_CATALOGUE_REVIEW": "CATALOGUE REVIEW REQUIRED",
         }[posture],
         "reasons": reasons,
@@ -110,6 +124,8 @@ def build_guidance(opportunity: dict[str, object], technical_fit: list[dict[str,
         "catalogue_fit_status": catalogue_status,
         "territory_fit": territory_fit,
         "principal_status": principal_status,
+        "channel_constraint_status": "MATCHED" if constraints else "NONE",
+        "channel_constraints": constraints,
         "days_to_closing": days,
         "commercial_account_priority_score": score,
         "commercial_account_priority_tier": tier,
