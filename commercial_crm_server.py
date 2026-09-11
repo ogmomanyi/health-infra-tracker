@@ -8,7 +8,18 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
-from procurement_intelligence import account_work, bid_decision_intelligence, channel_constraints, commercial_crm, commercial_work, execution_completeness, management_work, opportunity_technical_fit
+from procurement_intelligence import (
+    account_work,
+    bid_decision_intelligence,
+    channel_constraints,
+    commercial_bid_intelligence,
+    commercial_crm,
+    commercial_memory,
+    commercial_work,
+    execution_completeness,
+    management_work,
+    opportunity_technical_fit,
+)
 
 ROOT = Path(__file__).resolve().parent
 EXECUTION_HTML = ROOT / "procurement_intelligence" / "execution.html"
@@ -24,6 +35,7 @@ class CRMHandler(BaseHTTPRequestHandler):
     db_path = commercial_crm.DB_DEFAULT
     technical_fit_path = opportunity_technical_fit.DEFAULT_PATH
     channel_constraints_path = channel_constraints.DEFAULT_PATH
+    commercial_memory_path = ROOT / "data" / "faram_commercial_memory.csv"
 
     def _json(self, status, payload):
         body = json.dumps(payload, default=str).encode("utf-8")
@@ -105,7 +117,7 @@ class CRMHandler(BaseHTTPRequestHandler):
             if parts == ["api", "accounts"]:
                 return self._json(200, {"accounts": account_work.list_accounts(db_path=self.db_path, today=params.get("today", [None])[0])})
             if parts == ["api", "management"]:
-                return self._json(200, management_work.management_summary(db_path=self.db_path, today=params.get("today", [None])[0], closing_window_days=int(params.get("closing_window_days", [7])[0])) )
+                return self._json(200, management_work.management_summary(db_path=self.db_path, today=params.get("today", [None])[0], closing_window_days=int(params.get("closing_window_days", [7])[0])))
             if parts == ["api", "opportunities"]:
                 return self._json(200, commercial_crm.list_opportunities(db_path=self.db_path, status=params.get("status", [None])[0], owner=params.get("owner", [None])[0]))
             if len(parts) == 4 and parts[:2] == ["api", "opportunities"] and parts[3] == "technical-fit":
@@ -121,7 +133,21 @@ class CRMHandler(BaseHTTPRequestHandler):
                 event_id = item.get("procurement_event_id") or ""
                 technical_fit = opportunity_technical_fit.for_event(event_id, path=self.technical_fit_path)
                 execution = execution_completeness.snapshot(parts[2], db_path=self.db_path)
-                return self._json(200, bid_decision_intelligence.build_guidance(item, technical_fit, execution))
+                constraints = channel_constraints.match(
+                    item,
+                    technical_fit,
+                    channel_constraints.load(self.channel_constraints_path),
+                )
+                return self._json(200, {
+                    "bid_decision": bid_decision_intelligence.build_guidance(
+                        item, technical_fit, execution, constraints
+                    ),
+                    "commercial_preparation": commercial_bid_intelligence.build_guidance(
+                        item,
+                        technical_fit,
+                        commercial_memory.load_evidence(self.commercial_memory_path),
+                    ),
+                })
             if len(parts) == 3 and parts[:2] == ["api", "opportunities"]:
                 item = commercial_crm.get_opportunity(parts[2], db_path=self.db_path)
                 return self._json(200, item) if item else self._json(404, {"error": "opportunity not found"})
@@ -189,12 +215,15 @@ def main():
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--db", default=str(commercial_crm.DB_DEFAULT))
     parser.add_argument("--technical-fit", default=str(opportunity_technical_fit.DEFAULT_PATH))
+    parser.add_argument("--channel-constraints", default=str(channel_constraints.DEFAULT_PATH))
+    parser.add_argument("--commercial-memory", default=str(ROOT / "data" / "faram_commercial_memory.csv"))
     args = parser.parse_args()
     commercial_crm.initialize(args.db)
     execution_completeness.initialize(args.db)
     CRMHandler.db_path = args.db
     CRMHandler.technical_fit_path = Path(args.technical_fit)
     CRMHandler.channel_constraints_path = Path(args.channel_constraints)
+    CRMHandler.commercial_memory_path = Path(args.commercial_memory)
     server = ThreadingHTTPServer((args.host, args.port), CRMHandler)
     print(f"Commercial CRM API listening on http://{args.host}:{args.port}")
     try:
