@@ -15,6 +15,7 @@ from procurement_intelligence import (
     commercial_bid_intelligence,
     commercial_crm,
     commercial_memory,
+    commercial_pricing_workbench,
     commercial_work,
     execution_completeness,
     management_work,
@@ -30,6 +31,7 @@ MANAGEMENT_HTML = ROOT / "procurement_intelligence" / "management.html"
 OPPORTUNITY_HTML = ROOT / "procurement_intelligence" / "opportunity.html"
 OPPORTUNITY_TECHNICAL_FIT_JS = ROOT / "procurement_intelligence" / "opportunity_technical_fit.js"
 BID_DECISION_GUIDANCE_JS = ROOT / "procurement_intelligence" / "bid_decision_guidance.js"
+PRICING_WORKBENCH_JS = ROOT / "procurement_intelligence" / "pricing_workbench.js"
 
 
 class CRMHandler(BaseHTTPRequestHandler):
@@ -67,7 +69,7 @@ class CRMHandler(BaseHTTPRequestHandler):
             return self._json(404, {"error": "page not found"})
         body = path.read_bytes()
         if path == OPPORTUNITY_HTML:
-            body = body.replace(b"</body>", b'<script src="/opportunity-technical-fit.js"></script><script src="/bid_decision_guidance.js"></script></body>')
+            body = body.replace(b"</body>", b'<script src="/opportunity-technical-fit.js"></script><script src="/bid_decision_guidance.js"></script><script src="/pricing-workbench.js"></script></body>')
         self.send_response(200)
         self.send_header("Content-Type", "text/html; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
@@ -111,6 +113,8 @@ class CRMHandler(BaseHTTPRequestHandler):
                 return self._serve_js(OPPORTUNITY_TECHNICAL_FIT_JS)
             if path == "/bid_decision_guidance.js":
                 return self._serve_js(BID_DECISION_GUIDANCE_JS)
+            if path == "/pricing-workbench.js":
+                return self._serve_js(PRICING_WORKBENCH_JS)
             if parts == ["api", "health"]:
                 return self._json(200, {"ok": True})
             if parts == ["api", "work"]:
@@ -168,6 +172,16 @@ class CRMHandler(BaseHTTPRequestHandler):
                     return self._json(200, commercial_crm.list_audit_log(oid, db_path=self.db_path))
                 if parts[3] == "execution":
                     return self._json(200, execution_completeness.snapshot(oid, db_path=self.db_path))
+                if parts[3] == "pricing":
+                    execution = execution_completeness.snapshot(oid, db_path=self.db_path)
+                    decision = (execution.get("bid_decision") or {}).get("decision")
+                    cases = execution.get("pricing_cases") or []
+                    return self._json(200, {
+                        "pricing_cases": commercial_pricing_workbench.evaluate_cases(
+                            cases,
+                            human_bid_decision=decision,
+                        )
+                    })
             return self._json(404, {"error": "not found"})
         except Exception as exc:
             return self._json(400, {"error": str(exc)})
@@ -204,6 +218,15 @@ class CRMHandler(BaseHTTPRequestHandler):
                 return self._json(201, {"evidence_id": execution_completeness.add_evidence(parts[2], p, db_path=self.db_path)})
             if len(parts) == 4 and parts[:2] == ["api", "opportunities"] and parts[3] == "outcome":
                 return self._json(200, execution_completeness.record_outcome(parts[2], p, db_path=self.db_path))
+            if len(parts) == 4 and parts[:2] == ["api", "opportunities"] and parts[3] == "pricing":
+                case_id = execution_completeness.upsert_pricing_case(parts[2], p, db_path=self.db_path)
+                cases = execution_completeness.list_pricing_cases(parts[2], db_path=self.db_path)
+                case = next((row for row in cases if row.get("pricing_case_id") == case_id), None)
+                decision = execution_completeness.get_bid_decision(parts[2], db_path=self.db_path).get("decision")
+                return self._json(201, commercial_pricing_workbench.evaluate_case(
+                    case,
+                    human_bid_decision=decision,
+                ))
             return self._json(404, {"error": "not found"})
         except KeyError as exc:
             return self._json(404, {"error": str(exc)})
