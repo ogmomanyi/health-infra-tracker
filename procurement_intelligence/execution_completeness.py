@@ -81,6 +81,30 @@ def initialize(db_path: Path | str = commercial_crm.DB_DEFAULT) -> None:
             );
             CREATE INDEX IF NOT EXISTS idx_evidence_opportunity ON execution_evidence(opportunity_id, recorded_date DESC, evidence_id DESC);
 
+            CREATE TABLE IF NOT EXISTS commercial_pricing_cases (
+                pricing_case_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                opportunity_id TEXT NOT NULL REFERENCES opportunity_context(opportunity_id) ON DELETE CASCADE,
+                case_name TEXT NOT NULL,
+                supplier_reference TEXT,
+                supplier_currency TEXT,
+                supplier_cost REAL,
+                pricing_currency TEXT,
+                fx_rate_to_pricing_currency REAL,
+                freight_cost REAL,
+                clearing_and_tax_cost REAL,
+                financing_cost REAL,
+                other_costs REAL,
+                selling_price REAL,
+                cost_basis_complete INTEGER NOT NULL DEFAULT 0,
+                payment_terms TEXT,
+                quote_valid_until TEXT,
+                notes TEXT,
+                created_by TEXT,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            );
+            CREATE INDEX IF NOT EXISTS idx_pricing_cases_opportunity ON commercial_pricing_cases(opportunity_id, updated_at DESC, pricing_case_id DESC);
+
             CREATE TABLE IF NOT EXISTS opportunity_outcomes (
                 opportunity_id TEXT PRIMARY KEY REFERENCES opportunity_context(opportunity_id) ON DELETE CASCADE,
                 outcome TEXT NOT NULL CHECK(outcome IN ('WON','LOST','CANCELLED','NO_DECISION')),
@@ -172,6 +196,65 @@ def add_evidence(opportunity_id: str, data: Mapping[str, object], db_path: Path 
         return int(cur.lastrowid)
 
 
+def list_pricing_cases(opportunity_id: str, db_path: Path | str = commercial_crm.DB_DEFAULT) -> list[dict[str, object]]:
+    initialize(db_path)
+    with commercial_crm.connect(db_path) as conn:
+        return [dict(r) for r in conn.execute(
+            "SELECT * FROM commercial_pricing_cases WHERE opportunity_id = ? ORDER BY updated_at DESC, pricing_case_id DESC",
+            (opportunity_id,),
+        ).fetchall()]
+
+
+def upsert_pricing_case(opportunity_id: str, data: Mapping[str, object], db_path: Path | str = commercial_crm.DB_DEFAULT) -> int:
+    initialize(db_path); _ensure_opportunity(opportunity_id, db_path)
+    case_name = str(data.get("case_name") or "").strip()
+    if not case_name:
+        raise ValueError("Pricing case name is required")
+    now = utc_now()
+    case_id = data.get("pricing_case_id")
+    values = (
+        case_name,
+        data.get("supplier_reference"),
+        data.get("supplier_currency"),
+        data.get("supplier_cost"),
+        data.get("pricing_currency"),
+        data.get("fx_rate_to_pricing_currency"),
+        data.get("freight_cost"),
+        data.get("clearing_and_tax_cost"),
+        data.get("financing_cost"),
+        data.get("other_costs"),
+        data.get("selling_price"),
+        1 if str(data.get("cost_basis_complete") or "").lower() in {"1","true","yes","y","on"} else 0,
+        data.get("payment_terms"),
+        data.get("quote_valid_until"),
+        data.get("notes"),
+        data.get("created_by"),
+    )
+    with commercial_crm.connect(db_path) as conn:
+        if case_id:
+            conn.execute(
+                """UPDATE commercial_pricing_cases
+                   SET case_name=?, supplier_reference=?, supplier_currency=?, supplier_cost=?,
+                       pricing_currency=?, fx_rate_to_pricing_currency=?, freight_cost=?,
+                       clearing_and_tax_cost=?, financing_cost=?, other_costs=?, selling_price=?,
+                       cost_basis_complete=?, payment_terms=?, quote_valid_until=?, notes=?,
+                       created_by=?, updated_at=?
+                   WHERE pricing_case_id=? AND opportunity_id=?""",
+                values + (now, case_id, opportunity_id),
+            )
+            return int(case_id)
+        cur = conn.execute(
+            """INSERT INTO commercial_pricing_cases(
+                   opportunity_id, case_name, supplier_reference, supplier_currency, supplier_cost,
+                   pricing_currency, fx_rate_to_pricing_currency, freight_cost, clearing_and_tax_cost,
+                   financing_cost, other_costs, selling_price, cost_basis_complete, payment_terms,
+                   quote_valid_until, notes, created_by, created_at, updated_at
+               ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+            (opportunity_id,) + values + (now, now),
+        )
+        return int(cur.lastrowid)
+
+
 def get_outcome(opportunity_id: str, db_path: Path | str = commercial_crm.DB_DEFAULT) -> dict[str, object] | None:
     initialize(db_path)
     with commercial_crm.connect(db_path) as conn:
@@ -190,4 +273,4 @@ def record_outcome(opportunity_id: str, data: Mapping[str, object], db_path: Pat
 
 def snapshot(opportunity_id: str, db_path: Path | str = commercial_crm.DB_DEFAULT) -> dict[str, object]:
     """Return completeness state without recalculating commercial priority."""
-    return {"contacts": list_contacts(opportunity_id, db_path), "bid_decision": get_bid_decision(opportunity_id, db_path), "responses": list_responses(opportunity_id, db_path), "evidence": list_evidence(opportunity_id, db_path), "outcome": get_outcome(opportunity_id, db_path)}
+    return {"contacts": list_contacts(opportunity_id, db_path), "bid_decision": get_bid_decision(opportunity_id, db_path), "responses": list_responses(opportunity_id, db_path), "evidence": list_evidence(opportunity_id, db_path), "pricing_cases": list_pricing_cases(opportunity_id, db_path), "outcome": get_outcome(opportunity_id, db_path)}

@@ -56,6 +56,7 @@ def test_execution_completeness_api_lifecycle_preserves_priority():
             assert status == 200
             assert snapshot["contacts"] == []
             assert snapshot["bid_decision"]["decision"] == "PENDING"
+            assert snapshot["pricing_cases"] == []
             assert snapshot["outcome"] is None
 
             status, contact = _request(server, "POST", f"/api/opportunities/{opportunity_id}/contacts", {
@@ -93,6 +94,34 @@ def test_execution_completeness_api_lifecycle_preserves_priority():
             assert status == 201
             assert isinstance(evidence["evidence_id"], int)
 
+            status, pricing = _request(server, "POST", f"/api/opportunities/{opportunity_id}/pricing", {
+                "case_name": "Base case",
+                "supplier_reference": "SUP-Q-001",
+                "supplier_currency": "USD",
+                "supplier_cost": 500,
+                "pricing_currency": "USD",
+                "freight_cost": 50,
+                "clearing_and_tax_cost": 25,
+                "financing_cost": 10,
+                "other_costs": 15,
+                "selling_price": 750,
+                "cost_basis_complete": True,
+                "payment_terms": "50% advance / 50% on delivery",
+                "created_by": "Edward",
+            })
+            assert status == 201
+            assert pricing["pricing_status"] == "READY_FOR_COMMERCIAL_APPROVAL"
+            assert pricing["total_cost"] == 600.0
+            assert pricing["gross_profit"] == 150.0
+            assert pricing["margin_pct"] == 20.0
+
+            status, pricing_list = _request(
+                server, "GET", f"/api/opportunities/{opportunity_id}/pricing"
+            )
+            assert status == 200
+            assert len(pricing_list["pricing_cases"]) == 1
+            assert pricing_list["pricing_cases"][0]["case_name"] == "Base case"
+
             status, outcome = _request(server, "POST", f"/api/opportunities/{opportunity_id}/outcome", {
                 "outcome": "WON",
                 "value": 120000,
@@ -111,6 +140,7 @@ def test_execution_completeness_api_lifecycle_preserves_priority():
             assert snapshot["bid_decision"]["decision"] == "BID"
             assert snapshot["responses"][0]["reference"] == "Q-001"
             assert snapshot["evidence"][0]["title"] == "Tender notice"
+            assert snapshot["pricing_cases"][0]["case_name"] == "Base case"
             assert snapshot["outcome"]["outcome"] == "WON"
 
             status, context = _request(server, "GET", f"/api/opportunities/{opportunity_id}")
