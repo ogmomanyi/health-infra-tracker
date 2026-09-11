@@ -147,3 +147,34 @@ def test_not_found_returns_404():
             server.shutdown()
             server.server_close()
             thread.join(timeout=2)
+
+
+def test_decision_guidance_includes_quote_preparation_without_mutating_priority():
+    with TemporaryDirectory() as tmp:
+        db_path = Path(tmp) / "crm.db"
+        opportunity_id = _seed(db_path)
+        server, thread = _server(db_path)
+        try:
+            status, data = _request(
+                server,
+                "GET",
+                f"/api/opportunities/{opportunity_id}/decision-guidance",
+            )
+            assert status == 200
+            assert "bid_decision" in data
+            assert "commercial_preparation" in data
+            assert "quote_preparation" in data
+            assert data["quote_preparation"]["canonical_priority_is_unchanged"] is True
+            assert data["quote_preparation"]["decision_is_read_only_guidance"] is True
+
+            status, item = _request(
+                server,
+                "GET",
+                f"/api/opportunities/{opportunity_id}",
+            )
+            assert status == 200
+            assert item["commercial_account_priority_score"] == 81.5
+        finally:
+            server.shutdown()
+            server.server_close()
+            thread.join(timeout=2)
