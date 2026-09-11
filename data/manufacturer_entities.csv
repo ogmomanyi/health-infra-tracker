@@ -1,2 +1,32 @@
-manufacturer_entity_id,manufacturer_name,manufacturer_aliases,equipment_categories,evidence_source,activity_count,top_countries,source_layer
-mfr_85a5a03ad99f,Philips,Philips,,IATI activity text mention,1,ET,canonical
+manufacturer_entity_id,manufacturer_name,manufacturer_aliases,equipment_categories,evidence_source,evidence_sources,activity_count,catalogue_product_count,historical_product_count,historical_quote_count,procurement_award_count,principal_statuses,territories,country_codes,top_countries,latest_evidence_date,source_layer
+mfr_731acfca0bea,Thermo Fisher,Thermo Fisher; Thermo Fisher Scientific; Thermo Scientific,Laboratory Systems; Medical Devices & Equipment,Controlled Faram catalogue; Historical quotation evidence,Controlled Faram catalogue; Historical quotation evidence,0,5,1,1,0,pending,Kenya,KE,KE,,canonical
+mfr_50eb6cdf0b15,Molecular Devices,Molecular Devices,Laboratory Systems,Controlled Faram catalogue; Historical quotation evidence,Controlled Faram catalogue; Historical quotation evidence,0,3,3,3,0,pending,Kenya,KE,KE,,canonical
+mfr_21a87ee81c5a,Memmert,Memmert,Laboratory Systems,Controlled Faram catalogue; Historical quotation evidence,Controlled Faram catalogue; Historical quotation evidence,0,3,1,1,0,pending,Kenya,KE,KE,,canonical
+mfr_5f08c218d24f,Euromex,Euromex,Laboratory Systems,Controlled Faram catalogue,Controlled Faram catalogue,0,2,0,0,0,pending,Kenya,KE,KE,,canonical
+mfr_e3da55dde3cd,Hanna Instruments,Hanna Instruments,Laboratory Systems; Medical Devices & Equipment,Controlled Faram catalogue,Controlled Faram catalogue,0,2,0,0,0,pending,Kenya,KE,KE,,canonical
+mfr_054e822ba7bb,WTW,WTW,Laboratory Systems,Controlled Faram catalogue,Controlled Faram catalogue,0,2,0,0,0,pending,Kenya,KE,KE,,canonical
+mfr_06de2070438b,Adam Equipment,Adam Equipment,Laboratory Systems,Controlled Faram catalogue,Controlled Faram catalogue,0,1,0,0,0,pending,Kenya,KE,KE,,canonical
+mfr_260929b5e530,Hawach,Hawach,Laboratory Systems,Controlled Faram catalogue,Controlled Faram catalogue,0,1,0,0,0,pending,Kenya,KE,KE,,canonical
+mfr_5928feedefb4,Interscience,Interscience,Laboratory Systems,Controlled Faram catalogue,Controlled Faram catalogue,0,1,0,0,0,pending,Kenya,KE,KE,,canonical
+mfr_235f11717047,Silver Lake Research,Silver Lake Research,Diagnostic Equipment,Controlled Faram catalogue,Controlled Faram catalogue,0,1,0,0,0,pending,"Kenya,Uganda,DRC",CD; KE; UG,CD; KE; UG,,canonical
+mfr_a8cbef2c9230,Traceable,Traceable,Medical Devices & Equipment,Controlled Faram catalogue,Controlled Faram catalogue,0,1,0,0,0,pending,Kenya,KE,KE,,canonical
+mfr_de8f99a0b2cf,3DHISTECH,3DHISTECH,Diagnostic Equipment,Historical quotation evidence,Historical quotation evidence,0,0,1,1,0,,,,,,canonical
+mfr_af3df5f6872b,Agilent / BioTek,Agilent / BioTek,Medical Devices & Equipment,Historical quotation evidence,Historical quotation evidence,0,0,1,1,0,,,,,,canonical
+mfr_984355385c63,Ansell,Ansell,PPE,Historical quotation evidence,Historical quotation evidence,0,0,1,1,0,,,,,,canonical
+mfr_974a6b13e955,BLU-MED Response Systems,BLU-MED Response Systems,Medical Devices & Equipment,Historical quotation evidence,Historical quotation evidence,0,0,1,1,0,,,,,,canonical
+mfr_0f178d97ea46,BioPanda,BioPanda,Diagnostic Equipment,Historical quotation evidence,Historical quotation evidence,0,0,1,1,0,,,,,,canonical
+mfr_d0c516b76b69,ESCHWEILER,ESCHWEILER,Diagnostic Equipment,Historical quotation evidence,Historical quotation evidence,0,0,1,1,0,,,,,,canonical
+mfr_dc69b5576039,HTDS,HTDS,Laboratory Systems,Historical quotation evidence,Historical quotation evidence,0,0,1,1,0,,,,,,canonical
+mfr_74ee2b04cf70,HealthSky,HealthSky,Diagnostic Equipment,Historical quotation evidence,Historical quotation evidence,0,0,1,1,0,,,,,,canonical
+mfr_de672dcd0d59,Honod Medical,Honod Medical,Diagnostic Equipment,Historical quotation evidence,Historical quotation evidence,0,0,1,1,0,,,,,,canonical
+mfr_087d21a9edb5,Inflammatix,Inflammatix,Diagnostic Equipment,Historical quotation evidence,Historical quotation evidence,0,0,1,1,0,,,,,,canonical
+mfr_34b34bc62433,MF Lab,MF Lab,Diagnostic Equipment,Historical quotation evidence,Historical quotation evidence,0,0,1,1,0,,,,,,canonical
+mfr_196d39cf6f98,Medtecs,Medtecs,PPE,Historical quotation evidence,Historical quotation evidence,0,0,1,1,0,,,,,,canonical
+mfr_9df38d7d78c7,Midmark / Newmed,Midmark / Newmed,Medical Devices & Equipment,Historical quotation evidence,Historical quotation evidence,0,0,1,1,0,,,,,,canonical
+mfr_87c3dcd6b7b6,PixCell,PixCell,Diagnostic Equipment,Historical quotation evidence,Historical quotation evidence,0,0,1,1,0,,,,,,canonical
+mfr_870418901632,Recare,Recare,Diagnostic Equipment,Historical quotation evidence,Historical quotation evidence,0,0,1,1,0,,,,,,canonical
+mfr_555f22d79882,SHINVA,SHINVA,Medical Devices & Equipment,Historical quotation evidence,Historical quotation evidence,0,0,1,1,0,,,,,,canonical
+mfr_46207ed17303,Shengfeng Pack,Shengfeng Pack,Diagnostic Equipment,Historical quotation evidence,Historical quotation evidence,0,0,1,1,0,,,,,,canonical
+mfr_5eada80c35ed,Tharmac,Tharmac,Laboratory Systems,Historical quotation evidence,Historical quotation evidence,0,0,1,1,0,,,,,,canonical
+mfr_84e3b9944bc3,YiCare Medical,YiCare Medical,Diagnostic Equipment,Historical quotation evidence,Historical quotation evidence,0,0,1,1,0,,,,,,canonical
+mfr_85a5a03ad99f,Philips,Philips,,IATI activity text mention,IATI activity text mention,1,0,0,0,0,,,ET,ET,,canonical

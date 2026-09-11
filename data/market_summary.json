@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-09-11T13:21:50Z",
+  "generated_at": "2026-09-11T19:59:47Z",
   "as_of": "2026-09-11",
   "source_generated_at": "2026-09-11T11:01:00Z",
-  "pipeline_version": "3.2-project-detail-intelligence",
+  "pipeline_version": "3.3-product-manufacturer-intelligence",
   "pipeline_layers": [
     {
       "layer": "RAW",
@@ -57,9 +57,11 @@
       "layer": "PREDICTIVE_PRODUCT",
       "datasets": [
         "equipment_intelligence",
+        "product_intelligence",
+        "manufacturer_intelligence",
         "tender_predictions"
       ],
-      "purpose": "Forecast equipment/product demand and likely procurement timing."
+      "purpose": "Connect evidence-led product and manufacturer coverage to demand and likely procurement timing."
     }
   ],
   "layer_counts": {
@@ -77,7 +79,7 @@
       "organisation_entities": 2248,
       "organisation_aliases": 17173,
       "equipment_entities": 11,
-      "manufacturer_entities": 1
+      "manufacturer_entities": 31
     },
     "intelligence": {
       "opportunity_scores": 3280,
@@ -94,6 +96,8 @@
     },
     "predictive_product": {
       "equipment_intelligence": 11,
+      "product_intelligence": 48,
+      "manufacturer_intelligence": 31,
       "tender_predictions": 983
     }
   },
@@ -109,6 +113,9 @@
     "high_priority_opportunities": 587,
     "donors": 397,
     "equipment_categories": 11,
+    "products": 48,
+    "manufacturers": 31,
+    "active_principals": 0,
     "tender_predictions": 983,
     "likely_procurement": 194,
     "direct_equipment_projects": 659,
@@ -195,7 +202,8 @@
       "id": "05",
       "name": "Predictive / Product Intelligence",
       "status": "ready",
-      "output": "Equipment/product demand intelligence, tender probability, horizon, and timing windows"
+      "output": "Equipment demand, product and manufacturer intelligence, technical evidence, tender probability, horizon, and timing windows"
     }
-  ]
+  ],
+  "product_intelligence_generated_at": "2026-09-11T20:10:43Z"
 }

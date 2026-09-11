@@ -58,6 +58,8 @@ class DashboardContractTests(unittest.TestCase):
             "data/crm_notes.csv",
             "data/donor_intelligence.csv",
             "data/equipment_intelligence.csv",
+            "data/product_intelligence.csv",
+            "data/manufacturer_intelligence.csv",
             "data/tender_predictions.csv",
             "data/market_summary.json",
         ]:
@@ -67,18 +69,22 @@ class DashboardContractTests(unittest.TestCase):
         self.assertIn("openAccountDetail", html)
         self.assertIn("openEntityDetail", html)
         self.assertIn("openGroupDetail", html)
+        self.assertIn("openProductDetail", html)
+        self.assertIn("openManufacturerDetail", html)
         self.assertIn("renderPipelineHealth", html)
         self.assertIn("pipelineHealth", html)
         self.assertIn("detailOverlay", html)
         self.assertIn("data-account-id", html)
         self.assertIn("data-entity-id", html)
         self.assertIn("data-group-id", html)
+        self.assertIn("data-product-id", html)
+        self.assertIn("data-manufacturer-id", html)
         self.assertIn("data-programme-id", html)
 
     def test_manifest_declares_layered_pipeline(self):
         manifest = json.loads((DATA / "manifest.json").read_text(encoding="utf-8"))
 
-        self.assertEqual(manifest["pipeline_version"], "3.2-project-detail-intelligence")
+        self.assertEqual(manifest["pipeline_version"], "3.3-product-manufacturer-intelligence")
         self.assertEqual(
             [layer["layer"] for layer in manifest["pipeline_layers"]],
             [
@@ -112,6 +118,8 @@ class DashboardContractTests(unittest.TestCase):
             "crm_notes",
             "recommended_actions",
             "equipment_intelligence",
+            "product_intelligence",
+            "manufacturer_intelligence",
             "tender_predictions",
         ]:
             self.assertIn(name, manifest["files"])
@@ -145,6 +153,19 @@ class DashboardContractTests(unittest.TestCase):
                 "manufacturer_name",
                 "evidence_source",
             },
+            "product_intelligence.csv": {
+                "product_intelligence_id",
+                "product_name",
+                "manufacturer_entity_id",
+                "commercial_position",
+                "product_intelligence_score",
+            },
+            "manufacturer_intelligence.csv": {
+                "manufacturer_intelligence_id",
+                "manufacturer_entity_id",
+                "coverage_status",
+                "commercial_score",
+            },
         }
 
         for filename, required in expected_headers.items():
@@ -168,6 +189,8 @@ class DashboardContractTests(unittest.TestCase):
                 "opportunity_organisation_resolution": "opportunity_organisation_resolution.csv",
                 "donor_intelligence": "donor_intelligence.csv",
                 "equipment_intelligence": "equipment_intelligence.csv",
+                "product_intelligence": "product_intelligence.csv",
+                "manufacturer_intelligence": "manufacturer_intelligence.csv",
                 "tender_predictions": "tender_predictions.csv",
                 "target_accounts": "target_accounts.csv",
                 "engagements": "engagements.csv",
@@ -234,6 +257,20 @@ class DashboardContractTests(unittest.TestCase):
                 """
             ).fetchone()[0]
             self.assertEqual(broken_relationships, 0)
+
+            for table in ("product_intelligence", "manufacturer_intelligence"):
+                broken_manufacturers = connection.execute(
+                    f"""
+                    select count(*)
+                    from {table} t
+                    left join manufacturer_entities m
+                      on m.manufacturer_entity_id = t.manufacturer_entity_id
+                    where t.manufacturer_entity_id is not null
+                      and t.manufacturer_entity_id != ''
+                      and m.manufacturer_entity_id is null
+                    """
+                ).fetchone()[0]
+                self.assertEqual(broken_manufacturers, 0, table)
 
             placeholder_accounts = connection.execute(
                 """

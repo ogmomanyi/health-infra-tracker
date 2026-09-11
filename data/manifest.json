@@ -1,5 +1,5 @@
 {
-  "pipeline_version": "3.2-project-detail-intelligence",
+  "pipeline_version": "3.3-product-manufacturer-intelligence",
   "generated_at": "2026-09-11T11:01:00Z",
   "countries": [
     "KE",
@@ -22,7 +22,7 @@
     "organisation_entities": 2248,
     "organisation_aliases": 17173,
     "equipment_entities": 11,
-    "manufacturer_entities": 1,
+    "manufacturer_entities": 31,
     "opportunity_scores": 3280,
     "organisation_intelligence": 2378,
     "programme_intelligence": 3280,
@@ -38,7 +38,9 @@
     "iati_activities": 3280,
     "iati_transactions": 70971,
     "iati_organisations": 17777,
-    "opportunity_organisation_resolution": 16074
+    "opportunity_organisation_resolution": 16074,
+    "product_intelligence": 48,
+    "manufacturer_intelligence": 31
   },
   "files": {
     "iati_health_projects": "iati_health_projects.csv",
@@ -66,9 +68,11 @@
     "iati_activities": "iati_activities.csv",
     "iati_transactions": "iati_transactions.csv",
     "iati_organisations": "iati_organisations.csv",
-    "opportunity_organisation_resolution": "opportunity_organisation_resolution.csv"
+    "opportunity_organisation_resolution": "opportunity_organisation_resolution.csv",
+    "product_intelligence": "product_intelligence.csv",
+    "manufacturer_intelligence": "manufacturer_intelligence.csv"
   },
-  "intelligence_generated_at": "2026-09-11T13:21:50Z",
+  "intelligence_generated_at": "2026-09-11T19:59:47Z",
   "plan_progress": [
     {
       "id": "01",
@@ -98,7 +102,7 @@
       "id": "05",
       "name": "Predictive / Product Intelligence",
       "status": "ready",
-      "output": "Equipment/product demand intelligence, tender probability, horizon, and timing windows"
+      "output": "Equipment demand, product and manufacturer intelligence, technical evidence, tender probability, horizon, and timing windows"
     }
   ],
   "pipeline_layers": [
@@ -155,9 +159,11 @@
       "layer": "PREDICTIVE_PRODUCT",
       "datasets": [
         "equipment_intelligence",
+        "product_intelligence",
+        "manufacturer_intelligence",
         "tender_predictions"
       ],
-      "purpose": "Forecast equipment/product demand and likely procurement timing."
+      "purpose": "Connect evidence-led product and manufacturer coverage to demand and likely procurement timing."
     }
   ],
   "layer_outputs": {
@@ -192,7 +198,10 @@
     ],
     "predictive_product": [
       "equipment_intelligence",
+      "product_intelligence",
+      "manufacturer_intelligence",
       "tender_predictions"
     ]
-  }
+  },
+  "product_intelligence_generated_at": "2026-09-11T20:10:43Z"
 }

@@ -16,6 +16,21 @@ from typing import Iterable
 
 
 PRODUCT_FAMILIES: list[tuple[str, tuple[str, ...], str]] = [
+    ("Multi-Mode Microplate Reader", ("multi-mode microplate reader", "multimode microplate reader", "microplate reader"), "Laboratory Systems"),
+    ("Micro-Volume Spectrophotometer", ("micro-volume spectrophotometer", "micro volume spectrophotometer"), "Laboratory Systems"),
+    ("UV-VIS Spectrophotometer", ("uv-vis spectrophotometer", "uv vis spectrophotometer"), "Laboratory Systems"),
+    ("Biological Safety Cabinet", ("biological safety cabinet", "class ii safety cabinet", "biosafety cabinet"), "Laboratory Systems"),
+    ("Colony Counter", ("automatic colony counter", "colony counter"), "Laboratory Systems"),
+    ("Laboratory Incubator", ("laboratory incubator", "lab incubator", "incubator oven"), "Laboratory Systems"),
+    ("Universal Oven", ("laboratory oven", "universal oven"), "Laboratory Systems"),
+    ("Top Loading Balance", ("top loading balance", "precision laboratory balance"), "Laboratory Systems"),
+    ("pH Meter", ("ph meter", "ph/ise meter", "ph orp meter"), "Laboratory Systems"),
+    ("Membrane Filtration System", ("membrane filtration system", "vacuum filtration system"), "Laboratory Systems"),
+    ("Hotplate Stirrer", ("hotplate stirrer", "magnetic stirrer with hotplate"), "Laboratory Systems"),
+    ("Vortex Mixer", ("vortex mixer",), "Laboratory Systems"),
+    ("Thermoreactor", ("thermoreactor", "cod reactor", "digestion reactor"), "Laboratory Systems"),
+    ("Digital Probe Thermometer", ("digital probe thermometer",), "Laboratory Systems"),
+    ("Sickle Cell Diagnostic Test", ("sickle cell diagnostic", "sickle cell test kit", "hemotype sc"), "Diagnostic Equipment"),
     ("Hematology Analyzer", ("hematology", "haematology", "complete blood count", "cbc analyzer", "cbc analyser", "cell counter", "5 part diff", "5-part diff", "3 part diff", "3-part diff"), "Laboratory Equipment"),
     ("Clinical Chemistry Analyzer", ("clinical chemistry", "clinical chemistry analyzer", "clinical chemistry analyser", "biochemistry analyzer", "biochemistry analyser", "chemistry analyzer", "chemistry analyser"), "Laboratory Equipment"),
     ("Immunoassay Analyzer", ("immunoassay", "immunoassay analyzer", "immunoassay analyser", "chemiluminescence immunoassay", "clia", "eclia"), "Laboratory Equipment"),
@@ -103,12 +118,35 @@ def match_product_family(text: str) -> tuple[str, str, str]:
     return family, category, evidence
 
 
-def match_manufacturers(text: str) -> list[tuple[str, str]]:
+def match_manufacturers(
+    text: str,
+    manufacturer_rows: Iterable[dict[str, str]] | None = None,
+) -> list[tuple[str, str]]:
+    candidates = dict(MANUFACTURER_ALIASES)
+
+    for row in manufacturer_rows or []:
+        manufacturer = _text(row.get("manufacturer_name"))
+        aliases = tuple(
+            dict.fromkeys([
+                manufacturer,
+                *[item.strip() for item in _text(row.get("manufacturer_aliases")).split(";") if item.strip()],
+            ])
+        )
+        if manufacturer and aliases:
+            candidates[manufacturer] = tuple(dict.fromkeys([
+                *candidates.get(manufacturer, ()),
+                *aliases,
+            ]))
+
     matches: list[tuple[str, str]] = []
-    for manufacturer, aliases in MANUFACTURER_ALIASES.items():
+    seen: set[str] = set()
+    for manufacturer, aliases in candidates.items():
         for alias in aliases:
             if _contains(text, alias):
-                matches.append((manufacturer, alias))
+                key = _normalize(manufacturer)
+                if key not in seen:
+                    matches.append((manufacturer, alias))
+                    seen.add(key)
                 break
     return matches
 
@@ -126,11 +164,16 @@ def _canonical_lookup(equipment_rows: Iterable[dict[str, str]], manufacturer_row
         for row in equipment_rows
         if _text(row.get("equipment_category"))
     }
-    manufacturer_ids = {
-        _text(row.get("manufacturer_name")).lower(): _text(row.get("manufacturer_entity_id"))
-        for row in manufacturer_rows
-        if _text(row.get("manufacturer_name"))
-    }
+    manufacturer_ids: dict[str, str] = {}
+    for row in manufacturer_rows:
+        entity_id = _text(row.get("manufacturer_entity_id"))
+        names = [
+            _text(row.get("manufacturer_name")),
+            *[item.strip() for item in _text(row.get("manufacturer_aliases")).split(";")],
+        ]
+        for name in names:
+            if name and entity_id:
+                manufacturer_ids[_normalize(name)] = entity_id
     return equipment_ids, manufacturer_ids
 
 
@@ -146,7 +189,7 @@ def match_events(
     for event in events:
         text = _join_fields(event)
         family, category, product_evidence = match_product_family(text)
-        manufacturers = match_manufacturers(text)
+        manufacturers = match_manufacturers(text, manufacturer_rows or [])
         explicit_manufacturers = [name for name, _ in manufacturers]
 
         evidence_parts: list[str] = []
@@ -196,9 +239,9 @@ def match_events(
             "equipment_entity_id": equipment_ids.get(category.lower(), "") if category else "",
             "manufacturer_names": "; ".join(explicit_manufacturers),
             "manufacturer_entity_ids": "; ".join(
-                manufacturer_ids.get(name.lower(), "")
+                manufacturer_ids.get(_normalize(name), "")
                 for name in explicit_manufacturers
-                if manufacturer_ids.get(name.lower(), "")
+                if manufacturer_ids.get(_normalize(name), "")
             ),
             "product_evidence": product_evidence,
             "manufacturer_evidence": "explicit_notice_text" if explicit_manufacturers else "",

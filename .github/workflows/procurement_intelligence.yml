@@ -59,6 +59,9 @@ jobs:
       - name: Build historical Faram quote intelligence
         run: python -m procurement_intelligence.historical_quote_intelligence --evidence data/faram_historical_quote_evidence.csv --output data/faram_historical_quote_summary.csv
 
+      - name: Refresh product and manufacturer intelligence
+        run: python product_manufacturer_intelligence.py --data-dir data --database data/iati_intelligence.db
+
       - name: Build Faram commercial memory
         run: python -m procurement_intelligence.commercial_memory --evidence data/faram_historical_quote_evidence.csv --enrichment data/faram_commercial_memory_enrichment.csv --catalogue data/faram_product_catalogue.csv --output data/faram_commercial_memory.csv --summary data/faram_commercial_memory_summary.csv
 
@@ -103,6 +106,11 @@ jobs:
           cp data/faram_product_matches.csv /tmp/faram_product_matches.csv
           cp data/faram_product_fit.csv /tmp/faram_product_fit.csv
           cp data/faram_historical_quote_summary.csv /tmp/faram_historical_quote_summary.csv
+          cp data/manufacturer_entities.csv /tmp/manufacturer_entities.csv
+          cp data/product_intelligence.csv /tmp/product_intelligence.csv
+          cp data/manufacturer_intelligence.csv /tmp/manufacturer_intelligence.csv
+          cp data/manifest.json /tmp/manifest.json
+          cp data/market_summary.json /tmp/market_summary.json
           cp data/faram_commercial_memory.csv /tmp/faram_commercial_memory.csv
           cp data/faram_commercial_memory_summary.csv /tmp/faram_commercial_memory_summary.csv
           cp data/faram_account_commercial_memory.csv /tmp/faram_account_commercial_memory.csv
@@ -121,6 +129,11 @@ jobs:
             cp /tmp/faram_product_matches.csv data/faram_product_matches.csv
             cp /tmp/faram_product_fit.csv data/faram_product_fit.csv
             cp /tmp/faram_historical_quote_summary.csv data/faram_historical_quote_summary.csv
+            cp /tmp/manufacturer_entities.csv data/manufacturer_entities.csv
+            cp /tmp/product_intelligence.csv data/product_intelligence.csv
+            cp /tmp/manufacturer_intelligence.csv data/manufacturer_intelligence.csv
+            cp /tmp/manifest.json data/manifest.json
+            cp /tmp/market_summary.json data/market_summary.json
             cp /tmp/faram_commercial_memory.csv data/faram_commercial_memory.csv
             cp /tmp/faram_commercial_memory_summary.csv data/faram_commercial_memory_summary.csv
             cp /tmp/faram_account_commercial_memory.csv data/faram_account_commercial_memory.csv
@@ -129,7 +142,7 @@ jobs:
             cp /tmp/commercial_opportunity_workspace.csv data/commercial_opportunity_workspace.csv
             cp /tmp/tender_prediction_validation.csv data/tender_prediction_validation.csv
             cp /tmp/iati_intelligence.db data/iati_intelligence.db
-            git add data/procurement_events.csv data/procurement_buyer_history.csv data/procurement_supplier_history.csv data/procurement_product_matches.csv data/faram_product_matches.csv data/faram_product_fit.csv data/faram_historical_quote_summary.csv data/faram_commercial_memory.csv data/faram_commercial_memory_summary.csv data/faram_account_commercial_memory.csv data/commercial_account_priority.csv data/commercial_action_queue.csv data/commercial_opportunity_workspace.csv data/tender_prediction_validation.csv data/iati_intelligence.db
+            git add data/procurement_events.csv data/procurement_buyer_history.csv data/procurement_supplier_history.csv data/procurement_product_matches.csv data/faram_product_matches.csv data/faram_product_fit.csv data/faram_historical_quote_summary.csv data/manufacturer_entities.csv data/product_intelligence.csv data/manufacturer_intelligence.csv data/manifest.json data/market_summary.json data/faram_commercial_memory.csv data/faram_commercial_memory_summary.csv data/faram_account_commercial_memory.csv data/commercial_account_priority.csv data/commercial_action_queue.csv data/commercial_opportunity_workspace.csv data/tender_prediction_validation.csv data/iati_intelligence.db
             if git diff --cached --quiet; then echo "No procurement data changes to commit."; exit 0; fi
             git commit -m "Automated external procurement refresh"
             if git push origin HEAD:main; then echo "Procurement refresh pushed successfully on attempt $attempt."; exit 0; fi

@@ -25,6 +25,8 @@ and turns the normalized data into compact CSV/JSON products:
     data/recommended_actions.csv
     data/opportunities.csv
     data/equipment_intelligence.csv
+    data/product_intelligence.csv
+    data/manufacturer_intelligence.csv
     data/tender_predictions.csv
     data/market_summary.json
 """
@@ -49,6 +51,11 @@ from intelligence_enrichment import (
     extract_manufacturers,
     herfindahl,
     tender_model,
+)
+from product_manufacturer_intelligence import (
+    build_manufacturer_entities_dataset,
+    build_manufacturer_intelligence_dataset,
+    build_product_intelligence_dataset,
 )
 
 
@@ -83,7 +90,7 @@ PROCUREMENT_TERMS = [
     "health information system",
 ]
 
-PIPELINE_VERSION = "3.2-project-detail-intelligence"
+PIPELINE_VERSION = "3.3-product-manufacturer-intelligence"
 
 PLAN_PROGRESS = [
     {
@@ -114,7 +121,7 @@ PLAN_PROGRESS = [
         "id": "05",
         "name": "Predictive / Product Intelligence",
         "status": "ready",
-        "output": "Equipment/product demand intelligence, tender probability, horizon, and timing windows",
+        "output": "Equipment demand, product and manufacturer intelligence, technical evidence, tender probability, horizon, and timing windows",
     },
 ]
 
@@ -172,9 +179,11 @@ PIPELINE_LAYERS = [
         "layer": "PREDICTIVE_PRODUCT",
         "datasets": [
             "equipment_intelligence",
+            "product_intelligence",
+            "manufacturer_intelligence",
             "tender_predictions",
         ],
-        "purpose": "Forecast equipment/product demand and likely procurement timing.",
+        "purpose": "Connect evidence-led product and manufacturer coverage to demand and likely procurement timing.",
     },
 ]
 
@@ -1634,64 +1643,19 @@ def build_equipment_entities(opportunities: pd.DataFrame) -> pd.DataFrame:
     )
 
 
-def build_manufacturer_entities(opportunities: pd.DataFrame) -> pd.DataFrame:
-    columns = [
-        "manufacturer_entity_id",
-        "manufacturer_name",
-        "manufacturer_aliases",
-        "equipment_categories",
-        "evidence_source",
-        "activity_count",
-        "top_countries",
-        "source_layer",
-    ]
-
-    if opportunities.empty or "manufacturer_mentions" not in opportunities.columns:
-        return pd.DataFrame(columns=columns)
-
-    rows = []
-
-    for _, row in opportunities.iterrows():
-        for manufacturer in split_values(row.get("manufacturer_mentions")):
-            rows.append({
-                "manufacturer_name": manufacturer,
-                "iati_identifier": row.get("iati_identifier"),
-                "equipment_target_summary": row.get("equipment_target_summary"),
-                "country_codes": row.get("country_codes"),
-            })
-
-    if not rows:
-        return pd.DataFrame(columns=columns)
-
-    exploded = pd.DataFrame(rows)
-    output = []
-
-    for manufacturer, group in exploded.groupby("manufacturer_name"):
-        countries = [
-            country
-            for value in group["country_codes"]
-            for country in split_values(value)
-        ]
-        equipment = [
-            category
-            for value in group["equipment_target_summary"]
-            for category in split_values(value)
-        ]
-        output.append({
-            "manufacturer_entity_id": stable_id("mfr", manufacturer),
-            "manufacturer_name": manufacturer,
-            "manufacturer_aliases": manufacturer,
-            "equipment_categories": format_top(equipment),
-            "evidence_source": "IATI activity text mention",
-            "activity_count": int(group["iati_identifier"].nunique()),
-            "top_countries": format_top(countries),
-            "source_layer": "canonical",
-        })
-
-    return (
-        pd.DataFrame(output, columns=columns)
-        .sort_values(by=["activity_count", "manufacturer_name"], ascending=[False, True])
-        .reset_index(drop=True)
+def build_manufacturer_entities(
+    opportunities: pd.DataFrame,
+    catalogue: Optional[pd.DataFrame] = None,
+    historical_quotes: Optional[pd.DataFrame] = None,
+    manufacturer_history: Optional[pd.DataFrame] = None,
+    procurement_matches: Optional[pd.DataFrame] = None,
+) -> pd.DataFrame:
+    return build_manufacturer_entities_dataset(
+        opportunities,
+        catalogue=catalogue,
+        historical_quotes=historical_quotes,
+        manufacturer_history=manufacturer_history,
+        procurement_matches=procurement_matches,
     )
 
 
@@ -2272,6 +2236,8 @@ def build_market_summary(
     donors: pd.DataFrame,
     equipment: pd.DataFrame,
     predictions: pd.DataFrame,
+    products: pd.DataFrame,
+    manufacturers: pd.DataFrame,
     manifest: Dict[str, object],
     as_of: date,
     counts_by_layer: Dict[str, Dict[str, int]],
@@ -2321,6 +2287,11 @@ def build_market_summary(
             ),
             "donors": int(len(donors)),
             "equipment_categories": int(len(equipment)),
+            "products": int(len(products)),
+            "manufacturers": int(len(manufacturers)),
+            "active_principals": int(
+                (manufacturers.get("coverage_status", pd.Series(dtype=str)) == "ACTIVE_PRINCIPAL").sum()
+            ) if "coverage_status" in manufacturers.columns else 0,
             "tender_predictions": int(len(predictions)),
             "likely_procurement": int(
                 (opportunities.get("tender_stage", pd.Series(dtype=str)) == "Likely procurement").sum()
@@ -2398,6 +2369,12 @@ def main() -> None:
     budgets = read_csv(data_dir / "budgets.csv")
     planned = read_csv(data_dir / "planned_disbursements.csv")
     organisations = read_first_available_csv(data_dir, "organisations.csv")
+    product_catalogue = read_csv(data_dir / "faram_product_catalogue.csv")
+    historical_quotes = read_csv(data_dir / "faram_historical_quote_summary.csv")
+    manufacturer_history = read_csv(data_dir / "procurement_manufacturer_history.csv")
+    procurement_product_matches = read_csv(data_dir / "procurement_product_matches.csv")
+    faram_product_matches = read_csv(data_dir / "faram_product_matches.csv")
+    faram_product_fit = read_csv(data_dir / "faram_product_fit.csv")
 
     manifest_path = data_dir / "manifest.json"
 
@@ -2421,7 +2398,26 @@ def main() -> None:
     )
     organisation_aliases = build_organisation_aliases(organisations)
     equipment_entities = build_equipment_entities(opportunities)
-    manufacturer_entities = build_manufacturer_entities(opportunities)
+    manufacturer_entities = build_manufacturer_entities(
+        opportunities,
+        catalogue=product_catalogue,
+        historical_quotes=historical_quotes,
+        manufacturer_history=manufacturer_history,
+        procurement_matches=procurement_product_matches,
+    )
+    product_intelligence = build_product_intelligence_dataset(
+        product_catalogue,
+        historical_quotes,
+        procurement_product_matches,
+        faram_product_matches,
+        faram_product_fit,
+    )
+    manufacturer_intelligence = build_manufacturer_intelligence_dataset(
+        manufacturer_entities,
+        product_intelligence,
+        manufacturer_history=manufacturer_history,
+        procurement_matches=procurement_product_matches,
+    )
 
     opportunity_scores = build_opportunity_scores(opportunities)
     organisation_intelligence = build_organisation_intelligence(
@@ -2441,6 +2437,8 @@ def main() -> None:
         "organisation_intelligence": organisation_intelligence,
         "programme_intelligence": programme_intelligence,
         "donor_intelligence": donors,
+        "product_intelligence": product_intelligence,
+        "manufacturer_intelligence": manufacturer_intelligence,
         "target_accounts": build_target_accounts(organisation_intelligence),
     }
 
@@ -2484,6 +2482,8 @@ def main() -> None:
         donors,
         equipment,
         predictions,
+        product_intelligence,
+        manufacturer_intelligence,
         source_manifest,
         as_of,
         counts_by_layer,
@@ -2517,5 +2517,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-

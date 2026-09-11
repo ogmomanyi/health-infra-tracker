@@ -659,6 +659,7 @@
 
         .detail-header {
             min-height: 70px;
+            flex: 0 0 auto;
             padding: 16px 18px;
             border-bottom: 1px solid var(--line);
             background: #fbfdff;
@@ -682,6 +683,8 @@
         }
 
         .detail-content {
+            min-height: 0;
+            flex: 1 1 auto;
             padding: 16px 18px 22px;
             overflow: auto;
         }
@@ -1053,6 +1056,14 @@
                             <i data-lucide="stethoscope"></i>
                             Equipment
                         </button>
+                        <button class="tab-button" data-tab="products" type="button">
+                            <i data-lucide="package-search"></i>
+                            Products
+                        </button>
+                        <button class="tab-button" data-tab="manufacturers" type="button">
+                            <i data-lucide="factory"></i>
+                            Manufacturers
+                        </button>
                         <button class="tab-button" data-tab="tenders" type="button">
                             <i data-lucide="calendar-clock"></i>
                             Tenders
@@ -1102,6 +1113,8 @@
             notes: [],
             donors: [],
             equipment: [],
+            products: [],
+            manufacturers: [],
             tenders: [],
             activeTab: "accounts",
             filters: {
@@ -1126,6 +1139,8 @@
             notes: "data/crm_notes.csv",
             donors: "data/donor_intelligence.csv",
             equipment: "data/equipment_intelligence.csv",
+            products: "data/product_intelligence.csv",
+            manufacturers: "data/manufacturer_intelligence.csv",
             tenders: "data/tender_predictions.csv",
             summary: "data/market_summary.json"
         };
@@ -1254,7 +1269,7 @@
             });
 
             document.getElementById("detailContent").addEventListener("click", event => {
-                handleDetailNavigation(event.target.closest("[data-account-id], [data-programme-id], [data-entity-id], [data-group-id]"));
+                handleDetailNavigation(event.target.closest("[data-account-id], [data-programme-id], [data-entity-id], [data-group-id], [data-product-id], [data-manufacturer-id]"));
             });
 
             document.getElementById("detailContent").addEventListener("keydown", event => {
@@ -1262,7 +1277,7 @@
                     return;
                 }
 
-                const target = event.target.closest("[data-account-id], [data-programme-id], [data-entity-id], [data-group-id]");
+                const target = event.target.closest("[data-account-id], [data-programme-id], [data-entity-id], [data-group-id], [data-product-id], [data-manufacturer-id]");
 
                 if (target) {
                     event.preventDefault();
@@ -1297,7 +1312,7 @@
 
         async function loadDashboard() {
             try {
-                const [summary, accounts, actions, programmes, opportunities, relationships, entities, aliases, orgIntelligence, engagements, notes, donors, equipment, tenders] = await Promise.all([
+                const [summary, accounts, actions, programmes, opportunities, relationships, entities, aliases, orgIntelligence, engagements, notes, donors, equipment, products, manufacturers, tenders] = await Promise.all([
                     fetchJson(datasetPaths.summary),
                     fetchCsv(datasetPaths.accounts),
                     fetchCsv(datasetPaths.actions),
@@ -1311,6 +1326,8 @@
                     fetchCsv(datasetPaths.notes),
                     fetchCsv(datasetPaths.donors),
                     fetchCsv(datasetPaths.equipment),
+                    fetchCsv(datasetPaths.products),
+                    fetchCsv(datasetPaths.manufacturers),
                     fetchCsv(datasetPaths.tenders)
                 ]);
 
@@ -1327,6 +1344,8 @@
                 state.notes = notes;
                 state.donors = sortByNumber(donors, "donor_score");
                 state.equipment = sortByNumber(equipment, "demand_intensity");
+                state.products = sortByNumber(products, "product_intelligence_score");
+                state.manufacturers = sortByNumber(manufacturers, "commercial_score");
                 state.tenders = sortByNumber(tenders, "tender_probability");
 
                 populateFilters();
@@ -1409,6 +1428,12 @@
             state.equipment.forEach(item => {
                 if (item.equipment_category) {
                     categories.add(item.equipment_category);
+                }
+            });
+
+            state.products.forEach(product => {
+                if (product.market_equipment_category) {
+                    categories.add(product.market_equipment_category);
                 }
             });
 
@@ -1618,6 +1643,18 @@
                     headers: ["Category", "Intensity", "Evidence", "Projects", "Likely tenders", "USD Budget", "Countries", "Donors"],
                     renderer: equipmentRow
                 },
+                products: {
+                    rows: filteredProducts().slice(0, 100),
+                    total: filteredProducts().length,
+                    headers: ["Product", "Manufacturer", "Family", "Position", "Score", "Market demand", "Principal", "Territory"],
+                    renderer: productRow
+                },
+                manufacturers: {
+                    rows: filteredManufacturers().slice(0, 100),
+                    total: filteredManufacturers().length,
+                    headers: ["Manufacturer", "Coverage", "Priority", "Score", "Products", "Historical", "Market demand", "Territories"],
+                    renderer: manufacturerRow
+                },
                 tenders: {
                     rows: filteredTenders().slice(0, 100),
                     total: filteredTenders().length,
@@ -1740,6 +1777,42 @@
             `;
         }
 
+        function productRow(product) {
+            return `
+                <tr class="clickable-row" data-intelligence-kind="product" data-intelligence-key="${escapeAttr(product.product_intelligence_id)}" tabindex="0">
+                    <td>
+                        <div class="primary">${escapeHtml(product.product_name || "Unnamed product")}</div>
+                        <div class="secondary">${escapeHtml([product.model, product.faram_product_id].filter(hasValue).join(" · ") || "Historical product evidence")}</div>
+                    </td>
+                    <td>${escapeHtml(product.manufacturer_name || "Unresolved")}</td>
+                    <td>${tag(product.product_family || product.equipment_category || "Unclassified", "blue")}</td>
+                    <td>${tag(statusLabel(product.commercial_position || "REVIEW"), positionClass(product.commercial_position))}</td>
+                    <td>${scoreBadge(product.product_intelligence_score)}</td>
+                    <td>${formatInteger(product.family_demand_count)}</td>
+                    <td>${tag(product.principal_status || "Historical", principalClass(product.principal_status))}</td>
+                    <td>${tagList(product.territory || product.territory_codes, "")}</td>
+                </tr>
+            `;
+        }
+
+        function manufacturerRow(manufacturer) {
+            return `
+                <tr class="clickable-row" data-intelligence-kind="manufacturer" data-intelligence-key="${escapeAttr(manufacturer.manufacturer_entity_id)}" tabindex="0">
+                    <td>
+                        <div class="primary">${escapeHtml(manufacturer.manufacturer_name || "Unnamed manufacturer")}</div>
+                        <div class="secondary">${escapeHtml(manufacturer.manufacturer_aliases || manufacturer.manufacturer_entity_id || "")}</div>
+                    </td>
+                    <td>${tag(statusLabel(manufacturer.coverage_status || "REVIEW"), positionClass(manufacturer.coverage_status))}</td>
+                    <td>${tag(manufacturer.commercial_priority || "Monitor", manufacturer.commercial_priority === "Strategic manufacturer" ? "teal" : manufacturer.commercial_priority === "Priority manufacturer" ? "blue" : "amber")}</td>
+                    <td>${scoreBadge(manufacturer.commercial_score)}</td>
+                    <td>${formatInteger(manufacturer.catalogue_product_count)}</td>
+                    <td>${formatInteger(manufacturer.historical_quote_count)}</td>
+                    <td>${formatInteger(manufacturer.aligned_market_demand_count)}</td>
+                    <td>${tagList(manufacturer.territories || manufacturer.country_codes, "")}</td>
+                </tr>
+            `;
+        }
+
         function tenderRow(tender) {
             return `
                 <tr class="clickable-row" data-programme-id="${escapeAttr(tender.iati_identifier)}" tabindex="0">
@@ -1779,6 +1852,16 @@
 
             if (target.dataset.groupId) {
                 openGroupDetail(target.dataset.groupId);
+                return;
+            }
+
+            if (target.dataset.productId) {
+                openProductDetail(target.dataset.productId);
+                return;
+            }
+
+            if (target.dataset.manufacturerId) {
+                openManufacturerDetail(target.dataset.manufacturerId);
             }
         }
 
@@ -1962,6 +2045,11 @@
             const budget = firstValue(record.budget_usd, record.total_budget_amount);
             const futurePipeline = numberValue(firstValue(record.future_disbursement_usd, record.future_disbursement_amount)) +
                 numberValue(firstValue(record.future_budget_usd, record.future_budget_amount));
+            const mentionedManufacturers = manufacturersForMentions(record.manufacturer_mentions);
+            const programmeCategories = new Set(splitList(record.equipment_target_summary));
+            const alignedProducts = state.products.filter(product =>
+                programmeCategories.has(product.market_equipment_category)
+            );
 
             document.getElementById("detailTitle").textContent = title;
             document.getElementById("detailSubtitle").innerHTML = subtitle;
@@ -2013,6 +2101,11 @@
                     ])}
                     ${detailCopy(record.equipment_target_snippets)}
                 `)}
+                ${detailSection("Explicit Manufacturer Evidence", detailManufacturers(mentionedManufacturers))}
+                ${detailSection("Category-Aligned Product Coverage", `
+                    ${detailCopy("Product coverage is aligned by market category; tender-specific fit still requires explicit specifications and authorization.")}
+                    ${detailProducts(alignedProducts)}
+                `)}
                 ${detailSection("Tender Prediction", detailGrid([
                     ["Stage", record.tender_stage, value => tag(value, value === "Likely procurement" ? "teal" : value === "Funding window" ? "blue" : "amber")],
                     ["Horizon", record.tender_horizon],
@@ -2040,6 +2133,16 @@
 
             if (kind === "equipment") {
                 openEquipmentDetail(key);
+                return;
+            }
+
+            if (kind === "product") {
+                openProductDetail(key);
+                return;
+            }
+
+            if (kind === "manufacturer") {
+                openManufacturerDetail(key);
             }
         }
 
@@ -2138,6 +2241,15 @@
                 splitList(tender.equipment_target_summary).includes(item.equipment_category)
             );
 
+            const products = state.products.filter(product =>
+                product.market_equipment_category === item.equipment_category
+            );
+
+            const manufacturerIds = new Set(products.map(product => product.manufacturer_entity_id).filter(hasValue));
+            const manufacturers = state.manufacturers.filter(manufacturer =>
+                manufacturerIds.has(manufacturer.manufacturer_entity_id)
+            );
+
             document.getElementById("detailTitle").textContent =
                 item.equipment_category || "Equipment Intelligence";
 
@@ -2170,6 +2282,10 @@
                     ["Next Windows", item.next_windows, value => tagList(value, "amber")]
                 ]))}
 
+                ${detailSection("Product Coverage", detailProducts(products))}
+
+                ${detailSection("Manufacturers", detailManufacturers(manufacturers))}
+
                 ${detailSection("Related Programmes", detailCopy(
                     programmes.slice(0, 15).map(row =>
                         `${row.programme_name || row.iati_identifier} · score ${formatScore(row.opportunity_score)}`
@@ -2181,6 +2297,149 @@
                         `${row.project_title || row.iati_identifier} · ${formatScore(row.tender_probability)}% · ${row.tender_stage || "Watch"}`
                     ).join("\n")
                 ))}
+            `;
+
+            showIntelligenceDetail();
+        }
+
+        function openProductDetail(productId) {
+            const product = state.products.find(
+                row => String(row.product_intelligence_id || "") === String(productId || "")
+            );
+
+            if (!product) {
+                return;
+            }
+
+            const manufacturer = state.manufacturers.find(
+                row => row.manufacturer_entity_id === product.manufacturer_entity_id
+            );
+            const programmes = relatedMarketProgrammes([product.market_equipment_category]);
+
+            document.getElementById("detailTitle").textContent =
+                product.product_name || "Product Intelligence";
+            document.getElementById("detailSubtitle").textContent = [
+                product.model,
+                product.manufacturer_name,
+                product.product_family
+            ].filter(hasValue).join(" · ");
+
+            document.getElementById("detailContent").innerHTML = `
+                <div class="detail-summary">
+                    ${detailStat("Intelligence", scoreBadge(product.product_intelligence_score))}
+                    ${detailStat("Position", tag(statusLabel(product.commercial_position || "Review"), positionClass(product.commercial_position)))}
+                    ${detailStat("Market Demand", formatInteger(product.family_demand_count))}
+                    ${detailStat("Historical Quotes", formatInteger(product.historical_quote_count))}
+                </div>
+
+                ${detailSection("Product Identity", detailGrid([
+                    ["Catalogue ID", product.faram_product_id],
+                    ["Product", product.product_name],
+                    ["Model", product.model],
+                    ["Product Family", product.product_family, value => tag(value, "blue")],
+                    ["Equipment Category", product.equipment_category],
+                    ["Market Category", product.market_equipment_category, value => tag(value, "teal")]
+                ]))}
+
+                ${detailSection("Manufacturer", detailManufacturers(manufacturer ? [manufacturer] : []))}
+
+                ${detailSection("Commercial Authorization", detailGrid([
+                    ["Principal Status", product.principal_status, value => tag(value, principalClass(value))],
+                    ["Territory", product.territory, value => tagList(value, "")],
+                    ["Catalogue Status", product.catalogue_status, value => tag(statusLabel(value), positionClass(value))],
+                    ["Catalogue Source", product.catalogue_source],
+                    ["Commercial Position", product.commercial_position, value => tag(statusLabel(value), positionClass(value))]
+                ]))}
+
+                ${detailSection("Evidence & Fit", detailGrid([
+                    ["Evidence Sources", product.evidence_sources, value => tagList(value, "blue")],
+                    ["Historical Strength", product.historical_evidence_strength],
+                    ["Product Matches", product.procurement_match_count],
+                    ["Actionable Matches", product.actionable_match_count],
+                    ["Average Match Confidence", product.average_match_confidence ? `${formatScore(product.average_match_confidence)}%` : ""],
+                    ["Technical Pass", product.technical_pass_count],
+                    ["Technical Review", product.technical_review_count],
+                    ["Technical Fail", product.technical_fail_count],
+                    ["Technical Unknown", product.technical_unknown_count]
+                ]))}
+
+                ${detailSection("Recommended Action", detailCopy(product.recommended_action))}
+
+                ${detailSection("Category-Aligned Programmes", `
+                    ${detailCopy("Market-category alignment indicates relevant demand, not tender-specific product compliance.")}
+                    ${detailProgrammes(programmes)}
+                `)}
+            `;
+
+            showIntelligenceDetail();
+        }
+
+        function openManufacturerDetail(manufacturerId) {
+            const manufacturer = state.manufacturers.find(
+                row => String(row.manufacturer_entity_id || "") === String(manufacturerId || "")
+            );
+
+            if (!manufacturer) {
+                return;
+            }
+
+            const products = state.products.filter(
+                product => product.manufacturer_entity_id === manufacturer.manufacturer_entity_id
+            );
+            const explicitProgrammes = explicitManufacturerProgrammes(manufacturer);
+            const alignedProgrammes = relatedMarketProgrammes(splitList(manufacturer.equipment_categories));
+
+            document.getElementById("detailTitle").textContent =
+                manufacturer.manufacturer_name || "Manufacturer Intelligence";
+            document.getElementById("detailSubtitle").textContent = [
+                manufacturer.commercial_priority,
+                statusLabel(manufacturer.coverage_status),
+                manufacturer.manufacturer_entity_id
+            ].filter(hasValue).join(" · ");
+
+            document.getElementById("detailContent").innerHTML = `
+                <div class="detail-summary">
+                    ${detailStat("Commercial Score", scoreBadge(manufacturer.commercial_score))}
+                    ${detailStat("Catalogue Products", formatInteger(manufacturer.catalogue_product_count))}
+                    ${detailStat("Historical Quotes", formatInteger(manufacturer.historical_quote_count))}
+                    ${detailStat("Market Demand", formatInteger(manufacturer.aligned_market_demand_count))}
+                </div>
+
+                ${detailSection("Coverage", detailGrid([
+                    ["Coverage Status", manufacturer.coverage_status, value => tag(statusLabel(value), positionClass(value))],
+                    ["Commercial Priority", manufacturer.commercial_priority],
+                    ["Principal Statuses", manufacturer.principal_statuses, value => tagList(value, "amber")],
+                    ["Territories", manufacturer.territories, value => tagList(value, "")],
+                    ["Active Products", manufacturer.active_product_count],
+                    ["Pending Products", manufacturer.pending_product_count],
+                    ["Last Evidence", manufacturer.latest_evidence_date]
+                ]))}
+
+                ${detailSection("Products", detailProducts(products))}
+
+                ${detailSection("Market & Commercial Evidence", detailGrid([
+                    ["Explicit Demand Notices", manufacturer.explicit_demand_count],
+                    ["Aligned Market Notices", manufacturer.aligned_market_demand_count],
+                    ["Procurement Awards", manufacturer.procurement_award_count],
+                    ["Actionable Matches", manufacturer.actionable_match_count],
+                    ["Buyers", manufacturer.buyers, value => tagList(value, "blue")],
+                    ["Suppliers", manufacturer.suppliers, value => tagList(value, "")],
+                    ["Evidence Sources", manufacturer.evidence_sources, value => tagList(value, "blue")]
+                ]))}
+
+                ${detailSection("Technical Evidence", detailGrid([
+                    ["Pass", manufacturer.technical_pass_count],
+                    ["Review", manufacturer.technical_review_count],
+                    ["Fail", manufacturer.technical_fail_count],
+                    ["Unknown", manufacturer.technical_unknown_count]
+                ]))}
+
+                ${detailSection("Recommended Action", detailCopy(manufacturer.recommended_action))}
+                ${detailSection("Explicit Manufacturer Programmes", detailProgrammes(explicitProgrammes))}
+                ${detailSection("Category-Aligned Programmes", `
+                    ${detailCopy("Category alignment is a market-demand signal and does not establish manufacturer or product fit.")}
+                    ${detailProgrammes(alignedProgrammes)}
+                `)}
             `;
 
             showIntelligenceDetail();
@@ -2332,6 +2591,49 @@
                             <div class="tag-row" style="margin-top: 8px;">
                                 ${scoreBadge(account.fit_score)}
                                 ${tag(account.priority_tier || "Monitor", tierClass(account.priority_tier))}
+                            </div>
+                        </button>
+                    `).join("")}
+                </div>
+            `;
+        }
+
+        function detailProducts(products) {
+            if (!products.length) {
+                return "";
+            }
+
+            return `
+                <div class="detail-actions">
+                    ${products.slice(0, 16).map(product => `
+                        <button type="button" class="detail-link" data-product-id="${escapeAttr(product.product_intelligence_id)}">
+                            <strong>${escapeHtml(product.product_name || product.product_family || "Product")}</strong>
+                            <div class="secondary">${escapeHtml([product.model, product.manufacturer_name, product.product_family].filter(hasValue).join(" · "))}</div>
+                            <div class="tag-row" style="margin-top: 8px;">
+                                ${scoreBadge(product.product_intelligence_score)}
+                                ${tag(statusLabel(product.commercial_position || "Review"), positionClass(product.commercial_position))}
+                            </div>
+                        </button>
+                    `).join("")}
+                    ${products.length > 16 ? `<div class="secondary">${formatInteger(products.length - 16)} more products</div>` : ""}
+                </div>
+            `;
+        }
+
+        function detailManufacturers(manufacturers) {
+            if (!manufacturers.length) {
+                return "";
+            }
+
+            return `
+                <div class="detail-actions">
+                    ${manufacturers.slice(0, 12).map(manufacturer => `
+                        <button type="button" class="detail-link" data-manufacturer-id="${escapeAttr(manufacturer.manufacturer_entity_id)}">
+                            <strong>${escapeHtml(manufacturer.manufacturer_name || "Manufacturer")}</strong>
+                            <div class="secondary">${escapeHtml([manufacturer.commercial_priority, statusLabel(manufacturer.coverage_status)].filter(hasValue).join(" · "))}</div>
+                            <div class="tag-row" style="margin-top: 8px;">
+                                ${scoreBadge(manufacturer.commercial_score)}
+                                ${tag(statusLabel(manufacturer.coverage_status || "Review"), positionClass(manufacturer.coverage_status))}
                             </div>
                         </button>
                     `).join("")}
@@ -2507,6 +2809,22 @@
             });
         }
 
+        function filteredProducts() {
+            return state.products.filter(product => {
+                return matchesQuery(product, ["product_name", "manufacturer_name", "product_family", "equipment_category", "market_equipment_category", "model", "principal_status", "territory", "commercial_position", "evidence_sources"]) &&
+                    (!state.filters.country || splitList(product.territory_codes).includes(state.filters.country) || splitList(product.territory_codes).includes("GLOBAL")) &&
+                    (!state.filters.category || product.market_equipment_category === state.filters.category || product.equipment_category === state.filters.category);
+            });
+        }
+
+        function filteredManufacturers() {
+            return state.manufacturers.filter(manufacturer => {
+                return matchesQuery(manufacturer, ["manufacturer_name", "manufacturer_aliases", "coverage_status", "commercial_priority", "product_families", "equipment_categories", "product_names", "models", "territories", "evidence_sources"]) &&
+                    (!state.filters.country || splitList(manufacturer.country_codes).includes(state.filters.country) || splitList(manufacturer.country_codes).includes("GLOBAL")) &&
+                    matchesContains(manufacturer.equipment_categories, state.filters.category);
+            });
+        }
+
         function filteredTenders() {
             return state.tenders.filter(tender => {
                 return matchesQuery(tender, ["project_title", "funding_agencies", "implementing_partners", "country_codes", "country_names", "equipment_target_summary", "tender_stage", "recommended_action"]) &&
@@ -2573,6 +2891,50 @@
             return new Map(state.tenders.map(tender => [tender.iati_identifier, tender]));
         }
 
+        function relatedMarketProgrammes(categories) {
+            const categorySet = new Set(categories.filter(hasValue));
+
+            if (!categorySet.size) {
+                return [];
+            }
+
+            return sortByNumber(state.programmes.filter(programme =>
+                splitList(programme.equipment_target_summary).some(category => categorySet.has(category))
+            ), "opportunity_score");
+        }
+
+        function explicitManufacturerProgrammes(manufacturer) {
+            const aliases = new Set([
+                manufacturer.manufacturer_name,
+                ...splitList(manufacturer.manufacturer_aliases)
+            ].filter(hasValue).map(value => String(value).trim().toLowerCase()));
+
+            const ids = state.opportunities
+                .filter(opportunity =>
+                    splitList(opportunity.manufacturer_mentions).some(name => aliases.has(name.toLowerCase()))
+                )
+                .map(opportunity => opportunity.iati_identifier);
+
+            return relatedProgrammes(ids);
+        }
+
+        function manufacturersForMentions(value) {
+            const mentions = new Set(splitList(value).map(item => item.toLowerCase()));
+
+            if (!mentions.size) {
+                return [];
+            }
+
+            return state.manufacturers.filter(manufacturer => {
+                const aliases = [
+                    manufacturer.manufacturer_name,
+                    ...splitList(manufacturer.manufacturer_aliases)
+                ].filter(hasValue).map(item => String(item).toLowerCase());
+
+                return aliases.some(alias => mentions.has(alias));
+            });
+        }
+
         function entityAliases(entityId) {
             return state.aliases.filter(alias => {
                 return firstValue(alias.entity_id, alias.organisation_entity_id) === entityId;
@@ -2633,6 +2995,8 @@
                 crm_notes: state.notes.length,
                 donor_intelligence: state.donors.length,
                 equipment_intelligence: state.equipment.length,
+                product_intelligence: state.products.length,
+                manufacturer_intelligence: state.manufacturers.length,
                 tender_predictions: state.tenders.length
             });
 
@@ -2880,6 +3244,59 @@
             }
 
             return "";
+        }
+
+        function positionClass(value) {
+            const normalized = String(value || "").toUpperCase();
+
+            if (normalized.includes("FAIL") || normalized.includes("INACTIVE")) {
+                return "rose";
+            }
+
+            if (normalized.includes("ACTIVE")) {
+                return "teal";
+            }
+
+            if (normalized.includes("VALIDATION") || normalized.includes("DEVELOPMENT")) {
+                return "amber";
+            }
+
+            if (normalized.includes("HISTORICAL") || normalized.includes("MARKET")) {
+                return "blue";
+            }
+
+            return "";
+        }
+
+        function principalClass(value) {
+            const normalized = String(value || "").toLowerCase();
+
+            if (["active", "approved", "current"].includes(normalized)) {
+                return "teal";
+            }
+
+            if (["pending", "prospect", "unknown"].includes(normalized)) {
+                return "amber";
+            }
+
+            if (normalized === "historical") {
+                return "blue";
+            }
+
+            if (normalized === "inactive") {
+                return "rose";
+            }
+
+            return "";
+        }
+
+        function statusLabel(value) {
+            const words = String(value || "")
+                .replaceAll("_", " ")
+                .trim()
+                .toLowerCase();
+
+            return words ? words.charAt(0).toUpperCase() + words.slice(1) : "";
         }
 
         function escapeHtml(value) {

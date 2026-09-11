@@ -25,7 +25,7 @@ Commercial opportunity scoring, target accounts, recommended actions, engagement
 ## 5. Predictive and product intelligence
 Status: production foundation complete.
 
-Equipment/product intelligence, tender probability and stage, procurement timing windows, procurement-product matching, manufacturer entities and tender-prediction validation are implemented.
+Equipment demand, evidence-led product and manufacturer intelligence, tender probability and stage, procurement timing windows, procurement-product matching and tender-prediction validation are implemented. Products and manufacturers are browsable with granular evidence and market-alignment detail.
 
 Calibration remains dependent on accumulated external observations.
 
@@ -57,9 +57,9 @@ Controlled catalogue validation, required-field checks, duplicate commercial-rec
 The catalogue remains a Faram-side source of truth; procurement notices do not automatically create catalogue records.
 
 ## 11. Manufacturer and brand intelligence
-Status: consolidation required.
+Status: canonical implementation complete.
 
-Manufacturer extraction, canonical manufacturer intelligence and related tests exist in historical branches and in the mainline history, but the surviving branches contain overlapping historical implementations. The next task is to establish one canonical implementation on current `main`.
+Explicit IATI mentions, controlled catalogue records, historical quotation evidence, procurement notice mentions and award history now resolve into one canonical manufacturer layer. Current representation remains controlled by catalogue principal status and territory; historical evidence cannot activate a relationship.
 
 ## 12. Supplier entity resolution
 Status: next integration.
@@ -72,9 +72,9 @@ Status: next integration.
 Supplier competitive intelligence exists on a stale branch. It should be integrated only after supplier entity resolution is established as the canonical identity layer.
 
 ## 14. Specification-level product matching
-Status: next major product milestone.
+Status: technical foundation complete; evidence expansion ongoing.
 
-Move from product-family matching toward structured tender-requirement extraction and specification-level matching against Faram products and principals.
+Structured tender requirements and verified product specifications now support requirement-level technical-fit outcomes. Current source files contain limited verified specification evidence, so evidence expansion and calibration remain ongoing.
 
 Target output:
 - tender requirement set
@@ -84,7 +84,7 @@ Target output:
 - evidence and exceptions
 
 ## 15. Faram catalogue, principal and authorization linkage
-Status: next major commercial milestone.
+Status: production foundation complete; authorization validation ongoing.
 
 Link procurement demand and specification-level fit to Faram's actual catalogue, principal/manufacturer representation and territory authorization status.
 
@@ -100,16 +100,12 @@ Status: planned validation layer.
 Validate supplier, manufacturer and product matches against awarded tenders and publicly available supplier information where reliable evidence exists.
 
 ## 17. Product and competitor intelligence UX
-Status: planned.
+Status: product and manufacturer views complete; supplier and competitor views planned.
 
-Add dashboard views for:
-- product family
-- product/specification fit
-- manufacturer
+Dashboard coverage now includes product families, products, manufacturers, evidence status, Faram coverage and authorization state. Remaining views are:
 - supplier
 - validation performance
 - competitor signals
-- Faram coverage and authorization
 
 ## Strategic end-state
 

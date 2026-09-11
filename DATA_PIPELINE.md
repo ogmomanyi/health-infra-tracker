@@ -33,6 +33,8 @@ recommended_actions
 
 PREDICTIVE_PRODUCT
 equipment_intelligence
+product_intelligence
+manufacturer_intelligence
 tender_predictions
 ```
 
@@ -43,7 +45,7 @@ tender_predictions
 - CANONICAL resolves reusable entities used across programmes and accounts.
 - INTELLIGENCE scores and summarizes market, donor, organisation, and programme signals.
 - COMMERCIAL converts intelligence into account targeting, engagement, CRM note, and action workflows.
-- PREDICTIVE_PRODUCT forecasts equipment/product demand and likely procurement timing.
+- PREDICTIVE_PRODUCT connects controlled products and manufacturers to market demand, technical evidence, and likely procurement timing.
 
 ## Intelligence quality rules
 
@@ -51,6 +53,7 @@ tender_predictions
 - Amounts used for ranking are converted to USD with a documented fallback FX table. Source currencies stay on the row.
 - Equipment demand distinguishes `direct_keyword` evidence from `sector_inferred` demand. Inferred demand never counts as an open tender.
 - Tender predictions require a probability, a stage, and either direct equipment language, procurement language, or a dated funding window. `Monitor` is not a predicted window.
-- Manufacturer entities are created only from explicit text mentions, not guessed from category.
+- Manufacturer entities are created only from explicit IATI, catalogue, historical quotation, or procurement evidence, never guessed from category.
+- The controlled Faram catalogue is the only source that can establish current product/principal status. Historical and external evidence remain explicitly non-authoritative for representation.
 
 `iati_tracker.py` owns the source fetch and normalized foundation. Entity-resolution modules own canonical organisation IDs. `run_intelligence_pipeline.py` invokes `intelligence_builder.py` without replacing the canonical organisation registry, removes non-entity placeholders from canonical/account outputs, appends missing real source organisations to the registry, rebuilds opportunity-to-organisation relationships, and republishes canonical organisation CSVs from SQLite. Daily CI runs the fetcher, the protected intelligence runner, and the tests.

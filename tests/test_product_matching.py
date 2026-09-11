@@ -48,6 +48,23 @@ class ProductMatchingTests(unittest.TestCase):
     def test_manufacturer_alias_is_explicit(self):
         self.assertEqual(match_manufacturers("Supply from B. Braun") [0][0], "B. Braun")
 
+    def test_canonical_manufacturer_rows_expand_explicit_matching(self):
+        matches = match_manufacturers(
+            "Tender requires a Molecular Devices reader",
+            [{
+                "manufacturer_name": "Molecular Devices",
+                "manufacturer_aliases": "Molecular Devices; MD Instruments",
+            }],
+        )
+        self.assertEqual(matches, [("Molecular Devices", "Molecular Devices")])
+
+    def test_catalogue_product_family_requires_specific_language(self):
+        self.assertEqual(
+            match_product_family("Supply of a class II biological safety cabinet")[:2],
+            ("Biological Safety Cabinet", "Laboratory Systems"),
+        )
+        self.assertEqual(match_product_family("Women energy incubator programme"), ("", "", ""))
+
     def test_canonical_entity_ids_are_resolved(self):
         rows = match_events(
             [{"procurement_event_id": "E4", "title": "Apheresis machine"}],
@@ -55,6 +72,18 @@ class ProductMatchingTests(unittest.TestCase):
             manufacturer_rows=[],
         )
         self.assertEqual(rows[0]["equipment_entity_id"], "equip-blood")
+
+    def test_canonical_manufacturer_aliases_resolve_to_entity_ids(self):
+        rows = match_events(
+            [{"procurement_event_id": "E5", "title": "Supply from Thermo Scientific"}],
+            manufacturer_rows=[{
+                "manufacturer_entity_id": "mfr-thermo",
+                "manufacturer_name": "Thermo Fisher",
+                "manufacturer_aliases": "Thermo Fisher; Thermo Scientific",
+            }],
+        )
+        self.assertEqual(rows[0]["manufacturer_names"], "Thermo Fisher")
+        self.assertEqual(rows[0]["manufacturer_entity_ids"], "mfr-thermo")
 
 
 if __name__ == "__main__":
