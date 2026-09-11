@@ -1,6 +1,6 @@
 {
   "pipeline_version": "3.2-project-detail-intelligence",
-  "generated_at": "2026-09-10T11:02:39Z",
+  "generated_at": "2026-09-11T11:01:00Z",
   "countries": [
     "KE",
     "UG",
@@ -13,25 +13,25 @@
   ],
   "query": "recipient_country_code:(KE UG RW ET SS SO TZ CD) AND sector_code:(12110 12181 12182 12191 12196 12220 12230 12240 12250 12261 12262 12263 12264 12281 12310 12320 12330 12340 12350 12382) AND activity_status_code:(1 2)",
   "row_counts": {
-    "iati_health_projects": 3279,
+    "iati_health_projects": 3280,
     "transactions": 70971,
     "budgets": 13649,
     "planned_disbursements": 4654,
-    "activity_countries": 5748,
-    "organisations": 17775,
+    "activity_countries": 5749,
+    "organisations": 17777,
     "organisation_entities": 2247,
     "organisation_aliases": 17237,
     "equipment_entities": 9,
     "manufacturer_entities": 5,
-    "opportunity_scores": 3279,
+    "opportunity_scores": 3280,
     "organisation_intelligence": 2450,
-    "programme_intelligence": 3279,
+    "programme_intelligence": 3280,
     "donor_intelligence": 515,
     "target_accounts": 2450,
     "engagements": 2260,
     "crm_notes": 2260,
-    "recommended_actions": 2695,
-    "opportunities": 3279,
+    "recommended_actions": 2696,
+    "opportunities": 3280,
     "equipment_intelligence": 9,
     "tender_predictions": 1479
   },
@@ -58,7 +58,7 @@
     "equipment_intelligence": "equipment_intelligence.csv",
     "tender_predictions": "tender_predictions.csv"
   },
-  "intelligence_generated_at": "2026-09-10T11:03:12Z",
+  "intelligence_generated_at": "2026-09-11T11:01:33Z",
   "plan_progress": [
     {
       "id": "01",
