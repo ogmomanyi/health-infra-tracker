@@ -8,7 +8,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
-from procurement_intelligence import account_work, bid_decision_intelligence, commercial_crm, commercial_work, execution_completeness, management_work, opportunity_technical_fit
+from procurement_intelligence import account_work, bid_decision_intelligence, channel_constraints, commercial_crm, commercial_work, execution_completeness, management_work, opportunity_technical_fit
 
 ROOT = Path(__file__).resolve().parent
 EXECUTION_HTML = ROOT / "procurement_intelligence" / "execution.html"
@@ -23,6 +23,7 @@ BID_DECISION_GUIDANCE_JS = ROOT / "procurement_intelligence" / "bid_decision_gui
 class CRMHandler(BaseHTTPRequestHandler):
     db_path = commercial_crm.DB_DEFAULT
     technical_fit_path = opportunity_technical_fit.DEFAULT_PATH
+    channel_constraints_path = channel_constraints.DEFAULT_PATH
 
     def _json(self, status, payload):
         body = json.dumps(payload, default=str).encode("utf-8")
@@ -193,6 +194,7 @@ def main():
     execution_completeness.initialize(args.db)
     CRMHandler.db_path = args.db
     CRMHandler.technical_fit_path = Path(args.technical_fit)
+    CRMHandler.channel_constraints_path = Path(args.channel_constraints)
     server = ThreadingHTTPServer((args.host, args.port), CRMHandler)
     print(f"Commercial CRM API listening on http://{args.host}:{args.port}")
     try:
