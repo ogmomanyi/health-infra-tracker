@@ -7,6 +7,7 @@
     HOLD_FOR_TECHNICAL_REVIEW:'pri',
     DO_NOT_BID_TECHNICAL_FAILURE:'act',
     HOLD_FOR_TERRITORY_REVIEW:'pri',
+    HOLD_FOR_CHANNEL_ROUTE:'pri',
     HOLD_FOR_CATALOGUE_REVIEW:'pri'
   }[guidance] || 'neutral');
   const render = data => {
@@ -18,7 +19,8 @@
     panel.className = 'panel';
     const technical = data.technical || {};
     const reasons = (data.reasons || []).map(reason => `<li>${esc(reason)}</li>`).join('');
-    panel.innerHTML = `<div class="panel-head"><h2>Bid / No-Bid Intelligence</h2><span class="tag ${tone(data.guidance)}">${esc(data.guidance_label || 'REVIEW REQUIRED')}</span></div><div class="body"><div class="grid"><div><strong>Commercial priority</strong><div class="mini">${esc(data.commercial_account_priority_tier || '—')} · ${esc(data.commercial_account_priority_score ?? '—')}</div></div><div><strong>Technical fit</strong><div class="mini">${esc(technical.status || 'UNKNOWN')} · ${esc(technical.pass || 0)} pass · ${esc(technical.review || 0)} review · ${esc(technical.fail || 0)} fail · ${esc(technical.unknown || 0)} unknown</div></div><div><strong>Territory</strong><div class="mini">${esc(data.territory_fit || 'UNKNOWN')}</div></div><div><strong>Human decision</strong><div class="mini">${esc(data.human_bid_decision || 'PENDING')} — guidance does not set this</div></div></div>${reasons ? `<div style="margin-top:14px"><strong>Decision signals</strong><ul>${reasons}</ul></div>` : ''}<div class="mini" style="margin-top:12px">This is decision support only. The bid/no-bid decision remains a human CRM action, and canonical commercial priority is unchanged.</div></div>`;
+    const channels = (data.channel_constraints || []).map(row => [row.manufacturer_name, row.channel_holder].filter(Boolean).map(esc).join(' → ')).join('; ');
+    panel.innerHTML = `<div class="panel-head"><h2>Bid / No-Bid Intelligence</h2><span class="tag ${tone(data.guidance)}">${esc(data.guidance_label || 'REVIEW REQUIRED')}</span></div><div class="body"><div class="grid"><div><strong>Commercial priority</strong><div class="mini">${esc(data.commercial_account_priority_tier || '—')} · ${esc(data.commercial_account_priority_score ?? '—')}</div></div><div><strong>Technical fit</strong><div class="mini">${esc(technical.status || 'UNKNOWN')} · ${esc(technical.pass || 0)} pass · ${esc(technical.review || 0)} review · ${esc(technical.fail || 0)} fail · ${esc(technical.unknown || 0)} unknown</div></div><div><strong>Territory</strong><div class="mini">${esc(data.territory_fit || 'UNKNOWN')}</div></div><div><strong>Channel route</strong><div class="mini">${channels || 'No explicit constraint matched'}</div></div><div><strong>Human decision</strong><div class="mini">${esc(data.human_bid_decision || 'PENDING')} — guidance does not set this</div></div></div>${reasons ? `<div style="margin-top:14px"><strong>Decision signals</strong><ul>${reasons}</ul></div>` : ''}<div class="mini" style="margin-top:12px">This is decision support only. The bid/no-bid decision remains a human CRM action, and canonical commercial priority is unchanged.</div></div>`;
     anchor.after(panel);
   };
   const load = async () => {
