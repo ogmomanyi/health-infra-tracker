@@ -1104,6 +1104,15 @@
             });
 
             document.getElementById("tableBody").addEventListener("click", event => {
+                const intelligenceRow = event.target.closest("[data-intelligence-kind]");
+                if (intelligenceRow) {
+                    openIntelligenceDetail(
+                        intelligenceRow.dataset.intelligenceKind,
+                        intelligenceRow.dataset.intelligenceKey
+                    );
+                    return;
+                }
+
                 const row = event.target.closest("[data-programme-id]");
                 if (row) {
                     openProgrammeDetail(row.dataset.programmeId);
@@ -1112,6 +1121,16 @@
 
             document.getElementById("tableBody").addEventListener("keydown", event => {
                 if (!["Enter", " "].includes(event.key)) {
+                    return;
+                }
+
+                const intelligenceRow = event.target.closest("[data-intelligence-kind]");
+                if (intelligenceRow) {
+                    event.preventDefault();
+                    openIntelligenceDetail(
+                        intelligenceRow.dataset.intelligenceKind,
+                        intelligenceRow.dataset.intelligenceKey
+                    );
                     return;
                 }
 
@@ -1494,7 +1513,7 @@
 
         function donorRow(donor) {
             return `
-                <tr>
+                <tr class="clickable-row" data-intelligence-kind="donor" data-intelligence-key="${escapeAttr(donor.donor_name)}" tabindex="0">
                     <td>
                         <div class="primary">${escapeHtml(donor.donor_name || "Unnamed donor")}</div>
                         <div class="secondary">${escapeHtml(donor.intelligence_notes || donor.source_aliases || "")}</div>
@@ -1512,7 +1531,7 @@
 
         function equipmentRow(item) {
             return `
-                <tr>
+                <tr class="clickable-row" data-intelligence-kind="equipment" data-intelligence-key="${escapeAttr(item.equipment_category)}" tabindex="0">
                     <td>
                         <div class="primary">${escapeHtml(item.equipment_category || "Unspecified")}</div>
                         <div class="secondary">${formatInteger(item.direct_evidence_projects)} direct · ${formatInteger(item.inferred_projects)} inferred</div>
@@ -1631,6 +1650,167 @@
                 ${detailSection("CRM Notes", detailNotes(notes))}
             `;
 
+            document.getElementById("detailOverlay").classList.remove("hidden");
+            document.body.classList.add("modal-open");
+            document.getElementById("detailClose").focus({ preventScroll: true });
+            createIcons();
+        }
+
+        function openIntelligenceDetail(kind, key) {
+            if (kind === "donor") {
+                openDonorDetail(key);
+                return;
+            }
+
+            if (kind === "equipment") {
+                openEquipmentDetail(key);
+            }
+        }
+
+        function openDonorDetail(name) {
+            const donor = state.donors.find(
+                row => String(row.donor_name || "") === String(name || "")
+            );
+
+            if (!donor) {
+                return;
+            }
+
+            const programmes = state.programmes.filter(programme =>
+                splitList(programme.funding_agencies).some(value =>
+                    value.toLowerCase() === String(donor.donor_name || "").toLowerCase()
+                )
+            );
+
+            const tenders = state.tenders.filter(tender =>
+                splitList(tender.funding_agencies).some(value =>
+                    value.toLowerCase() === String(donor.donor_name || "").toLowerCase()
+                )
+            );
+
+            document.getElementById("detailTitle").textContent =
+                donor.donor_name || "Donor Intelligence";
+
+            document.getElementById("detailSubtitle").textContent =
+                `${formatInteger(donor.project_count)} programmes · ${donor.commercial_priority || "Background"}`;
+
+            document.getElementById("detailContent").innerHTML = `
+                <div class="detail-summary">
+                    ${detailStat("Donor Score", scoreBadge(donor.donor_score))}
+                    ${detailStat("Priority", tag(donor.commercial_priority || "Background", donor.commercial_priority === "Strategic donor" ? "teal" : donor.commercial_priority === "Priority donor" ? "blue" : "amber"))}
+                    ${detailStat("USD Budget", moneyDetail(donor.reported_budget_usd || donor.reported_budget))}
+                    ${detailStat("Future Disbursement", moneyDetail(donor.future_disbursement_usd))}
+                </div>
+
+                ${detailSection("Score Drivers", detailGrid([
+                    ["Average Opportunity Score", donor.average_score],
+                    ["High Priority Opportunities", donor.high_priority_opportunities],
+                    ["Likely Procurement Programmes", donor.likely_procurement_count],
+                    ["Equipment Specificity", `${Math.round(numberValue(donor.equipment_specificity) * 100)}%`],
+                    ["Country Count", donor.country_count],
+                    ["Country Concentration", donor.country_concentration]
+                ]))}
+
+                ${detailSection("Funding & Activity", detailGrid([
+                    ["Reported Budget USD", donor.reported_budget_usd, moneyDetail],
+                    ["Disbursements USD", donor.disbursement_usd, moneyDetail],
+                    ["Future Disbursements USD", donor.future_disbursement_usd, moneyDetail],
+                    ["Disbursement Ratio", donor.disbursement_ratio],
+                    ["Active Projects", donor.active_projects],
+                    ["Pipeline Projects", donor.pipeline_projects]
+                ]))}
+
+                ${detailSection("Geographic & Delivery Focus", detailGrid([
+                    ["Countries", donor.top_countries, value => tagList(value, "")],
+                    ["Implementers", donor.top_implementers, value => tagList(value, "blue")],
+                    ["Equipment", donor.top_equipment_categories, value => tagList(value, "teal")],
+                    ["Next Windows", donor.next_window, value => tagList(value, "amber")]
+                ]))}
+
+                ${detailSection("Intelligence", detailCopy(donor.intelligence_notes))}
+
+                ${detailSection("Related Programmes", detailCopy(
+                    programmes.slice(0, 12).map(row =>
+                        `${row.programme_name || row.iati_identifier} · score ${formatScore(row.opportunity_score)}`
+                    ).join("\n")
+                ))}
+
+                ${detailSection("Likely Procurement", detailCopy(
+                    tenders.slice(0, 12).map(row =>
+                        `${row.project_title || row.iati_identifier} · ${formatScore(row.tender_probability)}% · ${row.tender_stage || "Watch"}`
+                    ).join("\n")
+                ))}
+            `;
+
+            showIntelligenceDetail();
+        }
+
+        function openEquipmentDetail(category) {
+            const item = state.equipment.find(
+                row => String(row.equipment_category || "") === String(category || "")
+            );
+
+            if (!item) {
+                return;
+            }
+
+            const programmes = state.programmes.filter(programme =>
+                splitList(programme.equipment_target_summary).includes(item.equipment_category)
+            );
+
+            const tenders = state.tenders.filter(tender =>
+                splitList(tender.equipment_target_summary).includes(item.equipment_category)
+            );
+
+            document.getElementById("detailTitle").textContent =
+                item.equipment_category || "Equipment Intelligence";
+
+            document.getElementById("detailSubtitle").textContent =
+                `${formatInteger(item.project_count)} programmes · ${item.evidence_quality || "unknown"} evidence`;
+
+            document.getElementById("detailContent").innerHTML = `
+                <div class="detail-summary">
+                    ${detailStat("Demand Intensity", scoreBadge(item.demand_intensity))}
+                    ${detailStat("Evidence", tag(item.evidence_quality || "None", item.evidence_quality === "direct_keyword" ? "teal" : "amber"))}
+                    ${detailStat("Likely Tenders", formatInteger(item.likely_procurement_count))}
+                    ${detailStat("USD Budget", moneyDetail(item.reported_budget_usd || item.reported_budget))}
+                </div>
+
+                ${detailSection("Demand Evidence", detailGrid([
+                    ["Projects", item.project_count],
+                    ["Direct Evidence Projects", item.direct_evidence_projects],
+                    ["Inferred Projects", item.inferred_projects],
+                    ["Active Projects", item.active_projects],
+                    ["Pipeline Projects", item.pipeline_projects],
+                    ["High Priority Opportunities", item.high_priority_opportunities]
+                ]))}
+
+                ${detailSection("Market", detailGrid([
+                    ["USD Budget", item.reported_budget_usd, moneyDetail],
+                    ["Future Disbursement USD", item.future_disbursement_usd, moneyDetail],
+                    ["Average Opportunity Score", item.average_score],
+                    ["Countries", item.top_countries, value => tagList(value, "")],
+                    ["Donors", item.top_donors, value => tagList(value, "blue")],
+                    ["Next Windows", item.next_windows, value => tagList(value, "amber")]
+                ]))}
+
+                ${detailSection("Related Programmes", detailCopy(
+                    programmes.slice(0, 15).map(row =>
+                        `${row.programme_name || row.iati_identifier} · score ${formatScore(row.opportunity_score)}`
+                    ).join("\n")
+                ))}
+
+                ${detailSection("Likely Procurement", detailCopy(
+                    tenders.slice(0, 15).map(row =>
+                        `${row.project_title || row.iati_identifier} · ${formatScore(row.tender_probability)}% · ${row.tender_stage || "Watch"}`
+                    ).join("\n")
+                ))}
+            `;
+
+            showIntelligenceDetail();
+        }
+
+        function showIntelligenceDetail() {
             document.getElementById("detailOverlay").classList.remove("hidden");
             document.body.classList.add("modal-open");
             document.getElementById("detailClose").focus({ preventScroll: true });

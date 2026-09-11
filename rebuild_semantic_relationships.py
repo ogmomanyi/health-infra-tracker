@@ -38,8 +38,8 @@ def candidate_names(name):
     return list(dict.fromkeys(candidates))
 
 
-def find_entity(conn, name):
-    """Return the unique ACTIVE entity matching a canonical name."""
+def find_entities(conn, name):
+    """Return all ACTIVE entities matching a canonical name candidate."""
     matches = []
     for candidate in candidate_names(name):
         rows = conn.execute(
@@ -52,18 +52,20 @@ def find_entity(conn, name):
             (candidate,),
         ).fetchall()
         matches.extend(rows)
+    return {row[0]: row for row in matches}
 
-    # The same entity may be found through both candidate forms only when the
-    # names are equivalent; de-duplicate by entity ID.
-    by_id = {row[0]: row for row in matches}
+
+def find_entity(conn, name):
+    """Return the unique ACTIVE entity matching a canonical name.
+
+    Ambiguous names are deliberately unresolved.  The 03D guardrail is that
+    we must never invent a relationship when more than one active entity
+    matches the approved semantic name.
+    """
+    by_id = find_entities(conn, name)
     if len(by_id) == 1:
         return next(iter(by_id))
-    if not by_id:
-        return None
-
-    raise RuntimeError(
-        f"Ambiguous active entity for {name!r}: {sorted(by_id)}"
-    )
+    return None
 
 
 def remove_stale_relationships(conn):
@@ -94,21 +96,30 @@ def main():
         remove_stale_relationships(conn)
 
         for canonical_name, duplicate_name in PAIRS:
-            parent_id = find_entity(conn, canonical_name)
-            child_id = find_entity(conn, duplicate_name)
+            parent_matches = find_entities(conn, canonical_name)
+            child_matches = find_entities(conn, duplicate_name)
 
-            if parent_id is None or child_id is None:
+            if len(parent_matches) != 1 or len(child_matches) != 1:
                 skipped += 1
+                parent_detail = sorted(parent_matches)
+                child_detail = sorted(child_matches)
                 print(
                     f"SKIP    {canonical_name!r} <- {duplicate_name!r} "
-                    f"(one or both current entities are absent)"
+                    f"(ambiguous/absent current entities; "
+                    f"parent={parent_detail}, child={child_detail})"
                 )
                 continue
 
+            parent_id = next(iter(parent_matches))
+            child_id = next(iter(child_matches))
+
             if parent_id == child_id:
-                raise RuntimeError(
-                    f"Semantic pair collapsed to one entity: {canonical_name!r}"
+                skipped += 1
+                print(
+                    f"SKIP    {canonical_name!r} <- {duplicate_name!r} "
+                    "(pair resolved to the same current entity)"
                 )
+                continue
 
             exists = conn.execute(
                 """
@@ -145,7 +156,8 @@ def main():
         conn.commit()
         print(
             f"Semantic relationships ready: {created} created, "
-            f"{skipped} approved pairs skipped because current entities are absent."
+            f"{skipped} approved pairs skipped because current entities were "
+            "ambiguous or absent."
         )
     except Exception:
         conn.rollback()

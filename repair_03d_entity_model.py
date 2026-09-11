@@ -63,7 +63,7 @@ def ensure_schema(conn):
 
     if table_exists(conn, "organisation_aliases"):
         columns = set(table_columns(conn, "organisation_aliases"))
-        if "entity_id" not in columns or "alias_id" not in columns:
+        if not {"entity_id", "alias_id", "alias_name", "organisation_key"}.issubset(columns):
             backup = "organisation_aliases_intelligence_legacy"
             if table_exists(conn, backup):
                 conn.execute(f"DROP TABLE {backup}")
