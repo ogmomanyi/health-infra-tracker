@@ -19,6 +19,7 @@ from procurement_intelligence import (
     execution_completeness,
     management_work,
     opportunity_technical_fit,
+    quote_preparation_intelligence,
 )
 
 ROOT = Path(__file__).resolve().parent
@@ -138,6 +139,7 @@ class CRMHandler(BaseHTTPRequestHandler):
                     technical_fit,
                     channel_constraints.load(self.channel_constraints_path),
                 )
+                memory = commercial_memory.load_evidence(self.commercial_memory_path)
                 return self._json(200, {
                     "bid_decision": bid_decision_intelligence.build_guidance(
                         item, technical_fit, execution, constraints
@@ -145,7 +147,12 @@ class CRMHandler(BaseHTTPRequestHandler):
                     "commercial_preparation": commercial_bid_intelligence.build_guidance(
                         item,
                         technical_fit,
-                        commercial_memory.load_evidence(self.commercial_memory_path),
+                        memory,
+                    ),
+                    "quote_preparation": quote_preparation_intelligence.build_guidance(
+                        item,
+                        execution,
+                        memory,
                     ),
                 })
             if len(parts) == 3 and parts[:2] == ["api", "opportunities"]:
