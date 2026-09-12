@@ -1,6 +1,12 @@
 import unittest
 
-from procurement_intelligence.product_matching import match_events, match_product_family, match_manufacturers
+from procurement_intelligence.product_matching import (
+    match_catalogue_products,
+    match_events,
+    match_manufacturers,
+    match_product_families,
+    match_product_family,
+)
 
 
 class ProductMatchingTests(unittest.TestCase):
@@ -58,6 +64,19 @@ class ProductMatchingTests(unittest.TestCase):
         )
         self.assertEqual(matches, [("Molecular Devices", "Molecular Devices")])
 
+    def test_ambiguous_brand_words_do_not_create_manufacturer_matches(self):
+        manufacturer_rows = [
+            {"manufacturer_name": "Traceable", "manufacturer_aliases": "Traceable"},
+            {"manufacturer_name": "Becton Dickinson", "manufacturer_aliases": "BD"},
+        ]
+        self.assertEqual(
+            match_manufacturers(
+                "Provide traceable results for a basin diagnostic study",
+                manufacturer_rows,
+            ),
+            [],
+        )
+
     def test_catalogue_product_family_requires_specific_language(self):
         self.assertEqual(
             match_product_family("Supply of a class II biological safety cabinet")[:2],
@@ -84,6 +103,52 @@ class ProductMatchingTests(unittest.TestCase):
         )
         self.assertEqual(rows[0]["manufacturer_names"], "Thermo Fisher")
         self.assertEqual(rows[0]["manufacturer_entity_ids"], "mfr-thermo")
+
+    def test_notice_can_emit_multiple_product_line_items(self):
+        rows = match_events([{
+            "procurement_event_id": "E6",
+            "title": "Supply of hematology analyzers, centrifuges and microscopes",
+        }])
+        self.assertEqual(
+            {row["product_family"] for row in rows},
+            {"Hematology Analyzer", "Centrifuge", "Microscope"},
+        )
+        self.assertEqual(len({row["procurement_line_item_id"] for row in rows}), 3)
+
+    def test_notice_and_document_text_are_searchable_evidence(self):
+        rows = match_events([{
+            "procurement_event_id": "E7",
+            "title": "Hospital equipment lot",
+            "notice_text": "Technical schedule: multiparameter patient monitor",
+            "document_text": "Portable ultrasound system",
+        }])
+        self.assertEqual(
+            {row["product_family"] for row in rows},
+            {"Patient Monitor", "Ultrasound System"},
+        )
+
+    def test_unique_catalogue_model_resolves_product_and_manufacturer(self):
+        catalogue = [{
+            "faram_product_id": "F-1",
+            "product_name": "Memmert IN75 laboratory incubator",
+            "manufacturer_name": "Memmert",
+            "product_family": "Laboratory Incubator",
+            "equipment_category": "Laboratory Systems",
+            "model": "IN75",
+        }]
+        matches = match_catalogue_products("Required model IN75", catalogue)
+        self.assertEqual(matches[0]["method"], "MODEL_REGISTRY")
+        rows = match_events(
+            [{"procurement_event_id": "E8", "title": "Required model IN75"}],
+            catalogue_rows=catalogue,
+        )
+        self.assertEqual(rows[0]["manufacturer_names"], "Memmert")
+        self.assertEqual(rows[0]["model_evidence"], "IN75")
+        self.assertEqual(rows[0]["manufacturer_match_method"], "MODEL_REGISTRY")
+
+    def test_product_family_list_keeps_strongest_evidence_per_family(self):
+        matches = match_product_families("PCR molecular diagnostics and PCR systems")
+        self.assertEqual(matches[0][0], "Molecular / PCR System")
 
 
 if __name__ == "__main__":

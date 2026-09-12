@@ -117,3 +117,17 @@ def test_explicit_iati_identifier_remains_confirmed():
     )
     assert result["match_status"] == "CONFIRMED"
     assert result["match_confidence"] == 100.0
+
+
+def test_unresolved_explicit_reference_is_not_overridden_by_fuzzy_title():
+    result = match_event(
+        event(project_reference="P-NOT-IN-SNAPSHOT", title="Kenya laboratory equipment"),
+        [{
+            "iati_identifier": "P-OTHER",
+            "project_title": "Kenya laboratory equipment",
+            "funding_agencies": "Buyer",
+            "country_names": "Kenya",
+        }],
+    )
+    assert result["match_status"] == "UNMATCHED"
+    assert result["matched_iati_identifier"] == ""

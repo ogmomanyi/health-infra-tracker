@@ -30,9 +30,9 @@ Equipment demand, evidence-led product and manufacturer intelligence, tender pro
 Calibration remains dependent on accumulated external observations.
 
 ## 6. External procurement intelligence
-Status: complete.
+Status: production foundation complete; source and evidence calibration ongoing.
 
-External procurement-source ingestion, World Bank notices and the procurement-intelligence pipeline are operational.
+World Bank ingestion is paginated and retryable. UNDP's current listing structure and AfDB official notice pages/feeds are supported. Stable process IDs, immutable release history, bounded detail/document extraction and current-run source receipts make amendments and source failures auditable. Additional national and health-agency sources remain future coverage work.
 
 ## 7. Buyer, donor and competitive intelligence
 Status: substantially complete.
@@ -62,19 +62,19 @@ Status: canonical implementation complete.
 Explicit IATI mentions, controlled catalogue records, historical quotation evidence, procurement notice mentions and award history now resolve into one canonical manufacturer layer. Current representation remains controlled by catalogue principal status and territory; historical evidence cannot activate a relationship.
 
 ## 12. Supplier entity resolution
-Status: next integration.
+Status: complete.
 
-Deterministic supplier entity resolution, aliases, canonical supplier IDs, supplier-history aggregation and related tests exist on a stale branch. The useful functionality should be rebuilt cleanly against current `main` rather than merging the stale branch wholesale.
+Deterministic supplier entity resolution, canonical supplier IDs and supplier-history aggregation are integrated. Supplier evidence remains restricted to explicit award records.
 
 ## 13. Supplier competitive intelligence
-Status: next integration.
+Status: production foundation complete; outcome calibration ongoing.
 
-Supplier competitive intelligence exists on a stale branch. It should be integrated only after supplier entity resolution is established as the canonical identity layer.
+Award-backed supplier history and competitive-position signals are integrated. Broader award coverage and outcome validation remain calibration work.
 
 ## 14. Specification-level product matching
 Status: technical foundation complete; evidence expansion ongoing.
 
-Structured tender requirements and verified product specifications now support requirement-level technical-fit outcomes. Current source files contain limited verified specification evidence, so evidence expansion and calibration remain ongoing.
+Structured tender requirements and verified product specifications support requirement-level technical-fit outcomes. Notice detail pages and bounded PDF/DOCX/XLSX/HTML extraction can now feed product evidence automatically. Current verified specification coverage remains limited, so evidence expansion and calibration are ongoing.
 
 Target output:
 - tender requirement set
@@ -100,9 +100,9 @@ Status: planned validation layer.
 Validate supplier, manufacturer and product matches against awarded tenders and publicly available supplier information where reliable evidence exists.
 
 ## 17. Product and competitor intelligence UX
-Status: product and manufacturer views complete; supplier and competitor views planned.
+Status: product and manufacturer views complete; procurement evidence drill-down complete; supplier and competitor views planned.
 
-Dashboard coverage now includes product families, products, manufacturers, evidence status, Faram coverage and authorization state. Remaining views are:
+Dashboard coverage includes product families, products, manufacturers, evidence status, Faram coverage and authorization state. Clickable opportunity workspaces expose notice line items, manufacturer resolution method, source documents and release history. Remaining views are:
 - supplier
 - validation performance
 - competitor signals

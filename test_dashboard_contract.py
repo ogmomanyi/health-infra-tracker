@@ -89,7 +89,7 @@ class DashboardContractTests(unittest.TestCase):
     def test_manifest_declares_layered_pipeline(self):
         manifest = json.loads((DATA / "manifest.json").read_text(encoding="utf-8"))
 
-        self.assertEqual(manifest["pipeline_version"], "3.3-product-manufacturer-intelligence")
+        self.assertEqual(manifest["pipeline_version"], "3.4-procurement-evidence")
         self.assertEqual(
             [layer["layer"] for layer in manifest["pipeline_layers"]],
             [

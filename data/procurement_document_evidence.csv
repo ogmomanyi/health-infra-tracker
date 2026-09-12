@@ -1,0 +1,1 @@
+procurement_document_evidence_id,procurement_process_id,procurement_release_id,procurement_event_id,source,document_url,fetched_at,content_type,byte_length,content_hash,extraction_status,text_length,document_text

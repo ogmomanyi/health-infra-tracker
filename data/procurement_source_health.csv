@@ -1,0 +1,4 @@
+source,current_run_status,record_count,active_opportunity_count,tender_reference_pct,source_url_pct,publication_date_pct,closing_date_pct,buyer_pct,notice_text_pct,document_link_pct,product_match_count,manufacturer_match_count,health_status,health_issues
+AfDB,NOT_RECORDED,41,0,0.0,100.0,0.0,0.0,100.0,0.0,0.0,0,0,REVIEW,low tender reference completeness; low publication date completeness
+UNDP,NOT_RECORDED,564,362,100.0,100.0,100.0,100.0,100.0,3.5,0.0,5,1,HEALTHY,
+World Bank,SUCCESS,3115,3,98.5,100.0,99.9,36.0,56.0,99.9,4.8,269,10,HEALTHY,

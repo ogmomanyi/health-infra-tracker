@@ -6,13 +6,13 @@ from typing import Any
 from urllib.parse import urljoin
 import xml.etree.ElementTree as ET
 
-import requests
-
+from ..evidence import encode_document_urls
+from ..http_client import build_session
 from ..ingest import stable_event_id
 
 
-def fetch_feed(url: str, timeout: int = 30) -> list[dict[str, Any]]:
-    response = requests.get(url, timeout=timeout, headers={"User-Agent": "Faram-Procurement-Intelligence/1.0"})
+def fetch_feed(url: str, timeout: int = 30, session=None) -> list[dict[str, Any]]:
+    response = (session or build_session()).get(url, timeout=timeout)
     response.raise_for_status()
     root = ET.fromstring(response.content)
     items = []
@@ -27,6 +27,7 @@ def fetch_feed(url: str, timeout: int = 30) -> list[dict[str, Any]]:
             "source_url": urljoin(url, link),
             "tender_reference": text("guid"),
             "publication_date": text("pubDate"),
+            "notice_text": text("description"),
         })
     return items
 
@@ -54,5 +55,14 @@ def normalize_notices(records: list[dict[str, Any]], source: str = "Official RSS
             "product_family": record.get("product_family", ""),
             "estimated_value": record.get("estimated_value", ""),
             "currency": record.get("currency", ""),
+            "source_record_id": reference or str(record.get("source_url") or ""),
+            "notice_text": record.get("notice_text", record.get("description", "")),
+            "language": record.get("language", ""),
+            "document_urls": record.get("document_urls", encode_document_urls([])),
+            "detail_fetch_status": (
+                "EMBEDDED"
+                if record.get("notice_text") or record.get("description")
+                else "LISTING_ONLY"
+            ),
         }
     return list(normalized.values())

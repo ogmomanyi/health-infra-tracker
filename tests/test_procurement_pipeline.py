@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from procurement_intelligence.pipeline import deduplicate_events, persist_events, sync_events
+from procurement_intelligence.pipeline import deduplicate_events, persist_events, replace_source_snapshots, sync_events
 from procurement_intelligence.schema import ProcurementEvent
 
 
@@ -26,6 +26,15 @@ class ProcurementPipelineTests(unittest.TestCase):
         result = deduplicate_events([event, duplicate])
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0].title, "Updated title")
+
+    def test_replace_source_snapshot_retains_other_sources(self):
+        old_world_bank = ProcurementEvent("old", "World Bank", "", "A", "Old", "", "Kenya", "", "", "Diagnostics", "")
+        old_undp = ProcurementEvent("undp", "UNDP", "", "B", "UNDP", "", "Kenya", "", "", "Diagnostics", "")
+        fresh_world_bank = ProcurementEvent("new", "World Bank", "", "C", "New", "", "Kenya", "", "", "Diagnostics", "")
+        rows = replace_source_snapshots(
+            [old_world_bank, old_undp], [fresh_world_bank], {"World Bank"}
+        )
+        self.assertEqual({row.procurement_event_id for row in rows}, {"new", "undp"})
 
     def test_sync_events_round_trips_fixture_csv(self):
         csv_text = """procurement_event_id,source,source_url,tender_reference,title,buyer,country,publication_date,closing_date,equipment_category,product_family,estimated_value,currency,matched_iati_identifier,match_confidence,match_status

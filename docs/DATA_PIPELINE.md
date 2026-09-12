@@ -24,6 +24,8 @@ opportunity_scores
 organisation_intelligence
 programme_intelligence
 donor_intelligence
+procurement_manufacturer_relationships
+world_bank_project_metadata
 
 COMMERCIAL
 target_accounts
@@ -36,6 +38,10 @@ equipment_intelligence
 product_intelligence
 manufacturer_intelligence
 tender_predictions
+procurement_processes
+procurement_releases
+procurement_line_items
+procurement_document_evidence
 ```
 
 ## Execution Rules
@@ -46,6 +52,11 @@ tender_predictions
 - INTELLIGENCE scores and summarizes market, donor, organisation, and programme signals.
 - COMMERCIAL converts intelligence into account targeting, engagement, CRM note, and action workflows.
 - PREDICTIVE_PRODUCT connects controlled products and manufacturers to market demand, technical evidence, and likely procurement timing.
+- Procurement notices use stable process IDs and immutable release IDs so amendments remain auditable.
+- Product identification emits multiple evidence-backed line items per notice and may use title, notice, and extracted document text.
+- Manufacturer resolution requires an explicit alias, unique catalogue model, or exact catalogue product name. It never treats a supplier as the manufacturer.
+- Manufacturer relationships distinguish observed award/specification affinity from explicit source preference and only attribute donors or receiving parties through confirmed project matches.
+- Source collection health is an operational CI artifact and is intentionally not displayed on the commercial dashboard.
 
 ## Intelligence quality rules
 

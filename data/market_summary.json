@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-09-12T10:30:02Z",
+  "generated_at": "2026-09-12T15:01:46Z",
   "as_of": "2026-09-12",
   "source_generated_at": "2026-09-12T10:29:36Z",
-  "pipeline_version": "3.3-product-manufacturer-intelligence",
+  "pipeline_version": "3.4-procurement-evidence",
   "pipeline_layers": [
     {
       "layer": "RAW",
@@ -39,7 +39,9 @@
         "organisation_intelligence",
         "programme_intelligence",
         "donor_intelligence",
-        "opportunity_organisation_resolution"
+        "opportunity_organisation_resolution",
+        "procurement_manufacturer_relationships",
+        "world_bank_project_metadata"
       ],
       "purpose": "Score programmes, donors, and organisations for market signals."
     },
@@ -59,7 +61,11 @@
         "equipment_intelligence",
         "product_intelligence",
         "manufacturer_intelligence",
-        "tender_predictions"
+        "tender_predictions",
+        "procurement_processes",
+        "procurement_releases",
+        "procurement_line_items",
+        "procurement_document_evidence"
       ],
       "purpose": "Connect evidence-led product and manufacturer coverage to demand and likely procurement timing."
     }
@@ -79,14 +85,16 @@
       "organisation_entities": 2250,
       "organisation_aliases": 17178,
       "equipment_entities": 11,
-      "manufacturer_entities": 31
+      "manufacturer_entities": 35
     },
     "intelligence": {
       "opportunity_scores": 3281,
       "organisation_intelligence": 2380,
       "programme_intelligence": 3281,
       "donor_intelligence": 398,
-      "opportunity_organisation_resolution": 16078
+      "opportunity_organisation_resolution": 16078,
+      "procurement_manufacturer_relationships": 20,
+      "world_bank_project_metadata": 5
     },
     "commercial": {
       "target_accounts": 2380,
@@ -97,8 +105,12 @@
     "predictive_product": {
       "equipment_intelligence": 11,
       "product_intelligence": 48,
-      "manufacturer_intelligence": 31,
-      "tender_predictions": 985
+      "manufacturer_intelligence": 35,
+      "tender_predictions": 985,
+      "procurement_processes": 6180,
+      "procurement_releases": 6241,
+      "procurement_line_items": 3769,
+      "procurement_document_evidence": 0
     }
   },
   "currency_note": "Amounts are source-reported nominal values and are not converted across currencies.",
@@ -114,7 +126,7 @@
     "donors": 398,
     "equipment_categories": 11,
     "products": 48,
-    "manufacturers": 31,
+    "manufacturers": 35,
     "active_principals": 0,
     "tender_predictions": 985,
     "likely_procurement": 196,
@@ -205,5 +217,5 @@
       "output": "Equipment demand, product and manufacturer intelligence, technical evidence, tender probability, horizon, and timing windows"
     }
   ],
-  "product_intelligence_generated_at": "2026-09-12T10:45:27Z"
+  "product_intelligence_generated_at": "2026-09-12T15:03:11Z"
 }

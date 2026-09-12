@@ -1,5 +1,5 @@
 {
-  "pipeline_version": "3.3-product-manufacturer-intelligence",
+  "pipeline_version": "3.4-procurement-evidence",
   "generated_at": "2026-09-12T10:29:36Z",
   "countries": [
     "KE",
@@ -26,13 +26,13 @@
     "organisation_entities": 2250,
     "organisation_aliases": 17178,
     "equipment_entities": 11,
-    "manufacturer_entities": 31,
+    "manufacturer_entities": 35,
     "opportunity_scores": 3281,
     "organisation_intelligence": 2380,
     "programme_intelligence": 3281,
     "donor_intelligence": 398,
     "product_intelligence": 48,
-    "manufacturer_intelligence": 31,
+    "manufacturer_intelligence": 35,
     "target_accounts": 2380,
     "engagements": 2042,
     "crm_notes": 2042,
@@ -40,7 +40,18 @@
     "opportunities": 3281,
     "equipment_intelligence": 11,
     "tender_predictions": 985,
-    "opportunity_organisation_resolution": 16078
+    "opportunity_organisation_resolution": 16078,
+    "procurement_events": 3720,
+    "procurement_processes": 6180,
+    "procurement_releases": 6241,
+    "procurement_documents": 165,
+    "procurement_document_evidence": 0,
+    "procurement_line_items": 3769,
+    "procurement_product_matches": 3769,
+    "procurement_manufacturer_relationships": 20,
+    "world_bank_project_metadata": 5,
+    "procurement_source_collection": 1,
+    "procurement_source_health": 3
   },
   "files": {
     "activities": "activities.csv",
@@ -70,9 +81,20 @@
     "opportunities": "opportunities.csv",
     "equipment_intelligence": "equipment_intelligence.csv",
     "tender_predictions": "tender_predictions.csv",
-    "opportunity_organisation_resolution": "opportunity_organisation_resolution.csv"
+    "opportunity_organisation_resolution": "opportunity_organisation_resolution.csv",
+    "procurement_events": "procurement_events.csv",
+    "procurement_processes": "procurement_processes.csv",
+    "procurement_releases": "procurement_releases.csv",
+    "procurement_documents": "procurement_documents.csv",
+    "procurement_document_evidence": "procurement_document_evidence.csv",
+    "procurement_line_items": "procurement_line_items.csv",
+    "procurement_product_matches": "procurement_product_matches.csv",
+    "procurement_manufacturer_relationships": "procurement_manufacturer_relationships.csv",
+    "world_bank_project_metadata": "world_bank_project_metadata.csv",
+    "procurement_source_collection": "procurement_source_collection.csv",
+    "procurement_source_health": "procurement_source_health.csv"
   },
-  "intelligence_generated_at": "2026-09-12T10:30:02Z",
+  "intelligence_generated_at": "2026-09-12T15:01:46Z",
   "plan_progress": [
     {
       "id": "01",
@@ -141,7 +163,9 @@
         "organisation_intelligence",
         "programme_intelligence",
         "donor_intelligence",
-        "opportunity_organisation_resolution"
+        "opportunity_organisation_resolution",
+        "procurement_manufacturer_relationships",
+        "world_bank_project_metadata"
       ],
       "purpose": "Score programmes, donors, and organisations for market signals."
     },
@@ -161,7 +185,11 @@
         "equipment_intelligence",
         "product_intelligence",
         "manufacturer_intelligence",
-        "tender_predictions"
+        "tender_predictions",
+        "procurement_processes",
+        "procurement_releases",
+        "procurement_line_items",
+        "procurement_document_evidence"
       ],
       "purpose": "Connect evidence-led product and manufacturer coverage to demand and likely procurement timing."
     }
@@ -188,7 +216,9 @@
       "organisation_intelligence",
       "programme_intelligence",
       "donor_intelligence",
-      "opportunity_organisation_resolution"
+      "opportunity_organisation_resolution",
+      "procurement_manufacturer_relationships",
+      "world_bank_project_metadata"
     ],
     "commercial": [
       "target_accounts",
@@ -200,8 +230,12 @@
       "equipment_intelligence",
       "product_intelligence",
       "manufacturer_intelligence",
-      "tender_predictions"
+      "tender_predictions",
+      "procurement_processes",
+      "procurement_releases",
+      "procurement_line_items",
+      "procurement_document_evidence"
     ]
   },
-  "product_intelligence_generated_at": "2026-09-12T10:45:27Z"
+  "product_intelligence_generated_at": "2026-09-12T15:03:11Z"
 }

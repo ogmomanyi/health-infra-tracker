@@ -20,6 +20,7 @@ from procurement_intelligence import (
     execution_completeness,
     management_work,
     opportunity_technical_fit,
+    procurement_evidence_view,
     quote_preparation_intelligence,
 )
 
@@ -39,6 +40,11 @@ class CRMHandler(BaseHTTPRequestHandler):
     technical_fit_path = opportunity_technical_fit.DEFAULT_PATH
     channel_constraints_path = channel_constraints.DEFAULT_PATH
     commercial_memory_path = ROOT / "data" / "faram_commercial_memory.csv"
+    procurement_events_path = ROOT / "data" / "procurement_events.csv"
+    procurement_line_items_path = ROOT / "data" / "procurement_line_items.csv"
+    procurement_releases_path = ROOT / "data" / "procurement_releases.csv"
+    procurement_documents_path = ROOT / "data" / "procurement_document_evidence.csv"
+    procurement_relationships_path = ROOT / "data" / "procurement_manufacturer_relationships.csv"
 
     def _json(self, status, payload):
         body = json.dumps(payload, default=str).encode("utf-8")
@@ -120,7 +126,18 @@ class CRMHandler(BaseHTTPRequestHandler):
             if parts == ["api", "work"]:
                 return self._json(200, commercial_work.list_work(db_path=self.db_path, owner=params.get("owner", [None])[0], today=params.get("today", [None])[0]))
             if parts == ["api", "accounts"]:
-                return self._json(200, {"accounts": account_work.list_accounts(db_path=self.db_path, today=params.get("today", [None])[0])})
+                accounts = account_work.list_accounts(
+                    db_path=self.db_path,
+                    today=params.get("today", [None])[0],
+                )
+                return self._json(200, {"accounts": procurement_evidence_view.enrich_accounts(
+                    accounts,
+                    relationships_path=self.procurement_relationships_path,
+                )})
+            if len(parts) == 4 and parts[:2] == ["api", "accounts"] and parts[3] == "manufacturer-relationships":
+                return self._json(200, {"manufacturer_relationships": procurement_evidence_view.for_account(
+                    parts[2], relationships_path=self.procurement_relationships_path
+                )})
             if parts == ["api", "management"]:
                 return self._json(200, management_work.management_summary(db_path=self.db_path, today=params.get("today", [None])[0], closing_window_days=int(params.get("closing_window_days", [7])[0])))
             if parts == ["api", "opportunities"]:
@@ -131,6 +148,18 @@ class CRMHandler(BaseHTTPRequestHandler):
                     return self._json(404, {"error": "opportunity not found"})
                 event_id = item.get("procurement_event_id") or ""
                 return self._json(200, {"technical_fit": opportunity_technical_fit.for_event(event_id, path=self.technical_fit_path)})
+            if len(parts) == 4 and parts[:2] == ["api", "opportunities"] and parts[3] == "procurement-evidence":
+                item = commercial_crm.get_opportunity(parts[2], db_path=self.db_path)
+                if item is None:
+                    return self._json(404, {"error": "opportunity not found"})
+                return self._json(200, procurement_evidence_view.for_event(
+                    item.get("procurement_event_id") or "",
+                    events_path=self.procurement_events_path,
+                    line_items_path=self.procurement_line_items_path,
+                    releases_path=self.procurement_releases_path,
+                    documents_path=self.procurement_documents_path,
+                    relationships_path=self.procurement_relationships_path,
+                ))
             if len(parts) == 4 and parts[:2] == ["api", "opportunities"] and parts[3] == "decision-guidance":
                 item = commercial_crm.get_opportunity(parts[2], db_path=self.db_path)
                 if item is None:
@@ -247,6 +276,11 @@ def main():
     parser.add_argument("--technical-fit", default=str(opportunity_technical_fit.DEFAULT_PATH))
     parser.add_argument("--channel-constraints", default=str(channel_constraints.DEFAULT_PATH))
     parser.add_argument("--commercial-memory", default=str(ROOT / "data" / "faram_commercial_memory.csv"))
+    parser.add_argument("--procurement-events", default=str(ROOT / "data" / "procurement_events.csv"))
+    parser.add_argument("--procurement-line-items", default=str(ROOT / "data" / "procurement_line_items.csv"))
+    parser.add_argument("--procurement-releases", default=str(ROOT / "data" / "procurement_releases.csv"))
+    parser.add_argument("--procurement-documents", default=str(ROOT / "data" / "procurement_document_evidence.csv"))
+    parser.add_argument("--procurement-relationships", default=str(ROOT / "data" / "procurement_manufacturer_relationships.csv"))
     args = parser.parse_args()
     commercial_crm.initialize(args.db)
     execution_completeness.initialize(args.db)
@@ -254,6 +288,11 @@ def main():
     CRMHandler.technical_fit_path = Path(args.technical_fit)
     CRMHandler.channel_constraints_path = Path(args.channel_constraints)
     CRMHandler.commercial_memory_path = Path(args.commercial_memory)
+    CRMHandler.procurement_events_path = Path(args.procurement_events)
+    CRMHandler.procurement_line_items_path = Path(args.procurement_line_items)
+    CRMHandler.procurement_releases_path = Path(args.procurement_releases)
+    CRMHandler.procurement_documents_path = Path(args.procurement_documents)
+    CRMHandler.procurement_relationships_path = Path(args.procurement_relationships)
     server = ThreadingHTTPServer((args.host, args.port), CRMHandler)
     print(f"Commercial CRM API listening on http://{args.host}:{args.port}")
     try:

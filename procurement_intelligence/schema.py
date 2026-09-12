@@ -38,6 +38,15 @@ class ProcurementEvent:
     manufacturer_name: str = ""
     brand_name: str = ""
     manufacturer_evidence_status: str = "NONE"
+    procurement_process_id: str = ""
+    procurement_release_id: str = ""
+    source_record_id: str = ""
+    source_updated_at: str = ""
+    notice_text: str = ""
+    language: str = ""
+    document_urls: str = ""
+    content_hash: str = ""
+    detail_fetch_status: str = ""
 
     def to_dict(self):
         return asdict(self)

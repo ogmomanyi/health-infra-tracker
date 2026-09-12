@@ -32,10 +32,25 @@ def merge_events(existing, fresh):
     """
     merged = {}
     for event in existing:
-        merged[event.procurement_event_id] = event
+        key = event.procurement_process_id or event.procurement_event_id
+        merged[key] = event
     for event in fresh:
-        merged[event.procurement_event_id] = event
+        key = event.procurement_process_id or event.procurement_event_id
+        if key in merged:
+            existing_event_id = merged[key].procurement_event_id
+            event = ProcurementEvent(**{
+                **event.to_dict(),
+                "procurement_event_id": existing_event_id,
+            })
+        merged[key] = event
     return list(merged.values())
+
+
+def replace_source_snapshots(existing, fresh, refreshed_sources):
+    """Replace successful source snapshots while retaining every other source."""
+    refreshed = {str(source).strip() for source in refreshed_sources if str(source).strip()}
+    retained = [event for event in existing if event.source.strip() not in refreshed]
+    return merge_events(retained, fresh)
 
 
 def _ensure_columns(conn: sqlite3.Connection, table_name: str) -> None:

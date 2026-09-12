@@ -3,14 +3,16 @@
 
 from __future__ import annotations
 import argparse
+from collections import Counter
 import csv
 from datetime import date
 from pathlib import Path
 from .ingest import read_events, write_events
 from .matcher import match_event
-from .pipeline import load_events, merge_events, persist_events
+from .pipeline import load_events, replace_source_snapshots, persist_events
 from .schema import ProcurementEvent
 from .iati_candidates import load_iati_candidates
+from .evidence import decode_document_urls, encode_document_urls, enrich_evidence_identity
 
 FARAM_COUNTRIES = {"Kenya", "Uganda", "Rwanda", "Ethiopia", "Somalia", "South Sudan", "Congo, Democratic Republic of the"}
 ACTIVE_STAGES = ("invitation for bids", "request for bids", "request for proposals", "request for quotation", "request for expression of interest", "expression of interest", "invitation to bid", "call for proposals", "rfq", "rfb", "rfp", "ifb")
@@ -43,7 +45,7 @@ def classify_opportunity_status(event: ProcurementEvent, today: date | None = No
 
 
 def score_faram_relevance(event: ProcurementEvent) -> tuple[float, str, str]:
-    text = " ".join((event.title, event.equipment_category, event.product_family, event.procurement_stage)).lower(); score = 0.0; reasons: list[str] = []
+    text = " ".join((event.title, event.equipment_category, event.product_family, event.procurement_stage, event.notice_text)).lower(); score = 0.0; reasons: list[str] = []
     categories = {"Laboratory Equipment", "Diagnostics", "Medical Equipment", "Blood Banking", "Cold Chain", "Sterilization", "PPE", "Ophthalmology", "Laboratory Consumables"}
     if event.equipment_category in categories: score += 35; reasons.append(event.equipment_category.lower())
     if event.country.strip().lower() in {c.lower() for c in FARAM_COUNTRIES}: score += 15; reasons.append(event.country.strip())
@@ -79,30 +81,93 @@ def resolve_supplier_entities(events: list[ProcurementEvent], database: Path) ->
 
 
 def build_events(notices, projects):
-    matched = []; fields = ProcurementEvent.__dataclass_fields__
+    from .matcher import ProjectMatcher
+    matched = []; fields = ProcurementEvent.__dataclass_fields__; matcher = ProjectMatcher(projects)
     for notice in notices:
-        event = ProcurementEvent(**{field: notice.get(field, "") for field in fields}); result = match_event(event, projects)
+        notice = enrich_evidence_identity(notice)
+        event = ProcurementEvent(**{field: notice.get(field, "") for field in fields}); result = match_event(event, matcher)
         enriched = ProcurementEvent(**{**event.to_dict(), "matched_iati_identifier": result["matched_iati_identifier"], "match_confidence": result["match_confidence"], "match_status": result["match_status"]})
         status = classify_opportunity_status(enriched); score, priority, reason = score_faram_relevance(enriched)
         matched.append(ProcurementEvent(**{**enriched.to_dict(), "opportunity_status": status, "faram_relevance_score": score, "faram_relevance_reason": reason, "procurement_priority": priority}))
     return matched
 
 
+def deduplicate_notices(notices):
+    """Collapse duplicate source records before detail fetching and project matching."""
+    unique: dict[str, dict] = {}
+    for raw_notice in notices:
+        notice = enrich_evidence_identity(dict(raw_notice))
+        key = notice.get("procurement_process_id") or notice.get("procurement_event_id")
+        existing = unique.get(key)
+        if existing is None:
+            unique[key] = notice
+            continue
+        if len(str(notice.get("notice_text") or "")) > len(str(existing.get("notice_text") or "")):
+            existing["notice_text"] = notice.get("notice_text", "")
+        documents = [
+            *decode_document_urls(existing.get("document_urls")),
+            *decode_document_urls(notice.get("document_urls")),
+        ]
+        existing["document_urls"] = encode_document_urls(documents)
+        for field, value in notice.items():
+            if not existing.get(field) and value not in (None, ""):
+                existing[field] = value
+    return list(unique.values())
+
+
 def _warn(source: str, exc: Exception) -> None: print(f"WARNING: {source} procurement source failed: {exc}")
+
+
+def write_collection_status(
+    path: Path,
+    notices: list[dict],
+    expected_sources: list[str],
+    failed_sources: set[str] | None = None,
+) -> None:
+    counts = Counter(str(notice.get("source") or "Unknown") for notice in notices)
+    failed_sources = failed_sources or set()
+    fields = ["source", "run_status", "record_count", "detail_extracted_count", "detail_failed_count"]
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fields)
+        writer.writeheader()
+        for source in expected_sources:
+            source_rows = [notice for notice in notices if notice.get("source") == source]
+            writer.writerow({
+                "source": source,
+                "run_status": (
+                    "FAILED" if not counts[source]
+                    else "PARTIAL" if source in failed_sources
+                    else "SUCCESS"
+                ),
+                "record_count": counts[source],
+                "detail_extracted_count": sum(
+                    notice.get("detail_fetch_status") == "EXTRACTED" for notice in source_rows
+                ),
+                "detail_failed_count": sum(
+                    notice.get("detail_fetch_status") == "FAILED" for notice in source_rows
+                ),
+            })
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(); parser.add_argument("--input", default="data/procurement_events_input.csv"); parser.add_argument("--output", default="data/procurement_events.csv"); parser.add_argument("--projects", default="data/opportunities.csv"); parser.add_argument("--database", default="data/iati_intelligence.db"); parser.add_argument("--buyer-output", default="data/procurement_buyer_history.csv"); parser.add_argument("--supplier-output", default="data/procurement_supplier_history.csv"); parser.add_argument("--manufacturer-output", default="data/procurement_manufacturer_history.csv"); parser.add_argument("--faram-catalogue", default="data/faram_product_catalogue.csv")
-    parser.add_argument("--source", choices=["fixture", "world_bank", "rss", "afdb", "undp", "all"], default="fixture"); parser.add_argument("--country", action="append", dest="countries"); parser.add_argument("--feed-url"); parser.add_argument("--feed-name", default="Official RSS"); parser.add_argument("--page-url", action="append", dest="page_urls"); parser.add_argument("--afdb-feed-url"); parser.add_argument("--afdb-page-url", action="append", dest="afdb_page_urls"); parser.add_argument("--undp-url", default="https://procurement-notices.undp.org/")
-    args = parser.parse_args(); notices = []; source_successes = 0
+    parser.add_argument("--source", choices=["fixture", "world_bank", "rss", "afdb", "undp", "all"], default="fixture"); parser.add_argument("--country", action="append", dest="countries"); parser.add_argument("--feed-url"); parser.add_argument("--feed-name", default="Official RSS"); parser.add_argument("--page-url", action="append", dest="page_urls"); parser.add_argument("--afdb-feed-url"); parser.add_argument("--afdb-page-url", action="append", dest="afdb_page_urls"); parser.add_argument("--undp-url", default="https://procurement-notices.undp.org/"); parser.add_argument("--detail-limit", type=int, default=0); parser.add_argument("--collection-output", default="data/procurement_source_collection.csv"); parser.add_argument("--merge-existing", action="store_true")
+    args = parser.parse_args(); notices = []; source_successes = 0; source_failures: set[str] = set()
     if args.source in {"world_bank", "all"}:
         from .sources.world_bank import fetch_notices, normalize_notices
         try:
             codes = args.countries or [None]
-            for code in codes: notices.extend(normalize_notices(fetch_notices(country_codes=[code] if code else None)))
+            for code in codes:
+                normalized = normalize_notices(
+                    fetch_notices(country_codes=[code] if code else None),
+                    health_only=True,
+                )
+                notices.extend(normalized)
             source_successes += 1
         except Exception as exc:
             if args.source == "world_bank": raise
+            source_failures.add("World Bank")
             _warn("World Bank", exc)
     if args.source == "rss":
         if not args.feed_url: parser.error("--feed-url is required when --source=rss")
@@ -122,21 +187,52 @@ def main() -> None:
         if args.afdb_feed_url:
             from .sources.rss import fetch_feed, normalize_notices
             try: notices.extend(normalize_notices(fetch_feed(args.afdb_feed_url), source="AfDB")); source_successes += 1
-            except Exception as exc: _warn("AfDB feed", exc)
+            except Exception as exc: source_failures.add("AfDB"); _warn("AfDB feed", exc)
         if args.afdb_page_urls:
             from .sources.afdb import fetch_page, parse_notice_page; ok = False
             for url in args.afdb_page_urls:
                 try: notices.extend(parse_notice_page(fetch_page(url), url)); ok = True
-                except Exception as exc: _warn(f"AfDB page {url}", exc)
+                except Exception as exc: source_failures.add("AfDB"); _warn(f"AfDB page {url}", exc)
             if ok: source_successes += 1
         from .sources.undp import fetch_page, parse_notice_page
         try: notices.extend(parse_notice_page(fetch_page(args.undp_url), args.undp_url)); source_successes += 1
-        except Exception as exc: _warn("UNDP", exc)
+        except Exception as exc: source_failures.add("UNDP"); _warn("UNDP", exc)
     elif args.source == "fixture": notices = [event.to_dict() for event in read_events(Path(args.input))]; source_successes = 1
     if not notices and args.source == "all" and source_successes == 0: raise RuntimeError("All external procurement sources failed; refusing to overwrite the existing dataset.")
+    notices = deduplicate_notices(notices)
+    if args.detail_limit > 0:
+        from .detail_enrichment import enrich_notice_details
+        detail_sources = {"AfDB", "UNDP"}
+        listing_records = [notice for notice in notices if notice.get("source") in detail_sources]
+        retained_records = [notice for notice in notices if notice.get("source") not in detail_sources]
+        notices = retained_records + enrich_notice_details(
+            listing_records,
+            max_records=args.detail_limit,
+        )
+    expected_sources: list[str] = []
+    if args.source in {"world_bank", "all"}: expected_sources.append("World Bank")
+    if args.source in {"undp", "all"}: expected_sources.append("UNDP")
+    if args.source == "afdb" or (args.source == "all" and (args.afdb_feed_url or args.afdb_page_urls)):
+        expected_sources.append("AfDB")
+    if args.source == "rss": expected_sources.append(args.feed_name)
+    if expected_sources:
+        write_collection_status(
+            Path(args.collection_output), notices, expected_sources, source_failures
+        )
     projects = load_projects(Path(args.projects), Path(args.database)); print(f"IATI matching candidates loaded: {len(projects)}")
     fresh_events = resolve_supplier_entities(build_events(notices, projects), Path(args.database))
-    events = merge_events([e for e in load_events(Path(args.output)) if not e.procurement_event_id.startswith("proc_demo_")], fresh_events) if args.source == "all" else fresh_events
+    if args.source == "all" or args.merge_existing:
+        existing = [
+            event for event in load_events(Path(args.output))
+            if not event.procurement_event_id.startswith("proc_demo_")
+        ]
+        collected_sources = {
+            str(notice.get("source") or "").strip() for notice in notices
+            if str(notice.get("source") or "").strip()
+        }
+        events = replace_source_snapshots(existing, fresh_events, collected_sources)
+    else:
+        events = fresh_events
     write_events(Path(args.output), events); persist_events(Path(args.database), events)
     from .commercial import write_buyer_history
     buyer_count = write_buyer_history(Path(args.buyer_output), events, database=Path(args.database))

@@ -90,7 +90,7 @@ PROCUREMENT_TERMS = [
     "health information system",
 ]
 
-PIPELINE_VERSION = "3.3-product-manufacturer-intelligence"
+PIPELINE_VERSION = "3.4-procurement-evidence"
 
 PLAN_PROGRESS = [
     {
@@ -162,6 +162,8 @@ PIPELINE_LAYERS = [
             "programme_intelligence",
             "donor_intelligence",
             "opportunity_organisation_resolution",
+            "procurement_manufacturer_relationships",
+            "world_bank_project_metadata",
         ],
         "purpose": "Score programmes, donors, and organisations for market signals.",
     },
@@ -182,6 +184,10 @@ PIPELINE_LAYERS = [
             "product_intelligence",
             "manufacturer_intelligence",
             "tender_predictions",
+            "procurement_processes",
+            "procurement_releases",
+            "procurement_line_items",
+            "procurement_document_evidence",
         ],
         "purpose": "Connect evidence-led product and manufacturer coverage to demand and likely procurement timing.",
     },

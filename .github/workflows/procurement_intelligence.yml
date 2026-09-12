@@ -39,16 +39,31 @@ jobs:
           AFDB_PROCUREMENT_FEED_URL: ${{ vars.AFDB_PROCUREMENT_FEED_URL }}
           UNDP_PROCUREMENT_URL: ${{ vars.UNDP_PROCUREMENT_URL }}
         run: |
-          args=(--source all --country KE --country UG --country RW --country ET --country SO --country SS --country CD)
+          args=(--source all --detail-limit 40 --country KE --country UG --country RW --country ET --country SO --country SS --country CD)
           if [ -n "$AFDB_PROCUREMENT_FEED_URL" ]; then args+=(--afdb-feed-url "$AFDB_PROCUREMENT_FEED_URL"); else args+=(--afdb-page-url "https://www.afdb.org/en/documents/project-related-procurement/procurement-notices/specific-procurement-notices" --afdb-page-url "https://www.afdb.org/en/documents/project-related-procurement/procurement-notices/general-procurement-notices" --afdb-page-url "https://www.afdb.org/en/documents/project-related-procurement/procurement-notices/invitation-bids"); fi
           if [ -n "$UNDP_PROCUREMENT_URL" ]; then args+=(--undp-url "$UNDP_PROCUREMENT_URL"); fi
           python -m procurement_intelligence.run "${args[@]}"
+
+      - name: Maintain procurement notice release ledger
+        run: python -m procurement_intelligence.notice_ledger --events data/procurement_events.csv --database data/iati_intelligence.db --data-dir data
+
+      - name: Extract procurement document evidence
+        run: python -m procurement_intelligence.document_evidence --events data/procurement_events.csv --database data/iati_intelligence.db --output data/procurement_document_evidence.csv --max-documents 40
 
       - name: Build buyer demand intelligence
         run: python -m procurement_intelligence.buyer_intelligence --events data/procurement_events.csv --database data/iati_intelligence.db --output data/procurement_buyer_history.csv
 
       - name: Match procurement products and manufacturers
-        run: python -m procurement_intelligence.product_matching --events data/procurement_events.csv --equipment-entities data/equipment_entities.csv --manufacturer-entities data/manufacturer_entities.csv --output data/procurement_product_matches.csv
+        run: python -m procurement_intelligence.product_matching --events data/procurement_events.csv --equipment-entities data/equipment_entities.csv --manufacturer-entities data/manufacturer_entities.csv --catalogue data/faram_product_catalogue.csv --document-evidence data/procurement_document_evidence.csv --output data/procurement_product_matches.csv --line-items-output data/procurement_line_items.csv
+
+      - name: Resolve relevant World Bank project parties
+        run: python -m procurement_intelligence.world_bank_project_metadata --matches data/procurement_product_matches.csv --events data/procurement_events.csv --output data/world_bank_project_metadata.csv
+
+      - name: Build manufacturer relationship intelligence
+        run: python -m procurement_intelligence.manufacturer_relationships --matches data/procurement_product_matches.csv --events data/procurement_events.csv --opportunities data/opportunities.csv --buyers data/procurement_buyer_history.csv --resolutions data/opportunity_organisation_resolution.csv --accounts data/target_accounts.csv --manufacturers data/manufacturer_entities.csv --world-bank-projects data/world_bank_project_metadata.csv --document-evidence data/procurement_document_evidence.csv --output data/procurement_manufacturer_relationships.csv
+
+      - name: Validate procurement source health
+        run: python -m procurement_intelligence.source_health --events data/procurement_events.csv --matches data/procurement_product_matches.csv --collection data/procurement_source_collection.csv --output data/procurement_source_health.csv --require-source "World Bank" --require-source AfDB --require-source UNDP --strict
 
       - name: Match procurement demand against Faram catalogue
         run: python -m procurement_intelligence.faram_product_matching --procurement-matches data/procurement_product_matches.csv --catalogue data/faram_product_catalogue.csv --output data/faram_product_matches.csv
@@ -81,19 +96,7 @@ jobs:
         run: python -m procurement_intelligence.tender_validation --predictions data/tender_predictions.csv --events data/procurement_events.csv --output data/tender_prediction_validation.csv
 
       - name: Run procurement regression tests
-        run: |
-          python -m unittest discover -s tests -p 'test_*procurement*.py' -v
-          python -m unittest discover -s tests -p 'test_tender_validation.py' -v
-          python -m unittest discover -s tests -p 'test_product_matching.py' -v
-          python -m unittest discover -s tests -p 'test_faram_product_matching.py' -v
-          python -m unittest discover -s tests -p 'test_faram_product_fit.py' -v
-          python -m unittest discover -s tests -p 'test_historical_quote_intelligence.py' -v
-          python -m unittest discover -s tests -p 'test_commercial_memory.py' -v
-          python -m unittest discover -s tests -p 'test_account_commercial_memory.py' -v
-          python -m unittest discover -s tests -p 'test_buyer_intelligence.py' -v
-          python -m unittest discover -s tests -p 'test_commercial_account_priority.py' -v
-          python -m unittest discover -s tests -p 'test_commercial_action_queue.py' -v
-          python -m unittest discover -s tests -p 'test_commercial_opportunity_workspace.py' -v
+        run: python -m pytest -q
 
       - name: Commit refreshed procurement data
         run: |
@@ -102,7 +105,17 @@ jobs:
           cp data/procurement_events.csv /tmp/procurement_events.csv
           cp data/procurement_buyer_history.csv /tmp/procurement_buyer_history.csv
           cp data/procurement_supplier_history.csv /tmp/procurement_supplier_history.csv
+          cp data/procurement_manufacturer_history.csv /tmp/procurement_manufacturer_history.csv
           cp data/procurement_product_matches.csv /tmp/procurement_product_matches.csv
+          cp data/procurement_line_items.csv /tmp/procurement_line_items.csv
+          cp data/procurement_manufacturer_relationships.csv /tmp/procurement_manufacturer_relationships.csv
+          cp data/world_bank_project_metadata.csv /tmp/world_bank_project_metadata.csv
+          cp data/procurement_processes.csv /tmp/procurement_processes.csv
+          cp data/procurement_releases.csv /tmp/procurement_releases.csv
+          cp data/procurement_documents.csv /tmp/procurement_documents.csv
+          cp data/procurement_document_evidence.csv /tmp/procurement_document_evidence.csv
+          cp data/procurement_source_collection.csv /tmp/procurement_source_collection.csv
+          cp data/procurement_source_health.csv /tmp/procurement_source_health.csv
           cp data/faram_product_matches.csv /tmp/faram_product_matches.csv
           cp data/faram_product_fit.csv /tmp/faram_product_fit.csv
           cp data/faram_historical_quote_summary.csv /tmp/faram_historical_quote_summary.csv
@@ -125,7 +138,17 @@ jobs:
             cp /tmp/procurement_events.csv data/procurement_events.csv
             cp /tmp/procurement_buyer_history.csv data/procurement_buyer_history.csv
             cp /tmp/procurement_supplier_history.csv data/procurement_supplier_history.csv
+            cp /tmp/procurement_manufacturer_history.csv data/procurement_manufacturer_history.csv
             cp /tmp/procurement_product_matches.csv data/procurement_product_matches.csv
+            cp /tmp/procurement_line_items.csv data/procurement_line_items.csv
+            cp /tmp/procurement_manufacturer_relationships.csv data/procurement_manufacturer_relationships.csv
+            cp /tmp/world_bank_project_metadata.csv data/world_bank_project_metadata.csv
+            cp /tmp/procurement_processes.csv data/procurement_processes.csv
+            cp /tmp/procurement_releases.csv data/procurement_releases.csv
+            cp /tmp/procurement_documents.csv data/procurement_documents.csv
+            cp /tmp/procurement_document_evidence.csv data/procurement_document_evidence.csv
+            cp /tmp/procurement_source_collection.csv data/procurement_source_collection.csv
+            cp /tmp/procurement_source_health.csv data/procurement_source_health.csv
             cp /tmp/faram_product_matches.csv data/faram_product_matches.csv
             cp /tmp/faram_product_fit.csv data/faram_product_fit.csv
             cp /tmp/faram_historical_quote_summary.csv data/faram_historical_quote_summary.csv
@@ -142,7 +165,7 @@ jobs:
             cp /tmp/commercial_opportunity_workspace.csv data/commercial_opportunity_workspace.csv
             cp /tmp/tender_prediction_validation.csv data/tender_prediction_validation.csv
             cp /tmp/iati_intelligence.db data/iati_intelligence.db
-            git add data/procurement_events.csv data/procurement_buyer_history.csv data/procurement_supplier_history.csv data/procurement_product_matches.csv data/faram_product_matches.csv data/faram_product_fit.csv data/faram_historical_quote_summary.csv data/manufacturer_entities.csv data/product_intelligence.csv data/manufacturer_intelligence.csv data/manifest.json data/market_summary.json data/faram_commercial_memory.csv data/faram_commercial_memory_summary.csv data/faram_account_commercial_memory.csv data/commercial_account_priority.csv data/commercial_action_queue.csv data/commercial_opportunity_workspace.csv data/tender_prediction_validation.csv data/iati_intelligence.db
+            git add data/procurement_events.csv data/procurement_buyer_history.csv data/procurement_supplier_history.csv data/procurement_manufacturer_history.csv data/procurement_product_matches.csv data/procurement_line_items.csv data/procurement_manufacturer_relationships.csv data/world_bank_project_metadata.csv data/procurement_processes.csv data/procurement_releases.csv data/procurement_documents.csv data/procurement_document_evidence.csv data/procurement_source_collection.csv data/procurement_source_health.csv data/faram_product_matches.csv data/faram_product_fit.csv data/faram_historical_quote_summary.csv data/manufacturer_entities.csv data/product_intelligence.csv data/manufacturer_intelligence.csv data/manifest.json data/market_summary.json data/faram_commercial_memory.csv data/faram_commercial_memory_summary.csv data/faram_account_commercial_memory.csv data/commercial_account_priority.csv data/commercial_action_queue.csv data/commercial_opportunity_workspace.csv data/tender_prediction_validation.csv data/iati_intelligence.db
             if git diff --cached --quiet; then echo "No procurement data changes to commit."; exit 0; fi
             git commit -m "Automated external procurement refresh"
             if git push origin HEAD:main; then echo "Procurement refresh pushed successfully on attempt $attempt."; exit 0; fi

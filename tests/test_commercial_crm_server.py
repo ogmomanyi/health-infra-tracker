@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import csv
 import threading
 from http.client import HTTPConnection
 from pathlib import Path
@@ -11,8 +12,8 @@ from commercial_crm_server import CRMHandler
 from procurement_intelligence import commercial_crm
 
 
-def _server(db_path: Path) -> tuple[ThreadingHTTPServer, threading.Thread]:
-    handler = type("TestCRMHandler", (CRMHandler,), {"db_path": db_path})
+def _server(db_path: Path, **paths) -> tuple[ThreadingHTTPServer, threading.Thread]:
+    handler = type("TestCRMHandler", (CRMHandler,), {"db_path": db_path, **paths})
     server = ThreadingHTTPServer(("127.0.0.1", 0), handler)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
@@ -49,6 +50,7 @@ def _seed(db_path: Path) -> str:
                 "action_status": "OPEN",
                 "next_activity": "Contact buyer",
                 "next_activity_due_date": "2026-09-10",
+                "procurement_event_id": "EV-TEST-1",
             }
         ],
         db_path,
@@ -178,3 +180,43 @@ def test_decision_guidance_includes_quote_preparation_without_mutating_priority(
             server.shutdown()
             server.server_close()
             thread.join(timeout=2)
+
+
+def test_procurement_evidence_endpoint_returns_line_items_and_releases():
+    with TemporaryDirectory() as tmp:
+        root = Path(tmp); db_path = root / "crm.db"
+        opportunity_id = _seed(db_path)
+        events = root / "events.csv"; items = root / "items.csv"; releases = root / "releases.csv"; documents = root / "documents.csv"; relationships = root / "relationships.csv"
+        fixtures = [
+            (events, ["procurement_event_id", "procurement_process_id", "notice_text"], [{"procurement_event_id": "EV-TEST-1", "procurement_process_id": "P1", "notice_text": "PCR system"}]),
+            (items, ["procurement_event_id", "product_family", "match_status"], [{"procurement_event_id": "EV-TEST-1", "product_family": "PCR System", "match_status": "MATCHED_PRODUCT_FAMILY"}]),
+            (releases, ["procurement_process_id", "procurement_release_id", "observed_at"], [{"procurement_process_id": "P1", "procurement_release_id": "R1", "observed_at": "2026-09-12"}]),
+            (documents, ["procurement_process_id", "document_url"], [{"procurement_process_id": "P1", "document_url": "https://example.test/spec.pdf"}]),
+            (relationships, ["procurement_event_ids", "target_account_id", "party_role", "manufacturer_name"], [{"procurement_event_ids": "EV-TEST-1", "target_account_id": "ACCT-1", "party_role": "BUYER", "manufacturer_name": "Acme"}]),
+        ]
+        for path, fields, rows in fixtures:
+            with path.open("w", newline="", encoding="utf-8") as handle:
+                writer = csv.DictWriter(handle, fieldnames=fields); writer.writeheader(); writer.writerows(rows)
+        server, thread = _server(
+            db_path,
+            procurement_events_path=events,
+            procurement_line_items_path=items,
+            procurement_releases_path=releases,
+            procurement_documents_path=documents,
+            procurement_relationships_path=relationships,
+        )
+        try:
+            status, payload = _request(server, "GET", f"/api/opportunities/{opportunity_id}/procurement-evidence")
+            assert status == 200
+            assert payload["line_items"][0]["product_family"] == "PCR System"
+            assert payload["releases"][0]["procurement_release_id"] == "R1"
+            assert payload["documents"][0]["document_url"].endswith("spec.pdf")
+            assert payload["manufacturer_relationships"][0]["manufacturer_name"] == "Acme"
+            status, payload = _request(server, "GET", "/api/accounts")
+            assert status == 200
+            assert payload["accounts"][0]["manufacturer_relationships"][0]["manufacturer_name"] == "Acme"
+            status, payload = _request(server, "GET", "/api/accounts/ACCT-1/manufacturer-relationships")
+            assert status == 200
+            assert payload["manufacturer_relationships"][0]["party_role"] == "BUYER"
+        finally:
+            server.shutdown(); server.server_close(); thread.join(timeout=2)

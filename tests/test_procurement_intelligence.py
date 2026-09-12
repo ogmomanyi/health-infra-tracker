@@ -6,12 +6,12 @@ from unittest.mock import Mock, patch
 
 from procurement_intelligence.ingest import read_events, stable_event_id, write_events
 from procurement_intelligence.matcher import match_event
-from procurement_intelligence.run import build_events, classify_opportunity_status, score_faram_relevance
+from procurement_intelligence.run import build_events, classify_opportunity_status, deduplicate_notices, score_faram_relevance
 from procurement_intelligence.schema import ProcurementEvent
 from procurement_intelligence.sources.afdb import normalize_notice_records, parse_notice_page
 from procurement_intelligence.sources.rss import normalize_notices as normalize_rss_notices
 from procurement_intelligence.sources.undp import parse_notice_page as parse_undp_notice_page
-from procurement_intelligence.sources.world_bank import classify_equipment, fetch_notices, normalize_notices as normalize_world_bank_notices
+from procurement_intelligence.sources.world_bank import classify_equipment, fetch_notices, is_health_procurement, normalize_notices as normalize_world_bank_notices
 from procurement_intelligence.supplier_intelligence import build_supplier_history
 
 
@@ -29,9 +29,18 @@ class ProcurementIntelligenceTests(unittest.TestCase):
 
     def test_world_bank_fetch_uses_country_name_filter(self):
         response = Mock(); response.json.return_value = {"procnotices": [{"id": "WB-1", "title": "Laboratory equipment"}]}; response.raise_for_status.return_value = None
-        with patch("procurement_intelligence.sources.world_bank.requests.get", return_value=response) as get:
-            records = fetch_notices(country_codes=["KE"])
+        session = Mock(); session.get.return_value = response
+        records = fetch_notices(country_codes=["KE"], session=session)
+        get = session.get
         self.assertEqual(records[0]["id"], "WB-1"); self.assertEqual(get.call_args.kwargs["params"]["project_ctry_name"], "Kenya")
+
+    def test_world_bank_fetch_paginates_until_short_page(self):
+        first = Mock(); first.json.return_value = {"procnotices": [{"id": "1"}, {"id": "2"}]}; first.raise_for_status.return_value = None
+        second = Mock(); second.json.return_value = {"procnotices": [{"id": "3"}]}; second.raise_for_status.return_value = None
+        session = Mock(); session.get.side_effect = [first, second]
+        records = fetch_notices(rows=2, max_pages=5, session=session)
+        self.assertEqual([row["id"] for row in records], ["1", "2", "3"])
+        self.assertEqual(session.get.call_args_list[1].kwargs["params"]["os"], 2)
 
     def test_world_bank_live_schema_is_normalized(self):
         records = normalize_world_bank_notices([{"id": "OP00465854", "bid_reference_no": "KE-KEMSA-512246-GO-RFB", "bid_description": "Supply and Delivery of Examination Gloves and Surgical Gloves sterile", "contact_organization": "Kenya Medical Supplies Authority", "project_ctry_name": "Kenya", "noticedate": "31-Aug-2026", "submission_deadline_date": "2026-10-01T00:00:00Z", "procurement_group": "GO", "procurement_method_name": "Request for Bids", "project_id": "P179698", "notice_type": "Invitation for Bids"}])
@@ -51,6 +60,46 @@ class ProcurementIntelligenceTests(unittest.TestCase):
     def test_world_bank_award_text_can_be_parsed(self):
         records = normalize_world_bank_notices([{"id": "AWD-2", "bid_description": "Supply of diagnostic equipment", "notice_type": "Contract Award", "notice_text": "Awarded Bidder: Acme Medical Ltd; Country: Kenya; Signed Contract Price: USD 250,000"}])
         self.assertEqual(records[0]["supplier_name"], "Acme Medical Ltd"); self.assertEqual(records[0]["supplier_evidence_status"], "EXPLICIT")
+
+    def test_world_bank_live_award_html_is_parsed(self):
+        html = """<h4>Contract Award</h4><div><u><b>Awarded Bidder(s):</b></u></div>
+        <div><b>ACME MEDICAL LIMITED (12345)</b><br>Country: Kenya</div>
+        <div><b>Signed Contract price</b><br>USD 250,000.00</div>
+        <div><u><b>Evaluated Bidder(s):</b></u></div><div><b>OTHER COMPANY</b></div>"""
+        records = normalize_world_bank_notices([{
+            "id": "AWD-HTML", "bid_description": "Supply of laboratory analyzers",
+            "notice_type": "Contract Award", "notice_text": html,
+        }])
+        self.assertEqual(records[0]["supplier_name"], "ACME MEDICAL LIMITED")
+        self.assertEqual(records[0]["supplier_country"], "Kenya")
+        self.assertEqual(records[0]["award_value"], "250000.00")
+        self.assertEqual(records[0]["award_currency"], "USD")
+
+    def test_world_bank_health_filter_uses_controlled_category(self):
+        health, generic = normalize_world_bank_notices([
+            {"id": "H", "bid_description": "Supply of PCR diagnostic test kits"},
+            {"id": "G", "bid_description": "Supply of office furniture", "procurement_group": "GO"},
+        ])
+        self.assertTrue(is_health_procurement(health))
+        self.assertFalse(is_health_procurement(generic))
+        filtered = normalize_world_bank_notices([
+            {"id": "H", "bid_description": "Supply of PCR diagnostic test kits"},
+            {"id": "G", "bid_description": "Supply of office furniture", "procurement_group": "GO"},
+        ], health_only=True)
+        self.assertEqual([row["source_record_id"] for row in filtered], ["H"])
+
+    def test_duplicate_notices_are_collapsed_before_matching(self):
+        duplicate = {
+            "source": "World Bank", "source_record_id": "WB-1",
+            "procurement_event_id": "E1", "title": "PCR equipment",
+        }
+        rows = deduplicate_notices([
+            {**duplicate, "document_urls": "[\"https://example.test/a.pdf\"]"},
+            {**duplicate, "notice_text": "Longer notice evidence"},
+        ])
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["notice_text"], "Longer notice evidence")
+        self.assertIn("a.pdf", rows[0]["document_urls"])
 
     def test_supplier_history_only_uses_explicit_awards(self):
         awarded = ProcurementEvent("a", "World Bank", "", "A", "Lab", "Buyer", "Kenya", "2026-01-01", "", "Laboratory Equipment", "RFB", supplier_name="Acme", supplier_country="Kenya", award_value=100, award_currency="USD", supplier_evidence_status="EXPLICIT", opportunity_status="AWARD_HISTORY", faram_relevance_score=80, procurement_priority="HIGH")
@@ -77,14 +126,28 @@ class ProcurementIntelligenceTests(unittest.TestCase):
             import sys
             from procurement_intelligence import run
             argv = ["run.py", "--source", "afdb", "--page-url", "https://www.afdb.org/notices/1", "--page-url", "https://www.afdb.org/notices/2"]
-            with run_patch.object(sys, "argv", argv), run_patch.object(run, "load_projects", return_value=[]), run_patch.object(run, "write_events"), run_patch.object(run, "persist_events"):
+            with run_patch.object(sys, "argv", argv), run_patch.object(run, "load_projects", return_value=[]), run_patch.object(run, "write_events"), run_patch.object(run, "persist_events"), run_patch.object(run, "write_collection_status"):
                 run.main()
             self.assertEqual(fetch_page.call_count, 2)
 
     def test_undp_public_table_parser_matches_live_field_names(self):
         html = '''<table><tr><th>Title</th><th>Ref No</th><th>UNDP Office/Country</th><th>Procurement Process</th><th>Deadline</th><th>Posted</th></tr><tr><td><a href="/notice/123">Supply of laboratory diagnostic equipment</a></td><td>UNDP-KEN-123</td><td>UNDP-KEN/KENYA</td><td>RFQ - Request for quotation</td><td>30-Sep-26</td><td>01-Sep-26</td></tr></table>'''
         records = parse_undp_notice_page(html, "https://procurement-notices.undp.org/")
-        self.assertEqual(len(records), 1); self.assertEqual(records[0]["source"], "UNDP"); self.assertEqual(records[0]["country"], "KENYA"); self.assertEqual(records[0]["tender_reference"], "UNDP-KEN-123"); self.assertEqual(records[0]["closing_date"], "2026-09-30"); self.assertEqual(records[0]["publication_date"], "2026-09-01"); self.assertEqual(records[0]["procurement_stage"], "NOTICE")
+        self.assertEqual(len(records), 1); self.assertEqual(records[0]["source"], "UNDP"); self.assertEqual(records[0]["country"], "KENYA"); self.assertEqual(records[0]["tender_reference"], "UNDP-KEN-123"); self.assertEqual(records[0]["closing_date"], "2026-09-30"); self.assertEqual(records[0]["publication_date"], "2026-09-01"); self.assertEqual(records[0]["procurement_stage"], "RFQ - Request for quotation")
+
+    def test_undp_current_link_row_markup_is_supported(self):
+        html = '''<a href="view_negotiation.cfm?nego_id=49623" class="vacanciesTableLink vacanciesTable__row">
+        <div class="vacanciesTable__cell"><div>Title</div><span>Supply of PCR diagnostic equipment</span></div>
+        <div class="vacanciesTable__cell"><div>Ref No</div><span>UNDP-KEN-00155</span></div>
+        <div class="vacanciesTable__cell"><div>Office/Country</div><span>UNDP-KEN/KENYA</span></div>
+        <div class="vacanciesTable__cell"><div>Process</div><span>RFQ - Request for quotation</span></div>
+        <div class="vacanciesTable__cell"><div>Deadline</div><span>27-Sep-26 01:59 PM (New York time)</span></div>
+        <div class="vacanciesTable__cell"><div>Posted</div><span>12-Sep-26</span></div></a>'''
+        records = parse_undp_notice_page(html, "https://procurement-notices.undp.org/")
+        self.assertEqual(len(records), 1)
+        self.assertEqual(records[0]["source_record_id"], "49623")
+        self.assertEqual(records[0]["closing_date"], "2026-09-27")
+        self.assertEqual(records[0]["procurement_stage"], "RFQ - Request for quotation")
 
     def test_undp_card_parser_remains_supported(self):
         html = '''<div class="notice-card"><a href="/notice/123">Supply of laboratory diagnostic equipment</a><span>Reference: UNDP-KEN-123</span><span>Country: Kenya</span><span>Deadline: 30/09/2026</span><span>Posted: 01/09/2026</span></div>'''

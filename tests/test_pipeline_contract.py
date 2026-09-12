@@ -41,7 +41,7 @@ def test_intelligence_manifest_contract():
     import json
 
     manifest = json.loads((DATA / "manifest.json").read_text(encoding="utf-8"))
-    assert manifest["pipeline_version"] == "3.3-product-manufacturer-intelligence"
+    assert manifest["pipeline_version"] == "3.4-procurement-evidence"
     for name in (
         "opportunity_scores",
         "donor_intelligence",

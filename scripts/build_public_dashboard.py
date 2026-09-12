@@ -29,6 +29,9 @@ PRIVATE_DATASETS = {
     "recommended_actions.csv",
     "engagements.csv",
     "crm_notes.csv",
+    "procurement_document_evidence.csv",
+    "procurement_source_collection.csv",
+    "procurement_source_health.csv",
 }
 
 
