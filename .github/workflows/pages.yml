@@ -1,0 +1,68 @@
+name: Deploy Public Dashboard
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "index.html"
+      - "data/dashboard_config.json"
+      - "data/market_summary.json"
+      - "data/programme_intelligence.csv"
+      - "data/opportunities.csv"
+      - "data/opportunity_organisation_resolution.csv"
+      - "data/organisation_entities.csv"
+      - "data/organisation_aliases.csv"
+      - "data/organisation_intelligence.csv"
+      - "data/donor_intelligence.csv"
+      - "data/equipment_intelligence.csv"
+      - "data/product_intelligence.csv"
+      - "data/manufacturer_intelligence.csv"
+      - "data/tender_predictions.csv"
+      - "deployment/public_dashboard_config.json"
+      - "scripts/build_public_dashboard.py"
+      - ".github/workflows/pages.yml"
+  workflow_run:
+    workflows:
+      - External Procurement Intelligence
+    types:
+      - completed
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout latest main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Build privacy-scoped dashboard
+        run: python3 scripts/build_public_dashboard.py --output site
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

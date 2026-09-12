@@ -328,6 +328,11 @@
             margin-bottom: 16px;
         }
 
+        .workspace-grid.public-layout,
+        .chart-grid.public-layout {
+            grid-template-columns: 1fr;
+        }
+
         .panel {
             background: var(--panel);
             border: 1px solid var(--line);
@@ -357,53 +362,6 @@
             color: var(--muted);
             font-size: 12px;
             white-space: nowrap;
-        }
-
-        .health-panel {
-            margin-bottom: 16px;
-        }
-
-        .health-grid {
-            display: grid;
-            grid-template-columns: repeat(6, minmax(0, 1fr));
-        }
-
-        .health-step {
-            min-width: 0;
-            padding: 13px 14px;
-            border-right: 1px solid var(--line);
-        }
-
-        .health-step:last-child {
-            border-right: 0;
-        }
-
-        .health-title {
-            margin: 0 0 8px;
-            color: var(--muted);
-            font-size: 11px;
-            font-weight: 800;
-            line-height: 1.35;
-            text-transform: uppercase;
-        }
-
-        .health-counts {
-            display: grid;
-            gap: 5px;
-        }
-
-        .health-count {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-            color: var(--muted);
-            font-size: 12px;
-            line-height: 1.35;
-        }
-
-        .health-count strong {
-            color: var(--ink);
-            font-size: 12px;
         }
 
         .chart-grid {
@@ -800,13 +758,6 @@
                 grid-template-columns: 1fr;
             }
 
-            .health-grid {
-                grid-template-columns: repeat(3, minmax(0, 1fr));
-            }
-
-            .health-step:nth-child(3n) {
-                border-right: 0;
-            }
         }
 
         @media (max-width: 760px) {
@@ -823,19 +774,8 @@
 
             .metric-grid,
             .control-band,
-            .chart-grid,
-            .health-grid {
+            .chart-grid {
                 grid-template-columns: 1fr;
-            }
-
-            .health-step,
-            .health-step:nth-child(3n) {
-                border-right: 0;
-                border-bottom: 1px solid var(--line);
-            }
-
-            .health-step:last-child {
-                border-bottom: 0;
             }
 
             .chart-cell {
@@ -874,11 +814,15 @@
                     <i data-lucide="activity"></i>
                 </div>
                 <div>
-                    <h1 class="brand-title">Health Infrastructure Commercial Intelligence</h1>
-                    <p class="brand-subtitle">East Africa funding, programmes, accounts, and actions</p>
+                    <h1 id="brandTitle" class="brand-title">Health Infrastructure Commercial Intelligence</h1>
+                    <p id="brandSubtitle" class="brand-subtitle">East Africa funding, programmes, accounts, and actions</p>
                 </div>
             </div>
             <div class="status-strip">
+                <span class="pill hidden" data-public-only>
+                    <i data-lucide="globe-2"></i>
+                    Public market view
+                </span>
                 <span class="pill">
                     <i data-lucide="layers"></i>
                     <span id="pipelineVersion">Loading</span>
@@ -910,7 +854,7 @@
         </section>
 
         <section id="dashboard" class="hidden">
-            <section class="metric-grid" aria-label="Commercial metrics">
+            <section class="metric-grid" aria-label="Market metrics">
                 <article class="metric">
                     <div class="metric-top">
                         <span class="metric-label">Reported Funding</span>
@@ -921,7 +865,7 @@
                         <div class="metric-note">source-reported values</div>
                     </div>
                 </article>
-                <article class="metric">
+                <article class="metric" data-private-only>
                     <div class="metric-top">
                         <span class="metric-label">Target Accounts</span>
                         <span class="icon-box icon-blue"><i data-lucide="building-2"></i></span>
@@ -931,7 +875,7 @@
                         <div id="metricTierOne" class="metric-note">0 Tier 1</div>
                     </div>
                 </article>
-                <article class="metric">
+                <article class="metric" data-private-only>
                     <div class="metric-top">
                         <span class="metric-label">Open Actions</span>
                         <span class="icon-box icon-amber"><i data-lucide="list-checks"></i></span>
@@ -961,6 +905,26 @@
                         <div id="metricCountries" class="metric-note">0 countries</div>
                     </div>
                 </article>
+                <article class="metric hidden" data-public-only>
+                    <div class="metric-top">
+                        <span class="metric-label">Products</span>
+                        <span class="icon-box icon-blue"><i data-lucide="package-search"></i></span>
+                    </div>
+                    <div>
+                        <div id="metricProducts" class="metric-value">0</div>
+                        <div id="metricCatalogueProducts" class="metric-note">0 controlled catalogue</div>
+                    </div>
+                </article>
+                <article class="metric hidden" data-public-only>
+                    <div class="metric-top">
+                        <span class="metric-label">Manufacturers</span>
+                        <span class="icon-box icon-amber"><i data-lucide="factory"></i></span>
+                    </div>
+                    <div>
+                        <div id="metricManufacturers" class="metric-value">0</div>
+                        <div id="metricPrincipalValidation" class="metric-note">0 awaiting validation</div>
+                    </div>
+                </article>
             </section>
 
             <section class="control-band" aria-label="Filters">
@@ -977,7 +941,7 @@
                         <option value="">All countries</option>
                     </select>
                 </div>
-                <div class="field">
+                <div class="field" data-private-only>
                     <label for="tierFilter">Account Tier</label>
                     <select id="tierFilter">
                         <option value="">All tiers</option>
@@ -994,22 +958,14 @@
                 </button>
             </section>
 
-            <section class="panel health-panel" aria-label="Pipeline health">
-                <div class="panel-header">
-                    <h2 class="panel-title">Pipeline Health</h2>
-                    <span id="healthMeta" class="panel-meta">0 unresolved</span>
-                </div>
-                <div id="pipelineHealth" class="health-grid"></div>
-            </section>
-
-            <section class="workspace-grid">
+            <section id="workspaceGrid" class="workspace-grid">
                 <article class="panel">
                     <div class="panel-header">
                         <h2 class="panel-title">Market Shape</h2>
                         <span id="chartMeta" class="panel-meta">0 accounts</span>
                     </div>
-                    <div class="chart-grid">
-                        <div class="chart-cell">
+                    <div id="chartGrid" class="chart-grid">
+                        <div class="chart-cell" data-private-only>
                             <h3 class="chart-title">Accounts by Tier</h3>
                             <div class="chart-frame">
                                 <canvas id="tierChart"></canvas>
@@ -1024,7 +980,7 @@
                     </div>
                 </article>
 
-                <article class="panel">
+                <article class="panel" data-private-only>
                     <div class="panel-header">
                         <h2 class="panel-title">Priority Action Queue</h2>
                         <span id="queueMeta" class="panel-meta">0 open</span>
@@ -1035,12 +991,12 @@
 
             <section class="panel">
                 <div class="panel-header">
-                    <div class="tabs" role="tablist" aria-label="Commercial views">
-                        <button class="tab-button active" data-tab="accounts" type="button">
+                    <div class="tabs" role="tablist" aria-label="Intelligence views">
+                        <button class="tab-button active" data-tab="accounts" data-private-only type="button">
                             <i data-lucide="building-2"></i>
                             Accounts
                         </button>
-                        <button class="tab-button" data-tab="actions" type="button">
+                        <button class="tab-button" data-tab="actions" data-private-only type="button">
                             <i data-lucide="list-checks"></i>
                             Actions
                         </button>
@@ -1100,6 +1056,7 @@
 
     <script>
         const state = {
+            deployment: {},
             summary: {},
             accounts: [],
             actions: [],
@@ -1127,6 +1084,7 @@
         };
 
         const datasetPaths = {
+            deployment: "data/dashboard_config.json",
             accounts: "data/target_accounts.csv",
             actions: "data/recommended_actions.csv",
             programmes: "data/programme_intelligence.csv",
@@ -1312,18 +1270,22 @@
 
         async function loadDashboard() {
             try {
+                const deployment = await fetchJson(datasetPaths.deployment);
+                const loadPrivateCsv = deployment.private_datasets === false
+                    ? () => Promise.resolve([])
+                    : fetchCsv;
                 const [summary, accounts, actions, programmes, opportunities, relationships, entities, aliases, orgIntelligence, engagements, notes, donors, equipment, products, manufacturers, tenders] = await Promise.all([
                     fetchJson(datasetPaths.summary),
-                    fetchCsv(datasetPaths.accounts),
-                    fetchCsv(datasetPaths.actions),
+                    loadPrivateCsv(datasetPaths.accounts),
+                    loadPrivateCsv(datasetPaths.actions),
                     fetchCsv(datasetPaths.programmes),
                     fetchCsv(datasetPaths.opportunities),
                     fetchCsv(datasetPaths.relationships),
                     fetchCsv(datasetPaths.entities),
                     fetchCsv(datasetPaths.aliases),
                     fetchCsv(datasetPaths.orgIntelligence),
-                    fetchCsv(datasetPaths.engagements),
-                    fetchCsv(datasetPaths.notes),
+                    loadPrivateCsv(datasetPaths.engagements),
+                    loadPrivateCsv(datasetPaths.notes),
                     fetchCsv(datasetPaths.donors),
                     fetchCsv(datasetPaths.equipment),
                     fetchCsv(datasetPaths.products),
@@ -1331,6 +1293,7 @@
                     fetchCsv(datasetPaths.tenders)
                 ]);
 
+                state.deployment = deployment || {};
                 state.summary = summary || {};
                 state.accounts = sortByNumber(accounts, "fit_score");
                 state.actions = sortByNumber(actions, "opportunity_score");
@@ -1348,6 +1311,7 @@
                 state.manufacturers = sortByNumber(manufacturers, "commercial_score");
                 state.tenders = sortByNumber(tenders, "tender_probability");
 
+                applyDeploymentMode();
                 populateFilters();
                 showDashboard();
                 render();
@@ -1389,6 +1353,36 @@
                     },
                     error: reject
                 });
+            });
+        }
+
+        function isPublicMode() {
+            return state.deployment.mode === "public" || state.deployment.private_datasets === false;
+        }
+
+        function applyDeploymentMode() {
+            const publicMode = isPublicMode();
+
+            document.body.classList.toggle("public-mode", publicMode);
+            document.querySelectorAll("[data-private-only]").forEach(element => {
+                element.classList.toggle("hidden", publicMode);
+            });
+            document.querySelectorAll("[data-public-only]").forEach(element => {
+                element.classList.toggle("hidden", !publicMode);
+            });
+            document.getElementById("workspaceGrid").classList.toggle("public-layout", publicMode);
+            document.getElementById("chartGrid").classList.toggle("public-layout", publicMode);
+
+            if (publicMode) {
+                state.activeTab = "programmes";
+                document.title = "Health Infrastructure Market Intelligence";
+                document.getElementById("brandTitle").textContent = "Health Infrastructure Market Intelligence";
+                document.getElementById("brandSubtitle").textContent = "East Africa funding, programmes, products, and procurement signals";
+                document.getElementById("queryInput").placeholder = "Programme, donor, country, product, manufacturer";
+            }
+
+            document.querySelectorAll(".tab-button").forEach(tab => {
+                tab.classList.toggle("active", tab.dataset.tab === state.activeTab);
             });
         }
 
@@ -1461,7 +1455,6 @@
         function render() {
             renderHeader();
             renderMetrics();
-            renderPipelineHealth();
             renderQueue();
             renderCharts();
             renderTable();
@@ -1481,8 +1474,14 @@
             const visibleActions = filteredActions();
             const visibleProgrammes = filteredProgrammes();
             const visibleDonors = filteredDonors();
+            const visibleProducts = filteredProducts();
+            const visibleManufacturers = filteredManufacturers();
             const tierOne = visibleAccounts.filter(account => account.priority_tier === "Tier 1").length;
             const tenderWatch = visibleActions.filter(action => action.action_type === "Tender watch").length;
+            const catalogueProducts = visibleProducts.filter(product => product.catalogue_status === "CONTROLLED_CATALOGUE").length;
+            const principalValidation = visibleManufacturers.filter(manufacturer => {
+                return manufacturer.coverage_status === "PRINCIPAL_VALIDATION_REQUIRED";
+            }).length;
             const filteredFunding = sumNumber(visibleProgrammes, "total_budget_amount");
             const highPriority = visibleProgrammes.filter(programme => {
                 return ["Strategic Priority", "Qualified Lead"].includes(programme.priority_band);
@@ -1496,49 +1495,10 @@
             document.getElementById("metricHighPriority").textContent = formatInteger(highPriority);
             document.getElementById("metricDonors").textContent = formatInteger(visibleDonors.length);
             document.getElementById("metricCountries").textContent = `${formatInteger(uniqueCountries(visibleProgrammes).size)} countries`;
-        }
-
-        function renderPipelineHealth() {
-            const container = document.getElementById("pipelineHealth");
-            const layers = state.summary.pipeline_layers || [];
-            const counts = datasetCounts();
-            const entities = entityMap();
-            const unresolved = state.relationships.filter(row => row.resolution_level === "UNRESOLVED").length;
-            const brokenEntityRefs = state.relationships.filter(row => hasValue(row.entity_id) && !entities.has(row.entity_id)).length;
-
-            document.getElementById("healthMeta").textContent =
-                `${formatInteger(unresolved)} unresolved · ${formatInteger(brokenEntityRefs)} broken refs`;
-
-            if (!layers.length) {
-                container.innerHTML = `<div class="empty-state">No pipeline metadata available.</div>`;
-                return;
-            }
-
-            container.innerHTML = layers.map(layer => {
-                const datasets = layer.datasets || [];
-                const ready = datasets.every(name => numberValue(counts[name]) > 0);
-                const layerClass = ready ? "teal" : "amber";
-                const preview = datasets.slice(0, 4).map(name => `
-                    <div class="health-count">
-                        <span>${escapeHtml(datasetLabel(name))}</span>
-                        <strong>${formatInteger(counts[name])}</strong>
-                    </div>
-                `).join("");
-                const remainder = datasets.length > 4
-                    ? `<div class="health-count"><span>More datasets</span><strong>${formatInteger(datasets.length - 4)}</strong></div>`
-                    : "";
-
-                return `
-                    <div class="health-step">
-                        <p class="health-title">${escapeHtml(layer.layer || "Layer")}</p>
-                        <div style="margin-bottom: 9px;">${tag(ready ? "Ready" : "Review", layerClass)}</div>
-                        <div class="health-counts">
-                            ${preview}
-                            ${remainder}
-                        </div>
-                    </div>
-                `;
-            }).join("");
+            document.getElementById("metricProducts").textContent = formatInteger(visibleProducts.length);
+            document.getElementById("metricCatalogueProducts").textContent = `${formatInteger(catalogueProducts)} controlled catalogue`;
+            document.getElementById("metricManufacturers").textContent = formatInteger(visibleManufacturers.length);
+            document.getElementById("metricPrincipalValidation").textContent = `${formatInteger(principalValidation)} awaiting validation`;
         }
 
         function renderQueue() {
@@ -1576,7 +1536,9 @@
 
             const accounts = filteredAccounts();
             const programmes = filteredProgrammes();
-            document.getElementById("chartMeta").textContent = `${formatInteger(accounts.length)} accounts`;
+            document.getElementById("chartMeta").textContent = isPublicMode()
+                ? `${formatInteger(programmes.length)} programmes`
+                : `${formatInteger(accounts.length)} accounts`;
 
             destroyChart("tier");
             destroyChart("equipment");
@@ -1584,18 +1546,20 @@
             const tierCounts = groupCount(accounts, "priority_tier", orderTiers(["Tier 1", "Tier 2", "Tier 3", "Monitor"]));
             const equipmentCounts = topEquipmentCounts(programmes, 8);
 
-            state.charts.tier = new Chart(document.getElementById("tierChart"), {
-                type: "bar",
-                data: {
-                    labels: tierCounts.map(item => item.label),
-                    datasets: [{
-                        data: tierCounts.map(item => item.count),
-                        backgroundColor: ["#0f766e", "#2563eb", "#b45309", "#94a3b8"],
-                        borderRadius: 6
-                    }]
-                },
-                options: chartOptions(false)
-            });
+            if (!isPublicMode()) {
+                state.charts.tier = new Chart(document.getElementById("tierChart"), {
+                    type: "bar",
+                    data: {
+                        labels: tierCounts.map(item => item.label),
+                        datasets: [{
+                            data: tierCounts.map(item => item.count),
+                            backgroundColor: ["#0f766e", "#2563eb", "#b45309", "#94a3b8"],
+                            borderRadius: 6
+                        }]
+                    },
+                    options: chartOptions(false)
+                });
+            }
 
             state.charts.equipment = new Chart(document.getElementById("equipmentChart"), {
                 type: "bar",
@@ -2971,42 +2935,6 @@
 
             const total = rows.reduce((sum, row) => sum + numberValue(row.confidence_score), 0);
             return `${Math.round((total / rows.length) * 100)}%`;
-        }
-
-        function datasetCounts() {
-            const output = {};
-            const layerCounts = state.summary.layer_counts || {};
-
-            Object.values(layerCounts).forEach(group => {
-                Object.assign(output, group || {});
-            });
-
-            Object.assign(output, state.summary.row_counts || {});
-            Object.assign(output, {
-                target_accounts: state.accounts.length,
-                recommended_actions: state.actions.length,
-                programme_intelligence: state.programmes.length,
-                opportunities: state.opportunities.length,
-                opportunity_organisation_resolution: state.relationships.length,
-                organisation_entities: state.entities.length,
-                organisation_aliases: state.aliases.length,
-                organisation_intelligence: state.orgIntelligence.length,
-                engagements: state.engagements.length,
-                crm_notes: state.notes.length,
-                donor_intelligence: state.donors.length,
-                equipment_intelligence: state.equipment.length,
-                product_intelligence: state.products.length,
-                manufacturer_intelligence: state.manufacturers.length,
-                tender_predictions: state.tenders.length
-            });
-
-            return output;
-        }
-
-        function datasetLabel(name) {
-            return String(name || "")
-                .replace(/^iati_/, "raw_")
-                .replaceAll("_", " ");
         }
 
         function mergeRows(...rows) {

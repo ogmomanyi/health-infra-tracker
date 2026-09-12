@@ -12,6 +12,8 @@ RAW -> NORMALIZED -> CANONICAL -> INTELLIGENCE -> COMMERCIAL -> PREDICTIVE_PRODU
 
 `iati_tracker.py` fetches and normalizes IATI records. `run_intelligence_pipeline.py` calls `intelligence_builder.py` through the canonical-safe wrapper, scores programmes and donors, predicts tender windows, and generates commercial account/action outputs without replacing the canonical organisation registry. The dashboard reads the generated artifacts directly and opens project rows into granular opportunity, tender, engagement, and CRM-note detail.
 
+The internal dashboard loads the complete commercial workspace. GitHub Pages uses `scripts/build_public_dashboard.py` to publish an allowlisted market-intelligence view without target accounts, recommended actions, engagements, CRM notes, or commercial-layer metadata.
+
 ## Main Commands
 
 Build intelligence layers from the current normalized data:
@@ -41,6 +43,8 @@ Then open `http://localhost:8765/`.
 - `data/programme_intelligence.csv`
 - `data/donor_intelligence.csv`
 - `data/equipment_intelligence.csv`
+- `data/product_intelligence.csv`
+- `data/manufacturer_intelligence.csv`
 - `data/tender_predictions.csv`
 - `data/market_summary.json`
 - `data/iati_intelligence.db`

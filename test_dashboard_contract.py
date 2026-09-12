@@ -46,6 +46,7 @@ class DashboardContractTests(unittest.TestCase):
         self.assertNotIn("```", html)
 
         for path in [
+            "data/dashboard_config.json",
             "data/target_accounts.csv",
             "data/recommended_actions.csv",
             "data/programme_intelligence.csv",
@@ -71,8 +72,12 @@ class DashboardContractTests(unittest.TestCase):
         self.assertIn("openGroupDetail", html)
         self.assertIn("openProductDetail", html)
         self.assertIn("openManufacturerDetail", html)
-        self.assertIn("renderPipelineHealth", html)
-        self.assertIn("pipelineHealth", html)
+        self.assertNotIn("renderPipelineHealth", html)
+        self.assertNotIn("pipelineHealth", html)
+        self.assertNotIn("Pipeline Health", html)
+        self.assertIn("private_datasets", html)
+        self.assertIn("data-private-only", html)
+        self.assertIn("data-public-only", html)
         self.assertIn("detailOverlay", html)
         self.assertIn("data-account-id", html)
         self.assertIn("data-entity-id", html)
