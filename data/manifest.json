@@ -42,10 +42,10 @@
     "tender_predictions": 985,
     "opportunity_organisation_resolution": 16078,
     "procurement_events": 3700,
-    "procurement_processes": 6211,
-    "procurement_releases": 6298,
+    "procurement_processes": 6215,
+    "procurement_releases": 6302,
     "procurement_documents": 165,
-    "procurement_document_evidence": 40,
+    "procurement_document_evidence": 80,
     "procurement_line_items": 3749,
     "procurement_product_matches": 3749,
     "procurement_manufacturer_relationships": 20,
@@ -237,5 +237,5 @@
       "procurement_document_evidence"
     ]
   },
-  "product_intelligence_generated_at": "2026-09-13T11:52:09Z"
+  "product_intelligence_generated_at": "2026-09-13T16:17:28Z"
 }
