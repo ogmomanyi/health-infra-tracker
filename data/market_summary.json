@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-09-12T15:01:46Z",
-  "as_of": "2026-09-12",
-  "source_generated_at": "2026-09-12T10:29:36Z",
+  "generated_at": "2026-09-13T11:33:07Z",
+  "as_of": "2026-09-13",
+  "source_generated_at": "2026-09-13T11:32:29Z",
   "pipeline_version": "3.4-procurement-evidence",
   "pipeline_layers": [
     {
@@ -92,9 +92,7 @@
       "organisation_intelligence": 2380,
       "programme_intelligence": 3281,
       "donor_intelligence": 398,
-      "opportunity_organisation_resolution": 16078,
-      "procurement_manufacturer_relationships": 20,
-      "world_bank_project_metadata": 5
+      "opportunity_organisation_resolution": 16078
     },
     "commercial": {
       "target_accounts": 2380,
@@ -106,11 +104,7 @@
       "equipment_intelligence": 11,
       "product_intelligence": 48,
       "manufacturer_intelligence": 35,
-      "tender_predictions": 985,
-      "procurement_processes": 6180,
-      "procurement_releases": 6241,
-      "procurement_line_items": 3769,
-      "procurement_document_evidence": 0
+      "tender_predictions": 985
     }
   },
   "currency_note": "Amounts are source-reported nominal values and are not converted across currencies.",
@@ -216,6 +210,5 @@
       "status": "ready",
       "output": "Equipment demand, product and manufacturer intelligence, technical evidence, tender probability, horizon, and timing windows"
     }
-  ],
-  "product_intelligence_generated_at": "2026-09-12T15:03:11Z"
+  ]
 }

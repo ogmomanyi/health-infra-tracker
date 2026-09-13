@@ -1,6 +1,6 @@
 {
   "pipeline_version": "3.4-procurement-evidence",
-  "generated_at": "2026-09-12T10:29:36Z",
+  "generated_at": "2026-09-13T11:32:29Z",
   "countries": [
     "KE",
     "UG",
@@ -40,18 +40,7 @@
     "opportunities": 3281,
     "equipment_intelligence": 11,
     "tender_predictions": 985,
-    "opportunity_organisation_resolution": 16078,
-    "procurement_events": 3720,
-    "procurement_processes": 6180,
-    "procurement_releases": 6241,
-    "procurement_documents": 165,
-    "procurement_document_evidence": 0,
-    "procurement_line_items": 3769,
-    "procurement_product_matches": 3769,
-    "procurement_manufacturer_relationships": 20,
-    "world_bank_project_metadata": 5,
-    "procurement_source_collection": 1,
-    "procurement_source_health": 3
+    "opportunity_organisation_resolution": 16078
   },
   "files": {
     "activities": "activities.csv",
@@ -81,20 +70,9 @@
     "opportunities": "opportunities.csv",
     "equipment_intelligence": "equipment_intelligence.csv",
     "tender_predictions": "tender_predictions.csv",
-    "opportunity_organisation_resolution": "opportunity_organisation_resolution.csv",
-    "procurement_events": "procurement_events.csv",
-    "procurement_processes": "procurement_processes.csv",
-    "procurement_releases": "procurement_releases.csv",
-    "procurement_documents": "procurement_documents.csv",
-    "procurement_document_evidence": "procurement_document_evidence.csv",
-    "procurement_line_items": "procurement_line_items.csv",
-    "procurement_product_matches": "procurement_product_matches.csv",
-    "procurement_manufacturer_relationships": "procurement_manufacturer_relationships.csv",
-    "world_bank_project_metadata": "world_bank_project_metadata.csv",
-    "procurement_source_collection": "procurement_source_collection.csv",
-    "procurement_source_health": "procurement_source_health.csv"
+    "opportunity_organisation_resolution": "opportunity_organisation_resolution.csv"
   },
-  "intelligence_generated_at": "2026-09-12T15:01:46Z",
+  "intelligence_generated_at": "2026-09-13T11:33:07Z",
   "plan_progress": [
     {
       "id": "01",
@@ -236,6 +214,5 @@
       "procurement_line_items",
       "procurement_document_evidence"
     ]
-  },
-  "product_intelligence_generated_at": "2026-09-12T15:03:11Z"
+  }
 }
