@@ -1,2 +1,4 @@
 source,run_status,record_count,detail_extracted_count,detail_failed_count
 World Bank,SUCCESS,3115,0,0
+UNDP,SUCCESS,556,37,0
+AfDB,SUCCESS,29,3,0
