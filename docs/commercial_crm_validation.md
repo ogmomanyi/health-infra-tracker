@@ -18,6 +18,12 @@ The API integration tests verify:
 - audit records for state and activity changes
 - 404 handling for missing opportunities
 - preservation of the canonical priority score during CRM mutations
+- pricing calculations from explicit current inputs
+- immutable numbered pricing revisions
+- approval decisions bound to the current revision
+- automatic return to `PENDING` approval after a pricing edit
+- preservation of prior approved snapshots and approval history
+- rejection of stale-revision approvals, incomplete-case approvals, and anonymous decisions
 
 The CRM layer does **not** recalculate commercial priority. Intelligence generation owns the score; the CRM stores and exposes it as read-only context.
 

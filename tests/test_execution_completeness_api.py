@@ -114,6 +114,23 @@ def test_execution_completeness_api_lifecycle_preserves_priority():
             assert pricing["total_cost"] == 600.0
             assert pricing["gross_profit"] == 150.0
             assert pricing["margin_pct"] == 20.0
+            assert pricing["revision_number"] == 1
+            assert pricing["approval_status"] == "PENDING"
+
+            status, approval = _request(
+                server,
+                "POST",
+                f"/api/opportunities/{opportunity_id}/pricing/{pricing['pricing_case_id']}/approvals",
+                {
+                    "revision_number": pricing["revision_number"],
+                    "decision": "APPROVED",
+                    "decided_by": "Finance Director",
+                    "rationale": "Margin and payment terms accepted.",
+                },
+            )
+            assert status == 201
+            assert approval["approval"]["decision"] == "APPROVED"
+            assert approval["pricing_case"]["approval_status"] == "APPROVED"
 
             status, pricing_list = _request(
                 server, "GET", f"/api/opportunities/{opportunity_id}/pricing"
@@ -121,6 +138,64 @@ def test_execution_completeness_api_lifecycle_preserves_priority():
             assert status == 200
             assert len(pricing_list["pricing_cases"]) == 1
             assert pricing_list["pricing_cases"][0]["case_name"] == "Base case"
+            assert pricing_list["pricing_cases"][0]["approval_status"] == "APPROVED"
+
+            status, approvals = _request(
+                server,
+                "GET",
+                f"/api/opportunities/{opportunity_id}/pricing/{pricing['pricing_case_id']}/approvals",
+            )
+            assert status == 200
+            assert approvals["current_revision_number"] == 1
+            assert approvals["approvals"][0]["decided_by"] == "Finance Director"
+
+            status, revised_pricing = _request(
+                server,
+                "POST",
+                f"/api/opportunities/{opportunity_id}/pricing",
+                {
+                    "pricing_case_id": pricing["pricing_case_id"],
+                    "case_name": "Base case",
+                    "supplier_reference": "SUP-Q-002",
+                    "supplier_currency": "USD",
+                    "supplier_cost": 500,
+                    "pricing_currency": "USD",
+                    "freight_cost": 50,
+                    "clearing_and_tax_cost": 25,
+                    "financing_cost": 10,
+                    "other_costs": 15,
+                    "selling_price": 780,
+                    "cost_basis_complete": True,
+                    "created_by": "Edward",
+                },
+            )
+            assert status == 201
+            assert revised_pricing["revision_number"] == 2
+            assert revised_pricing["approval_status"] == "PENDING"
+
+            status, stale_approval = _request(
+                server,
+                "POST",
+                f"/api/opportunities/{opportunity_id}/pricing/{pricing['pricing_case_id']}/approvals",
+                {
+                    "revision_number": 1,
+                    "decision": "APPROVED",
+                    "decided_by": "Finance Director",
+                },
+            )
+            assert status == 400
+            assert "current pricing case revision" in stale_approval["error"]
+
+            status, approvals = _request(
+                server,
+                "GET",
+                f"/api/opportunities/{opportunity_id}/pricing/{pricing['pricing_case_id']}/approvals",
+            )
+            assert status == 200
+            assert approvals["current_revision_number"] == 2
+            assert [(row["revision_number"], row["decision"]) for row in approvals["approvals"]] == [
+                (1, "APPROVED")
+            ]
 
             status, outcome = _request(server, "POST", f"/api/opportunities/{opportunity_id}/outcome", {
                 "outcome": "WON",
@@ -166,3 +241,58 @@ def test_execution_completeness_rejects_unknown_opportunity():
             server.shutdown()
             server.server_close()
             thread.join(timeout=2)
+
+def test_pricing_approval_rejects_incomplete_case_and_missing_reviewer():
+    with TemporaryDirectory() as tmp:
+        db_path = Path(tmp) / "crm.db"
+        opportunity_id = _seed(db_path)
+        server, thread = _server(db_path)
+        try:
+            status, pricing = _request(
+                server,
+                "POST",
+                f"/api/opportunities/{opportunity_id}/pricing",
+                {
+                    "case_name": "Incomplete case",
+                    "supplier_currency": "USD",
+                    "supplier_cost": 500,
+                    "pricing_currency": "USD",
+                    "selling_price": 750,
+                    "cost_basis_complete": False,
+                },
+            )
+            assert status == 201
+
+            approval_path = (
+                f"/api/opportunities/{opportunity_id}/pricing/"
+                f"{pricing['pricing_case_id']}/approvals"
+            )
+            status, error = _request(
+                server,
+                "POST",
+                approval_path,
+                {
+                    "revision_number": 1,
+                    "decision": "APPROVED",
+                    "decided_by": "Finance Director",
+                },
+            )
+            assert status == 400
+            assert "complete pricing case" in error["error"]
+
+            status, error = _request(
+                server,
+                "POST",
+                approval_path,
+                {
+                    "revision_number": 1,
+                    "decision": "CHANGES_REQUESTED",
+                },
+            )
+            assert status == 400
+            assert "reviewer is required" in error["error"]
+        finally:
+            server.shutdown()
+            server.server_close()
+            thread.join(timeout=2)
+
