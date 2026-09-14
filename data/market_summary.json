@@ -107,10 +107,10 @@
       "product_intelligence": 48,
       "manufacturer_intelligence": 35,
       "tender_predictions": 985,
-      "procurement_processes": 6215,
-      "procurement_releases": 6303,
-      "procurement_line_items": 3747,
-      "procurement_document_evidence": 120
+      "procurement_processes": 6217,
+      "procurement_releases": 6308,
+      "procurement_line_items": 3746,
+      "procurement_document_evidence": 160
     }
   },
   "currency_note": "Amounts are source-reported nominal values and are not converted across currencies.",
@@ -217,5 +217,5 @@
       "output": "Equipment demand, product and manufacturer intelligence, technical evidence, tender probability, horizon, and timing windows"
     }
   ],
-  "product_intelligence_generated_at": "2026-09-13T20:51:34Z"
+  "product_intelligence_generated_at": "2026-09-14T04:56:34Z"
 }
