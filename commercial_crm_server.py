@@ -188,6 +188,32 @@ class CRMHandler(BaseHTTPRequestHandler):
                         memory,
                     ),
                 })
+            if (
+                len(parts) == 6
+                and parts[:2] == ["api", "opportunities"]
+                and parts[3] == "pricing"
+                and parts[5] == "approvals"
+            ):
+                opportunity_id = parts[2]
+                pricing_case_id = int(parts[4])
+                if commercial_crm.get_opportunity(opportunity_id, db_path=self.db_path) is None:
+                    return self._json(404, {"error": "opportunity not found"})
+                revision = execution_completeness.get_pricing_revision(
+                    opportunity_id,
+                    pricing_case_id,
+                    db_path=self.db_path,
+                )
+                if revision is None:
+                    return self._json(404, {"error": "pricing case not found"})
+                return self._json(200, {
+                    "pricing_case_id": pricing_case_id,
+                    "current_revision_number": revision["revision_number"],
+                    "approvals": execution_completeness.list_pricing_approvals(
+                        opportunity_id,
+                        pricing_case_id,
+                        db_path=self.db_path,
+                    ),
+                })
             if len(parts) == 3 and parts[:2] == ["api", "opportunities"]:
                 item = commercial_crm.get_opportunity(parts[2], db_path=self.db_path)
                 return self._json(200, item) if item else self._json(404, {"error": "opportunity not found"})
@@ -234,6 +260,73 @@ class CRMHandler(BaseHTTPRequestHandler):
         try:
             parts = self._route()
             p = self._read_json()
+            if (
+                len(parts) == 6
+                and parts[:2] == ["api", "opportunities"]
+                and parts[3] == "pricing"
+                and parts[5] == "approvals"
+            ):
+                opportunity_id = parts[2]
+                pricing_case_id = int(parts[4])
+                revision_number = int(p.get("revision_number"))
+                revision = execution_completeness.get_pricing_revision(
+                    opportunity_id,
+                    pricing_case_id,
+                    revision_number,
+                    db_path=self.db_path,
+                )
+                if revision is None:
+                    raise KeyError(
+                        f"Unknown pricing case revision: {pricing_case_id}/{revision_number}"
+                    )
+                decision = str(p.get("decision") or "").strip().upper()
+                bid_decision = execution_completeness.get_bid_decision(
+                    opportunity_id,
+                    db_path=self.db_path,
+                ).get("decision")
+                evaluation = commercial_pricing_workbench.evaluate_case(
+                    revision,
+                    human_bid_decision=bid_decision,
+                )
+                if (
+                    decision == "APPROVED"
+                    and evaluation.get("pricing_status")
+                    != "READY_FOR_COMMERCIAL_APPROVAL"
+                ):
+                    raise ValueError(
+                        "Only a complete pricing case with non-negative gross profit that is not held by NO_BID can be approved"
+                    )
+                approval = execution_completeness.record_pricing_approval(
+                    opportunity_id,
+                    pricing_case_id,
+                    revision_number,
+                    decision,
+                    decided_by=str(
+                        p.get("decided_by")
+                        or p.get("actor")
+                        or self.headers.get("X-CRM-Actor")
+                        or ""
+                    ),
+                    rationale=p.get("rationale"),
+                    db_path=self.db_path,
+                )
+                current = execution_completeness.get_pricing_revision(
+                    opportunity_id,
+                    pricing_case_id,
+                    db_path=self.db_path,
+                )
+                return self._json(201, {
+                    "approval": approval,
+                    "pricing_case": commercial_pricing_workbench.evaluate_case(
+                        current,
+                        human_bid_decision=bid_decision,
+                    ),
+                    "approval_history": execution_completeness.list_pricing_approvals(
+                        opportunity_id,
+                        pricing_case_id,
+                        db_path=self.db_path,
+                    ),
+                })
             if len(parts) == 4 and parts[:2] == ["api", "opportunities"] and parts[3] == "activities":
                 aid = commercial_crm.add_activity(parts[2], db_path=self.db_path, actor=self._actor(p), activity_type=p.get("activity_type", "NOTE"), subject=p.get("subject", ""), notes=p.get("notes", ""), activity_date=p.get("activity_date"), due_date=p.get("due_date"), owner=p.get("owner"))
                 return self._json(201, {"activity_id": aid})

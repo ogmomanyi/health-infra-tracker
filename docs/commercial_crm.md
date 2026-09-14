@@ -12,6 +12,9 @@ The commercial intelligence architecture has a deliberate separation between **d
 - `opportunity_state` — CRM status, owner, activity overrides and notes. This is never replaced by a pipeline refresh.
 - `activity_log` — calls, meetings, emails and other recorded activities.
 - `audit_log` — state changes and activity creation for traceability.
+- `commercial_pricing_cases` — the current working copy of each named pricing case.
+- `commercial_pricing_case_revisions` — immutable cost and selling-price snapshots created on every save.
+- `commercial_pricing_approvals` — append-only approval decisions tied to one exact pricing revision.
 
 ## Opportunity lifecycle
 
@@ -33,7 +36,16 @@ This creates the database if needed and upserts opportunity context. Existing CR
 
 ## Local operation
 
-The current execution UI is a static CSV dashboard. The CRM database is intentionally introduced first as the durable operational boundary. A subsequent execution-server layer can expose the database to the UI without changing the intelligence pipeline.
+The local CRM server exposes the execution and opportunity workspaces without changing the intelligence pipeline. The opportunity workspace includes current-input pricing calculations, revision creation, and commercial approve/request-changes/reject decisions.
+
+An approval never applies to a mutable case generally. It references a specific `revision_id` and `revision_number`. Saving an approved case creates a new revision whose approval state is `PENDING`; the prior approved snapshot and decision remain queryable in the approval history.
+
+API routes:
+
+- `GET/POST /api/opportunities/{opportunity_id}/pricing`
+- `GET/POST /api/opportunities/{opportunity_id}/pricing/{pricing_case_id}/approvals`
+
+Only a complete case with non-negative gross profit that is not held by a human `NO_BID` decision can be approved. Rejections and change requests remain available so reviewers can record why a draft is not acceptable.
 
 For example, application code can use:
 
@@ -44,4 +56,4 @@ update_state("OPP-E1", status="QUALIFIED", assigned_owner="Edward")
 add_activity("OPP-E1", "CALL", "Spoke with procurement contact", owner="Edward")
 ```
 
-Do not write CRM state back into generated intelligence CSVs or into the canonical entity tables.
+Do not write CRM state, pricing inputs, or approval decisions back into generated intelligence CSVs or canonical entity tables.

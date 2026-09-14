@@ -107,6 +107,14 @@ Dashboard coverage includes product families, products, manufacturers, evidence 
 - validation performance
 - competitor signals
 
+## 18. Commercial pricing and approval workflow
+
+Status: production foundation complete.
+
+The opportunity workspace supports named pricing cases built only from current explicit supplier, FX, landed-cost, financing and selling-price inputs. Every save creates an immutable numbered revision. Commercial approval decisions are append-only, reviewer-attributed, and bound to the exact revision reviewed; changing an approved case produces a new pending revision without rewriting the prior approval record.
+
+Further calibration should add Faram's role-based approval thresholds and escalation matrix once those policies are formally defined.
+
 ## Strategic end-state
 
 The platform should answer, for each relevant opportunity:

@@ -47,6 +47,7 @@ def evaluate_case(
             "markup_pct": None,
             "canonical_priority_is_unchanged": True,
             "decision_is_read_only_guidance": True,
+            "approval_status": "PENDING",
         }
 
     pricing_currency = _upper(case.get("pricing_currency"))
@@ -75,6 +76,11 @@ def evaluate_case(
 
     result = {
         "pricing_case_id": case.get("pricing_case_id"),
+        "revision_id": case.get("revision_id") or case.get("current_revision_id"),
+        "current_revision_id": case.get("current_revision_id") or case.get("revision_id"),
+        "revision_number": case.get("revision_number") or case.get("current_revision_number"),
+        "current_revision_number": case.get("current_revision_number") or case.get("revision_number"),
+        "is_current_revision": case.get("is_current_revision", True),
         "case_name": _text(case.get("case_name")) or "Pricing case",
         "pricing_currency": pricing_currency or "UNKNOWN",
         "supplier_currency": supplier_currency or "UNKNOWN",
@@ -94,6 +100,11 @@ def evaluate_case(
         "markup_pct": None,
         "canonical_priority_is_unchanged": True,
         "decision_is_read_only_guidance": True,
+        "approval_id": case.get("approval_id"),
+        "approval_status": _upper(case.get("approval_status")) or "PENDING",
+        "approval_decided_by": _text(case.get("approval_decided_by")),
+        "approval_rationale": _text(case.get("approval_rationale")),
+        "approval_decided_at": _text(case.get("approval_decided_at")),
     }
 
     if _upper(human_bid_decision) == "NO_BID":
