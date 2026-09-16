@@ -220,3 +220,61 @@ def test_procurement_evidence_endpoint_returns_line_items_and_releases():
             assert payload["manufacturer_relationships"][0]["party_role"] == "BUYER"
         finally:
             server.shutdown(); server.server_close(); thread.join(timeout=2)
+
+
+def test_project_selection_api_creates_follow_up_workflow():
+    with TemporaryDirectory() as tmp:
+        root = Path(tmp)
+        db_path = root / "crm.db"
+        projects = root / "opportunities.csv"
+        fields = [
+            "iati_identifier", "project_title", "reporting_org_name", "implementing_partners",
+            "country_codes", "country_names", "opportunity_score", "priority_band",
+            "signal_summary", "tender_stage", "recommended_action", "equipment_target_summary",
+        ]
+        with projects.open("w", newline="", encoding="utf-8") as handle:
+            writer = csv.DictWriter(handle, fieldnames=fields)
+            writer.writeheader()
+            writer.writerow({
+                "iati_identifier": "IATI/KE/CRM-1",
+                "project_title": "County diagnostic expansion",
+                "reporting_org_name": "Reporter",
+                "implementing_partners": "County Health Department",
+                "country_codes": "KE",
+                "country_names": "Kenya",
+                "opportunity_score": "94",
+                "priority_band": "Strategic Priority",
+                "signal_summary": "funded diagnostic equipment demand",
+                "tender_stage": "Likely procurement",
+                "recommended_action": "Confirm buyer and lot structure.",
+                "equipment_target_summary": "Diagnostic Equipment",
+            })
+        server, thread = _server(db_path, projects_path=projects)
+        try:
+            status, listing = _request(server, "GET", "/api/projects?q=diagnostic")
+            assert status == 200
+            assert listing["projects"][0]["tracked"] is False
+
+            status, result = _request(server, "POST", "/api/projects/track", {
+                "project_id": "IATI/KE/CRM-1",
+                "owner": "Edward",
+                "next_activity": "Call the county procurement lead",
+                "due_date": "2026-09-20",
+                "selection_reason": "High-confidence funded demand",
+                "actor": "test-user",
+            })
+            assert status == 201
+            opportunity = result["opportunity"]
+            assert opportunity["assigned_owner"] == "Edward"
+            assert opportunity["next_activity_override"] == "Call the county procurement lead"
+
+            status, listing = _request(server, "GET", "/api/projects?tracked=true")
+            assert status == 200
+            assert listing["summary"]["tracked"] == 1
+            assert listing["projects"][0]["opportunity_id"] == opportunity["opportunity_id"]
+
+            status, work = _request(server, "GET", "/api/work?today=2026-09-16")
+            assert status == 200
+            assert work["items"][0]["work_bucket"] == "week"
+        finally:
+            server.shutdown(); server.server_close(); thread.join(timeout=2)

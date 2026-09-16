@@ -157,6 +157,17 @@ def initialize(db_path: Path | str = DB_DEFAULT) -> None:
                 new_value TEXT
             );
 
+            CREATE TABLE IF NOT EXISTS tracked_projects (
+                project_id TEXT PRIMARY KEY,
+                opportunity_id TEXT NOT NULL UNIQUE
+                    REFERENCES opportunity_context(opportunity_id) ON DELETE CASCADE,
+                selected_at TEXT NOT NULL,
+                selected_by TEXT,
+                selection_reason TEXT,
+                active INTEGER NOT NULL DEFAULT 1 CHECK(active IN (0, 1)),
+                updated_at TEXT NOT NULL
+            );
+
             CREATE INDEX IF NOT EXISTS idx_context_account
                 ON opportunity_context(target_account_id);
             CREATE INDEX IF NOT EXISTS idx_context_closing
@@ -169,6 +180,10 @@ def initialize(db_path: Path | str = DB_DEFAULT) -> None:
                 ON activity_log(opportunity_id, created_at DESC);
             CREATE INDEX IF NOT EXISTS idx_audit_opportunity
                 ON audit_log(opportunity_id, changed_at DESC);
+            CREATE INDEX IF NOT EXISTS idx_tracked_projects_opportunity
+                ON tracked_projects(opportunity_id);
+            CREATE INDEX IF NOT EXISTS idx_tracked_projects_active
+                ON tracked_projects(active, updated_at DESC);
             """
         )
 
@@ -285,6 +300,79 @@ def list_opportunities(
                      c.account_name ASC
             """,
             values,
+        ).fetchall()
+    return [dict(row) for row in rows]
+
+
+def track_project(
+    project_id: str,
+    opportunity_id: str,
+    *,
+    db_path: Path | str = DB_DEFAULT,
+    selected_by: str | None = None,
+    selection_reason: str | None = None,
+) -> dict[str, object]:
+    """Create or reactivate the durable link between an IATI project and CRM work."""
+    initialize(db_path)
+    project_id = str(project_id or "").strip()
+    opportunity_id = str(opportunity_id or "").strip()
+    if not project_id or not opportunity_id:
+        raise ValueError("project_id and opportunity_id are required")
+    now = utc_now()
+    with connect(db_path) as conn:
+        if conn.execute(
+            "SELECT 1 FROM opportunity_context WHERE opportunity_id = ?", (opportunity_id,)
+        ).fetchone() is None:
+            raise KeyError(f"Unknown opportunity: {opportunity_id}")
+        current = conn.execute(
+            "SELECT * FROM tracked_projects WHERE project_id = ?", (project_id,)
+        ).fetchone()
+        created = current is None
+        conn.execute(
+            """
+            INSERT INTO tracked_projects
+                (project_id, opportunity_id, selected_at, selected_by, selection_reason, active, updated_at)
+            VALUES (?, ?, ?, ?, ?, 1, ?)
+            ON CONFLICT(project_id) DO UPDATE SET
+                opportunity_id=excluded.opportunity_id,
+                selected_by=CASE WHEN excluded.selected_by != '' THEN excluded.selected_by ELSE tracked_projects.selected_by END,
+                selection_reason=CASE WHEN excluded.selection_reason != '' THEN excluded.selection_reason ELSE tracked_projects.selection_reason END,
+                active=1,
+                updated_at=excluded.updated_at
+            """,
+            (project_id, opportunity_id, now, selected_by or "", selection_reason or "", now),
+        )
+        if created:
+            _audit(conn, opportunity_id, selected_by, "PROJECT_SELECTED", "project_id", None, project_id)
+        elif current["active"] == 0:
+            _audit(conn, opportunity_id, selected_by, "PROJECT_REACTIVATED", "project_id", project_id, project_id)
+        row = conn.execute(
+            "SELECT * FROM tracked_projects WHERE project_id = ?", (project_id,)
+        ).fetchone()
+    result = dict(row)
+    result["created"] = created
+    return result
+
+
+def list_tracked_projects(
+    db_path: Path | str = DB_DEFAULT,
+    *,
+    active_only: bool = True,
+) -> list[dict[str, object]]:
+    initialize(db_path)
+    where = "WHERE t.active = 1" if active_only else ""
+    with connect(db_path) as conn:
+        rows = conn.execute(
+            f"""
+            SELECT t.*, s.status, s.assigned_owner, s.next_activity_override,
+                   s.next_activity_due_date_override, c.next_activity,
+                   c.next_activity_due_date, c.title, c.account_name
+            FROM tracked_projects t
+            JOIN opportunity_context c ON c.opportunity_id = t.opportunity_id
+            JOIN opportunity_state s ON s.opportunity_id = t.opportunity_id
+            {where}
+            ORDER BY t.updated_at DESC, t.project_id ASC
+            """
         ).fetchall()
     return [dict(row) for row in rows]
 

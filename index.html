@@ -723,6 +723,19 @@
             gap: 10px;
         }
 
+        .workflow-link {
+            display: inline-flex;
+            align-items: center;
+            min-height: 38px;
+            padding: 8px 12px;
+            border: 1px solid var(--blue);
+            border-radius: 6px;
+            background: var(--blue);
+            color: #fff;
+            font-weight: 750;
+            text-decoration: none;
+        }
+
         .detail-action {
             padding-left: 10px;
             border-left: 3px solid #99f6e4;
@@ -2024,6 +2037,7 @@
                     ${detailStat("Tender", hasValue(record.tender_probability) ? scoreBadge(record.tender_probability) : emptyDetail())}
                     ${detailStat("Reported Budget", moneyDetail(budget))}
                 </div>
+                ${isPublicMode() ? "" : `<div style="margin-bottom:16px"><a class="workflow-link" href="/projects.html?project=${encodeURIComponent(id)}">Select project and start follow-up</a></div>`}
                 ${detailSection("Project", `
                     ${detailGrid([
                         ["Status", record.activity_status_label],

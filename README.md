@@ -36,6 +36,18 @@ make serve
 
 Then open `http://localhost:8765/`.
 
+The local workspace includes:
+
+- `/projects` to review projects and start a follow-up workflow
+- `/my-work` for due and overdue actions
+- `/opportunity.html?id=...` for the full execution record
+- `/intelligence` for the granular intelligence dashboard
+
+Product identification is evidence-led. Exact catalogue models and full product
+names are verified, controlled device phrases are reported as evidence-backed
+families, and broad clinical terms remain review candidates. Each identification
+retains its source, reference, excerpt, method, and confidence.
+
 ## Key Outputs
 
 - `data/target_accounts.csv`

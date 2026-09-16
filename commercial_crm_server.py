@@ -21,6 +21,7 @@ from procurement_intelligence import (
     management_work,
     opportunity_technical_fit,
     procurement_evidence_view,
+    project_follow_up,
     quote_preparation_intelligence,
 )
 
@@ -30,6 +31,11 @@ MY_WORK_HTML = ROOT / "procurement_intelligence" / "my_work.html"
 ACCOUNT_HTML = ROOT / "procurement_intelligence" / "account.html"
 MANAGEMENT_HTML = ROOT / "procurement_intelligence" / "management.html"
 OPPORTUNITY_HTML = ROOT / "procurement_intelligence" / "opportunity.html"
+PROJECTS_HTML = ROOT / "procurement_intelligence" / "projects.html"
+BUYERS_HTML = ROOT / "procurement_intelligence" / "buyers.html"
+PROCUREMENT_DASHBOARD_HTML = ROOT / "procurement_intelligence" / "dashboard.html"
+INTELLIGENCE_HTML = ROOT / "index.html"
+DATA_DIR = ROOT / "data"
 OPPORTUNITY_TECHNICAL_FIT_JS = ROOT / "procurement_intelligence" / "opportunity_technical_fit.js"
 BID_DECISION_GUIDANCE_JS = ROOT / "procurement_intelligence" / "bid_decision_guidance.js"
 PRICING_WORKBENCH_JS = ROOT / "procurement_intelligence" / "pricing_workbench.js"
@@ -45,6 +51,7 @@ class CRMHandler(BaseHTTPRequestHandler):
     procurement_releases_path = ROOT / "data" / "procurement_releases.csv"
     procurement_documents_path = ROOT / "data" / "procurement_document_evidence.csv"
     procurement_relationships_path = ROOT / "data" / "procurement_manufacturer_relationships.csv"
+    projects_path = ROOT / "data" / "opportunities.csv"
 
     def _json(self, status, payload):
         body = json.dumps(payload, default=str).encode("utf-8")
@@ -93,6 +100,23 @@ class CRMHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def _serve_data(self, parts):
+        if len(parts) != 2 or parts[0] != "data":
+            return self._json(404, {"error": "data file not found"})
+        candidate = (DATA_DIR / parts[1]).resolve()
+        if candidate.parent != DATA_DIR.resolve() or candidate.suffix.lower() not in {".csv", ".json"}:
+            return self._json(404, {"error": "data file not found"})
+        if not candidate.is_file():
+            return self._json(404, {"error": "data file not found"})
+        body = candidate.read_bytes()
+        content_type = "application/json; charset=utf-8" if candidate.suffix.lower() == ".json" else "text/csv; charset=utf-8"
+        self.send_response(200)
+        self.send_header("Content-Type", content_type)
+        self.send_header("Cache-Control", "no-cache")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
     def do_OPTIONS(self):
         self.send_response(204)
         self.send_header("Access-Control-Allow-Origin", "*")
@@ -115,6 +139,16 @@ class CRMHandler(BaseHTTPRequestHandler):
                 return self._serve(MANAGEMENT_HTML)
             if path in {"/opportunity", "/opportunity.html"}:
                 return self._serve(OPPORTUNITY_HTML)
+            if path in {"/projects", "/projects.html"}:
+                return self._serve(PROJECTS_HTML)
+            if path in {"/buyers", "/buyers.html"}:
+                return self._serve(BUYERS_HTML)
+            if path in {"/procurement", "/dashboard.html"}:
+                return self._serve(PROCUREMENT_DASHBOARD_HTML)
+            if path in {"/intelligence", "/intelligence.html", "/index.html"}:
+                return self._serve(INTELLIGENCE_HTML)
+            if parts and parts[0] == "data":
+                return self._serve_data(parts)
             if path == "/opportunity-technical-fit.js":
                 return self._serve_js(OPPORTUNITY_TECHNICAL_FIT_JS)
             if path == "/bid_decision_guidance.js":
@@ -123,6 +157,18 @@ class CRMHandler(BaseHTTPRequestHandler):
                 return self._serve_js(PRICING_WORKBENCH_JS)
             if parts == ["api", "health"]:
                 return self._json(200, {"ok": True})
+            if parts == ["api", "projects"]:
+                tracked_value = params.get("tracked", [None])[0]
+                tracked = None if tracked_value is None else tracked_value.lower() in {"1", "true", "yes"}
+                return self._json(200, project_follow_up.list_projects(
+                    projects_path=self.projects_path,
+                    db_path=self.db_path,
+                    query=params.get("q", [None])[0],
+                    country=params.get("country", [None])[0],
+                    priority=params.get("priority", [None])[0],
+                    tracked=tracked,
+                    limit=int(params.get("limit", [500])[0]),
+                ))
             if parts == ["api", "work"]:
                 return self._json(200, commercial_work.list_work(db_path=self.db_path, owner=params.get("owner", [None])[0], today=params.get("today", [None])[0]))
             if parts == ["api", "accounts"]:
@@ -234,6 +280,17 @@ class CRMHandler(BaseHTTPRequestHandler):
         try:
             parts = self._route()
             p = self._read_json()
+            if parts == ["api", "projects", "track"]:
+                return self._json(201, project_follow_up.track_project(
+                    str(p.get("project_id") or ""),
+                    projects_path=self.projects_path,
+                    db_path=self.db_path,
+                    owner=p.get("owner"),
+                    next_activity=p.get("next_activity"),
+                    due_date=p.get("due_date"),
+                    selection_reason=p.get("selection_reason"),
+                    selected_by=self._actor(p),
+                ))
             if len(parts) == 4 and parts[:2] == ["api", "opportunities"] and parts[3] == "activities":
                 aid = commercial_crm.add_activity(parts[2], db_path=self.db_path, actor=self._actor(p), activity_type=p.get("activity_type", "NOTE"), subject=p.get("subject", ""), notes=p.get("notes", ""), activity_date=p.get("activity_date"), due_date=p.get("due_date"), owner=p.get("owner"))
                 return self._json(201, {"activity_id": aid})
@@ -281,6 +338,7 @@ def main():
     parser.add_argument("--procurement-releases", default=str(ROOT / "data" / "procurement_releases.csv"))
     parser.add_argument("--procurement-documents", default=str(ROOT / "data" / "procurement_document_evidence.csv"))
     parser.add_argument("--procurement-relationships", default=str(ROOT / "data" / "procurement_manufacturer_relationships.csv"))
+    parser.add_argument("--projects", default=str(ROOT / "data" / "opportunities.csv"))
     args = parser.parse_args()
     commercial_crm.initialize(args.db)
     execution_completeness.initialize(args.db)
@@ -293,6 +351,7 @@ def main():
     CRMHandler.procurement_releases_path = Path(args.procurement_releases)
     CRMHandler.procurement_documents_path = Path(args.procurement_documents)
     CRMHandler.procurement_relationships_path = Path(args.procurement_relationships)
+    CRMHandler.projects_path = Path(args.projects)
     server = ThreadingHTTPServer((args.host, args.port), CRMHandler)
     print(f"Commercial CRM API listening on http://{args.host}:{args.port}")
     try:

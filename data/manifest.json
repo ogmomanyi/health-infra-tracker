@@ -46,8 +46,8 @@
     "procurement_releases": 6308,
     "procurement_documents": 165,
     "procurement_document_evidence": 160,
-    "procurement_line_items": 3746,
-    "procurement_product_matches": 3746,
+    "procurement_line_items": 3748,
+    "procurement_product_matches": 3748,
     "procurement_manufacturer_relationships": 20,
     "world_bank_project_metadata": 5,
     "procurement_source_collection": 3,
@@ -237,5 +237,5 @@
       "procurement_document_evidence"
     ]
   },
-  "product_intelligence_generated_at": "2026-09-14T04:56:34Z"
+  "product_intelligence_generated_at": "2026-09-16T08:27:10Z"
 }

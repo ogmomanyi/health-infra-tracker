@@ -21,6 +21,11 @@ import pandas as pd
 
 
 ACTIVE_PRINCIPAL_STATUSES = {"active", "approved", "current"}
+ACCEPTED_PRODUCT_IDENTIFICATIONS = {
+    "VERIFIED_MODEL_IDENTITY",
+    "VERIFIED_PRODUCT_IDENTITY",
+    "EVIDENCE_BACKED_FAMILY",
+}
 PENDING_PRINCIPAL_STATUSES = {"pending", "prospect", "unknown", ""}
 
 MANUFACTURER_ALIASES = {
@@ -390,6 +395,16 @@ def _history_matches(catalogue_row: dict[str, object], history_row: dict[str, ob
     return bool(catalogue_product and history_product and catalogue_product == history_product)
 
 
+def _accepted_product_demand(row: dict[str, object]) -> bool:
+    identification_status = _text(row.get("product_identification_status"))
+    if identification_status:
+        return identification_status in ACCEPTED_PRODUCT_IDENTIFICATIONS
+    return _text(row.get("match_status")) in {
+        "MATCHED_PRODUCT_AND_MANUFACTURER",
+        "MATCHED_PRODUCT_FAMILY",
+    }
+
+
 def _commercial_position(catalogue_status: str, principal_status: str, actionable_matches: int) -> str:
     normalized = _normalize(principal_status)
     if catalogue_status == "HISTORICAL_ONLY":
@@ -436,7 +451,7 @@ def build_product_intelligence_dataset(
     for row in demand_rows:
         family = _normalize(row.get("product_family"))
         event_id = _text(row.get("procurement_event_id"))
-        if family and event_id and _text(row.get("match_status")) != "UNMATCHED":
+        if family and event_id and _accepted_product_demand(row):
             demand_by_family[family].add(event_id)
 
     matches_by_product: dict[str, list[dict[str, object]]] = defaultdict(list)
@@ -601,7 +616,7 @@ def build_manufacturer_intelligence_dataset(
         for name in _split(row.get("manufacturer_names")):
             explicit_demand[manufacturer_key(name)].add(event_id)
         family = _normalize(row.get("product_family"))
-        if family and event_id and _text(row.get("match_status")) != "UNMATCHED":
+        if family and event_id and _accepted_product_demand(row):
             family_demand[family].add(event_id)
 
     output = []

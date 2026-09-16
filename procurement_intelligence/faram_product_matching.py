@@ -24,6 +24,12 @@ OUTPUT_FIELDS = [
     "closing_date",
     "matched_iati_identifier",
     "product_family",
+    "product_identification_status",
+    "product_identification_method",
+    "product_identification_confidence",
+    "product_evidence_source",
+    "product_evidence_reference",
+    "product_evidence_excerpt",
     "faram_product_id",
     "product_name",
     "manufacturer_name",
@@ -37,6 +43,11 @@ OUTPUT_FIELDS = [
 ]
 
 ACTIVE_PRINCIPAL_STATUSES = {"active", "approved", "current"}
+ACCEPTED_PRODUCT_IDENTIFICATIONS = {
+    "VERIFIED_MODEL_IDENTITY",
+    "VERIFIED_PRODUCT_IDENTITY",
+    "EVIDENCE_BACKED_FAMILY",
+}
 WILDCARD_TERRITORIES = {"all", "all countries", "global", "worldwide", "any"}
 COUNTRY_ALIASES = {
     "kenya": "KE",
@@ -152,6 +163,14 @@ def match_events(
     results: list[dict[str, object]] = []
 
     for procurement in procurement_rows:
+        identification_status = _text(procurement.get("product_identification_status"))
+        if identification_status and identification_status not in ACCEPTED_PRODUCT_IDENTIFICATIONS:
+            continue
+        legacy_match_status = _text(procurement.get("match_status"))
+        if not identification_status and legacy_match_status and legacy_match_status not in {
+            "MATCHED_PRODUCT_AND_MANUFACTURER", "MATCHED_PRODUCT_FAMILY",
+        }:
+            continue
         notice_text = _row_text(procurement)
         for product in catalogue:
             if not _family_alignment(procurement, product):
@@ -211,6 +230,12 @@ def match_events(
                 "closing_date": _text(procurement.get("closing_date")),
                 "matched_iati_identifier": _text(procurement.get("matched_iati_identifier")),
                 "product_family": _text(procurement.get("product_family")),
+                "product_identification_status": identification_status,
+                "product_identification_method": _text(procurement.get("product_identification_method")),
+                "product_identification_confidence": _text(procurement.get("product_identification_confidence")),
+                "product_evidence_source": _text(procurement.get("product_evidence_source")),
+                "product_evidence_reference": _text(procurement.get("product_evidence_reference")),
+                "product_evidence_excerpt": _text(procurement.get("product_evidence_excerpt")),
                 "faram_product_id": _text(product.get("faram_product_id")),
                 "product_name": _text(product.get("product_name")),
                 "manufacturer_name": _text(product.get("manufacturer_name")),

@@ -24,6 +24,9 @@ class ProductMatchingTests(unittest.TestCase):
         self.assertEqual(rows[0]["product_family"], "Hematology Analyzer")
         self.assertEqual(rows[0]["manufacturer_names"], "Sysmex")
         self.assertEqual(rows[0]["match_status"], "MATCHED_PRODUCT_AND_MANUFACTURER")
+        self.assertEqual(rows[0]["product_identification_status"], "EVIDENCE_BACKED_FAMILY")
+        self.assertEqual(rows[0]["product_evidence_source"], "NOTICE_TITLE")
+        self.assertIn("hematology analyzers", rows[0]["product_evidence_excerpt"])
         self.assertIn("product family phrase", rows[0]["match_evidence"])
 
     def test_product_family_does_not_infer_manufacturer(self):
@@ -37,6 +40,18 @@ class ProductMatchingTests(unittest.TestCase):
         self.assertEqual(rows[0]["product_family"], "Clinical Chemistry Analyzer")
         self.assertEqual(rows[0]["manufacturer_names"], "")
         self.assertEqual(rows[0]["match_status"], "MATCHED_PRODUCT_FAMILY")
+
+    def test_broad_clinical_term_is_review_only_not_a_product_identity(self):
+        rows = match_events([{
+            "procurement_event_id": "E2-review",
+            "title": "Strengthening hematology services and quality assurance",
+        }])
+        self.assertEqual(rows[0]["product_family"], "")
+        self.assertEqual(rows[0]["candidate_product_family"], "Hematology Analyzer")
+        self.assertEqual(rows[0]["product_identification_status"], "REVIEW_REQUIRED")
+        self.assertEqual(rows[0]["product_identification_method"], "AMBIGUOUS_TERM")
+        self.assertEqual(rows[0]["match_status"], "PRODUCT_REVIEW_REQUIRED")
+        self.assertIn("does not prove", rows[0]["product_review_reason"])
 
     def test_manufacturer_only_is_not_product_match(self):
         rows = match_events([{
@@ -126,6 +141,21 @@ class ProductMatchingTests(unittest.TestCase):
             {row["product_family"] for row in rows},
             {"Patient Monitor", "Ultrasound System"},
         )
+        ultrasound = next(row for row in rows if row["product_family"] == "Ultrasound System")
+        self.assertEqual(ultrasound["product_evidence_source"], "DOCUMENT_TEXT")
+
+    def test_document_evidence_keeps_its_url_and_excerpt(self):
+        rows = match_events([{
+            "procurement_event_id": "E7-url",
+            "title": "Hospital equipment lot",
+            "_document_evidence_segments": [{
+                "text": "Schedule 4 requires two automated blood gas analyzers.",
+                "reference": "https://buyer.example/specification.pdf",
+            }],
+        }])
+        self.assertEqual(rows[0]["product_family"], "Blood Gas Analyzer")
+        self.assertEqual(rows[0]["product_evidence_reference"], "https://buyer.example/specification.pdf")
+        self.assertIn("blood gas analyzers", rows[0]["product_evidence_excerpt"])
 
     def test_unique_catalogue_model_resolves_product_and_manufacturer(self):
         catalogue = [{
@@ -137,14 +167,15 @@ class ProductMatchingTests(unittest.TestCase):
             "model": "IN75",
         }]
         matches = match_catalogue_products("Required model IN75", catalogue)
-        self.assertEqual(matches[0]["method"], "MODEL_REGISTRY")
+        self.assertEqual(matches[0]["method"], "CATALOGUE_MODEL_EXACT")
         rows = match_events(
             [{"procurement_event_id": "E8", "title": "Required model IN75"}],
             catalogue_rows=catalogue,
         )
         self.assertEqual(rows[0]["manufacturer_names"], "Memmert")
         self.assertEqual(rows[0]["model_evidence"], "IN75")
-        self.assertEqual(rows[0]["manufacturer_match_method"], "MODEL_REGISTRY")
+        self.assertEqual(rows[0]["manufacturer_match_method"], "CATALOGUE_MODEL_EXACT")
+        self.assertEqual(rows[0]["product_identification_status"], "VERIFIED_MODEL_IDENTITY")
 
     def test_product_family_list_keeps_strongest_evidence_per_family(self):
         matches = match_product_families("PCR molecular diagnostics and PCR systems")
