@@ -36,6 +36,11 @@ make serve
 
 Then open `http://localhost:8765/`.
 
+On macOS, `start_health_tracker.command` provides a one-step launcher. It verifies
+that the selected port is the tracker, falls back to the next available port when
+another application is in the way, opens the project workspace, and always uses
+the persistent CRM database at `data/commercial_crm.db`.
+
 The local workspace includes:
 
 - `/projects` to review projects and start a follow-up workflow

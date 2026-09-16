@@ -12,7 +12,7 @@ test:
 	$(PYTHON) -m pytest -q
 
 serve:
-	$(PYTHON) commercial_crm_server.py --port $(PORT)
+	$(PYTHON) scripts/open_workspace.py --port $(PORT) --no-browser
 
 mock:
 	$(PYTHON) iati_tracker.py --mock --output-dir /tmp/iati_tracker_mock --database /tmp/iati_tracker_mock.db --state-file /tmp/iati_tracker_mock_state.json --snapshot-dir /tmp/iati_tracker_mock_history
