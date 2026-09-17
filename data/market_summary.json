@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-09-13T11:33:07Z",
-  "as_of": "2026-09-13",
-  "source_generated_at": "2026-09-13T11:32:29Z",
+  "generated_at": "2026-09-17T11:26:13Z",
+  "as_of": "2026-09-17",
+  "source_generated_at": "2026-09-17T11:25:48Z",
   "pipeline_version": "3.4-procurement-evidence",
   "pipeline_layers": [
     {
@@ -72,117 +72,111 @@
   ],
   "layer_counts": {
     "raw": {
-      "iati_activities": 3281,
-      "iati_transactions": 70984,
-      "iati_organisations": 17782
+      "iati_activities": 3133,
+      "iati_transactions": 66007,
+      "iati_organisations": 16985
     },
     "normalized": {
-      "activities": 3281,
-      "transactions": 70984,
-      "organisations": 17782
+      "activities": 3133,
+      "transactions": 66007,
+      "organisations": 16985
     },
     "canonical": {
-      "organisation_entities": 2250,
-      "organisation_aliases": 17178,
+      "organisation_entities": 2261,
+      "organisation_aliases": 17219,
       "equipment_entities": 11,
       "manufacturer_entities": 35
     },
     "intelligence": {
-      "opportunity_scores": 3281,
-      "organisation_intelligence": 2380,
-      "programme_intelligence": 3281,
-      "donor_intelligence": 398,
-      "opportunity_organisation_resolution": 16078,
-      "procurement_manufacturer_relationships": 20,
-      "world_bank_project_metadata": 5
+      "opportunity_scores": 3133,
+      "organisation_intelligence": 2357,
+      "programme_intelligence": 3133,
+      "donor_intelligence": 371,
+      "opportunity_organisation_resolution": 15403
     },
     "commercial": {
-      "target_accounts": 2380,
-      "engagements": 2042,
-      "crm_notes": 2042,
-      "recommended_actions": 1868
+      "target_accounts": 2357,
+      "engagements": 2019,
+      "crm_notes": 2019,
+      "recommended_actions": 1755
     },
     "predictive_product": {
       "equipment_intelligence": 11,
       "product_intelligence": 48,
       "manufacturer_intelligence": 35,
-      "tender_predictions": 985,
-      "procurement_processes": 6217,
-      "procurement_releases": 6308,
-      "procurement_line_items": 3748,
-      "procurement_document_evidence": 160
+      "tender_predictions": 936
     }
   },
   "currency_note": "Amounts are source-reported nominal values and are not converted across currencies.",
   "metrics": {
-    "projects": 3281,
-    "active_projects": 2971,
+    "projects": 3133,
+    "active_projects": 2823,
     "pipeline_projects": 309,
-    "reported_budget": 78279124940.93,
-    "future_disbursement": 37163785748.6,
-    "future_budget": 43161002315.09,
-    "procurement_signal_projects": 789,
-    "high_priority_opportunities": 590,
-    "donors": 398,
+    "reported_budget": 78476623996.49,
+    "future_disbursement": 37161282787.56,
+    "future_budget": 42020641943.83,
+    "procurement_signal_projects": 765,
+    "high_priority_opportunities": 544,
+    "donors": 371,
     "equipment_categories": 11,
     "products": 48,
     "manufacturers": 35,
     "active_principals": 0,
-    "tender_predictions": 985,
-    "likely_procurement": 196,
-    "direct_equipment_projects": 661,
+    "tender_predictions": 936,
+    "likely_procurement": 170,
+    "direct_equipment_projects": 636,
     "countries": 145
   },
   "top_countries": [
     {
       "country_code": "KE",
       "country_name": "Kenya",
-      "project_count": 649
-    },
-    {
-      "country_code": "ET",
-      "country_name": "Ethiopia",
-      "project_count": 604
+      "project_count": 624
     },
     {
       "country_code": "CD",
       "country_name": "Democratic Republic of the Congo",
-      "project_count": 600
+      "project_count": 582
+    },
+    {
+      "country_code": "ET",
+      "country_name": "Ethiopia",
+      "project_count": 578
     },
     {
       "country_code": "TZ",
       "country_name": "Tanzania",
-      "project_count": 527
+      "project_count": 502
     },
     {
       "country_code": "SO",
       "country_name": "Somalia",
-      "project_count": 387
+      "project_count": 379
     },
     {
       "country_code": "UG",
       "country_name": "Uganda",
-      "project_count": 376
+      "project_count": 357
     },
     {
       "country_code": "SS",
       "country_name": "South Sudan",
-      "project_count": 303
+      "project_count": 282
     },
     {
       "country_code": "RW",
       "country_name": "Rwanda",
-      "project_count": 252
+      "project_count": 241
     },
     {
       "country_code": "NG",
       "country_name": "NG",
-      "project_count": 138
+      "project_count": 135
     },
     {
       "country_code": "GH",
       "country_name": "GH",
-      "project_count": 78
+      "project_count": 77
     }
   ],
   "plan_progress": [
@@ -216,6 +210,5 @@
       "status": "ready",
       "output": "Equipment demand, product and manufacturer intelligence, technical evidence, tender probability, horizon, and timing windows"
     }
-  ],
-  "product_intelligence_generated_at": "2026-09-16T08:27:10Z"
+  ]
 }
