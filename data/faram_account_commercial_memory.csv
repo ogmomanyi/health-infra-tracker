@@ -2,23 +2,23 @@ target_account_id,account_name,organisation_entity_id,commercial_memory_score,co
 acct_7463f1fc3f54,Gates Foundation,org_1d31aa894b28,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_0035179113d1,Republic of Korea,org_afbd2f538c3d,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_2be88f1e011f,USA CDC,org_cd9ccfa8ab70,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_6edea12409f3,World Bank - Washington D.C.,org_38fe6b5adbe6,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_15237987bd1a,Canadian UNICEF Committee,org_7fa416fa36ca,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_40de97c64252,"The Global Fund to Fight AIDS, Tuberculosis and Malaria",org_0ca5f946b33a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_6edea12409f3,World Bank - Washington D.C.,org_38fe6b5adbe6,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_9295ffafff5f,German Federal Foreign Office,org_1ffd06c941b2,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_328731bd80f3,Central Emergency Response Fund,org_9e74d9f48320,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_82acef5fd0b8,Ministry of Foreign Affairs,org_31a7d12e13fd,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_60177a058c6c,Canada,org_111fc4ad0d0c,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_1aee448186a4,European Investment Bank,org_88ebb8668fd5,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_328731bd80f3,Central Emergency Response Fund,org_9e74d9f48320,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_64bc4e05c75b,UNICEF-United Arab Emirates,org_ef2a15536328,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_352ba470f57f,KOICA,org_75e4500861ba,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_1aee448186a4,European Investment Bank,org_88ebb8668fd5,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_97a28832b26e,United Nations Office for Project Services,org_2de0bd70bdce,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_14b5fb15aee6,AFD,org_174c4423de9e,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_a140ba95ed7f,France,org_3356eb8a871e,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_ed81e9967813,"Gavi, the Vaccine Alliance",org_aa2df26069b6,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_cb6f60cb6b1f,Danish Committee for UNICEF,org_88f6c68cb639,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_5bd491d36776,Global - Water Sanitation & Hygiene,org_6e1a4e4a8d8d,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_1e66d247ed43,Ministry of Health and Welfare,org_c9e0005dc7a9,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_b138578a25a3,International Development Association,org_0ae70a066e90,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_d97883702de6,Republic of South Sudan,org_a02de78381e3,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_48163738d413,PS MINISTRY OF HEALTH ZNZ,org_1dea60f72271,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_2053a7a58eb5,PS MINISTRY OF HEALTH AND SOCIAL WELFARE MATERNAL AND CHILD,org_4bd6674aafda,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -68,7 +68,6 @@ acct_7aa93aa0b9f7,CATHOLIC RELIEF SERVICES,org_b5c5ee536db0,0,NONE,0,,,,,No hist
 acct_98273d89ffa3,REGIONAL ADMINISTRATIVE SECRETARY NJOMBE,org_1cee496295b4,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_4d0c926f978e,REGIONAL ADMINISTRATIVE SECRETARY MBEYA,org_64bf09c25a24,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_ad1d47c9e6c3,PS MINISTRY OF EDUCATION AND VOCATIONAL TRAINING ZNZ,org_a28c124eaf7e,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_3aeef1f7b51e,PATH,org_73fa80025ade,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_0a1fc9e944cb,Atlas-alliansen,org_bc913676dc7b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_c13cbaef4c31,Addis Ababa University,org_65f816fd5774,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_6aa428c0db1a,ADVENTIST DEVELOPMENT AND RELIEF AGENCY,org_02dd5418d148,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -76,7 +75,6 @@ acct_117972aacb91,TEARFUND,org_b917c0640ddf,0,NONE,0,,,,,No historical Faram pro
 acct_faec6b1fea3b,GOAL SOUTH SUDAN,org_f87bfc4dc593,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_bc0c3a44adf4,WORLD RELIEF CORPORATION OF NATIONAL ASSOCIATION OF EVANGELICALS,org_4c7da9452216,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_e35f1fe9befa,IMPACT HEALTH ORGANIZATION IHO,org_57cda58c2ea1,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_b138578a25a3,International Development Association,org_0ae70a066e90,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_ffc1e4b26a17,STATE MINISTRY OF HEALTH AWEIL,org_f3e687e5ede0,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_046a086a1300,STATE MINISTRY OF HEALTH EES,org_9f85e7139ada,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_7bd2edd6141f,STATE MINISTRY OF HEALTH LAKES,org_f4395b290b4b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -105,7 +103,6 @@ acct_e306f1ee07c6,MINISTRY OF HEALTH,org_b7fc802a0a04,0,NONE,0,,,,,No historical
 acct_ddc379dc761d,African Development Bank,org_f5b57cfc621b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_c06d0916d311,The Pandemic Fund,org_5d22ba82a83c,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_3a26182408f7,Cordaid Global Office,org_17e940f7dd7d,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_84b8ef5fa21c,Sasakawa Health Foundation,org_1c758e660940,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_322821fa8154,UNITED NETWORKS FOR HEALTH,org_3f5c8855aa7e,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_1e1a586dfc27,STATE MINISTRY OF HEALTH CES,org_0ab0e3972311,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_543ff556faf1,AGENCY FOR CHILD RELIEF AID,org_32a0e7f632ae,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -134,6 +131,7 @@ acct_a9d8c9b95420,Somalia,org_964002c49673,0,NONE,0,,,,,No historical Faram prod
 acct_2751a8f9ec94,MINISTRY OF HEALTH SOUTH WEST STATE SOMALIA,org_9519d1e35b5e,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_1fb0945e10f5,MUNICIPALITY OF MOGADISHU MOM BENAADIR REGIONAL ADMINISTRATION,org_53a53babc78f,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_89f8032218b4,MINISTRY OF HEALTH AND SOCIAL CARE HIRSHABELLE STATE OF SOMALIA,org_b560c2233d4a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_6d959ae9774e,United Republic of Tanzania,org_72eefd18b86c,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_d5ec058dcf3c,Global - Education,org_e12d10d93d38,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_f9d15f942e0d,AMHARA DEVELOPMENT ASSOCIATION,org_9735af6a71d3,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_0dfa2c582991,MOTHERS AND CHILDREN MULTISECTORAL DEVELOPMENT ORGANIZATION,org_d51b37d038d2,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -144,11 +142,8 @@ acct_40a4fe535dcf,NATIONAL BUREAU OF STATISTICS,org_3df27e00e3c8,0,NONE,0,,,,,No
 acct_af4178a10139,MUHIMBILI UNIVERSITY OF HEALTH AND ALLIED SCIENCES,org_1d408c880f2b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_bad73dbd6ec5,PS MINISTRY OF HEALTH COMMUNITY DEVELOPMENT GENDER ELDERLY AND,org_e532498ae31c,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_a6861ceda430,MINISTRY OF COMMUNITY DEV GENDER ELDERS AND CHILDREN,org_3c1d218513d7,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_3aeef1f7b51e,PATH,org_73fa80025ade,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_05c6430c6a62,Invest International B.V.,org_98bf1bf742d9,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_a02adc5fac36,Pandemic Fund,org_fb45fe817563,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_4108178f6031,WHO Contingency Fund for Emergencies,org_6c28ffbb094a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_1849dba93430,"Federal Ministry for Economic Cooperation and Development (BMZ), Germany",org_5bad56b5a738,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_07b86bbf8282,Carter Center,org_0f4f45afeeac,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_72557d616e9d,ACTION AFRICA HELP INTERNATIONAL,org_b73e7b3d9e85,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_bd5abdf76bc3,SUPPORT FOR PEACE AND EDUCATION DEVELOPMENT PROGRAM SPEDP,org_94ef9891d30b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_9133aa88a1c9,STICHTING HEALTHNET TRANSCULTURAL PSYCHOSOCIAL ORGANIZATION,org_22361e02a8c3,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -187,7 +182,6 @@ acct_aec3352a0970,CATHOLIC MEDICAL MISSION BOARD INC,org_24893dc9f973,0,NONE,0,,
 acct_0d157d895ee9,Iceland,org_820b189891ff,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_a191e95ac263,Deutsche Gesellschaft für Internationale Zusammenarbeit (GIZ) GmbH,org_58db937a32bd,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_cd60cf06d94b,Oxfam Quebec,org_b674258c90fd,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_6d959ae9774e,United Republic of Tanzania,org_72eefd18b86c,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_71b4a6818caf,REGIONAL ADMINISTRATIVE SECRETARY DAR ES SALAAM,org_7fa2e3536034,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_45a4fdf2714e,BENJAMIN WILLIAM MKAPA FOUNDATION,org_e735edc59a06,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_8558812c6e9e,REGIONAL ADMINISTRATIVE SECRETARY TABORA,org_bb588467f0ad,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -207,10 +201,6 @@ acct_1d0e66b872f5,D TREE INTERNATIONAL,org_c9d45efcc939,0,NONE,0,,,,,No historic
 acct_aab1a6c0786d,INTERCHURCH MEDICAL ASSISTANCE INC,org_0b57822dc8f7,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_81cd98870829,REGIONAL ADMINISTRATIVE SECRETARY IRINGA,org_dac65b09c0c6,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_dced49339927,eHealth Africa,org_4969935b4c45,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_da3086edb61c,"Department of Foreign Affairs, Trade and Development (DFATD), Canada",org_3e53bd108b74,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_c5d169d51f6e,"Ministry of Foreign Affairs, Japan",org_6e82a910dbce,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_892528dba50f,Gates Philanthropy Partners,org_914043e26151,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_955508462fe0,Mohamed bin Zayed Foundation for Humanity,org_99d2a5458aa2,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_9dcf0ed409e8,University of Birmingham,org_12729e2ab71c,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_92c0b1f4c21b,Special Relief Funds,org_4469c4bae0f8,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_d575704256db,"Ministry of Finance, Planning and Economic Development of the Republic of Uganda",org_302bff85b483,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -250,14 +240,15 @@ acct_1274fee1ccc1,University of Warwick,org_b2c303562a54,0,NONE,0,,,,,No histori
 acct_4921c9aca785,University of California San Francisco,org_fd74b04cc1a8,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_64221f1eab13,University of Gondar,org_023c7258dc2e,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_5fb72a905894,Norges Blindeforbund,org_52e744cd9a93,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_eea0a9bec6ec,Rotary International,org_1288c5f3250f,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_ff3f371e98a0,FONDATION PIERRE FABRE,org_4478b44bbada,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_4e70db82187f,"DEPARTMENT FOR SCIENCE, INNOVATION AND TECHNOLOGY",org_0a5b88d26636,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_20badbcdff7d,William and Flora Hewlett Foundation,org_312bafac3130,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_e306f1ee07c6,Ministry of Health,org_b7fc802a0a04,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_5e6e7c9f9128,Republic of Kenya,org_d32834d72ccf,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_eb4713885a15,PUNTLAND AIDS COMMISSION,org_37f83f232c3b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_6449c3414a0d,PHYSICIANS ACROSS CONTINENT,org_7fbcc6147714,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_1206f36f626a,SOUTH CENTRAL SOMALIA AIDS COMMISION,org_919c28e6a34a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_6d959ae9774e,United Republic of Tanzania,org_72eefd18b86c,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_3faccb5e0872,YAMBIO COUNTY HEALTH DEPARTMENT,org_1b88c7c4b1a2,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_83630b421884,Malta,org_93da36c7dc57,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_a19622c6be68,ETHIOPIAN PHARMACEUTICALS SUPPLY SERVICE,org_9ad692b80f5b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -296,7 +287,6 @@ acct_e306f1ee07c6,Ministry of Health,org_b7fc802a0a04,0,NONE,0,,,,,No historical
 acct_1fc8a9976ce8,Islamic Relief Canada,org_3685bf5e9107,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_a08dea0b9e52,The Rotary Foundation of Rotary International,org_c85997e8a5fe,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_8a476fc4b45b,"Ministry of Finance Tanzania,",org_b8ac1027cae0,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_515c8a89a449,"Ministry for Europe and Foreign Affairs (MEAE), France",org_d15020569b4a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_e9971b4edaf7,UNDP South Sudan,org_21457108e7c2,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_d0cefebc1f3f,MUFINDI DISTRICT COUNCIL,org_d63b9f7058c5,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_f0d2772c1f6c,MAKETE DISTRICT COUNCIL,org_0fe2df0005e6,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -320,8 +310,8 @@ acct_59cd7fbdda70,University of Washington Foundation,org_76af77f490d2,0,NONE,0,
 acct_5d31667baecc,University of Ibadan,org_82cb296b16ca,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_39b39e0ed2b8,Bayero University,org_5f808cc7c81f,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_f5c8609ceda3,University of SaskatchewanTreasury Department,org_862b8f9fa859,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_c908941d80a0,"Ministry of Foreign Affairs, Monaco",org_d8d9709b6ce6,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_dd513e064016,BlueSquare,org_4e176e3a3b71,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_07b86bbf8282,The Carter Center,org_0f4f45afeeac,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_97aa435e5242,AGENCE FRANCAISE DE DEVELOPPEMENT,org_25974ab71dea,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_2a6f9b389e95,Uganda Society for Health Scientists,org_4d2c506cbe3d,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_b31cd2c67c76,Centre for Affordable Water and Sanitation Technology,org_0c010c79e58c,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -329,7 +319,10 @@ acct_7b81225c50bd,University of Virginia,org_96ff62c4249c,0,NONE,0,,,,,No histor
 acct_f2714b004d72,Maisha Meds,org_dd58afd9961a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_a30531133e4d,African Institute for Development Policy,org_1a379a726364,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_bf0e83eafdbd,Center for Rapid Evidence Synthesis,org_d7dc4e8b85ea,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_90b031750468,"King Salman Humanitarian Aid & Relief Center, KSrelief",org_480b2375c3e1,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_eea0a9bec6ec,Rotary International,org_1288c5f3250f,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_31ce246790e8,Biosurv International Ltd,org_63036c312d2f,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_7ed31517d661,Norwegian Agency for Development Cooperation (NORAD),org_d5bd9b6eaffa,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_fcca8e40c1d0,Jhpiego Corporation,org_6ac0a5e16614,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_215b1e7a69c2,The Governing Council of the University of Toronto,org_c30d0425c0df,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_5807c803917f,KOIS Advisory,org_087add724fe6,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -359,10 +352,10 @@ acct_518522e9c546,RELIEF INTERNATIONAL,org_7f229679554a,0,NONE,0,,,,,No historic
 acct_6a282a680b9e,LVCT Health,org_1d4e3d8698e4,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_a0a5dfb20229,Première Urgence Internationale,org_402c92a77e1c,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_4c076e319355,Wits Health Consortium (Pty) Ltd,org_0462e5598faf,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_d6290615f3e3,Novo Nordisk Foundation,org_403853a4b232,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_a46b70053b2e,HEALTH LINK SOUTH SUDAN,org_5f5c9d4ce347,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_48735b2c0072,Global - Health,org_787479b35a2f,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_995aa0b135ee,Ireland,org_1c46b1866a93,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_f94207e95243,Sanofi-Aventis,org_d6e63dc6e93f,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_121f93923ccc,Ethiopia,org_69e960ed136a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_9ef78d42561f,Consolidated Funds from NatComs,org_afc19e70be13,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_9f74dffe3a22,UNIVERISTY OF RWANDA HOLDINGS GROUP LTD,org_69eef5a47b25,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -399,7 +392,6 @@ acct_a0a5dfb20229,Première Urgence Internationale,org_402c92a77e1c,0,NONE,0,,,,
 acct_33a1ee44bc05,WORLD VISION INTERNATIONAL,org_ab3aa9c2fd63,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_dcb29d009619,EU-Commission of the European Communities,org_92266702d717,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_0a850a1455b0,RURAL AGENCY FOR COMMUNITY DEVELOPMENT AND ASSISTANCE,org_f97f424ad493,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_1a03bf5ff5b0,UNOCHA,org_89136f8179ea,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_ed81e9967813,GAVI The Vaccine Alliance,org_aa2df26069b6,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_72ace4dcbaa9,WORLD VISION KENYA,org_d35b010bd40e,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_db40467f8446,MINISTRY OF HEALTH SERVICE AND SANITATION TURKANA COUNTY,org_3ee863d0f30f,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -408,6 +400,7 @@ acct_4a6613767d3c,"University of California, Los Angeles",org_9ed5deed5f74,0,NON
 acct_08415547faa2,Norway - Ministry of Foreign Affairs,org_8f881fd1d47b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_2032b7b5b03e,Resolve to Save Lives,org_de68a6d37408,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_85c12095ab37,Institute of Tropical Medicine,org_c2c1dd5c7b33,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_1a03bf5ff5b0,UNOCHA,org_89136f8179ea,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_e0f4f1e2c7f0,Ags Worldwide Movers Ltd,org_d37492649c8a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_045115161709,Astral Aerial Solutions,org_d1d5a4e48702,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_94ade5e7cc09,Techforce Projects B.V.,org_b069c22835f7,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -429,7 +422,6 @@ acct_e6d7f820a3e3,GRID3 Inc,org_112787e8c4b6,0,NONE,0,,,,,No historical Faram pr
 acct_98d1f3819269,NFU - Norsk Forbund for Utviklingshemmede,org_f5e76a7a93dd,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_437a37b60f51,"- Ministère de la Santé Publique, hygiène et prévention",org_846fb41d7aed,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_138bc3afa993,Nutrition International,org_927ede3ef886,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_cda006fb529b,UNAIDS - Joint UN Programme,org_cd2a37e07b0b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_d4b30e01efe7,MINISTRY OF HEALTH SAMBURU COUNTY,org_a2a4dfb9aa55,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_af08646f4ef6,MINISTRY OF HEALTH MANDERA COUNTY GOVERNMENT,org_8219c1621281,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_515da9765b81,DEPARTMENT OF HEALTH TANA RIVER COUNTY,org_41baf85e6146,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -439,13 +431,12 @@ acct_cf16b40747ab,RBC RWANDA BIOMEDICAL CENTER,org_45505f7316cd,0,NONE,0,,,,,No 
 acct_59b0cb8e61a3,NATIONAL CHILD DEVELOPMENT AGENCY TUBARERE MUMURYANGO PROGRAMME,org_3d2c9c3cf59d,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_9ebe2cc74039,KENYA NATIONAL BUREAU OF STATISTICS,org_2ce329544d3b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_7dca00ee3b2f,COUNCIL OF GOVERNORS,org_900d6ddd0d61,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_2dc36c583718,"Gilead Sciences, Inc.",org_fc65fad47401,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_63b7a6668a2c,South Sudan,org_bdd5ceaea466,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_6b6ad7984256,ACTION OF THE FUTURE,org_16afe6ac44e9,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_e306f1ee07c6,Ministry of Health,org_b7fc802a0a04,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_d97883702de6,Republic of South Sudan,org_a02de78381e3,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_325273ab457b,"University of Maryland, Baltimore",org_97fd3e0570c8,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_05f785a2ad9a,GSK plc,org_dbd44629ef64,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_84b8ef5fa21c,Sasakawa Health Foundation,org_1c758e660940,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_cda006fb529b,UNAIDS - Joint UN Programme,org_cd2a37e07b0b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_40e92fb12340,CHRISTIAN MISSION AID,org_23ec5ae3748b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_048eb46af2f3,ACTIONS POUR LA REHABILITATION ET LA PROMOTION SOCIALE,org_b182fa5dd717,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_9b5ec60ef593,SOCIAL DEVELOPMENT CENTER,org_7271cd6eeb5b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -461,14 +452,11 @@ acct_9a741f2f0b85,CARITAS DEVELOPPEMENT DU DIOCESE DE BUNIA,org_7dc30ee81da4,0,N
 acct_a83e7e1a6479,DIVISION PROVINCILAE EPSP KASAI CENTRAL EX DIVISION PROV EPSP KASAI OCC,org_2350a40f06cc,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_11a2fd3e53e2,Nordic Development Fund,org_07e2cff35719,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_47cfbfcc39e0,The Aids Support Organisation (TASO) Uganda Limited,org_2a8e6a9a1361,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_38d20954f0d3,Fundaci?n Anesvad,org_5306c09d2ace,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_7bfc3b23dd87,Hilfsaktion Noma e.V.,org_78180b1fa474,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_c43a4995b5d5,Rwanda Biomedical Center,org_b4dde9cfbc0d,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_b2407818c19d,MINISTRY OF FINANCE AND ECONOMIC PLANNING,org_60389eead3e0,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_fb5cde867ae3,United Kingdom Committee for UNICEF,org_31fbf2ee12b2,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_53a72b242c56,"Foreign, Commonwealth & Development Office (FCDO), United Kingdom",org_31e3ec9820c7,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_9df31d3a8ed4,DIVISION PROVINCIALE DU GENRE ET DE LA FAMILLE EQUATEUR,org_44cbb198beb9,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_1ede24e838ce,World Health Organization,org_906aee231f3a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_98dd49b15b0c,German Committee for UNICEF,org_67e57e50dec1,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_5468dda1f9d8,WHO Foundation,org_afb08b12140b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_fd0fb52a3305,Energy Sector Management Assistance Program Multi Donor Fund - Successor to TF071398,org_afaccd6cce5f,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_73f82d8b9044,Green Climate Fund (GCF) - Cooling Facility Trust Fund,org_f5b455bfece0,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_1f62762e76ee,Norwegian Committee for UNICEF,org_a04f7438d2d4,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -483,16 +471,17 @@ acct_b06cf6f32777,Public Health and Sanitation- County Government of Kisumu,org_
 acct_1f48ff2e2bb6,St. Mary's Hospital Lacor,org_923603b93d41,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_a82b4284c8ee,University of Pretoria,org_03f496019ac8,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_c3e3b3be111c,China,org_44a85b3211b9,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_aa55a5041afc,United Nations Multi-Partner Trust Fund Office (MPTFO),org_ab490ed6ff9a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_1f858ab556ae,SCIENCE AND TECHNOLOGY FACILITIES COUNCIL,org_b19bc4b9dff6,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_40a4fe535dcf,NATIONAL BUREAU OF STATISTICS,org_3df27e00e3c8,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_ed81e9967813,"Gavi, the Vaccine Alliance",org_aa2df26069b6,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_190bc3a0c1ed,Country - Survive & Thrive,org_e646007bf514,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_9cad3329678d,Slovak Committee for UNICEF,org_6846966737c9,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_e8da388bd0c2,Federal Ministry of Health,org_04a1601bc83c,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_7490279c6869,Federal Ministry of Finance,org_39c1b206b1f4,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_f1d486528a9e,International Organization for Migration,org_3ac48966b591,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_7ed31517d661,Norway,org_d5bd9b6eaffa,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_9dcac60f5878,United Arab Emirates,org_5fc2867663a4,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_e02f14ebf085,European Commission / ECHO,org_2c4d41679def,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_23c49057ff5a,Global Financing Facility for Womencomma Children and Adolescents Multi-Donor Trust Fund,org_96632dee2df1,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_8d1a74569b77,GiveWell,org_04a64e63360b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_419d239f26cb,Catalan Agency for Development,org_4a9a757ebf61,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_e9f7607887eb,World Bank Trust Funds,org_d7467a19807d,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_ae0eadec6775,MINISTRY OF FINANCE AND PLANNING,org_2311ee0131b6,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -501,11 +490,12 @@ acct_4b0f9f9ae888,Federal Ministry of Health of the Federal Democratic Republic 
 acct_d63fa8aa4963,MINISTERE DE LA SANTE PNLS,org_e66f5c1e7c29,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_8aacccb99fc9,PROGRAMME NATIONAL DE SANTE DES ADOLESCENTS PNSA KINSHASA,org_7827d97e7c4a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_50d822c13046,MINISTERE DE LA SANTE PUBLIQUE,org_c161fa3379a6,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_4a46a77c872f,UNICEF,org_10d2303f236a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_5ab084be93cc,Oxfam Novib,org_6c2376b6031f,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_5a4c030c129e,Global - Thematic Humanitarian Resp,org_feb359fc4dce,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_e02f14ebf085,European Commission / ECHO,org_2c4d41679def,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_98900eaccc90,University of North Carolina at Chapel Hill,org_7d60a7d47348,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_4e711c4bcc9d,J.C. Flowers Foundation,org_a498844d5075,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_4a46a77c872f,UNICEF,org_10d2303f236a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_a5a3c7736387,The Susan Thompson Buffett Foundati,org_5895e0d97c2a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_3650dd278c08,Merck Sharp & Dohme Corp,org_4332b92a3578,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_94deb07aed32,DIVISION PROV PLAN KATANGA,org_ccfed3e7b2f0,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -523,7 +513,6 @@ acct_3020347303af,London School of Hygiene & Tropical Medicine,org_2084c1c898dd,
 acct_d6a3a9068229,Health Research Operations Kenya Limited,org_631da657d706,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_98398a5ae302,INFECTIOUS DISEASES INSTITUTE,org_8ae9ad31e503,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_dd90c59e4e68,Malaria Partners International,org_199567bdb918,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_4e70db82187f,"DEPARTMENT FOR SCIENCE, INNOVATION AND TECHNOLOGY",org_0a5b88d26636,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_02390181364a,Malaria Consortium US Inc,org_79620da9f812,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_7aff9bd93675,TANZANIA INTERFAITH PARTNERSHIP TIP,org_dd6cea7f533b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_f8b775e2ee2b,Bureau for Humanitarian Assistance,org_d519f4b3c443,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -534,8 +523,8 @@ acct_dd023a72fd6c,CHANCE FOR CHILDHOOD CFC,org_f8a30ff56dbf,0,NONE,0,,,,,No hist
 acct_0873cec6ea59,Africa Nordic Development Fund (NDF) Climate Change Program Parallel Trust Fund of TF071810,org_6c7fdbeb260f,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_e916b8ffd294,Malawi-Liverpool Wellcome Programme,org_92fa1dbbc5b4,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_63829e8dc523,SOLIDARITES INTERNATIONAL,org_4bf58d4693fb,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_203a71a8cdec,UNIVERSITY COLLEGE LONDON,org_0b8166f09a3b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_c6d920341016,Global - HIV and AIDS,org_aa16e0a2122a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_b295157864bd,UNITAID,org_92308f73aeac,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_119cdcdce547,ADDIS ABABA CITY ADMINISTRATION FINANCE ECONOMIC DEVELOPMENT BUREAU,org_c960608c72f2,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_fa381b057f08,ACTION FOR INTEGRATED SUSTAINABLE DEVELOPMENT ASSOCIATION,org_b502bccc8a10,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_d52b1142f319,UNTFHS - UN Trust Fund for,org_fc4444c3019e,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -550,7 +539,6 @@ acct_a204ba97755d,SOMALI BUREAU OF AGRICULTURE,org_fe02b1dca2c7,0,NONE,0,,,,,No 
 acct_7a3442f62df5,Australian Centre for International Agricultural Research,org_d46d133dcdf4,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_0cd184b483a2,"HumanTruths, Inc.",org_f44c15bd1de0,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_9ede789d90b3,Makerere University,org_6df9b2522652,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_7933c1f504f7,London School of Hygiene and Tropical Medicine,org_a3c56bc3164e,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_59e17beffcd2,Japan - Ministry of Finance,org_112106da2972,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_e78c35f47b25,INTERNATIONAL RESCUE COMMITTEE,org_8748a1c549bc,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_ed21b3031a7f,SAVE THE CHILDREN UK KENYA,org_9443b925f8cb,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -562,7 +550,6 @@ acct_7b4bc5463d3b,National Institute for Health and Care Research (NIHR),org_653
 acct_c88d9b862343,ETHIOPIAN CATHOLIC CHURCH SOCIAL AND DEVELOPMENT COMMISSION,org_96e4aed65ab2,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_2211a8d32323,Japanese Social Development Fund (JSDF) - Parallel to TF023779,org_211bff12826d,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_643df56e5df8,Ministry of Finance Planning and Economic Development of Uganda,org_b8095bae1525,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_c3cc797d1dd7,"Ministry of Foreign Affairs, Ireland",org_b72c32b9bd07,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_d18ddd4d62e7,DIV PROV A LA CONDIFFA KATANGA,org_79fe3feea10c,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_7bb77e20cb45,SECRETARIAT GENERAL A LA COMMUNICATION ET MEDIAS,org_f734f1e1515e,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_317c0b0a59be,DIVISION PROV COMMUNICATION ET MEDIAS MANIEMA,org_2e6c4f514623,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -608,8 +595,11 @@ acct_76c71911e02a,Stichting PharmAccess International,org_dce9555b3075,0,NONE,0,
 acct_92930b365e0a,One-off donations PSFR,org_235073f9fd4c,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_7323897c3e39,Malaria Consortium,org_8115a4cf873d,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_517cfbb82333,COUNTY GOVERNMENT OF MARSABIT DEPARTMENT OF HEALTH SERVICES,org_1b8c6d4e0012,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_7933c1f504f7,London School of Hygiene and Tropical Medicine,org_a3c56bc3164e,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_93629a7f0fcc,CDC Foundation,org_b2c345b043cd,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_b0d359d4ac72,Stiftung der Deutschen Lions,org_3a106371fddc,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_2d270cde5107,Nexus Ethiopia,org_c8e5cc01208d,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_1ede24e838ce,World Health Organization,org_906aee231f3a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_32122db83066,Medic Mobile Inc.,org_d9f0ab0e52d1,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_5ab084be93cc,Oxfam Novib,org_6c2376b6031f,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_e0f4e9a1c62a,COLLECTIF DES ASSOCIATIONS FEMININES,org_bca1d4031a29,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -618,7 +608,6 @@ acct_a06640f07560,Netherlands Committee for UNICEF,org_7c2147904355,0,NONE,0,,,,
 acct_6fce9bf1f3a1,COUNTY GOVERNMENT OF GARISSA,org_e5cde66eb885,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_81ba760f3e32,MINISTRY OF LABOUR SOCIAL SECURITY AND SERVICES,org_4144b0d8cd36,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_5f19791a0373,University,org_1c680f5552cf,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_0d023df1a094,AMREF Health Africa,org_eb571fae3b24,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_a7f3559a215b,RWANDA INTERFAITH COUNCIL ON HEALTH RICH,org_5530bb91a620,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_cbd0e1198c93,PS SECOND VICE PRESIDENT S OFFICE ZANZIBAR DISASTER MANAGEMENT OFFICE,org_be11fa55b1f1,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_7201a08e4abc,INTER RELIGIOUS COUNCIL OF KENYA,org_c9e18e9dea8b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -633,6 +622,8 @@ acct_45f9ccc4af46,The Chartered Institute of Procurement and Supply,org_f5973654
 acct_b590d3bdec45,European Commission/EC,org_ad2a79e69f64,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_9b93e0ea5ea0,MINISTRY OF LABOR SOCIAL SECURITY AND SERVICES DEPT OF CHILDREN SERVICES,org_125c19559dba,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_83e39f51c4a6,TURKANA COUNTY ASSEMBLY,org_69ff24d03f8e,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_92919f096db2,Ministry in charge of Emergency Management (MINEMA),org_4370366bd96f,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_513716e4e192,Republic of Rwanda,org_78db3e0524b8,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_00da15d4f384,King Salman Humanitarian Aid and Relief Centre,org_b8a3fd29f053,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_b33ff7ca66da,Canada,org_8b4dad7cea2d,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_709edd2e7c1a,National Institute for Health and Care Research,org_e1064810350d,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -641,13 +632,11 @@ acct_a140ba95ed7f,France,org_3356eb8a871e,0,NONE,0,,,,,No historical Faram produ
 acct_9dbe04816122,UYISENGA NI IMANZI,org_56e3f254b598,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_d10a95ea27ee,Europäische Union (EU),org_03132fc10c8e,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_9e0abc1ad1c9,Manchester Metropolitan University,org_001bfcc9c8ea,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_2c8a35fb23d0,UNFPA - UN Population Fund,org_dd01d271b88a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_ce2ffa651a34,World Health Organization,org_03f184fc4d50,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_e41880caf00c,DEPARTMENT OF CHILDRENS SERVICES KISUMU,org_78ee58702cd1,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_1d629e4b1d9e,MEDICAL RESEARCH COUNCIL,org_6e7b480ab466,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_a92bd1a8093f,Children's Investment Fund Foundation (UK),org_782c48f1f726,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_2c8a35fb23d0,UNFPA - UN Population Fund,org_dd01d271b88a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_ab815e2f90e3,MINISTRY OF SOCIAL DEVELOPMENT NBEG,org_7d2261f6e8ea,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_51e644db3d3b,Democratic Republic of the Congo,org_db16edc19982,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_e067f74575a1,Johns Hopkins University Bloomberg School of Public Health,org_04ebe06a6429,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_24ca5141a191,Hong Kong Committee for UNICEF,org_621f5f43b3e1,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_e9555ebb253b,Field Intelligence Inc,org_d5c342fd024a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -666,12 +655,13 @@ acct_432578960023,Federal Democratic Republic of Ethiopia,org_c2c424a07419,0,NON
 acct_02085ea34118,CENTRE D APPUI A LA PROMOTION NUTRITIONNELLE,org_15c14c18d686,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_f0cf8c0eafc6,SANTE PLUS ASBL,org_1b578c5591ac,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_9498bf2c65c7,Sweden,org_43c9dae7d836,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_4ddf587d941d,EXPERTISE FRANCE AFETI,org_46755487b29c,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_44b87cf6f328,UGANDA RED CROSS SOCIETY,org_11592fb7674d,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_04aeec04de72,KENYA PRIVATE SECTOR ALLIANCE FOUNDATION,org_68c252a791db,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_f2217d5af0db,"Deutsche Gesellschaft f?r Internationale Zusammenarbeit (GIZ), Germany",org_2eae16b3d65e,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_a1ba89318572,MRC/UVRI & LSHTM Uganda Research Unit,org_0a6523c23d96,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_0121cfc5b6cc,University of Glasgow,org_aade22f8ac33,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_d4235a883b0c,UN Joint Programme,org_151e2e7760da,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_a02adc5fac36,Pandemic Fund,org_fb45fe817563,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_fff4c7c44d75,Boston College,org_cba09f51aaf6,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_4f6747e4dc8e,SAVE THE CHILDREN UK DRC,org_d80f49350687,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_abd54b284f3f,The AIDS Support Organisation (Uganda) Limited,org_29f6764e5f1f,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -697,6 +687,7 @@ acct_657e7c40b6ab,ALIMA ALLIANCE POUR ACTION MEDICALE INTERNATIONALE,org_5694566
 acct_f2293b85faf1,DIRECTION SURVEILLANCE EPIDEMIOLOGIQUE,org_491023d41559,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_943aea35c8eb,Innovation Norway,org_f0e8053c08f2,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_72c0be0f83f2,Temple University - Of The Commonwealth System of Higher Education,org_62b82d39435e,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_87bf30869a18,Federal Ministry for Economic Cooperation and Development (BMZ),org_9f9a39a5a240,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_ffd8fd40e63d,Keele University,org_132fb32a9d6a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_e78c35f47b25,INTERNATIONAL RESCUE COMMITTEE,org_8748a1c549bc,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_940570e26dac,PNAM PROGRAMME NATIONAL D APPROV MEDICAMENTS ESSENTIELS,org_31cec221ed85,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -710,10 +701,9 @@ acct_2b1c5f69fd96,ASSISTANCE AUX ENFANTS ABANDONNES ET ORPHELINS CENTRES NUTRITI
 acct_e178d50f90eb,PROSANA MINAGRI,org_ad2451689c29,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_a3f7d01deefd,ENTREAIDE MULTISECTORIELLE POUR LA SURVIE ET LE DEVELOPPEMENT EN RDC,org_6014c500cd74,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_3d774e9a769b,DIVISION PROVINCIALE DU DEVELOPPEMENT RURAL TANGANYIKA,org_53c0fdf72733,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_87bf30869a18,Federal Ministry for Economic Cooperation and Development (BMZ),org_9f9a39a5a240,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_247829e50c98,MINISTRY OF WATER AND ENVIRONMENT HOMA BAY,org_9aff539fe058,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_b4598de501d7,WASH ALLIANCE SOCIETY OF KENYA,org_2a6a69d5a021,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_31a1357aafe5,"Ministry of Foreign Affairs, Greece",org_1cc423d9ddba,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_0d023df1a094,AMREF Health Africa,org_eb571fae3b24,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_b9911df6414e,International Organisation for Migration (IOM),org_cff537c0a327,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_590eaa4d7911,Primary Health Care Transformation Trust Fund,org_2e14222a2144,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_6b85c4370271,PROG NATIONAL MULTI SECTORIEL DE LUTTE CONTRE LE SIDA,org_7f8a26348bf8,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -730,7 +720,7 @@ acct_ffd084418d4c,PROVINCE EDUCATIONNELLE ITURI3,org_bc9d1936ccdd,0,NONE,0,,,,,N
 acct_02edce55a6f8,PROVINCE EDUC EPST KINSHASA PLATEAU,org_e9717dded3b2,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_3048cc7f7f17,HELP A CHILD,org_681566346f53,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_6f80db1306f2,STREET CHILD,org_06289b25de8c,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_b66cf3a309d6,University of Geneva,org_1c4ab910232c,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_6d1738e941be,Clinton Health Access Initiative,org_7a27e999ef54,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_27df5abd22e1,Multi-Donor Trust Fund for the Global Financing Facility (GFF) in Support of Every Woman Every Child,org_a567ffce84ff,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_8b982f334655,ABYEI COMMUNITY ACTION FOR DEVELOPMENT,org_cb1581520283,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_76b0529d2bed,CARITAS SOUTH SUDAN,org_5f06f03021dc,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -791,7 +781,6 @@ acct_33ad63842970,SERVANTS HEART SOUTH SUDAN,org_64aed36f9b33,0,NONE,0,,,,,No hi
 acct_774adf1702aa,MOBILE HUMANITARIAN AGENCY,org_2c152c283c46,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_898dae187e9d,CONFIDENT WOMEN NETWORK,org_4cf9e989cc74,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_83315de31d3e,Norwegian Government,org_b6f5a1117bc7,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_6d1738e941be,Clinton Health Access Initiative,org_7a27e999ef54,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_7def36886e90,VILLAGE D ESPOIR,org_0b4643dbcab7,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_08b4a0c8a9ca,INS KATANGA STATISTIQUE LUBUMBASHI,org_f1fa5be5b35e,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_0455587cdfa6,UNICEF-Rwanda,org_01e7ac0f553f,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -861,6 +850,7 @@ acct_a08cf6dec07c,SIIQQEE WOMENS DEVELOPMENT ASSOCIATION,org_e0295a5fb291,0,NONE
 acct_d3c92ee6baa4,AFAR COMMUNITY INITIATIVE SUSTAINABLE DEVELOPMENT,org_be7a211f8a17,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_c9c8a6b54b10,TERRE DES HOMMES FOUNDATION,org_95e8c68eda27,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_04f34a058ab3,TURKANA DEPARTMENT OF EDUCATION SPORTS AND SOCIAL PROTECTION,org_9133f9fb2266,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_ea3dac228079,"Université, institut d'education et autre institution d'enseignement, institut de recherche ou groupe de réflexion",org_7eecdb46db9c,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_7ec24ddea944,ALIGHT,org_c414b66e6ced,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_8cd6ff5f9eb4,GALMUDUG SUN SECRETARIAT,org_6192f9be23de,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_2730f3d52f9d,Stichting Task Force Health Care,org_c2babf898397,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -880,8 +870,8 @@ acct_13398c6b9502,VillageReach,org_c29c5dc85213,0,NONE,0,,,,,No historical Faram
 acct_5cf59345a65e,OROMIA REGION WATER RESOURCE BUREAU,org_57d1ea5d6a4c,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_a847f74aff68,ETHIOPIAN HEALTH INSURANCE AGENCY,org_32125a6af66d,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_ef0d45bea4d2,Rods&Cones Sales B.V.,org_b7cc38719275,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_ea3dac228079,"Université, institut d'education et autre institution d'enseignement, institut de recherche ou groupe de réflexion",org_7eecdb46db9c,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_369487edc505,"ICF Incorporated, L.L.C.",org_9eca44ef099f,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_0407709eb7be,Welthungerhilfe,org_4680785ef2c7,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_7bd8581a57fa,DEPT OF ENVIRONMENTAL HEALTH,org_b44a0de2b177,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_8ea4271d6c17,"DEPARTMENT OF CHILDREN SERVICES, WEST POKOT",org_3e3f930ddb62,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_e214a0797f35,COUNTY DEPARTMENT OF HEALTH SERVICES TAITA TAVETA,org_4da88f97bc3c,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -891,6 +881,7 @@ acct_eb7ca32e497e,PALLISA DISTRICT LOCAL GOVERNMENT,org_014eb6359557,0,NONE,0,,,
 acct_96871493718f,NAMAYINGO DISTRICT LOCAL GOVERNMENT,org_9fbb069941a3,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_7d12afda2579,MASAKA CITY,org_d1a15a0f1912,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_d468954691d1,South African Medical Research Council,org_29934e9377c9,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_8d1a74569b77,GiveWell,org_04a64e63360b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_3750198b72bd,TIGRAY COMMISSION OF DISASTER AND RISK MANAGEMENT,org_68b2a4e49a05,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_c2245316efc9,B GUMUZ DISASTER RISK AND MANAGEMENT OFFICE,org_4cf85005900e,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_efd6ad35db32,AFAR REGIONAL DISASTER PREVENTION FOOD SECURITY AND PROGRAMME COORDINATION,org_686278673783,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -905,7 +896,6 @@ acct_79d54fefd7e8,ETHIOPIAN PUBLIC HEALTH ASSOCIATION,org_48c6dd7bca07,0,NONE,0,
 acct_5f20797ae76c,CENTRAL ETHIOPIA REGIONAL STATE DRMC,org_4299ba571223,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_47dc562f3944,SERS DRMC,org_d106c636e282,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_ce5b4718984b,UNIVERSITA DELLA SVIZZERA ITALIANA,org_777b547ddd26,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_4ddf587d941d,EXPERTISE FRANCE AFETI,org_46755487b29c,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_b7f389d5bd76,UNICEF-Saudi Arabia,org_4d5d6d241526,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_306da65e8e5f,FINN CHURCH AID KIRKON ULKOMAANAPU SR,org_4e3d6bbcaa69,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_1cb2e78d6838,MINISTRY OF EDUCATION,org_888dac064567,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -966,8 +956,6 @@ acct_ef01c535da7b,ACTION POUR LE DEVELOPPEMENT DU PEUPLE ADEPE,org_7ea02b08c5a6,
 acct_7d3a992f2460,MOROTO DISTRICT LOCAL GOVERNMENT,org_43b5dbe7a66e,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_7e6930faa9dc,KOTIDO DISTRICT LOCAL GOVERNMENT,org_de9d9e0d0ced,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_eed9a4a1b190,KAABONG DISTRICT UNICEF ACCOUNT,org_a6d7ba22fffa,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_93629a7f0fcc,CDC Foundation,org_b2c345b043cd,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_0407709eb7be,Welthungerhilfe,org_4680785ef2c7,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_8143a2bf53aa,"EngenderHealth, Inc.",org_bceec50a2a37,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_651612289374,Kreditanstalt für Wiederaufbau (KfW) (Reconstruction Credit Institute),org_55b97553fec7,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_37a1d96a0acb,KENYA SCOUTS ASSOCIATION,org_438e628e03ab,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -977,36 +965,30 @@ acct_9a5e5d32071f,SAVE THE CHILDREN SWEDEN RWANDA,org_4dfe82054dbd,0,NONE,0,,,,,
 acct_d3f74a728666,NATIONAL COUNCIL OF PERSONS WITH DISABILITIES,org_9038c898801e,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_40f09e8915fb,PLAN INTERNATIONAL RWANDA,org_856e782a6f5a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_69e7f5b4d556,KIGALI COLLABORATIVE RESEARCH CENTRE,org_f5345dbb47b1,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_c74477ab19de,Health Systems Insight,org_974536e03101,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_7b66e30f20cf,NATIONAL AIDS CONTROL COUNCIL,org_2fcd7bf4ade5,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_498988269bbb,PUMWANI MATERNITY HOSPITAL,org_0a84cad15bb0,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_d6290615f3e3,Novo Nordisk Foundation,org_403853a4b232,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_eea0a9bec6ec,Rotary International,org_1288c5f3250f,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_12e2a1d342fc,African Capacity Building Foundation,org_cfdedca70e1c,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_912f13a2cdef,Campaign for Tobacco-Free Kids,org_c3c61b7035d5,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_f446c4b22172,Dorcas Aid International,org_a6ce0653c5ac,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_9ea0b0359b07,Bayer AG,org_2df7d7450758,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_d88433596f10,Italy - Ministry of Foreign Affairs International Cooperation,org_f8a8ce253abc,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_e1c3f1869c30,Infectious Diseases Research Collaboration (IDRC),org_ab0e284b9f38,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_14d2ace9cc5e,MPTFO - UN Multi Partner,org_f77fbea7407e,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_1ed561643e12,DRA,org_1cca89500ef2,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_5f0b9172c024,Uganda,org_1afbb7107bd6,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_31e5e7b4e5c7,International Bank for Reconstruction and Development,org_9c25c6e3a564,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_9d0b79f69859,Institut National de Recherche Biomédicale,org_5d6ff7fef939,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_89266a397293,Spanish Agency for International Cooperation (AECID),org_4f7c724a2221,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_fc95343a6c36,"Development Gateway, Inc.",org_e452f039651a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_a18b98f3e58e,Busitema University,org_9b79a62af441,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_08b8b879b799,Semafor,org_a08e1c94af54,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_8bf40a17a1ec,"Ministry of Foreign Affairs, Denmark",org_746ecc65ea77,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_36e459152167,15ème Communauté Baptiste du Congo ECC ASBL,org_297e0c7105c9,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_ddf92384ec31,UK - Department for Work and Pensions,org_fd753cbb10ba,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_e0bc98ada44e,Global Financing Facility,org_2fdad4a8e791,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_118b4a7c7812,Estonia,org_f3cdafbe8b38,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_2de24d04ac6b,Food and Agriculture Organization (FAO),org_ff249e4b90fc,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_a8c35b628a1d,"UK Foreign, Commonwealth & Development Office (FCDO)",org_d96f8fde4782,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_7b5fb17e996a,STEADFAST VOLUNTARY ORGANIZATION,org_9a5cf1b1d817,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_ccb4df10cdc2,SOMALIA DISASTER MANAGEMENT AGENCY FDS,org_ee7a9b313a8e,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_2c3d38b6cacf,SOMALI FEDERAL PARLIAMENT HOUSE OF THE PEOPLE,org_fecdf0d5916b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_2de24d04ac6b,Food and Agriculture Organization (FAO),org_ff249e4b90fc,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_ae5c5d480e36,MINISTRY OF GENDER LABOUR AND SOCIAL DEVELOPMENT,org_cb0ec54797d4,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_20bd6bf768a9,KYAMBOGO UNIVERSITY UNICEF ACCOUNT,org_ce5168cb8e7e,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_72cdcef711fc,OFFICE OF PRIME MINISTER,org_3ea2574d4de4,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -1018,11 +1000,13 @@ acct_8ec553fc4e28,UNICEF-Mexico,org_9684cc0eed04,0,NONE,0,,,,,No historical Fara
 acct_412402b8d56e,Makerere University School of Public Health,org_fceaccd7dfae,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_2deb774788b2,Access to Nutrition Initiative,org_ca7612b4759e,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_8329d7991431,International Rescue Committee Inc.,org_05d4b49f0d92,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_2dc36c583718,"Gilead Sciences, Inc.",org_fc65fad47401,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_99e76470df07,DAHW Deutsche Lepra- und Tuberkulosehilfe e.V.,org_29f4774365b4,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_7f383d6712ad,Italian Committee for UNICEF,org_5df93cd5c706,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_d72951a536b0,Ministry of Health of the Republic of Kenya,org_31027570b193,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_4bd32faaaba4,The National Treasury & Economic Planning of the Government of Kenya,org_5b8332b8c99a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_8e242b129a89,"Brigham and Women's Hospital, Inc.",org_22743893ef10,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_aa55a5041afc,United Nations Multi-Partner Trust Fund Office (MPTFO),org_ab490ed6ff9a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_8a9fcc839422,GPNRS LIVESTOCK AND FISHE RES DEV BUREAU,org_ec9e37b6b570,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_d56e83466655,Amref Health Africa in Kenya,org_355b1ad7ae9b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_c164604a8dd1,Mott MacDonald Group Limited,org_d97da42d3471,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -1033,10 +1017,10 @@ acct_78653de2ec1e,JOHN DAU FOUNDATION,org_16d31313c65c,0,NONE,0,,,,,No historica
 acct_517901861eb5,ZANZIBAR AIDS COMMISSION,org_b9300736aa6f,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_4b8a80487fd7,BAYLOR COLLEGE OF MEDICINE CHILDREN S FOUNDATION TANZANIA,org_a95f11f0cca8,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_55200abdfd04,Czech Republic (The),org_6899c8c67dcd,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_0a07ac3de1e9,"Ministry of Development Cooperation and Humanitarian Affairs, Luxembourg",org_907072286e8c,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_cdcbf60f42bd,Polish National Comm for UNICEF,org_c153f5644b8d,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_7a63c045a479,"Ministry of Public Health, Hygiene and Social Security",org_a2521faeb82f,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_cd26a9aa235d,United States Fund for UNICEF,org_71a798919964,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_53a72b242c56,"Foreign, Commonwealth & Development Office (FCDO), United Kingdom",org_31e3ec9820c7,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_f2e7420767cd,REACH THE NEEDY ETHIOPIA RTN ETHIOPIA,org_4cae9799fafb,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_c17c0d3f5a26,Stichting Red een Kind,org_b90e96175185,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_1a2aa4cffa27,Government of Tanzania - Ministry of Finance,org_52c71d3349f0,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -1052,9 +1036,7 @@ acct_e28611a5ac60,REPUBLIQUE DU RWANDA,org_d14a7e1beb3d,0,NONE,0,,,,,No historic
 acct_3dd758507515,Russian Federation,org_380bdb92c1ed,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_6e24ec1ec673,Hungarian National Comm for UNICEF,org_7cfaada84783,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_74a020f9e699,"Ministry of Foreign Affairs, Denmark",org_5c1b932e7b70,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_43c285edd836,Susan Thompson Buffett Foundation,org_59e1382c722f,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_bb9d08248a64,UNICEF-United Republic of Tanzania,org_42733c140236,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_a96d5027594d,Family Health International,org_5c090398f454,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_5d6501e22d37,International Rescue Committee UK,org_cdc7d5643f34,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_68a7c46cf8c0,SOLIDARITE DES ASSOCIATIONS FEMININES POUR LES DROITS DE LA,org_c0ccd7ab2fc1,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_ee44d559711d,FONDAZIONE AVSI ASSOCIAZONE VOLONTARI PER IL SERVI,org_ec858d8c0180,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -1070,13 +1052,12 @@ acct_0ad3e9e2b199,BUREAU DIOCESAIN DES OEUVRES MEDICALES BUTEMBO BENI,org_0ea843
 acct_8fabb5bfebd5,ACTION JUSTICE ET PAIX,org_d237f725ded7,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_7c1e65247e76,REGIE DE DISTRIBUTION DEAU DE LA REPUBLIQUE DEMOCRATIQUE DU CONGO,org_5546d97439d4,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_e1917e38d3ac,ACTIONS HUMANITAIRES ET DAIDE AU DEVELOPPEMENT INTEGRE AHADI,org_4371b812f2b7,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_32c6b2eaa340,Helmsley Charitable Trust,org_4234330edd16,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_a96d5027594d,Family Health International,org_5c090398f454,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_6ed6d3fbf117,AICS - Italian Agency for Cooperation and Development,org_61991ba80421,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_c8ce18807148,United Nations Foundation Inc.,org_c76478877539,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_a7eb1b7331d5,Financing Alliance for Health,org_9903d4716bc6,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_3048cc7f7f17,Help a Child,org_681566346f53,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_a9a7e4087753,PSFR - consolidated pool funding,org_ba6c33d3c438,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_bae3bca052ce,World Diabetes Foundation,org_9aabe2594c03,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_aaa5d8f7d8ce,CHILD PROTECTION: PREVENTING/ R,org_1aaaabf6710b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_7427710ee3ea,Ministry for Foreign Affairs of Finland,org_da2ea093755f,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_c68205aa3d39,Epicentre,org_130c8f522053,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -1092,8 +1073,8 @@ acct_bbf671882aac,EYE MEDIA,org_06affb576040,0,NONE,0,,,,,No historical Faram pr
 acct_43dafaddb152,THE RESCUE INITIATIVE SOUTH SUDAN,org_232bbb8a8e61,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_af907257cd33,ECSSS EDUCATION AND TRAINING,org_6477966d8b5f,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_ec41106eefdf,SOUTH SUDAN COUNCIL OF CHURCHES,org_33c76b9f2844,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_6d959ae9774e,United Republic of Tanzania,org_72eefd18b86c,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_a63f1a3518b8,GROUPE D APPUI CONSEILS AUX REALISATIONS POUR LE DEVELOPPEMENT ENDOGENE,org_636febc03f95,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_927dcfda2434,The University of Alabama at Birmingham,org_0643a73b757b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_8e0070ed9a2c,Stichting Vluchteling,org_ee29b21a9493,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_41a599d6db80,Spain,org_78391a4aabd1,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_ea400cfd9783,Abt Britain Ltd,org_6a30dd272c2b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -1119,13 +1100,13 @@ acct_4b51b84d85bc,The Hong Kong Polytechnic University,org_cd38292fead7,0,NONE,0
 acct_01952a2d2080,Uganda Medical Research Council,org_a613ff7a3a11,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_565795763a2c,Health Research Operations Kenya Limited,org_0540815a803b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_6c55b261fd61,Malawi-Liverpool-Wellcome Trust Clinical Research Programme,org_557ac71e418f,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_203a71a8cdec,University College London,org_0b8166f09a3b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_8ed9e47f5366,Botswana Harvard AIDS Institute Partnership,org_743a0de3ffeb,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_2317c9bf9f70,Hanoi Medical University,org_d94b211dac81,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_a2808182501a,Malawi Liverpool Wellcome Trust clinical Research Unit,org_baff44e1057d,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_ac1eb35e8bbd,St. George's University of London (SGUL),org_8d7186a69be9,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_a9884bbbf0ef,Wits Health Consortium,org_3d0b38a1b202,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_6a16b2059071,Drugs for Neglected Diseases initiative,org_a6a52c35073e,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_b66cf3a309d6,University of Geneva,org_1c4ab910232c,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_339d83d0d43c,Jomo Kenyatta University of Science and Technology,org_824c6763cc56,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_213dc5c0ca1f,"Kenyatta University Teaching, Referral and Research Hospital",org_426fabdbf8cd,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_0e7736e3787e,Manchester University NHS Foundation Trust,org_9a7bd1ffa3c8,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -1153,7 +1134,6 @@ acct_5a4b1e378fa6,SHIMAHR CONSULTANTS LTD,org_ae0d7adeec3c,0,NONE,0,,,,,No histo
 acct_2f5d71557222,WS INSIGHT LIMITED,org_0764cac2dbef,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_9d079ec3d0fe,EXPERTISE FRANCE,org_3e28a23fe013,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_92e40b8a2698,Murdoch Childrens Research Institute,org_4ef1dbecb2ea,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_ef5d6d9d514f,Gouvernement du bénéficiaire,org_888a6cd184a0,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_cceaa0940d3a,Effective Altruism Foundation,org_bc26a5e49f0e,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_36cc69aa07a4,Good Ventures,org_19754a2ec844,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_758566f10f4f,Three Graces Foundation Inc,org_b42650f246f2,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -1179,7 +1159,9 @@ acct_3a36df4f70b0,MEWA,org_3f4374cb1f38,0,NONE,0,,,,,No historical Faram product
 acct_d6c1af9f1236,"Kumasi Centre for Collaboration and Research in Tropical Medicine, Kwame Nkrumah University of Science and Technology",org_44ba0c53a774,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_320f6167884a,The Organisation of Islamic Cooperation (OIC),org_982bae3789c8,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_d2f008f33ac8,The Queen Elizabeth Diamond Jubilee Trust,org_8b5d2efe3aa1,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_ef5d6d9d514f,Gouvernement du bénéficiaire,org_888a6cd184a0,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_073196e9d358,Action Against Hunger,org_86ff8fd60111,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_5040951b9a62,Bloomberg Family Foundation,org_37ad50ec2dfa,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_b4e092b64c55,Vision for a Nation Foundation,org_75f7b46ca21a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_512a2b27217f,SI East Africa (Kenya),org_3b3de4206f77,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_a168f9b611b7,Sense International,org_dc8bb9b69e91,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -1189,10 +1171,10 @@ acct_a9a9f9586667,Children Aid South Sudan,org_9bf5ac58ae66,0,NONE,0,,,,,No hist
 acct_ce9873cbc467,Uganda Virus Research Institute,org_9ee31fdf3552,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_fec2c9be1433,World Vision Netherlands,org_44aa50272484,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_6db11bfe971a,Liverpool School of Tropical Medicine,org_b22eba63ac5b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_5040951b9a62,Bloomberg Family Foundation,org_37ad50ec2dfa,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_76f2a9fef195,XM-DAC-41305,org_73abc9c28abd,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_26e6309c2b25,Mainline,org_896140535264,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_3e188c27aa0d,"Results for Development Institute, Inc.",org_409db938cd97,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_a5e227cbe7fa,Wellcome Trust,org_aa4d6c2d942a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_3a2d9bc6a08e,Global Alliance for Improved Nutrition,org_b2f65ab50e19,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_f6cd69462532,Kilpatrick Fraser Charitable Trust,org_9b74727a0139,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_c516564e15ef,Veta Bailey Charitable Trust,org_b0ebf33f1fa9,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -1201,7 +1183,6 @@ acct_800bb2e7b12c,Bernhard-Nocht-Institut (BNITM),org_ca6ae2560d6b,0,NONE,0,,,,,
 acct_863ae2b09cd7,The George Washington University,org_235f3aa315c1,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_0c21b28988c8,Tropical Institute of Community Health and Development,org_3dfdda93bda8,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_24ef10ede5aa,MINISTRY OF DEVOLUTION AND PLANNING,org_6db4557db95c,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_db3e23197a09,WEEMA International Inc,org_d0b33487260a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_8d850301d247,Kenya Medical Research Institute (KEMRI),org_00c354d7806b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_6a1a6fd0ce64,Germany,org_ebe02793a342,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_3a4c66016a2d,ADRA DR Congo,org_148bf3413030,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -1210,6 +1191,8 @@ acct_5e035db1a782,CONCERN WORLDWIDE,org_f3904a17b82e,0,NONE,0,,,,,No historical 
 acct_3b51b500d74f,European Commission - Development and Cooperation - EuropeAid,org_67b7a219a516,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_9196b0740a5f,Department of Health and Social Care (DHSC) Global Health Research,org_cb5b31dc2796,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_2217ab0bc396,Programme alimentaire mondial,org_b9118bf33159,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_f3789c8d461f,"CausalFoundry, Inc.",org_dc67edb59ac2,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_db3e23197a09,WEEMA International Inc,org_d0b33487260a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_acad02bd8ba7,AFLAM,org_4e8a91a6c7a1,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_707a0d4e251d,Fondation NIF,org_991264bb23f6,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_b43eefbca448,Mangrove Foundation,org_229e176b7527,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -1219,7 +1202,6 @@ acct_cb063a9050ea,DFID,org_1cb7b09f6b01,0,NONE,0,,,,,No historical Faram product
 acct_6588075f58dc,International Food Policy Research Institute,org_6abd0f3351de,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_79259366f599,AECID Agencia Española de Cooperación Internacional para el Desarrollo,org_7b1a57095347,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_2fc9789e96a9,Heifer Nederland,org_8496fef95b22,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_a5e227cbe7fa,Wellcome Trust,org_aa4d6c2d942a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_cfed2a5c5b22,Abt Associates Inc.,org_5c1e10208472,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_d4d29998e6d4,Dutch Relief Alliance,org_a0025f952056,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_9f51254cd53c,Open Philanthropy,org_861afd8fe5a7,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -1234,6 +1216,7 @@ acct_7152de7ce537,Cesvi,org_6e5d2e83ff1c,0,NONE,0,,,,,No historical Faram produc
 acct_4a620702d881,"Noguchi Memorial Institute for Medical Research, University of Ghana",org_1cf59eea766e,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_83acd6aa49b2,Kiyita Family Alliance for Development (KIFAD),org_6d6899ed8995,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_3d683b4146bf,CHRISTIAN RECOVERY AND DEVELOPMENT AGENCY,org_7ff1e88a28da,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_b295157864bd,UNITAID,org_92308f73aeac,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_951ae07b6620,Belgian Committee for UNICEF,org_936fc426e37c,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_0c2f21d8d8a6,Uganda National Council for Science and Technology,org_afb497f679e3,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_9f5456343d8c,Biovision Foundation,org_1d62c3eef12a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -1261,6 +1244,7 @@ acct_da0481eb6f2e,Université de Lubumbashi,org_5183e13802bd,0,NONE,0,,,,,No his
 acct_7be41858c057,Université de Mons,org_4846b029f220,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_4d1f194b6cb6,Université Pédagogique Nationale,org_c49d9531bbaa,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_ef89ea8e6cde,DT Global International Development UK Ltd,org_108a198835bb,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_beea590bf478,Harvard T.H. Chan School of Public Health,org_7a1d2e8c6801,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_6e1942cf330d,Gulu University,org_7ac8ce140505,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_15bbe5bc950c,Ardhi University,org_1891aab38b34,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_f3a21cfa8d5a,Catholic University of Health and Allied Sciences,org_316d2721f9e9,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -1359,12 +1343,12 @@ acct_4f0f8cd1da25,NATIONAL COUNCIL FOR PERSONS WITH DISABILITIES,org_3444c1003ec
 acct_48bfdebf6e5c,UNICEF,org_adc8deda2486,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_51ae9414f901,Haukeland Universitetssykehus,org_aa8fd4f029de,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_fed17208b595,Sightsavers,org_93b1bad634dc,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_00dff5c7720b,European Commission,org_a22a45033975,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_a464f4987b81,Max Foundation,org_fc6fd70258c8,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_2a8643b587ff,ONG basée dans un pays donneur,org_839cd73be018,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_00dff5c7720b,European Commission,org_a22a45033975,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_18a41a622923,ETHIOPIAN RED CROSS SOCIETY,org_7ac30b6b75f5,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_c426460d713e,Centre for Economic Governance and Accountability in Africa,org_d5be80851165,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_83d790e793bc,hospice africa ltd,org_3be99e0054cd,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_2a8643b587ff,ONG basée dans un pays donneur,org_839cd73be018,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_204c7e8a0f65,Deutsche Welthungerhilfe e.V.,org_6af3d897abd7,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_3ec8a39f8f5d,"Taysha Consulting, Ltd",org_57104ead5724,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_d7d3edd2b888,LTS International Ltd,org_6e42dcd9c1b5,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -1377,7 +1361,6 @@ acct_cf02fb12db43,Ministry of Health - Kenya,org_8eb33ebb8dff,0,NONE,0,,,,,No hi
 acct_fed17208b595,Sightsavers,org_93b1bad634dc,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_5ad5127aadc2,Project Harar (Ethiopia),org_dd9d54b077d3,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_4072d5550ddd,Project Harar,org_16d57f6b2409,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_beea590bf478,Harvard T.H. Chan School of Public Health,org_7a1d2e8c6801,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_de038cbb5b31,Luxembourg,org_c4497912a6b8,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_ee4c22d014bb,Mainline Foundation,org_15eae19fcb51,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_4cc6073cf2a2,Swiss Agency for Development and Cooperation (SDC),org_cce1ecabbcac,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -1392,7 +1375,6 @@ acct_127fec322fc9,Australian Committee for UNICEF,org_abdb978cf115,0,NONE,0,,,,,
 acct_5674c79526d7,National Execution,org_3f4cf80cd479,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_67e6e7823523,International Medical Corps UK,org_f27563172112,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_38b326bf4e47,UNIVERSITY OF NOTTINGHAM,org_28df713898ee,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_927dcfda2434,The University of Alabama at Birmingham,org_0643a73b757b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_4b04962f31e5,University of Edinburgh,org_3b8bb9bc1159,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_64ff55142902,University of Cape Town,org_95df6801612d,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_9b11e4641130,HIV-AIDS AND CHILDREN,org_b46c2d40ee7a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -1407,7 +1389,6 @@ acct_0121cfc5b6cc,UNIVERSITY OF GLASGOW,org_aade22f8ac33,0,NONE,0,,,,,No histori
 acct_c2b6eedf4e37,UK-Med,org_9bbafe12d7d0,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_c5cc2b93c090,VLIR-UOS,org_0eecaaddf4c8,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_0b043f4db1d2,American International Health Alliance,org_860caeed6e6b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_1620524b8a1f,ONG basée dans un pays en développement,org_f8745630db84,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_4c9714ab2c99,New Zealand - Ministry of Foreign Affairs and Trade,org_2a0a5b2ad78e,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_c5ae895c0abd,Luxembourg Committee for UNICEF,org_1cc78ddec226,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_f0a6d9bdfcf9,Ethiopiaid Ireland,org_eca78cd74e4d,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -1419,6 +1400,7 @@ acct_f266e66ef139,Rwanda Biomedical Research Centre,org_d5a16e08fd9e,0,NONE,0,,,
 acct_8dea3020fdd2,University of Dar es Salaam,org_2767d466d1c5,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_24133ecd7787,International Centre of Insect Physiology and Ecology (icipe),org_8e6e3e86afa8,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_662e9379555e,Kenyatta University,org_5f0a9cd071e4,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_1620524b8a1f,ONG basée dans un pays en développement,org_f8745630db84,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_95d623320481,UNICEF Kenya,org_e9b5fbd12cbf,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_a5fc6e8ceb00,Finnish Committee for UNICEF,org_4e8c98c06dc1,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_0f8e16ecad25,Spanish Committee for UNICEF,org_723ed160e99e,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -1462,6 +1444,7 @@ acct_183bdcd74e67,Centre de Recherche et de Formation en Infectiologie de Guiné
 acct_f881ab57a2d6,Global Agriculture and Food Security Program (GAFSP) - World Bank as Supervising Entity,org_a8fdb3469218,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_bdd9a3ee1058,Second Phase of the Scaling Up of Nutrition Investments - Parallel Trust Fund of TF072449,org_3099d455be0e,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_c7240d6ebb52,Food Systems 2030 Multi-Donor Trust Fund,org_a087a257abba,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_f2217d5af0db,"Deutsche Gesellschaft f?r Internationale Zusammenarbeit (GIZ), Germany",org_2eae16b3d65e,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_5f33a35e6180,Rockefeller Foundation,org_2d9e086441ac,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_81a64af1969f,CBM Christoffel-Blindenmission Christian Blind Mission e.V.,org_2a180c939e1f,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_858eaaf4b58a,Comprehensive Community Based Rehabilitation in Tanzania,org_a6ca1d952bf4,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -1565,27 +1548,19 @@ acct_13caca1f9260,BRITISH RED CROSS,org_df54a76c2dc2,0,NONE,0,,,,,No historical 
 acct_445bd8177330,University of Dundee,org_fb85a1d9d4df,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_f7d95b65bba4,Stichting Healthy Entrepreneurs Foundation,org_0b4a78988605,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_be629fa231a9,Armauer Hansen Research Institute,org_c75fd38ff124,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_a5b501386548,OneSight EssilorLuxottica Foundation,org_45a5663e3a7f,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_c74477ab19de,Health Systems Insight,org_974536e03101,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_8954844400a4,"RF Catalytic Capital, Inc.",org_432f65b142ed,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_850e0f5088e4,Biological Sciences Research Council BBSRC,org_9a3ee149c47b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_00659bf6b24a,Fianakaviana Sambatra (FISA),org_6f4400eb9d63,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_1fc24b3d274a,Ipas,org_ef8371a4d246,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_30703bca2ac5,"Directorate-General for International Partnerships (INTPA), European Commission",org_b346140f70ce,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_8fb4b815839d,"Myriad USA, Inc (Previously King Baudouin Foundation United States ? KBFUS)",org_a5fafb8430bf,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_82a7f6bb9542,Other public entities in recipient country,org_ab4590b9454c,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_5fd321b52822,UN Environment Programme,org_0e77a5c5d9a5,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_3721d4b116df,Amref Flying Doctors,org_416ffd11369b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_71fd00d63538,UNIVERSITÀ DEGLI STUDI MILANO-BICOCCA EPE,org_e4832a1557f2,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_6a16b2059071,Drugs for Neglected Diseases initiative,org_a6a52c35073e,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_0a2f202a38cf,Ethiopiaid UK,org_55533cc58015,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_9ff5c5780216,donor country based NGO,org_56868d2a0fad,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_03ac52bd49f1,Andalucia,org_a443711c0f18,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_580b05039144,Roche Kenya Limited,org_af053d6af566,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_aa2785e3ec62,"Government of Wallonia, Belgium",org_d9f2216a6886,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_564324894b24,"TechnoServe, Inc.",org_f246abcb1cb9,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_3a87cd4f4627,"Department of Health and Social Care, United Kingdom",org_d49931c26919,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_3cefbb54f276,War Child Holland,org_64434bfc5632,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_4e92fe6cd908,Swiss Development Cooperation Agency (SDC/DDC),org_788c073c2809,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_82a7f6bb9542,Other public entities in recipient country,org_ab4590b9454c,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_5eefa791969c,IOGT-NTO Movement,org_02a5445a5121,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_879d36072af0,entfällt,org_2241bd208704,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_0761ea2c460d,American University of Beirut (AUB),org_e9c2e88c62c9,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -1614,8 +1589,6 @@ acct_dd82d5c916b2,World Bank (WB),org_42d1caeae20d,0,NONE,0,,,,,No historical Fa
 acct_8e943b863922,World Economic Forum (WEF),org_19c36f680422,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_1ede24e838ce,World Health Organization (WHO,org_906aee231f3a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_d62aab0c7cd7,World Meteorological Organization (WMO),org_ab52c12677db,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_9d6d53b6c1cf,LEGO Foundation,org_64129eabd7a5,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_641ba03c06ac,"Merck Sharp and Dohme Corp.,",org_1c79f2c2a6c4,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_c0037c9f149d,Kirkens Nødhjelp,org_926430783ea7,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_c49f4ca8dffb,SAfA Stiftungsallianz für Afrika gGmbH,org_fd5f9e4396b8,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_af4178a10139,Muhimbili University of Health and Allied Sciences,org_1d408c880f2b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -1625,18 +1598,18 @@ acct_64fd5b780d05,Multi Donor Trust Fund for Achieving Nutrition Impact at Scale
 acct_a2ed25988b8e,Nutrition Multi-Donor Trust Fund,org_90a12222b090,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_60cadaefddb0,World Health Organization,org_3d8997fe9a0c,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_dcf6d0d6b852,"European Investment Bank (Trust fund via EIB like FEMIP, NIF, Interest subsidies...)",org_5262e3c23a33,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_75a1ab5879c4,Fondation Botnar (FB),org_f1f0a093bbb7,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_921f5339295f,Plan Nederland,org_eb35e75f4e77,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_f9c36c55111f,"Foreign, Commonwealth & Development Office",org_12ee91f25707,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_399f28e7b17e,JP-2,org_a5c757ce36b8,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_16c0bb5f36e4,BroadReach Group LLC,org_6969a145351b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_4b3b0916394f,National Nutrition Program (PRONANUT),org_f80aca9d7333,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_51e644db3d3b,Democratic Republic of the Congo,org_db16edc19982,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_d98fc22a85aa,DFID,org_0c47842d162a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_d21a62cdbc49,ARES,org_986a62f2d21a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_e7f71322c45d,Japan,org_2a8280e20d98,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_f7ff5f44f19c,World Federation of Neurology,org_4c634ce895ae,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_32b2b1fb96c2,"Aga Khan Health Service, Tanzania",org_f3ad87459d70,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_57037849ee19,Alliance for Health Policy and Systems Research (AHPSR),org_9bb322d4b8f1,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_e51b2256cb89,Population Services International,org_2adc66bcd186,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_5468dda1f9d8,WHO Foundation,org_afb08b12140b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_918edd10f5ba,Pre-Qualification Fees (PQF),org_b10c53cb0b50,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_b87831b2e2c0,AWYAD,org_95b9616fde87,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_db073c979b6d,Hopelink Action Foundation Uganda,org_cb0a130c8fbf,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -1645,7 +1618,7 @@ acct_828e79ea0958,Similar Ground Uganda,org_e905113e01a6,0,NONE,0,,,,,No histori
 acct_194dcc9174b8,Youth Social Advocacy Team Uganda,org_598d865225b8,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_b96f2e0aa5d5,War Child Alliance Foundation,org_127248dabef6,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_4f7711c2eac3,"Ministry of Health, Community Development, Gender, Elderly and Children",org_7c85e090d1cb,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_2032b7b5b03e,Resolve To Save Lives,org_de68a6d37408,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_bae3bca052ce,World Diabetes Foundation,org_9aabe2594c03,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_990607f9698e,Hasselt University,org_1094860b968e,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_203a71a8cdec,University College London,org_0b8166f09a3b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_7caaf7c970c7,Deutsches Medikamentenhilfswerk – action medeor e.V.,org_91f880b7dfcc,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -1658,13 +1631,16 @@ acct_47a88fd01f62,KU Leuven,org_5293b2e13867,0,NONE,0,,,,,No historical Faram pr
 acct_e43c15a716c9,Vrije Universiteit Brussel,org_3423797bd804,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_42e4d3b49935,Institute for Tropical Medicine,org_5fe056f46b14,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_ae98eaa874f0,KZE - Katholische Zentralstelle für Entwicklungshilfe e.V.,org_4a372636dd05,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_cec2ec3357b1,United Nations Economic Commission for Africa (UNECA),org_5da2f7e7eb77,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_5d757fb2e2f8,Bahir Dar University,org_b61293e759c1,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_30703bca2ac5,"Directorate-General for International Partnerships (INTPA), European Commission",org_b346140f70ce,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_c438b0afddf1,Pathfinder International,org_0401788342c2,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_0fa199723c59,Government of Uganda (Ministry of Health),org_f187df78fe8f,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_9d6d53b6c1cf,LEGO Foundation,org_64129eabd7a5,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_31e5e7b4e5c7,International Bank for Reconstruction and Development,org_9c25c6e3a564,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_4f85f7253eaf,Federation Internationale de Football Association (FIFA),org_6d4943774c08,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_af79e667ed32,"Ministry of Foreign Affairs, Netherlands",org_e4b50c86a3eb,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_89266a397293,Spanish Agency for International Cooperation (AECID),org_4f7c724a2221,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_c1d9873ee139,"FCSAI - Fundación Estatal Salud, Infancia y Bienestar Social",org_b6d0ac78b856,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_6d959ae9774e,United Republic of Tanzania,org_72eefd18b86c,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_e1a4fe6e30f6,GROUPE URGENCE REHABILITATION DEVELOPPEMENT,org_0a13acbf8a25,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_6a36709edabe,"Science, Technology, Innovation, Research and Sustainability Collaboration (STIRS Collaboration)",org_99b3d7602b31,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_a22de7c3b2e3,Technology for Social Change and Development Initiative,org_344cb03ee566,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -1690,6 +1666,9 @@ acct_589afe63ebd0,University of Rwanda,org_f5adfc903c14,0,NONE,0,,,,,No historic
 acct_f4632a36a742,EMERGENCY - LIFE SUPPORT FOR CIVILIAN WAR VICTIMS ONG/ON,org_56f9fec3a606,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_42a604d25859,COMUNE DI RIMINI,org_f47d5ee29a19,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_58bbdb244e51,Centre for health Human Rights and,org_fb404e289a0f,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_0a07ac3de1e9,"Ministry of Development Cooperation and Humanitarian Affairs, Luxembourg",org_907072286e8c,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_af79e667ed32,"Ministry of Foreign Affairs, Netherlands",org_e4b50c86a3eb,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_c3cc797d1dd7,"Ministry of Foreign Affairs, Ireland",org_b72c32b9bd07,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_777022aada1c,Send a Cow Ethiopia,org_e41caf1c2ae4,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_b4a22c59dd3b,Faculty of Nursing and Midwifery ? Royal College of Surgeons in Ireland (RCSI),org_6ebd4a74f63f,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_a91da85910e8,Charity Projects Ltd (Comic Relief),org_41370340b23b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -1701,6 +1680,7 @@ acct_8269485b697e,Drugs for Neglected Diseases initiative (DNDi),org_1230c6cd1ee
 acct_2db276a22177,University of Oxford,org_4834510cf00d,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_81581e424603,Save the Children Netherlands,org_a0a1faee7c27,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_09a6f373462b,HelpAge International,org_7948d9b819d4,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_5fd321b52822,UN Environment Programme,org_0e77a5c5d9a5,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_e51b2256cb89,Population Services International,org_2adc66bcd186,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_f9c0e18a4490,United Nations Population Fund,org_8211c70e26a7,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_59b1587af96c,KFUK-KFUM Global,org_07034feae3dc,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -1804,7 +1784,6 @@ acct_cb063a9050ea,DFID,org_1cb7b09f6b01,0,NONE,0,,,,,No historical Faram product
 acct_1a4ef5050ac1,Palladium International Ltd (UK),org_4d3481bd1656,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_cbfcec2d7508,MOTT MACDONALD LTD,org_61ea9d3edfc1,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_b1ac86439602,Global Disability Innovation Hub,org_3ae1ebed193a,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_f3789c8d461f,"CausalFoundry, Inc.",org_dc67edb59ac2,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_33727572601d,World Health Organisation - assessed contributions,org_9d56378d344b,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_56695591d973,management4health GmbH,org_b14f3e884d9d,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_f8e5be9ba417,HECTA LIMITED,org_9a181e8730eb,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -1843,7 +1822,6 @@ acct_4ca559f87868,Kuwait,org_b534bbf394de,0,NONE,0,,,,,No historical Faram produ
 acct_066032950147,THET,org_8f1536b484de,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_02db37a55dbc,OXFAM CANADA,org_3e177397f026,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_422b982ac58e,KfW Bankengruppe (KfW),org_553043916913,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_09f425fa2dd0,World Food Program USA,org_97d6da0caff8,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_b491321d07c4,MEDICOS DEL MUNDO,org_8ec93730c424,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_78fc3579d550,JHPIEGO,org_353c566f69fb,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_ce179a254e22,Stichting Simavi,org_8375b3e577fe,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -1852,8 +1830,6 @@ acct_57e911ad14d8,Red Barnet,org_7a1235911394,0,NONE,0,,,,,No historical Faram p
 acct_0e470efb2487,Jimma University,org_e93b63ad7617,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_e11473bb16d7,BBC Media Action,org_cee9cc6cf860,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_ff0af6361f57,NILE INITIATIVE DEVELOPMENT ORGANIZATION NIDO,org_5848d8d7d71c,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_80a8737dc977,Brown University,org_a9a38d8b87a3,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
-acct_72fa99527433,Management Sciences for Health,org_5914cdad1d78,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_2db276a22177,UNIVERSITY OF OXFORD,org_4834510cf00d,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_103d36917d54,CARE UGANDA CO,org_62c37ddfb2ed,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_83ba6d3092ca,BKP Economic Advisors,org_3990a5e82c32,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
@@ -1866,6 +1842,7 @@ acct_5ed7f042b097,University of Manitoba,org_8aaba877e0e0,0,NONE,0,,,,,No histor
 acct_fd3fa2bea067,ATScale,org_75a060ca80ed,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_7c7188ab79f0,Other public entities in donor country,org_267c6a9d12cd,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_f41a84a330b6,Hospital for Sick Children,org_1daf5aa393a8,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
+acct_72fa99527433,Management Sciences for Health,org_5914cdad1d78,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_370f0b7dca34,Vysoká škola zdravotníctva a sociálnej práce sv. Alžbety,org_08f9668061e0,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_76e69bafa1cc,Heifer Netherlands,org_a6cc95b2a0fe,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.
 acct_cda636f93481,NYU Langone Health,org_746a1da6ee89,0,NONE,0,,,,,No historical Faram product-family familiarity identified; use current opportunity signals.

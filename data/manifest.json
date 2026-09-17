@@ -26,13 +26,13 @@
     "organisation_entities": 2261,
     "organisation_aliases": 17219,
     "equipment_entities": 11,
-    "manufacturer_entities": 35,
+    "manufacturer_entities": 34,
     "opportunity_scores": 3133,
     "organisation_intelligence": 2357,
     "programme_intelligence": 3133,
     "donor_intelligence": 371,
     "product_intelligence": 48,
-    "manufacturer_intelligence": 35,
+    "manufacturer_intelligence": 34,
     "target_accounts": 2357,
     "engagements": 2019,
     "crm_notes": 2019,
@@ -40,7 +40,18 @@
     "opportunities": 3133,
     "equipment_intelligence": 11,
     "tender_predictions": 936,
-    "opportunity_organisation_resolution": 15403
+    "opportunity_organisation_resolution": 15403,
+    "procurement_events": 3709,
+    "procurement_processes": 6352,
+    "procurement_releases": 6591,
+    "procurement_documents": 171,
+    "procurement_document_evidence": 171,
+    "procurement_line_items": 3760,
+    "procurement_product_matches": 3760,
+    "procurement_manufacturer_relationships": 20,
+    "world_bank_project_metadata": 5,
+    "procurement_source_collection": 3,
+    "procurement_source_health": 3
   },
   "files": {
     "activities": "activities.csv",
@@ -70,7 +81,18 @@
     "opportunities": "opportunities.csv",
     "equipment_intelligence": "equipment_intelligence.csv",
     "tender_predictions": "tender_predictions.csv",
-    "opportunity_organisation_resolution": "opportunity_organisation_resolution.csv"
+    "opportunity_organisation_resolution": "opportunity_organisation_resolution.csv",
+    "procurement_events": "procurement_events.csv",
+    "procurement_processes": "procurement_processes.csv",
+    "procurement_releases": "procurement_releases.csv",
+    "procurement_documents": "procurement_documents.csv",
+    "procurement_document_evidence": "procurement_document_evidence.csv",
+    "procurement_line_items": "procurement_line_items.csv",
+    "procurement_product_matches": "procurement_product_matches.csv",
+    "procurement_manufacturer_relationships": "procurement_manufacturer_relationships.csv",
+    "world_bank_project_metadata": "world_bank_project_metadata.csv",
+    "procurement_source_collection": "procurement_source_collection.csv",
+    "procurement_source_health": "procurement_source_health.csv"
   },
   "intelligence_generated_at": "2026-09-17T11:26:13Z",
   "plan_progress": [
@@ -214,5 +236,6 @@
       "procurement_line_items",
       "procurement_document_evidence"
     ]
-  }
+  },
+  "product_intelligence_generated_at": "2026-09-17T11:42:23Z"
 }
