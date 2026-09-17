@@ -41,13 +41,13 @@
     "equipment_intelligence": 11,
     "tender_predictions": 936,
     "opportunity_organisation_resolution": 15403,
-    "procurement_events": 3709,
-    "procurement_processes": 6352,
-    "procurement_releases": 6591,
+    "procurement_events": 3718,
+    "procurement_processes": 6371,
+    "procurement_releases": 6620,
     "procurement_documents": 171,
     "procurement_document_evidence": 171,
-    "procurement_line_items": 3760,
-    "procurement_product_matches": 3760,
+    "procurement_line_items": 3769,
+    "procurement_product_matches": 3769,
     "procurement_manufacturer_relationships": 20,
     "world_bank_project_metadata": 5,
     "procurement_source_collection": 3,
@@ -237,5 +237,5 @@
       "procurement_document_evidence"
     ]
   },
-  "product_intelligence_generated_at": "2026-09-17T11:42:23Z"
+  "product_intelligence_generated_at": "2026-09-17T17:01:03Z"
 }
