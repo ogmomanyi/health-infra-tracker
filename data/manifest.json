@@ -1,6 +1,6 @@
 {
   "pipeline_version": "3.4-procurement-evidence",
-  "generated_at": "2026-09-17T11:25:48Z",
+  "generated_at": "2026-09-18T10:59:17Z",
   "countries": [
     "KE",
     "UG",
@@ -13,45 +13,34 @@
   ],
   "query": "recipient_country_code:(KE UG RW ET SS SO TZ CD) AND sector_code:(12110 12181 12182 12191 12196 12220 12230 12240 12250 12261 12262 12263 12264 12281 12310 12320 12330 12340 12350 12382) AND activity_status_code:(1 2)",
   "row_counts": {
-    "activities": 3133,
-    "transactions": 66007,
-    "budgets": 13150,
+    "activities": 3132,
+    "transactions": 66009,
+    "budgets": 13151,
     "planned_disbursements": 4515,
-    "activity_countries": 5583,
-    "organisations": 16985,
-    "iati_health_projects": 3133,
-    "iati_activities": 3133,
-    "iati_transactions": 66007,
-    "iati_organisations": 16985,
+    "activity_countries": 5582,
+    "organisations": 16983,
+    "iati_health_projects": 3132,
+    "iati_activities": 3132,
+    "iati_transactions": 66009,
+    "iati_organisations": 16983,
     "organisation_entities": 2261,
     "organisation_aliases": 17219,
     "equipment_entities": 11,
     "manufacturer_entities": 34,
-    "opportunity_scores": 3133,
+    "opportunity_scores": 3132,
     "organisation_intelligence": 2357,
-    "programme_intelligence": 3133,
+    "programme_intelligence": 3132,
     "donor_intelligence": 371,
     "product_intelligence": 48,
     "manufacturer_intelligence": 34,
     "target_accounts": 2357,
     "engagements": 2019,
     "crm_notes": 2019,
-    "recommended_actions": 1755,
-    "opportunities": 3133,
+    "recommended_actions": 1754,
+    "opportunities": 3132,
     "equipment_intelligence": 11,
     "tender_predictions": 936,
-    "opportunity_organisation_resolution": 15403,
-    "procurement_events": 3715,
-    "procurement_processes": 6378,
-    "procurement_releases": 6636,
-    "procurement_documents": 171,
-    "procurement_document_evidence": 171,
-    "procurement_line_items": 3766,
-    "procurement_product_matches": 3766,
-    "procurement_manufacturer_relationships": 20,
-    "world_bank_project_metadata": 5,
-    "procurement_source_collection": 3,
-    "procurement_source_health": 3
+    "opportunity_organisation_resolution": 15401
   },
   "files": {
     "activities": "activities.csv",
@@ -81,20 +70,9 @@
     "opportunities": "opportunities.csv",
     "equipment_intelligence": "equipment_intelligence.csv",
     "tender_predictions": "tender_predictions.csv",
-    "opportunity_organisation_resolution": "opportunity_organisation_resolution.csv",
-    "procurement_events": "procurement_events.csv",
-    "procurement_processes": "procurement_processes.csv",
-    "procurement_releases": "procurement_releases.csv",
-    "procurement_documents": "procurement_documents.csv",
-    "procurement_document_evidence": "procurement_document_evidence.csv",
-    "procurement_line_items": "procurement_line_items.csv",
-    "procurement_product_matches": "procurement_product_matches.csv",
-    "procurement_manufacturer_relationships": "procurement_manufacturer_relationships.csv",
-    "world_bank_project_metadata": "world_bank_project_metadata.csv",
-    "procurement_source_collection": "procurement_source_collection.csv",
-    "procurement_source_health": "procurement_source_health.csv"
+    "opportunity_organisation_resolution": "opportunity_organisation_resolution.csv"
   },
-  "intelligence_generated_at": "2026-09-17T11:26:13Z",
+  "intelligence_generated_at": "2026-09-18T10:59:53Z",
   "plan_progress": [
     {
       "id": "01",
@@ -236,6 +214,5 @@
       "procurement_line_items",
       "procurement_document_evidence"
     ]
-  },
-  "product_intelligence_generated_at": "2026-09-18T04:43:57Z"
+  }
 }

@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-09-17T11:26:13Z",
-  "as_of": "2026-09-17",
-  "source_generated_at": "2026-09-17T11:25:48Z",
+  "generated_at": "2026-09-18T10:59:53Z",
+  "as_of": "2026-09-18",
+  "source_generated_at": "2026-09-18T10:59:17Z",
   "pipeline_version": "3.4-procurement-evidence",
   "pipeline_layers": [
     {
@@ -72,14 +72,14 @@
   ],
   "layer_counts": {
     "raw": {
-      "iati_activities": 3133,
-      "iati_transactions": 66007,
-      "iati_organisations": 16985
+      "iati_activities": 3132,
+      "iati_transactions": 66009,
+      "iati_organisations": 16983
     },
     "normalized": {
-      "activities": 3133,
-      "transactions": 66007,
-      "organisations": 16985
+      "activities": 3132,
+      "transactions": 66009,
+      "organisations": 16983
     },
     "canonical": {
       "organisation_entities": 2261,
@@ -88,39 +88,33 @@
       "manufacturer_entities": 34
     },
     "intelligence": {
-      "opportunity_scores": 3133,
+      "opportunity_scores": 3132,
       "organisation_intelligence": 2357,
-      "programme_intelligence": 3133,
+      "programme_intelligence": 3132,
       "donor_intelligence": 371,
-      "opportunity_organisation_resolution": 15403,
-      "procurement_manufacturer_relationships": 20,
-      "world_bank_project_metadata": 5
+      "opportunity_organisation_resolution": 15401
     },
     "commercial": {
       "target_accounts": 2357,
       "engagements": 2019,
       "crm_notes": 2019,
-      "recommended_actions": 1755
+      "recommended_actions": 1754
     },
     "predictive_product": {
       "equipment_intelligence": 11,
       "product_intelligence": 48,
       "manufacturer_intelligence": 34,
-      "tender_predictions": 936,
-      "procurement_processes": 6378,
-      "procurement_releases": 6636,
-      "procurement_line_items": 3766,
-      "procurement_document_evidence": 171
+      "tender_predictions": 936
     }
   },
   "currency_note": "Amounts are source-reported nominal values and are not converted across currencies.",
   "metrics": {
-    "projects": 3133,
-    "active_projects": 2823,
+    "projects": 3132,
+    "active_projects": 2822,
     "pipeline_projects": 309,
-    "reported_budget": 78476623996.49,
+    "reported_budget": 78476612750.49,
     "future_disbursement": 37161282787.56,
-    "future_budget": 42020641943.83,
+    "future_budget": 42020630697.83,
     "procurement_signal_projects": 765,
     "high_priority_opportunities": 544,
     "donors": 371,
@@ -162,7 +156,7 @@
     {
       "country_code": "UG",
       "country_name": "Uganda",
-      "project_count": 357
+      "project_count": 356
     },
     {
       "country_code": "SS",
@@ -216,6 +210,5 @@
       "status": "ready",
       "output": "Equipment demand, product and manufacturer intelligence, technical evidence, tender probability, horizon, and timing windows"
     }
-  ],
-  "product_intelligence_generated_at": "2026-09-18T04:43:57Z"
+  ]
 }
