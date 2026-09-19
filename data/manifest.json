@@ -43,7 +43,7 @@
     "opportunity_organisation_resolution": 15401,
     "procurement_events": 3715,
     "procurement_processes": 6412,
-    "procurement_releases": 6715,
+    "procurement_releases": 6717,
     "procurement_documents": 175,
     "procurement_document_evidence": 175,
     "procurement_line_items": 3766,
@@ -237,5 +237,5 @@
       "procurement_document_evidence"
     ]
   },
-  "product_intelligence_generated_at": "2026-09-19T10:59:46Z"
+  "product_intelligence_generated_at": "2026-09-19T15:54:41Z"
 }
