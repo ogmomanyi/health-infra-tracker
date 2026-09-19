@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-09-18T10:59:53Z",
-  "as_of": "2026-09-18",
-  "source_generated_at": "2026-09-18T10:59:17Z",
+  "generated_at": "2026-09-19T10:43:25Z",
+  "as_of": "2026-09-19",
+  "source_generated_at": "2026-09-19T10:42:49Z",
   "pipeline_version": "3.4-procurement-evidence",
   "pipeline_layers": [
     {
@@ -92,25 +92,19 @@
       "organisation_intelligence": 2357,
       "programme_intelligence": 3132,
       "donor_intelligence": 371,
-      "opportunity_organisation_resolution": 15401,
-      "procurement_manufacturer_relationships": 20,
-      "world_bank_project_metadata": 5
+      "opportunity_organisation_resolution": 15401
     },
     "commercial": {
       "target_accounts": 2357,
       "engagements": 2019,
       "crm_notes": 2019,
-      "recommended_actions": 1754
+      "recommended_actions": 1755
     },
     "predictive_product": {
       "equipment_intelligence": 11,
       "product_intelligence": 48,
       "manufacturer_intelligence": 34,
-      "tender_predictions": 936,
-      "procurement_processes": 6408,
-      "procurement_releases": 6705,
-      "procurement_line_items": 3769,
-      "procurement_document_evidence": 174
+      "tender_predictions": 936
     }
   },
   "currency_note": "Amounts are source-reported nominal values and are not converted across currencies.",
@@ -137,7 +131,7 @@
     {
       "country_code": "KE",
       "country_name": "Kenya",
-      "project_count": 624
+      "project_count": 623
     },
     {
       "country_code": "CD",
@@ -147,12 +141,12 @@
     {
       "country_code": "ET",
       "country_name": "Ethiopia",
-      "project_count": 578
+      "project_count": 577
     },
     {
       "country_code": "TZ",
       "country_name": "Tanzania",
-      "project_count": 502
+      "project_count": 501
     },
     {
       "country_code": "SO",
@@ -162,7 +156,7 @@
     {
       "country_code": "UG",
       "country_name": "Uganda",
-      "project_count": 356
+      "project_count": 357
     },
     {
       "country_code": "SS",
@@ -216,6 +210,5 @@
       "status": "ready",
       "output": "Equipment demand, product and manufacturer intelligence, technical evidence, tender probability, horizon, and timing windows"
     }
-  ],
-  "product_intelligence_generated_at": "2026-09-18T20:56:25Z"
+  ]
 }
